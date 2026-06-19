@@ -6,7 +6,7 @@ import collections
 from . import runtime
 from .analyze import get_enum_member_name
 from .emit_py_native import _resolved_py_func_name
-from .helpers import get_enum_name, sanitize, simplify_identifier
+from .helpers import get_enum_name, is_method_of, method_name_from_func_name, sanitize, simplify_identifier
 
 
 def _member_c_value(value):
@@ -260,6 +260,7 @@ static struct PyModuleDef lvgl_module_def = {
                 )
 
     if max_phase >= 5 and obj_names:
+        enums = runtime.get("enums", {})
         for obj_name in obj_names:
             san = sanitize(obj_name)
             print(
@@ -267,6 +268,24 @@ static struct PyModuleDef lvgl_module_def = {
                     san=san
                 )
             )
+            obj_enums = [
+                enum_name
+                for enum_name in enums.keys()
+                if is_method_of(enum_name, obj_name)
+            ]
+            for enum_name in obj_enums:
+                module_enum = sanitize(get_enum_name(enum_name))
+                attr_name = sanitize(method_name_from_func_name(enum_name))
+                print(
+                    '    {{ PyObject *_enum_ns = PyObject_GetAttrString(m, "{module_enum}");'
+                    ' if (_enum_ns && ((PyTypeObject *)&py_lv_{san}_type)->tp_dict) {{'
+                    ' if (PyDict_SetItemString(((PyTypeObject *)&py_lv_{san}_type)->tp_dict, "{attr_name}", _enum_ns) < 0) return NULL;'
+                    ' Py_DECREF(_enum_ns); }} }}'.format(
+                        module_enum=module_enum,
+                        san=san,
+                        attr_name=attr_name,
+                    )
+                )
             print(
                 '    Py_INCREF((PyObject *)&py_lv_{san}_type);'.format(san=san)
             )
