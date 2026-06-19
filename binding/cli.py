@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 _LV_BINDINGS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _LV_BINDINGS_DIR)
 
-from .generator import run_circuitpython, run_micropython
+from .generator import run_circuitpython, run_cpython, run_micropython
 from binding.metadata import save_metadata
 from binding.preprocess import preprocess
 
@@ -20,7 +20,7 @@ def build_arg_parser():
     )
     parser.add_argument(
         "--target",
-        choices=["micropython", "circuitpython"],
+        choices=["micropython", "circuitpython", "cpython"],
         default="micropython",
         help="Binding target runtime (default: micropython)",
     )
@@ -94,6 +94,16 @@ def main(argv=None):
         source, pp_cmd = preprocess(args)
         cmd_line = " ".join(argv)
         _result, namespace, emitted = run_circuitpython(
+            args, source, pp_cmd, sys.stdout, cmd_line
+        )
+        if args.metadata:
+            save_metadata(namespace, args.metadata)
+        return 0 if emitted else 2
+
+    if args.target == "cpython":
+        source, pp_cmd = preprocess(args)
+        cmd_line = " ".join(argv)
+        _result, namespace, emitted = run_cpython(
             args, source, pp_cmd, sys.stdout, cmd_line
         )
         if args.metadata:

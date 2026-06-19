@@ -12,6 +12,7 @@ lv_bindings/
   generated/            # Output (gitignored): lvmp.c, lvcp.c
   regenerate_lvmp.sh    # MicroPython bindings
   regenerate_lvcp.sh    # CircuitPython bindings
+  regenerate_lvpy.sh    # CPython bindings (native PyInit_lvgl)
   verify_bindings.sh    # Regression checks
 ```
 
@@ -41,6 +42,7 @@ Bindings are not committed. Regenerate after changing `lvgl/`, `lv_conf.h`, or `
 ```bash
 ./regenerate_lvmp.sh          # MicroPython → generated/lvmp.c
 ./regenerate_lvcp.sh          # CircuitPython → generated/lvcp.c
+./regenerate_lvpy.sh          # CPython → generated/lvpy.c
 ```
 
 Set `LV_BINDINGS_DEBUG=1` to keep preprocessed `.pp` and `.json` metadata files.
@@ -56,3 +58,4 @@ Set `LV_BINDINGS_DEBUG=1` to keep preprocessed `.pp` and `.json` metadata files.
 |------|------|
 | [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod) | `generated/lvmp.c`, `lvgl/`, `lv_conf.h` |
 | [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) | `generated/lvcp.c`, `lvgl/`, `lv_conf.h` |
+| `lv_cpython_mod` (sibling repo) | `generated/lvpy.c`, `lvgl/`, `lv_conf.h`, `setup.py` |

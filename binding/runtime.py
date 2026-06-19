@@ -12,6 +12,8 @@ from .context import BindingContext
 _CONSUMER_MODULES = (
     "binding.analyze",
     "binding.emit_c",
+    "binding.emit_py",
+    "binding.emit_py_native",
     "binding.helpers",
     "binding.parse",
 )

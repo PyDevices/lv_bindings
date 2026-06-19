@@ -43,7 +43,9 @@
  * - LV_STDLIB_RTTHREAD:    RT-Thread implementation
  * - LV_STDLIB_CUSTOM:      Implement the functions externally
  */
-#if defined(CMODS_CIRCUITPYTHON_BUILD)
+#if defined(CMODS_CPYTHON_BUILD)
+#define LV_USE_STDLIB_MALLOC    LV_STDLIB_CLIB
+#elif defined(CMODS_CIRCUITPYTHON_BUILD)
 #define LV_USE_STDLIB_MALLOC    LV_STDLIB_CIRCUITPYTHON_OVERRIDE
 #else
 #define LV_USE_STDLIB_MALLOC    LV_STDLIB_MICROPYTHON_OVERRIDE
@@ -308,15 +310,20 @@
 
 /*Garbage Collector settings
  *Used if LVGL is bound to higher level language and the memory is managed by that language*/
+#if defined(CMODS_CPYTHON_BUILD)
+#define LV_GC_INIT() do {} while (0)
+#define LV_GC_DEINIT() do {} while (0)
+#define LV_ENABLE_GLOBAL_CUSTOM 0
+#else
 extern void mp_lv_init_gc(void);
 extern void mp_lv_deinit_gc(void);
 #define LV_GC_INIT() mp_lv_init_gc()
 #define LV_GC_DEINIT() mp_lv_deinit_gc()
-
 #define LV_ENABLE_GLOBAL_CUSTOM 1
 #if LV_ENABLE_GLOBAL_CUSTOM
     extern void *mp_lv_roots;
     #define LV_GLOBAL_CUSTOM() ((lv_global_t*)mp_lv_roots)
+#endif
 #endif
 
 /*Default cache size in bytes.
@@ -715,8 +722,8 @@ extern void mp_lv_deinit_gc(void);
 
 /* JPG + split JPG decoder library.
  * Split JPG is a custom format optimized for embedded systems. */
-#if defined(CMODS_CIRCUITPYTHON_BUILD)
-/* CP already links lib/tjpgd for jpegio; incompatible tjpgdcnf vs LVGL's bundled copy. */
+#if defined(CMODS_CIRCUITPYTHON_BUILD) || defined(CMODS_CPYTHON_BUILD)
+/* CP links lib/tjpgd separately; CPython build excludes bundled tjpgd.c (see setup.py). */
 #define LV_USE_TJPGD 0
 #else
 #define LV_USE_TJPGD 1

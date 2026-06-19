@@ -45,3 +45,26 @@ def run_circuitpython(args, source, pp_cmd, out, cmd_line):
     namespace["simplify_identifier"] = helpers.simplify_identifier
     namespace["get_enum_name"] = helpers.get_enum_name
     return build_result(ctx), namespace, emitted
+
+
+def run_cpython(args, source, pp_cmd, out, cmd_line):
+    import builtins
+
+    from .emit_cpython import run as emit_run_cpython
+
+    def emit_print(*a, **k):
+        k.setdefault("file", out)
+        builtins.print(*a, **k)
+
+    ctx = BindingContext(args, source, pp_cmd, cmd_line, emit_print)
+    emit_run_cpython(ctx)
+    emitted = True
+    from . import helpers
+
+    namespace = {}
+    for name in ctx.export_names():
+        if hasattr(ctx, name):
+            namespace[name] = getattr(ctx, name)
+    namespace["simplify_identifier"] = helpers.simplify_identifier
+    namespace["get_enum_name"] = helpers.get_enum_name
+    return build_result(ctx), namespace, emitted
