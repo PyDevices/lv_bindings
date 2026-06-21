@@ -23,7 +23,6 @@ def emit_phase2_enums_cpython():
         return
     runtime.set_("_py_enums_emitted", True)
     enums = runtime.get("enums", {})
-    enum_referenced = runtime.get("enum_referenced", collections.OrderedDict())
     module_name = runtime.get("module_name", "lvgl")
 
     print(
@@ -35,8 +34,6 @@ def emit_phase2_enums_cpython():
     )
 
     for enum_name in list(enums.keys()):
-        if enum_name in enum_referenced:
-            continue
         members = enums[enum_name]
         if not members:
             continue
@@ -172,6 +169,8 @@ static struct PyModuleDef lvgl_module_def = {
         for global_name in generated_globals:
             if not global_name.startswith("LV_"):
                 continue
+            if global_name.startswith("LV_SYMBOL_"):
+                continue
             py_name = simplify_identifier(global_name)
             if py_name.startswith("LV_"):
                 py_name = py_name[3:]
@@ -200,6 +199,19 @@ static struct PyModuleDef lvgl_module_def = {
 
     if max_phase >= 3:
         print("    py_lv_runtime_init_types();")
+        print("    if (PyType_Ready(&py_blob_type) < 0) return NULL;")
+        print("    Py_INCREF((PyObject *)&py_blob_type);")
+        print('    if (PyModule_AddObject(m, "Blob", (PyObject *)&py_blob_type) < 0) return NULL;')
+        print("    if (PyType_Ready(&py_lv_base_struct_type) < 0) return NULL;")
+        print("    Py_INCREF((PyObject *)&py_lv_base_struct_type);")
+        print('    if (PyModule_AddObject(m, "Struct", (PyObject *)&py_lv_base_struct_type) < 0) return NULL;')
+        print("    if (PyType_Ready(&py_C_Pointer_type) < 0) return NULL;")
+        print("    Py_INCREF((PyObject *)&py_C_Pointer_type);")
+        print('    if (PyModule_AddObject(m, "C_Pointer", (PyObject *)&py_C_Pointer_type) < 0) return NULL;')
+        print("    if (PyLvReferenceError) {")
+        print("        Py_INCREF(PyLvReferenceError);")
+        print('        if (PyModule_AddObject(m, "LvReferenceError", PyLvReferenceError) < 0) return NULL;')
+        print("    }")
         if generated_structs:
             for struct_name in generated_structs:
                 if not generated_structs[struct_name]:
@@ -221,6 +233,9 @@ static struct PyModuleDef lvgl_module_def = {
                         '    lv_struct_register_size(&py_{san}_type, sizeof({tag}{name}));'.format(
                             san=san, tag=struct_tag, name=struct_name
                         )
+                    )
+                    print(
+                        '    lv_struct_expose_size(&py_{san}_type);'.format(san=san)
                     )
                 print(
                     '    Py_INCREF((PyObject *)&py_{san}_type);'.format(san=san)
@@ -250,6 +265,9 @@ static struct PyModuleDef lvgl_module_def = {
                             san=san, tag=struct_tag, name=struct_name
                         )
                     )
+                    print(
+                        '    lv_struct_expose_size(&py_{san}_type);'.format(san=san)
+                    )
                 print(
                     '    Py_INCREF((PyObject *)&py_{san}_type);'.format(san=san)
                 )
@@ -274,14 +292,16 @@ static struct PyModuleDef lvgl_module_def = {
                 if is_method_of(enum_name, obj_name)
             ]
             for enum_name in obj_enums:
-                module_enum = sanitize(get_enum_name(enum_name))
+                enum_safe = sanitize(enum_name)
                 attr_name = sanitize(method_name_from_func_name(enum_name))
                 print(
-                    '    {{ PyObject *_enum_ns = PyObject_GetAttrString(m, "{module_enum}");'
-                    ' if (_enum_ns && ((PyTypeObject *)&py_lv_{san}_type)->tp_dict) {{'
-                    ' if (PyDict_SetItemString(((PyTypeObject *)&py_lv_{san}_type)->tp_dict, "{attr_name}", _enum_ns) < 0) return NULL;'
-                    ' Py_DECREF(_enum_ns); }} }}'.format(
-                        module_enum=module_enum,
+                    '    {{ if (PyType_Ready(&py_lv_{enum_safe}_type) < 0) return NULL;'
+                    ' PyObject *_enum_ns = (PyObject *)PyType_GenericNew(&py_lv_{enum_safe}_type, NULL, NULL);'
+                    ' if (_enum_ns == NULL) return NULL;'
+                    ' if (((PyTypeObject *)&py_lv_{san}_type)->tp_dict &&'
+                    ' PyDict_SetItemString(((PyTypeObject *)&py_lv_{san}_type)->tp_dict, "{attr_name}", _enum_ns) < 0) {{ Py_DECREF(_enum_ns); return NULL; }}'
+                    ' Py_DECREF(_enum_ns); }}'.format(
+                        enum_safe=enum_safe,
                         san=san,
                         attr_name=attr_name,
                     )

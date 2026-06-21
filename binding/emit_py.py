@@ -25,6 +25,7 @@ from .analyze import (
     noncommon_part,
 )
 from .helpers import (
+    collect_enum_referenced,
     ctor_name_from_obj_name,
     get_enum_name,
     is_global_callback,
@@ -3019,7 +3020,10 @@ static const mp_lv_struct_t mp_{global_name} = {{
         runtime.set_("generated_structs", generated_structs)
         runtime.set_("struct_aliases", struct_aliases)
         runtime.set_("enums", runtime.get("enums"))
-        runtime.set_("enum_referenced", enum_referenced)
+        runtime.set_(
+            "enum_referenced",
+            collect_enum_referenced(runtime.get("enums", {}), obj_names),
+        )
         runtime.set_("obj_names", obj_names)
         print(
             """

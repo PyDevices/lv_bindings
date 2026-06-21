@@ -1,6 +1,8 @@
 """Name sanitization and LVGL pattern helpers."""
 from __future__ import print_function
 
+import collections
+
 from pycparser import c_ast
 
 from .parse import get_name, get_type
@@ -87,6 +89,16 @@ def method_name_from_func_name(func_name):
 def get_enum_name(enum):
     match_result = lv_enum_name_pattern.match(enum)
     return match_result.group(3) if match_result else enum
+
+
+def collect_enum_referenced(enums, obj_names):
+    """Return enum names attached to widget types (MicroPython module-global semantics)."""
+    enum_referenced = collections.OrderedDict()
+    for obj_name in obj_names:
+        for enum_name in enums.keys():
+            if is_method_of(enum_name, obj_name):
+                enum_referenced[enum_name] = True
+    return enum_referenced
 
 
 def str_enum_to_str(str_enum):

@@ -76,6 +76,9 @@ def _module_global_entries(
                     )
                 )
     if max_phase >= 5 and obj_names:
+        entries.append(
+            "    { MP_ROM_QSTR(MP_QSTR_LvReferenceError), MP_ROM_PTR(&mp_type_LvReferenceError) }"
+        )
         for obj_name in obj_names:
             entries.append(
                 "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_lv_{obj}_type_base) }}".format(

@@ -20,6 +20,14 @@ echo "==> Regenerate CircuitPython bindings (lvcp.c)"
 "$LV_BINDINGS_DIR/regenerate_lvcp.sh"
 echo
 
+echo "==> Regenerate CPython bindings (lvpy.c)"
+"$LV_BINDINGS_DIR/regenerate_lvpy.sh"
+echo
+
+echo "==> Validate public namespace parity (MP reference)"
+"$PYTHON" "$LV_BINDINGS_DIR/binding/verify_namespace.py" "$GENERATED"
+echo
+
 echo "==> Validate generated/lvcp.c"
 "$PYTHON" - "$LVCP_C" "$LVCP_JSON" "$LVMP_JSON" <<'PY'
 import json

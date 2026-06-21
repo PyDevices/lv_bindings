@@ -2906,6 +2906,7 @@ static const mp_lv_struct_t mp_{global_name} = {{
         runtime.set_("generated_structs", generated_structs)
         runtime.set_("struct_aliases", struct_aliases)
         runtime.set_("enums", runtime.get("enums"))
+        runtime.set_("enum_referenced", enum_referenced)
         if len(obj_names) > 0 and (_emit_max_phase is None or _emit_max_phase >= 5):
             print(
                 """
