@@ -19,12 +19,10 @@ lv_bindings/
 ## Clone
 
 ```bash
-git clone git@github.com:PyDevices/lv_bindings.git lv_bindings
+git clone https://github.com/PyDevices/lv_bindings.git lv_bindings
 cd lv_bindings
 git submodule update --init lvgl
 ```
-
-HTTPS alternative: `https://github.com/PyDevices/lv_bindings.git`
 
 Place `lv_bindings/` as a sibling of `lv_micropython_cmod/` or `lv_circuitpython_mod/` in your workspace (or clone into `cmods/` when using the cmods wrapper).
 
