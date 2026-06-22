@@ -326,7 +326,7 @@ def try_generate_struct_cpython(struct_name, struct):
  * Struct {struct_name} (CPython)
  */
 
-static PyMethodDef py_{san}_methods[];
+extern PyMethodDef py_{san}_methods[];
 
 static PyObject *py_{san}_getattro(PyObject *self, PyObject *name)
 {{
@@ -438,7 +438,7 @@ def emit_struct_methods_cpython(struct_name, method_entries):
     sanitize = _h("sanitize")
     if not method_entries:
         print(
-            "static PyMethodDef py_{san}_methods[] = {{{{NULL}}}};".format(
+            "PyMethodDef py_{san}_methods[] = {{{{NULL}}}};".format(
                 san=sanitize(struct_name)
             )
         )
@@ -453,7 +453,7 @@ def emit_struct_methods_cpython(struct_name, method_entries):
         )
     print(
         """
-static PyMethodDef py_{san}_methods[] = {{
+PyMethodDef py_{san}_methods[] = {{
 {entries},
     {{NULL}}
 }};
