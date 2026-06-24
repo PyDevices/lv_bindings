@@ -1032,37 +1032,15 @@ def gen_py_func(func, obj_name):
                 )
             )
 
-    user_data_fallback = None
-    if is_method:
-        for _i, arg in indexed_args:
-            if (
-                getattr(arg, "name", None) == "user_data"
-                and gen.visit(arg.type) == "void *"
-            ):
-                user_data_fallback = (
-                    "if (!user_data) user_data = (void *)self;"
-                )
-                break
-    elif any(
-        getattr(arg, "name", None) == "user_data"
-        and gen.visit(arg.type) == "void *"
-        for _i, arg in indexed_args
-    ):
-        obj_cname = None
-        for _i, arg in indexed_args:
-            if get_type_fn(arg.type, remove_quals=True) == ("%s *" % base_obj_type):
-                obj_cname = _c_param_name(arg, _i) or "obj"
-                break
-        if obj_cname:
-            user_data_fallback = (
-                "if (!user_data && %s) {\n"
-                "        if (!%s->user_data) (void)lv_to_mp(%s);\n"
-                "        user_data = %s->user_data;\n"
-                "    }"
-                % (obj_cname, obj_cname, obj_cname, obj_cname)
-            )
-    if user_data_fallback:
-        body_items.append((1, user_data_fallback))
+    # NOTE: do not point a NULL user_data at the wrapper object (self/obj).
+    # Functions like lv_obj_add_event_cb register multiple callbacks on the same
+    # object, distinguished only by their event filter and per-registration
+    # user_data.  Reusing the object as user_data makes every registration share
+    # one callback dict under a single fixed key, so each call clobbers the
+    # previous and only the last-registered callback ever fires.  Leaving
+    # user_data NULL matches the MicroPython/CircuitPython emitters: mp_lv_callback
+    # then allocates a fresh dict per registration, which LVGL stores as that
+    # event descriptor's user_data and the trampoline reads back correctly.
 
     body_lines = [line for _, line in sorted(body_items, key=lambda t: t[0])]
 
