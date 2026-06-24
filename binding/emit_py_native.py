@@ -1056,6 +1056,32 @@ def gen_py_func(func, obj_name):
 
     void_self = "" if is_method else "    (void)self;\n"
 
+    pre_lv_call = ""
+    post_lv_call = ""
+    fname = func.name
+    if fname.endswith("_remove_event_cb_with_user_data"):
+        post_lv_call = "    if (_res > 0) lvpy_release_callback_user_data(user_data);"
+    elif fname == "lv_obj_remove_event_cb":
+        pre_lv_call = (
+            "    void *_lvpy_release_ud = lvpy_peek_obj_event_cb_user_data(obj, event_cb, NULL);"
+        )
+        post_lv_call = "    if (_res) lvpy_release_callback_user_data(_lvpy_release_ud);"
+    elif fname == "lv_obj_remove_event_dsc":
+        pre_lv_call = "    void *_lvpy_release_ud = lv_event_dsc_get_user_data(dsc);"
+        post_lv_call = "    if (_res) lvpy_release_callback_user_data(_lvpy_release_ud);"
+    elif fname == "lv_obj_remove_event":
+        pre_lv_call = (
+            "    lv_event_dsc_t *_lvpy_release_dsc = lv_obj_get_event_dsc(obj, index);\n"
+            "    void *_lvpy_release_ud = _lvpy_release_dsc ? lv_event_dsc_get_user_data(_lvpy_release_dsc) : NULL;"
+        )
+        post_lv_call = "    if (_res) lvpy_release_callback_user_data(_lvpy_release_ud);"
+    elif fname == "lv_indev_remove_event":
+        pre_lv_call = (
+            "    lv_event_dsc_t *_lvpy_release_dsc = lv_indev_get_event_dsc(indev, index);\n"
+            "    void *_lvpy_release_ud = _lvpy_release_dsc ? lv_event_dsc_get_user_data(_lvpy_release_dsc) : NULL;"
+        )
+        post_lv_call = "    if (_res) lvpy_release_callback_user_data(_lvpy_release_ud);"
+
     if allow_threads:
         lv_call_block = """    {result_decl}lvpy_lock();
     Py_BEGIN_ALLOW_THREADS
@@ -1079,7 +1105,9 @@ static PyObject *py_{func}(PyObject *self, PyObject *py_args, PyObject *py_kwds)
 {void_self}    (void)py_kwds;
 {parse}
     {body}
+    {pre_lv_call}
 {lv_call_block}
+    {post_lv_call}
     PyGILState_Release(gstate);
     {build_return}
 }}
@@ -1099,6 +1127,8 @@ static PyMethodDef py_{func}_def = {{
             void_self=void_self,
             parse=parse_block,
             body="\n    ".join(body_lines),
+            pre_lv_call=pre_lv_call,
+            post_lv_call=post_lv_call,
             result_decl=result_decl,
             lv_call_block=lv_call_block.format(
                 result_decl=result_decl,
