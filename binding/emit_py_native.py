@@ -392,6 +392,7 @@ PyTypeObject py_{san}_type = {{
 
 static inline void* mp_write_ptr_{san}(PyObject *self_in)
 {{
+    if (!self_in || self_in == Py_None) return NULL;
     py_lv_struct_t *self = (py_lv_struct_t *)self_in;
     return ({struct_tag}{struct_name}*)self->data;
 }}

@@ -1570,6 +1570,7 @@ static inline const mp_obj_type_t *get_mp_{sanitized_struct_name}_type(void);
 
 static inline void* mp_write_ptr_{sanitized_struct_name}(mp_obj_t self_in)
 {{
+    if (self_in == mp_const_none) return NULL;
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_{sanitized_struct_name}_type()));
     return ({struct_tag}{struct_name}*)self->data;
 }}
