@@ -18,7 +18,7 @@ WIDGET_SCOPED_MODULE_ENUMS = frozenset(
         "ARC_MODE",
         "ROLLER_MODE",
         "KEYBOARD_MODE",
-        "LABEL_LONG",
+        "LABEL_LONG_MODE",
         "CHART_UPDATE_MODE",
         "CHART_AXIS",
         "CHART_TYPE",
@@ -39,7 +39,7 @@ WIDGET_SCOPED_MODULE_ENUMS = frozenset(
 WIDGET_ENUM_ATTRS = {
     "obj": ["FLAG"],
     "image": ["FLAGS"],
-    "label": ["LONG"],
+    "label": ["LONG_MODE"],
     "bar": ["MODE"],
 }
 

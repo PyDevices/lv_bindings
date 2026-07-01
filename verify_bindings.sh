@@ -44,8 +44,8 @@ line_count = len(lines)
 
 errors = []
 
-if line_count < 35000 or line_count > 45000:
-    errors.append(f"lvcp.c line count {line_count} outside expected 35000–45000")
+if line_count < 45000 or line_count > 52000:
+    errors.append(f"lvcp.c line count {line_count} outside expected 45000–52000")
 
 if "Target: circuitpython" not in text:
     errors.append("missing Target: circuitpython banner")
@@ -72,11 +72,11 @@ def check_count(label, got, expect, slack=5):
     if abs(got - expect) > slack:
         errors.append(f"{label}: got {got}, expected ~{expect} (±{slack})")
 
-check_count("structs", len(meta.get("structs", [])), 100)
-check_count("functions", len(meta.get("functions", {})), 221)
-check_count("objects", len(meta.get("objects", {})), 41)
-check_count("int_constants", len(meta.get("int_constants", [])), 24, slack=2)
-check_count("blobs", len(meta.get("blobs", [])), 63, slack=2)
+check_count("structs", len(meta.get("structs", [])), 123)
+check_count("functions", len(meta.get("functions", {})), 304)
+check_count("objects", len(meta.get("objects", {})), 40)
+check_count("int_constants", len(meta.get("int_constants", [])), 28, slack=2)
+check_count("blobs", len(meta.get("blobs", [])), 70, slack=2)
 
 if lvmp_meta:
     check_count("structs vs lvmp.c.json", len(meta.get("structs", [])), len(lvmp_meta.get("structs", [])), slack=3)
