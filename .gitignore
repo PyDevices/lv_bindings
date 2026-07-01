@@ -1,4 +1,5 @@
-generated/
+generated/*.pp
+generated/*.json
 
 .venv/
 

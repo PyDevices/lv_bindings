@@ -1,6 +1,6 @@
 # lv_bindings
 
-LVGL header-to-C binding generator for MicroPython, CircuitPython, and future Python targets.
+LVGL header-to-C binding generator for MicroPython, CircuitPython, and CPython.
 
 ## Layout
 
@@ -9,7 +9,7 @@ lv_bindings/
   binding/              # Modular Python generator
   lvgl/                 # LVGL submodule (git submodule update --init)
   lv_conf.h             # Shared LVGL config for all targets
-  generated/            # Output (gitignored): lvmp.c, lvcp.c
+  generated/            # Generated bindings (lvmp.c, lvcp.c, lvpy.c — committed)
   regenerate_lvmp.sh    # MicroPython bindings
   regenerate_lvcp.sh    # CircuitPython bindings
   regenerate_lvpy.sh    # CPython bindings (native PyInit_lvgl)
@@ -35,7 +35,7 @@ python3 -m venv .venv
 
 ## Generate bindings
 
-Bindings are not committed. Regenerate after changing `lvgl/`, `lv_conf.h`, or `binding/`:
+Regenerate after changing `lvgl/`, `lv_conf.h`, or `binding/`, then commit the updated files under `generated/`:
 
 ```bash
 ./regenerate_lvmp.sh          # MicroPython → generated/lvmp.c
@@ -43,17 +43,18 @@ Bindings are not committed. Regenerate after changing `lvgl/`, `lv_conf.h`, or `
 ./regenerate_lvpy.sh          # CPython → generated/lvpy.c
 ```
 
-Set `LV_BINDINGS_DEBUG=1` to keep preprocessed `.pp` and `.json` metadata files.
+Set `LV_BINDINGS_DEBUG=1` to keep preprocessed `.pp` and `.json` metadata files (gitignored).
 
 ```bash
-./verify_bindings.sh          # Regenerate both + regression checks
-./clean_generated.sh          # Remove generated/ and pycparser caches
+./verify_bindings.sh          # Regenerate all targets + regression checks
+./clean_generated.sh          # Remove debug *.pp / *.json (keeps *.c)
+./clean_generated.sh --all    # Also remove generated/*.c
 ```
 
 ## Consumers
 
-| Repo | Uses |
+| Repo | Sync |
 |------|------|
 | [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod) | `generated/lvmp.c`, `lvgl/`, `lv_conf.h` |
 | [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) | `generated/lvcp.c`, `lvgl/`, `lv_conf.h` |
-| `lv_cpython_mod` (sibling repo) | `generated/lvpy.c`, `lvgl/`, `lv_conf.h`, `setup.py` |
+| [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) | `./scripts/sync_from_lv_bindings.sh` copies `generated/lvpy.c`, `lv_conf.h`, and the `lvgl` submodule pin from this repo |
