@@ -5,7 +5,7 @@
  *
  * Target: cpython
  * Command line:
- * /home/brad/github/cmods/lv_bindings/gen_lv_bindings.py --target cpython -M lvgl -MP lv -E /tmp/tmp.lHpL7nE5Ee lvgl/lvgl.h
+ * /home/brad/github/cmods/lv_bindings/gen_lv_bindings.py --target cpython -M lvgl -MP lv -E /tmp/tmp.0SiNlsfPCv lvgl/lvgl.h
  *
  * Preprocessing command:
  * Preprocessing was disabled.
