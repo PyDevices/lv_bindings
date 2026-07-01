@@ -1785,6 +1785,7 @@ GENMPY_UNUSED static mp_obj_t {arr_to_mp_convertor_name}({qualified_type} *arr)
     # Generate types from typedefs when needed
     #
 
+    generated_funcptr_helpers = collections.OrderedDict()
 
     def get_arg_name(arg):
         if isinstance(arg, c_ast.PtrDecl) or isinstance(arg, c_ast.FuncDecl):
@@ -1835,12 +1836,22 @@ GENMPY_UNUSED static mp_obj_t {arr_to_mp_convertor_name}({qualified_type} *arr)
             if isinstance(type_ast.type, c_ast.FuncDecl):
                 if isinstance(type_ast.type.type.type, c_ast.TypeDecl):
                     type = type_ast.type.type.type.declname
+                if ptr_type in lv_to_mp_funcptr:
+                    existing = lv_to_mp_funcptr[ptr_type]
+                    if ptr_type not in lv_to_mp:
+                        lv_to_mp[ptr_type] = "mp_lv_%s" % existing
+                    if ptr_type not in mp_to_lv:
+                        mp_to_lv[ptr_type] = mp_to_lv["void *"]
+                    if ptr_type not in lv_mp_type:
+                        lv_mp_type[ptr_type] = "function pointer"
+                    return mp_to_lv[ptr_type]
                 func_ptr_name = "funcptr_%s" % type
 
                 i = 1
-                while func_ptr_name in generated_funcs:  # Make sure func_ptr_name is unique
+                while func_ptr_name in generated_funcptr_helpers:
                     func_ptr_name = "funcptr_%s_%d" % (type, i)
                     i += 1
+                generated_funcptr_helpers[func_ptr_name] = True
 
                 func = c_ast.Decl(
                     name=func_ptr_name,

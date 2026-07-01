@@ -819,11 +819,12 @@ def build_py_func_arg_line(arg, index, func, py_var):
             raise MissingConversionException("Missing conversion to %s" % arg_type)
 
     convertor = mp_to_lv[arg_type]
-    cast = (
-        ("(%s)" % gen.visit(fixed_arg.type))
-        if hasattr(arg, "quals") and "const" in arg.quals
-        else ""
-    )
+    cast = ""
+    if hasattr(arg, "quals") and "const" in arg.quals:
+        # const pointer: cast the converted pointer. const struct by value: the
+        # lhs is already const; mp_write_* returns an lvalue — do not cast to struct.
+        if isinstance(fixed_arg.type, c_ast.PtrDecl):
+            cast = "(%s)" % gen.visit(fixed_arg.type)
     arg_metadata = {"type": lv_mp_type[arg_type]}
     if cname:
         arg_metadata["name"] = cname

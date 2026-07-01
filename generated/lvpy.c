@@ -5,7 +5,7 @@
  *
  * Target: cpython
  * Command line:
- * /home/brad/github/cmods/lv_bindings/gen_lv_bindings.py --target cpython -M lvgl -MP lv -E /tmp/tmp.CZT9aByyeJ lvgl/lvgl.h
+ * /home/brad/github/cmods/lv_bindings/gen_lv_bindings.py --target cpython -M lvgl -MP lv -E /tmp/tmp.e8ik66jROI lvgl/lvgl.h
  *
  * Preprocessing command:
  * Preprocessing was disabled.
@@ -41698,9 +41698,9 @@ static inline PyObject *mp_read_ptr_lv_circle_buf_t(void *field)
 #define mp_read_lv_circle_buf_t(field) lv_to_mp_struct_own(&py_lv_circle_buf_t_type, copy_buffer(&field, sizeof(lv_circle_buf_t)))
 #define mp_read_byref_lv_circle_buf_t(field) mp_read_ptr_lv_circle_buf_t(&field)
 
-#define funcptr_constructor_cb NULL
+#define funcptr_constructor_cb_1 NULL
 
-static inline PyObject *mp_lv_funcptr_constructor_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
+static inline PyObject *mp_lv_funcptr_constructor_cb_1(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
 
 
 /*
@@ -53273,7 +53273,7 @@ static PyObject *py_lv_color16_luminance(PyObject *self, PyObject *py_args, PyOb
     (void)py_kwds;
     PyObject *c_py;
     if (!PyArg_ParseTuple(py_args, "O", &c_py)) { PyGILState_Release(gstate); return NULL; }
-    const lv_color16_t c = (const lv_color16_t)mp_write_lv_color16_t(c_py);
+    const lv_color16_t c = mp_write_lv_color16_t(c_py);
     
     uint8_t _res;
     lvpy_lock();
