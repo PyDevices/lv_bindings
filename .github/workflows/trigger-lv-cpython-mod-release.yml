@@ -1,0 +1,37 @@
+# After generated/lvpy.c, lv_conf.h, or the lvgl pin change on main, trigger
+# lv_cpython_mod → Sync and release (sync, tag, TestPyPI publish).
+#
+# Required secret (lv_bindings → Settings → Secrets → Actions):
+#   LVCPYTHON_MOD_DISPATCH_TOKEN — PAT with actions:write on PyDevices/lv_cpython_mod
+
+name: Trigger lv_cpython_mod release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - generated/lvpy.c
+      - lv_conf.h
+      - lvgl
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    if: github.repository == 'PyDevices/lv_bindings'
+    steps:
+      - name: Trigger sync and release on lv_cpython_mod
+        env:
+          GH_TOKEN: ${{ secrets.LVCPYTHON_MOD_DISPATCH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "Error: LVCPYTHON_MOD_DISPATCH_TOKEN secret is not set." >&2
+            exit 1
+          fi
+          gh workflow run sync-and-release.yml \
+            --repo PyDevices/lv_cpython_mod \
+            -f "lv_bindings_ref=${{ github.sha }}"
+          echo "Triggered lv_cpython_mod sync-and-release for lv_bindings ${{ github.sha }}"
