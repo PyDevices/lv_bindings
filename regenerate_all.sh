@@ -51,18 +51,24 @@ if [[ ! -f "$LVGL_H" ]]; then
 fi
 
 read_lvgl_version() {
-    local major minor patch
-    major=$(grep -E '^#define LVGL_VERSION_MAJOR' "$LVGL_H" | awk '{print $3}')
-    minor=$(grep -E '^#define LVGL_VERSION_MINOR' "$LVGL_H" | awk '{print $3}')
-    patch=$(grep -E '^#define LVGL_VERSION_PATCH' "$LVGL_H" | awk '{print $3}')
-    if [[ -z "$major" || -z "$minor" || -z "$patch" ]]; then
-        echo "Error: could not read LVGL version from $LVGL_H" >&2
-        exit 1
-    fi
-    LVGL_MAJOR=$major
-    LVGL_MINOR=$minor
-    LVGL_PATCH=$patch
-    LVGL_VERSION="${major}.${minor}.${patch}"
+    local major minor patch version_file
+    for version_file in "$LVGL_DIR/lv_version.h" "$LVGL_H"; do
+        if [[ ! -f "$version_file" ]]; then
+            continue
+        fi
+        major=$(grep -E '^#define LVGL_VERSION_MAJOR' "$version_file" | awk '{print $3}')
+        minor=$(grep -E '^#define LVGL_VERSION_MINOR' "$version_file" | awk '{print $3}')
+        patch=$(grep -E '^#define LVGL_VERSION_PATCH' "$version_file" | awk '{print $3}')
+        if [[ -n "$major" && -n "$minor" && -n "$patch" ]]; then
+            LVGL_MAJOR=$major
+            LVGL_MINOR=$minor
+            LVGL_PATCH=$patch
+            LVGL_VERSION="${major}.${minor}.${patch}"
+            return
+        fi
+    done
+    echo "Error: could not read LVGL version from lv_version.h or lvgl.h" >&2
+    exit 1
 }
 
 lvgl_git_label() {
