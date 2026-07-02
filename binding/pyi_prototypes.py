@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 _FUNC_PROTO_RE = re.compile(
     r"^(?:static\s+inline\s+)?"
@@ -168,6 +168,75 @@ def struct_method_c_name(struct_name: str, method_name: str, *, module_prefix: s
     return f"{module_prefix}_{prefix}_{py_method}"
 
 
+def _struct_receiver_types(struct_name: str) -> frozenset[str]:
+    return frozenset({struct_name, struct_prefix(struct_name)})
+
+
+def strip_receiver_args(
+    args: Sequence[Mapping[str, Any]],
+    *,
+    receiver_struct: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    if not args or not receiver_struct:
+        return [dict(arg) for arg in args]
+    receiver_types = _struct_receiver_types(receiver_struct)
+    result = [dict(arg) for arg in args]
+    first_type = result[0].get("type", "")
+    if first_type in receiver_types:
+        result = result[1:]
+    if result:
+        last_type = result[-1].get("type", "")
+        if last_type in receiver_types:
+            result = result[:-1]
+    return result
+
+
+def merge_struct_arg(
+    pp_arg: Mapping[str, Any],
+    ir_arg: Optional[Mapping[str, Any]],
+) -> Dict[str, Any]:
+    if ir_arg is None:
+        return dict(pp_arg)
+    if ir_arg.get("type") == "callback" and isinstance(ir_arg.get("function"), Mapping):
+        merged = dict(ir_arg)
+        if pp_arg.get("name"):
+            merged["name"] = pp_arg["name"]
+        return merged
+    merged = dict(ir_arg)
+    if pp_arg.get("name"):
+        merged["name"] = pp_arg["name"]
+    return merged
+
+
+def align_args_to_pp(
+    ir_args: Sequence[Mapping[str, Any]],
+    pp_args: Sequence[Mapping[str, Any]],
+    *,
+    receiver_struct: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    pp_params = strip_receiver_args(pp_args, receiver_struct=receiver_struct)
+    if not pp_params:
+        return strip_receiver_args(ir_args, receiver_struct=receiver_struct)
+
+    ir_by_name = {
+        arg.get("name"): arg for arg in ir_args if arg.get("name")
+    }
+    aligned: List[Dict[str, Any]] = []
+    used: set[str] = set()
+    for pp_arg in pp_params:
+        name = pp_arg.get("name")
+        ir_arg = ir_by_name.get(name) if name else None
+        aligned.append(merge_struct_arg(pp_arg, ir_arg))
+        if name:
+            used.add(name)
+
+    for ir_arg in strip_receiver_args(ir_args, receiver_struct=receiver_struct):
+        name = ir_arg.get("name")
+        if name and name not in used:
+            aligned.append(dict(ir_arg))
+    return aligned
+
+
 def enrich_function_info(
     export_name: str,
     info: Mapping[str, Any],
@@ -206,26 +275,42 @@ def enrich_struct_function_info(
     module_prefix: str = "lv",
 ) -> Dict[str, Any]:
     merged = dict(info)
-    if merged.get("args"):
-        return merged
-    candidates = [
-        struct_method_c_name(struct_name, export_name, module_prefix=module_prefix),
-        method_c_name(struct_name, export_name, module_prefix=module_prefix),
-        module_c_name(export_name, module_prefix=module_prefix),
-    ]
-    for c_name in candidates:
-        proto = pp_index.get(c_name)
-        if proto and proto.get("args"):
-            merged["args"] = list(proto["args"])
-            if not merged.get("return_type") and proto.get("return_type"):
-                merged["return_type"] = proto["return_type"]
-            return merged
-    if not merged.get("return_type"):
+    proto = lookup_pp_proto(
+        pp_index,
+        export_name,
+        struct_name=struct_name,
+        module_prefix=module_prefix,
+    )
+
+    if not merged.get("args"):
+        candidates = [
+            struct_method_c_name(struct_name, export_name, module_prefix=module_prefix),
+            method_c_name(struct_name, export_name, module_prefix=module_prefix),
+            module_c_name(export_name, module_prefix=module_prefix),
+        ]
         for c_name in candidates:
-            proto = pp_index.get(c_name)
-            if proto and proto.get("return_type"):
-                merged["return_type"] = proto["return_type"]
+            candidate = pp_index.get(c_name)
+            if candidate and candidate.get("args"):
+                proto = candidate
+                merged["args"] = list(candidate["args"])
+                if not merged.get("return_type") and candidate.get("return_type"):
+                    merged["return_type"] = candidate["return_type"]
                 break
+        if not merged.get("return_type") and proto and proto.get("return_type"):
+            merged["return_type"] = proto["return_type"]
+        return merged
+
+    if proto and proto.get("args"):
+        merged["args"] = align_args_to_pp(
+            merged["args"],
+            proto["args"],
+            receiver_struct=struct_name,
+        )
+        if not merged.get("return_type") and proto.get("return_type"):
+            merged["return_type"] = proto["return_type"]
+    elif not merged.get("return_type"):
+        if proto and proto.get("return_type"):
+            merged["return_type"] = proto["return_type"]
     return merged
 
 

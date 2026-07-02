@@ -12,7 +12,6 @@ from .naming import get_naming_style
 from .pyi_prototypes import (
     default_pp_path_for_metadata,
     enrich_ir_metadata,
-    lookup_pp_proto,
     parse_pp_prototypes,
 )
 
@@ -104,7 +103,6 @@ class PyiEmitter:
         lvgl_version: Optional[str] = None,
         naming_style: Optional[str] = None,
         repo_root: Optional[Path] = None,
-        pp_index: Optional[Mapping[str, Dict[str, Any]]] = None,
     ) -> None:
         self.metadata = metadata
         self.target = target
@@ -115,7 +113,6 @@ class PyiEmitter:
         self.known_objects: Set[str] = set(metadata.get("objects", {}))
         self.lines: List[str] = []
         self.enum_names: Set[str] = set(metadata.get("enums", {}))
-        self.pp_index: Mapping[str, Dict[str, Any]] = pp_index or {}
 
     def emit(self, out: TextIO) -> None:
         self.lines = []
@@ -309,19 +306,6 @@ class PyiEmitter:
     ) -> str:
         args = list(info.get("args", []))
         if instance_method:
-            if (
-                receiver_struct
-                and self.pp_index
-                and self._receiver_at_end(args, receiver_obj, receiver_struct)
-            ):
-                proto = lookup_pp_proto(
-                    self.pp_index,
-                    name,
-                    obj_name=receiver_obj,
-                    struct_name=receiver_struct,
-                )
-                if proto and proto.get("args"):
-                    args = list(proto["args"])
             args = self._strip_receiver_arg(
                 args,
                 receiver_obj=receiver_obj,
@@ -370,24 +354,6 @@ class PyiEmitter:
                 result = result[:-1]
 
         return result
-
-    def _receiver_at_end(
-        self,
-        args: Sequence[Mapping[str, Any]],
-        receiver_obj: Optional[str],
-        receiver_struct: Optional[str],
-    ) -> bool:
-        if not args:
-            return False
-        last_type = args[-1].get("type", "")
-        if receiver_struct and last_type in {
-            receiver_struct,
-            struct_prefix_name(receiver_struct),
-        }:
-            return True
-        if receiver_obj and last_type in {receiver_obj, f"{receiver_obj}_t"}:
-            return True
-        return False
 
     def _format_params(self, args: Sequence[Mapping[str, Any]]) -> str:
         parts: List[str] = []
@@ -573,8 +539,6 @@ def write_pyi(
 ) -> None:
     metadata = load_and_enrich_metadata(metadata_path)
     repo_root = repo_root or metadata_path.resolve().parent.parent
-    pp_path = default_pp_path_for_metadata(metadata_path)
-    pp_index = parse_pp_prototypes(pp_path) if pp_path else {}
 
     emitter = PyiEmitter(
         metadata,
@@ -583,7 +547,6 @@ def write_pyi(
         lvgl_version=lvgl_version,
         naming_style=naming_style,
         repo_root=repo_root,
-        pp_index=pp_index,
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as handle:
