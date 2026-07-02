@@ -10,6 +10,8 @@ Feedback for refining `binding/emit_pyi.py` and `binding/pyi_prototypes.py`, bas
 
 **Implemented (lv_bindings generator, July 2026):** P1 `self` on instance methods; P2 `ENUM | int`; duplex `OBJ_FLAG`; driver callback typing; P4 `Struct.__init__` dict overload; P5 `@staticmethod` for static struct methods; P6 `_Nesting.value` + `font_get_default` in stubs; P8 `lvgl.pyi` shipped beside CPython extension on `pip install`.
 
+**Open (P1b, July 2026):** three leftover signatures where the C receiver was converted to `self` but a **duplicate receiver parameter** was not stripped, or a nullable C pointer was not marked optional. See [Priority 1b](#priority-1b--strip-duplicate-receivers-and-nullable-pointer-params).
+
 Historical note — the dominant bug **was**:
 
 > C receiver stripping removes the first `lv_*_t *` parameter but **does not insert `self`**, so Pyright binds the instance (`disp`, `indev`, `style`, `btn`, …) to the first *remaining* parameter.
@@ -92,7 +94,108 @@ cd pydisplay
 .venv/bin/basedpyright src/add_ons/display_driver.py src/examples/lv_touch_test.py
 ```
 
-Before `self` fix: **30+ errors** on those two files. Target: **0 LVGL-signature errors** (ignoring unrelated `board_config` typing).
+Before `self` fix: **30+ errors** on those two files. After P1+P2 (July 2026): **3 LVGL-signature errors** remain in pydisplay — see Priority 1b. Target: **0 LVGL-signature errors** (ignoring unrelated `board_config` / multimer typing).
+
+---
+
+## Priority 1b — Strip duplicate receivers and nullable pointer params
+
+**Status: open** (verified against pydisplay `generated/lvgl.pyi` after P1+P2 land).
+
+P1 adds `self` and P1's `strip_receiver_args()` removes the C struct receiver from `args` — but some methods still emit a **second parameter that duplicates `self`** (receiver stripping missed), or omit **`| None`** on C pointers that accept `NULL`.
+
+### Symptom → pydisplay call site
+
+| Stub (wrong) | Runtime call | basedpyright error |
+|--------------|--------------|------------------|
+| `group_t.set_default(self, arg: Any)` | `lv.group_create().set_default()` | Argument missing for parameter `"arg"` |
+| `display_t.flush_ready(self, disp: Any)` | `self.lv_display.flush_ready()` | Argument missing for parameter `"disp"` |
+| `obj.remove_style(self, style: style_t, selector: …)` | `arc.remove_style(None, lv.PART.KNOB)` | `None` not assignable to `style_t` |
+
+### C prototypes (`generated/lvgl.pp`)
+
+```c
+void lv_group_set_default(lv_group_t * group);
+void lv_display_flush_ready(lv_display_t * disp);
+void lv_obj_remove_style(lv_obj_t * obj, const lv_style_t * style, lv_style_selector_t selector);
+```
+
+After binding, Python calls are **instance methods with no extra receiver argument**:
+
+```python
+group.set_default()           # sets this group as default
+disp.flush_ready()            # marks this display's flush complete
+obj.remove_style(None, part)  # style=NULL removes all styles in selector
+```
+
+### Root cause
+
+`strip_receiver_args()` in `pyi_prototypes.py` does not remove the first parameter for these methods — likely because IR/PP types or names (`arg`, `disp`, `_lv_display_t *`) do not match `_struct_receiver_types()` / `_is_trailing_struct_receiver()` heuristics. P1 then prepends `self`, yielding **self + unstripped receiver**.
+
+For `remove_style`, the C parameter is `const lv_style_t *` (nullable); the emitter should type it `style_t | None`, not bare `style_t`.
+
+### Suggested fixes
+
+**1. Harden receiver stripping** (`pyi_prototypes.strip_receiver_args` or post-pass in `emit_pyi._format_function`):
+
+When `instance_method=True` and `receiver_struct` is set, also strip the first remaining arg if:
+
+- its type equals `receiver_struct` (or struct prefix), **or**
+- its name is in `{struct_prefix, "disp", "group", "indev", "obj", "style", "arg"}` **and** its type is the receiver struct or `Any`, **or**
+- PP lookup shows the C function's first parameter is exactly the receiver pointer (compare `lookup_pp_proto`).
+
+After fix, these should emit **params = `self` only**:
+
+```python
+def set_default(self) -> None: ...
+def flush_ready(self) -> None: ...
+```
+
+**2. Nullable pointer parameters**
+
+When PP marks a pointer parameter as `const T *` and the C docs / binding allow `NULL`, emit `T | None`. Minimum set for pydisplay:
+
+```python
+def remove_style(self, style: style_t | None, selector: int | PART | STATE) -> None: ...
+```
+
+General rule: optional table or heuristic — `const lv_*_t *` style/object params in remove/clear/reset APIs → `| None`.
+
+**3. Optional: module-level duplicates**
+
+Module functions `group_set_default(group)`, `display_flush_ready(disp)` may remain for legacy style; instance methods above are what bound objects use in Python.
+
+### Regression tests
+
+```python
+def test_group_set_default_instance_method():
+    sig = emitter._format_function(
+        "set_default", info, instance_method=True, receiver_struct="group_t"
+    )
+    assert sig == "set_default(self) -> None: ..."
+
+def test_display_flush_ready_instance_method():
+    sig = emitter._format_function(
+        "flush_ready", info, instance_method=True, receiver_struct="display_t"
+    )
+    assert sig == "flush_ready(self) -> None: ..."
+
+def test_obj_remove_style_accepts_none():
+    sig = emitter._format_function(
+        "remove_style", info, instance_method=True, receiver_obj="obj"
+    )
+    assert "style: style_t | None" in sig
+```
+
+### Validation (pydisplay)
+
+```bash
+cd pydisplay
+./tools/link_lvgl_stubs.sh
+.venv/bin/basedpyright src/add_ons/display_driver.py src/examples/lv_test_timer_common.py
+```
+
+Expect **0 errors** attributable to `lvgl.pyi` in those files (ignore `display_drv._timer.deinit` optional typing, etc.).
 
 ---
 
@@ -330,11 +433,12 @@ Generator already emits correct signatures for several of these **once `self` an
 
 ## Suggested implementation order
 
-1. **`self` on all `instance_method=True` emissions** — fixes the bulk of false positives.
-2. **`ENUM | int` for all enum typedef parameters** — fixes `PALETTE`, `COLOR_FORMAT`, `INDEV_TYPE`, `EVENT`, etc.
-3. **Resolve `_lv_*` internal typedefs** to public struct names.
-4. **Audit static struct methods** (staticmethod vs instance).
-5. **Optional:** `Struct.__init__` dict overload; binding-internal symbols; ship stubs with wheel.
+1. ~~**`self` on all `instance_method=True` emissions**~~ — done (P1).
+2. ~~**`ENUM | int` for all enum typedef parameters**~~ — done (P2).
+3. **P1b: strip duplicate receivers; `style_t | None` on nullable style params** — 3 errors left in pydisplay.
+4. **Resolve `_lv_*` internal typedefs** to public struct names.
+5. ~~**Audit static struct methods** (staticmethod vs instance).~~ — done (P5).
+6. ~~**Optional:** `Struct.__init__` dict overload; binding-internal symbols; ship stubs with wheel.~~ — done (P4, P6, P8).
 
 ---
 
@@ -344,7 +448,8 @@ Generator already emits correct signatures for several of these **once `self` an
 |------|--------|
 | `binding/emit_pyi.py` | `_format_function`: prepend `self`; optional `@staticmethod` |
 | `binding/emit_pyi.py` | `_map_type` / `_format_arg_type`: `ENUM \| int` |
-| `binding/pyi_prototypes.py` | helper to detect static struct methods from PP |
+| `binding/pyi_prototypes.py` | P1b: harden `strip_receiver_args`; nullable `const T *` → `T \| None` |
+| `binding/emit_pyi.py` | P1b: post-strip sanity check (no arg typed as receiver struct after `self`) |
 | `tests/test_pyi_prototypes.py` | receiver stripping + enum typing tests |
 | `tests/test_emit_pyi.py` (new) | end-to-end signature golden tests |
 | `generated/lvgl.pyi` | regenerate after fixes |
@@ -365,6 +470,10 @@ def timer_create(timer_xcb: Callable[[timer_t], None], period: int, user_data: A
 # display_t
 def set_flush_cb(self, flush_cb: Callable[[display_t, area_t, Any], None]) -> None: ...
 def set_theme(self, th: theme_t) -> None: ...
+def flush_ready(self) -> None: ...
+
+# group_t
+def set_default(self) -> None: ...
 
 # indev_t
 def set_display(self, disp: display_t) -> None: ...
@@ -380,8 +489,9 @@ def set_bg_color(self, value: color_t) -> None: ...
 def align(self, align: ALIGN | int, x_ofs: int, y_ofs: int) -> None: ...
 def get_coords(self, coords: area_t) -> None: ...
 def add_style(self, style: style_t, selector: int | PART | STATE) -> None: ...
+def remove_style(self, style: style_t | None, selector: int | PART | STATE) -> None: ...
 ```
 
 ---
 
-*Generated from pydisplay LVGL 9.5.4 integration work (July 2026). Re-run validation against `src/add_ons/display_driver.py` and `src/examples/lv_touch_test.py` after regenerating `generated/lvgl.pyi`.*
+*Generated from pydisplay LVGL 9.5.4 integration work (July 2026). Re-run validation against `src/add_ons/display_driver.py` and `src/examples/lv_test_timer_common.py` after regenerating `generated/lvgl.pyi`. Last updated: P1b follow-up (duplicate receiver stripping).*
