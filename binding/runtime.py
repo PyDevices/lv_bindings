@@ -1,9 +1,4 @@
-"""Shared mutable state for one LVGL binding generation run.
-
-Consumer modules (analyze, emit_c, helpers, parse) receive mirrored globals via
-publish(). Cross-module reads should use get(); cross-module writes should use
-set_() so all consumers stay in sync.
-"""
+"""Global mirror for one generation run; analyze/emit modules use get/set_."""
 from __future__ import print_function
 
 from .context import BindingContext
@@ -11,9 +6,9 @@ from .context import BindingContext
 # Modules that mirror binding globals during generation.
 _CONSUMER_MODULES = (
     "binding.analyze",
-    "binding.emit_c",
-    "binding.emit_py",
-    "binding.emit_py_native",
+    "binding.emit_c_micropython_style",
+    "binding.emit_c_cpython",
+    "binding.emit_cpython_native",
     "binding.helpers",
     "binding.parse",
 )

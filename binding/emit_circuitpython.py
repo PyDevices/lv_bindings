@@ -1,13 +1,10 @@
-"""Generate CircuitPython LVGL binding C source.
-
-See docs/lvgl/circuitpython_emit_plan.md for phased emission and MP→CP API mapping.
-"""
+"""CircuitPython target entry: analyze → emit_c_micropython_style (target=circuitpython)."""
 
 from __future__ import print_function
 
 import collections
 
-from . import emit_c as emit_c_mod
+from . import emit_c_micropython_style as emit_c_mod
 from . import runtime
 from .analyze import analyze
 

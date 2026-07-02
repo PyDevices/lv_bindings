@@ -1,3 +1,4 @@
+"""Load preprocessed C source when -E is not passed (cli internal fallback)."""
 import subprocess
 
 

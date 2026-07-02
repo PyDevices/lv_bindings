@@ -1,4 +1,4 @@
-"""LVGL binding code generation entry points."""
+"""Target run() bridges from cli to emit_* orchestrators and metadata export."""
 
 from __future__ import print_function
 

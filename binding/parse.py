@@ -1,4 +1,4 @@
-"""Low-level AST helpers for LVGL binding generation."""
+"""Low-level pycparser AST helpers used by analyze and emit."""
 from __future__ import print_function
 
 import copy

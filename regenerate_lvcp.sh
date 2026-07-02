@@ -1,51 +1,46 @@
 #!/usr/bin/env bash
-# Generate CircuitPython LVGL bindings (full phase-7 emission → generated/lvcp.c).
+# Generate CircuitPython bindings and all generated/lvgl_circuitpython.* artifacts.
+# Naming: LV_NAMING_STYLE=pythonic for PEP 8-style exports (default: legacy).
 set -e
 
 LV_BINDINGS_DIR=$(cd "$(dirname "$0")" && pwd)
-PYTHON=$("$LV_BINDINGS_DIR/python.sh")
+if [[ -x "$LV_BINDINGS_DIR/.venv/bin/python3" ]]; then
+    PYTHON="$LV_BINDINGS_DIR/.venv/bin/python3"
+else
+    PYTHON=python3
+fi
 GENERATED="$LV_BINDINGS_DIR/generated"
 LVGL_H="lvgl/lvgl.h"
-FAKE_LIBC=$("$PYTHON" -c "import sys; sys.path.insert(0, '$LV_BINDINGS_DIR'); from pycparser_support import fake_libc_include; print(fake_libc_include())")
+LVGL_CP_C="$GENERATED/lvgl_circuitpython.c"
+LVGL_CP_H="$GENERATED/lvgl_circuitpython.h"
 
-mkdir -p "$GENERATED"
-
-CPP="${CPP:-gcc -E}"
-# Match circuitpython.mk: CP build disables LVGL's bundled TJPGD (uses lib/tjpgd for jpegio).
-LV_CFLAGS="${LV_CFLAGS:--DCMODS_CIRCUITPYTHON_BUILD=1 -I$LV_BINDINGS_DIR}"
-
-PP_FILE=$(mktemp)
-trap 'rm -f "$PP_FILE"' EXIT
-
-echo "Preprocessing $LVGL_H"
-$CPP $LV_CFLAGS -E -DPYCPARSER \
-    -I "$FAKE_LIBC" \
-    "$LV_BINDINGS_DIR/$LVGL_H" > "$PP_FILE"
-
-if [ "${LV_BINDINGS_DEBUG:-0}" = 1 ]; then
-    cp "$PP_FILE" "$GENERATED/lvcp.c.pp"
-    echo "Wrote $GENERATED/lvcp.c.pp"
+NAMING_ARGS=()
+if [[ "${LV_NAMING_STYLE:-}" == pythonic ]]; then
+    NAMING_ARGS=(--naming-style pythonic)
 fi
 
-echo "Running generator (--target circuitpython)"
-METADATA_ARGS=()
-if [ "${LV_BINDINGS_DEBUG:-0}" = 1 ]; then
-    METADATA_ARGS=(-MD "$GENERATED/lvcp.c.json")
-fi
+PP_FILE=$("$LV_BINDINGS_DIR/scripts/preprocess_lvgl.sh")
 
-"$PYTHON" "$LV_BINDINGS_DIR/gen_lv_bindings.py" \
+echo "Writing $GENERATED/lvgl.json"
+"$PYTHON" "$LV_BINDINGS_DIR/binding/gen_binding.py" \
+    --target micropython \
+    --mode ir \
+    -M lvgl -MP lv \
+    --ir "$GENERATED/lvgl.json" \
+    "${NAMING_ARGS[@]}" \
+    -E "$PP_FILE" \
+    "$LVGL_H" >/dev/null
+
+echo "Generating $LVGL_CP_C"
+"$PYTHON" "$LV_BINDINGS_DIR/binding/gen_binding.py" \
     --target circuitpython \
     -M lvgl -MP lv \
-    "${METADATA_ARGS[@]}" \
+    "${NAMING_ARGS[@]}" \
+    --ir "$GENERATED/lvgl.json" \
     -E "$PP_FILE" \
-    "$LVGL_H" > "$GENERATED/lvcp.c"
-status=$?
+    "$LVGL_H" >"$LVGL_CP_C"
 
-if [ "$status" -ne 0 ]; then
-    exit "$status"
-fi
-
-"$PYTHON" - "$GENERATED/lvcp.c" "$GENERATED/lvcp_module_globals.h" <<'PY'
+"$PYTHON" - "$LVGL_CP_C" "$LVGL_CP_H" <<'PY'
 import sys
 from pathlib import Path
 
@@ -54,9 +49,17 @@ start = src.find("#ifndef LVCP_MODULE_GLOBALS_H")
 end_marker = "#endif /* LVCP_MODULE_GLOBALS_H */"
 end = src.find(end_marker)
 if start < 0 or end < 0:
-    raise SystemExit("LVCP_MODULE_GLOBALS block not found in lvcp.c")
+    raise SystemExit("LVCP_MODULE_GLOBALS block not found in lvgl_circuitpython.c")
 end += len(end_marker)
 Path(sys.argv[2]).write_text(src[start:end] + "\n")
 PY
 
-echo "Done: $GENERATED/lvcp.c"
+echo "Generating $GENERATED/lvgl.pyi"
+(
+    cd "$LV_BINDINGS_DIR"
+    "$PYTHON" -m binding.emit_pyi \
+        --generated-dir "$GENERATED" \
+        "${NAMING_ARGS[@]}"
+)
+
+echo "Done: $LVGL_CP_C"

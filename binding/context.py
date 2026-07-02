@@ -1,4 +1,4 @@
-"""Mutable state for LVGL binding generation."""
+"""Per-generation BindingContext; synced into runtime for analyze/emit."""
 from __future__ import print_function
 
 import collections

@@ -18,26 +18,28 @@ LVGL_H="$LVGL_DIR/lvgl.h"
 
 usage() {
     cat <<'EOF'
-Usage: ./regenerate_all.sh [--dry-run] [--no-commit] [--no-tag]
+Usage: ./regenerate_all.sh [--dry-run] [--no-commit] [--no-tag] [--pythonic]
 
   --dry-run     Show planned tag and commit; do not regenerate, commit, or tag.
   --no-commit   Regenerate only; do not create a git commit.
   --no-tag      Regenerate (and commit unless --no-commit); do not create a tag.
+  --pythonic    PEP 8-style Python export names (default: legacy / MP-shaped)
 EOF
 }
 
 DRY_RUN=0
 NO_COMMIT=0
 NO_TAG=0
+PYTHONIC=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --dry-run) DRY_RUN=1 ;;
-        --no-commit) NO_COMMIT=1 ;;
-        --no-tag) NO_TAG=1 ;;
+        --dry-run) DRY_RUN=1; shift ;;
+        --no-commit) NO_COMMIT=1; shift ;;
+        --no-tag) NO_TAG=1; shift ;;
+        --pythonic) PYTHONIC=1; shift ;;
         -h|--help) usage; exit 0 ;;
         *) echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
     esac
-    shift
 done
 
 if [[ "$DRY_RUN" -eq 1 && ( "$NO_COMMIT" -eq 1 || "$NO_TAG" -eq 1 ) ]]; then
@@ -81,8 +83,22 @@ lvgl_git_label() {
 
 next_bindings_tag() {
     local prefix="v${LVGL_MAJOR}.${LVGL_MINOR}."
-    local latest next_patch
-    latest=$(git -C "$LV_BINDINGS_DIR" tag -l "${prefix}*" | sort -V | tail -n 1)
+    local latest next_patch remote_tag
+
+    git fetch origin --tags 2>/dev/null || true
+    remote_tag=$(
+        git ls-remote --tags origin "${prefix}*" 2>/dev/null \
+            | awk '{print $2}' \
+            | sed 's|refs/tags/||' \
+            | grep -v '\^{}$' \
+            | sort -V \
+            | tail -n 1
+    )
+    if [[ -n "$remote_tag" ]]; then
+        latest=$remote_tag
+    else
+        latest=$(git -C "$LV_BINDINGS_DIR" tag -l "${prefix}*" | sort -V | tail -n 1)
+    fi
     if [[ -z "$latest" ]]; then
         echo "v${LVGL_MAJOR}.${LVGL_MINOR}.0"
         return
@@ -113,7 +129,13 @@ EOF
 }
 
 show_release_plan() {
-    local paths=(lvgl generated/lvmp.c generated/lvcp.c generated/lvpy.c)
+    local paths=(
+        lvgl
+        generated/lvgl_micropython.c
+        generated/lvgl_circuitpython.c
+        generated/lvgl_python.c
+        generated/lvgl.pyi
+    )
     local would_commit=0
 
     echo "==> LVGL submodule: ${LVGL_LABEL} (API ${LVGL_VERSION})"
@@ -161,15 +183,14 @@ echo "==> LVGL submodule: ${LVGL_LABEL} (API ${LVGL_VERSION})"
 echo "==> lv_bindings tag: ${BINDINGS_TAG}"
 echo
 
-echo "==> Regenerate MicroPython bindings (lvmp.c)"
+echo "==> Regenerate all binding targets"
+if [[ "$PYTHONIC" -eq 1 ]]; then
+    export LV_NAMING_STYLE=pythonic
+else
+    unset LV_NAMING_STYLE
+fi
 "$LV_BINDINGS_DIR/regenerate_lvmp.sh"
-echo
-
-echo "==> Regenerate CircuitPython bindings (lvcp.c)"
 "$LV_BINDINGS_DIR/regenerate_lvcp.sh"
-echo
-
-echo "==> Regenerate CPython bindings (lvpy.c)"
 "$LV_BINDINGS_DIR/regenerate_lvpy.sh"
 echo
 
@@ -177,7 +198,9 @@ cd "$LV_BINDINGS_DIR"
 
 COMMITTED=0
 if [[ "$NO_COMMIT" -eq 0 ]]; then
-    git add lvgl generated/lvmp.c generated/lvcp.c generated/lvpy.c
+    git add lvgl \
+        generated/lvgl_micropython.c generated/lvgl_circuitpython.c generated/lvgl_python.c \
+        generated/lvgl.pyi
     if git diff --cached --quiet; then
         echo "==> No changes to commit (bindings already match LVGL ${LVGL_VERSION})"
     else

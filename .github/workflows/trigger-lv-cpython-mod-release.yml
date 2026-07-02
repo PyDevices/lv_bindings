@@ -1,4 +1,4 @@
-# After generated/lvpy.c, lv_conf.h, or the lvgl pin change on main, trigger
+# After generated/lvgl_python.c, lv_conf.h, or the lvgl pin change on main, trigger
 # lv_cpython_mod → Sync and release (sync, tag, TestPyPI publish).
 #
 # Required secret (lv_bindings → Settings → Secrets → Actions):
@@ -10,7 +10,7 @@ on:
   push:
     branches: [main]
     paths:
-      - generated/lvpy.c
+      - generated/lvgl_python.c
       - lv_conf.h
       - lvgl
 

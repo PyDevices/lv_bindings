@@ -1,4 +1,4 @@
-"""Shared binding model types for LVGL code generation."""
+"""Datatypes (GenerationResult) passed from emit back to metadata export."""
 
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional

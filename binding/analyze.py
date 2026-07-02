@@ -1,4 +1,4 @@
-"""AST analysis and metadata extraction for LVGL bindings."""
+"""Walk preprocessed C AST; build func/object/enum/struct metadata for emit."""
 from __future__ import print_function
 
 import collections

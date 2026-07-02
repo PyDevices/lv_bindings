@@ -1,5 +1,4 @@
-generated/*.pp
-generated/*.json
+generated/baseline/
 
 .venv/
 

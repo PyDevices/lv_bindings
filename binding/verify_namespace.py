@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare public lvgl module namespaces in generated bindings against MicroPython."""
+"""Regression check: CP/CPython public exports vs MicroPython reference."""
 from __future__ import print_function
 
 import re
@@ -153,9 +153,9 @@ def verify(target, text, mp_names):
 def main(argv):
     generated = Path(argv[1]) if len(argv) > 1 else Path(__file__).resolve().parent.parent / "generated"
     files = {
-        "MicroPython": generated / "lvmp.c",
-        "CircuitPython": generated / "lvcp.c",
-        "CPython": generated / "lvpy.c",
+        "MicroPython": generated / "lvgl_micropython.c",
+        "CircuitPython": generated / "lvgl_circuitpython.c",
+        "CPython": generated / "lvgl_python.c",
     }
     mp_text = files["MicroPython"].read_text()
     mp_names = mp_module_names(mp_text)
