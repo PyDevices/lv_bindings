@@ -5,10 +5,15 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, TextIO
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, TextIO, Union
 
 from .helpers import export_name
 from .naming import get_naming_style
+from .pyi_prototypes import (
+    default_pp_path_for_metadata,
+    enrich_ir_metadata,
+    parse_pp_prototypes,
+)
 
 _LV_VERSION_DEFINE_RE = re.compile(
     r"^#define\s+(LVGL_VERSION_MAJOR|LVGL_VERSION_MINOR|LVGL_VERSION_PATCH)\s+(\d+)",
@@ -162,9 +167,27 @@ class PyiEmitter:
         self._add()
 
     def _emit_struct_types(self) -> None:
+        struct_funcs = self.metadata.get("struct_functions", {})
         for struct_name in sorted(self.known_structs):
             safe = export_name(struct_name, "struct")
-            self._add(f"class {safe}(Struct): ...")
+            members = struct_funcs.get(struct_name, {})
+            methods = [
+                (name, info)
+                for name, info in sorted(members.items())
+                if info.get("type") == "function"
+            ]
+            if not methods:
+                self._add(f"class {safe}(Struct): ...")
+                continue
+            self._add(f"class {safe}(Struct):")
+            for method_name, info in methods:
+                sig = self._format_function(
+                    method_name,
+                    info,
+                    instance_method=True,
+                    receiver_struct=struct_name,
+                )
+                self._add(f"    def {sig}")
         self._add()
 
     def _emit_module_enums(self) -> None:
@@ -229,7 +252,12 @@ class PyiEmitter:
         obj_parent = export_name("obj", "object")
         self._add(f"    def __init__(self, parent: {obj_parent} | None = ...) -> None: ...")
         for method_name, info in sorted(methods, key=lambda item: item[0]):
-            sig = self._format_function(method_name, info, instance_method=True)
+            sig = self._format_function(
+                method_name,
+                info,
+                instance_method=True,
+                receiver_obj=obj_name,
+            )
             self._add(f"    def {sig}")
         self._add()
 
@@ -273,27 +301,59 @@ class PyiEmitter:
         info: Mapping[str, Any],
         *,
         instance_method: bool,
+        receiver_obj: Optional[str] = None,
+        receiver_struct: Optional[str] = None,
     ) -> str:
         args = list(info.get("args", []))
         if instance_method:
-            args = self._strip_receiver_arg(args)
+            args = self._strip_receiver_arg(
+                args,
+                receiver_obj=receiver_obj,
+                receiver_struct=receiver_struct,
+            )
         params = self._format_params(args)
-        return_type = self._format_return_type(info.get("return_type"), instance_method, name)
+        return_type = self._format_return_type(
+            info.get("return_type"),
+            instance_method,
+            name,
+        )
         safe_name = export_name(name, "function")
         if params:
             return f"{safe_name}({params}) -> {return_type}: ..."
         return f"{safe_name}() -> {return_type}: ..."
 
-    def _strip_receiver_arg(self, args: Sequence[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
+    def _strip_receiver_arg(
+        self,
+        args: Sequence[Mapping[str, Any]],
+        *,
+        receiver_obj: Optional[str] = None,
+        receiver_struct: Optional[str] = None,
+    ) -> List[Mapping[str, Any]]:
         if not args:
             return []
-        first = args[0]
+        result = list(args)
+
+        first = result[0]
         arg_type = first.get("type", "")
         if arg_type in _OBJ_POINTER_TYPES or arg_type.endswith("_obj_t*"):
-            return list(args[1:])
-        if first.get("name") in {"obj", "self"}:
-            return list(args[1:])
-        return list(args)
+            result = result[1:]
+        elif receiver_obj and arg_type in {receiver_obj, f"{receiver_obj}_t"}:
+            result = result[1:]
+        elif first.get("name") in {"obj", "self"}:
+            result = result[1:]
+        elif receiver_struct and arg_type in {
+            receiver_struct,
+            struct_prefix_name(receiver_struct),
+        }:
+            result = result[1:]
+
+        if receiver_struct and result:
+            last = result[-1]
+            last_type = last.get("type", "")
+            if last_type in {receiver_struct, struct_prefix_name(receiver_struct)}:
+                result = result[:-1]
+
+        return result
 
     def _format_params(self, args: Sequence[Mapping[str, Any]]) -> str:
         parts: List[str] = []
@@ -301,23 +361,45 @@ class PyiEmitter:
             arg_name = sanitize(arg.get("name") or "arg")
             if arg_name in _PY_KEYWORDS:
                 arg_name = f"_{arg_name}"
-            parts.append(f"{arg_name}: {self._format_arg_type(arg.get('type', 'Any'))}")
+            parts.append(f"{arg_name}: {self._format_arg_type(arg)}")
         return ", ".join(parts)
 
-    def _format_arg_type(self, c_type: Optional[str]) -> str:
-        if not c_type:
+    def _format_callback_type(self, func_info: Mapping[str, Any]) -> str:
+        args = func_info.get("args", [])
+        param_types: List[str] = []
+        for arg in args:
+            if isinstance(arg, Mapping):
+                param_types.append(self._format_arg_type(arg))
+            else:
+                param_types.append(self._map_type(str(arg)))
+        ret = func_info.get("return_type")
+        if ret in (None, "NoneType", "void"):
+            ret_str = "None"
+        else:
+            ret_str = self._map_type(str(ret))
+        if not param_types:
+            return "Callable[..., Any]"
+        return "Callable[[{}], {}]".format(", ".join(param_types), ret_str)
+
+    def _format_arg_type(self, arg: Union[str, Mapping[str, Any], None]) -> str:
+        if isinstance(arg, Mapping):
+            arg_type = arg.get("type", "Any")
+            if arg_type == "callback":
+                func_info = arg.get("function")
+                if isinstance(func_info, Mapping):
+                    return self._format_callback_type(func_info)
+            return self._map_type(str(arg_type))
+        if not arg:
             return "Any"
+        c_type = str(arg)
         if c_type in _OBJ_POINTER_TYPES:
-            return "obj"
+            return export_name("obj", "object")
         if c_type.endswith("_obj_t*"):
             widget = c_type[: -len("_obj_t*")]
             if widget in self.known_objects:
-                return sanitize(widget)
-            return "obj"
-        py_type = self._map_type(c_type)
-        if py_type == "Callable[..., Any]":
-            return py_type
-        return py_type
+                return export_name(widget, "object")
+            return export_name("obj", "object")
+        return self._map_type(c_type)
 
     def _format_return_type(
         self,
@@ -332,12 +414,16 @@ class PyiEmitter:
         if c_type == "NoneType":
             return "None"
         if c_type in _OBJ_POINTER_TYPES:
-            return "obj"
+            return export_name("obj", "object")
         if c_type.endswith("_obj_t*"):
             widget = c_type[: -len("_obj_t*")]
             if widget in self.known_objects:
-                return sanitize(widget)
-            return "obj"
+                return export_name(widget, "object")
+            return export_name("obj", "object")
+        if c_type in self.known_structs:
+            return export_name(c_type, "struct")
+        if c_type in self.known_objects:
+            return export_name(c_type, "object")
         return self._map_type(c_type)
 
     def _map_type(self, c_type: str) -> str:
@@ -350,17 +436,25 @@ class PyiEmitter:
         if c_type in {"function pointer", "callback"}:
             return "Callable[..., Any]"
         if c_type in self.known_structs:
-            return sanitize(c_type)
+            return export_name(c_type, "struct")
+        if c_type in self.known_objects:
+            return export_name(c_type, "object")
         if c_type.endswith("*"):
             base = c_type[:-1]
             if base in self.known_structs:
-                return sanitize(base)
+                return export_name(base, "struct")
             return "Any"
         if c_type.endswith("_t") and c_type in self.known_structs:
-            return sanitize(c_type)
+            return export_name(c_type, "struct")
         if c_type.endswith("_t"):
             return sanitize(c_type)
         return "Any"
+
+
+def struct_prefix_name(struct_name: str) -> str:
+    if struct_name.endswith("_t"):
+        return struct_name[:-2]
+    return struct_name
 
 
 def default_metadata_path(generated_dir: Path, target: str = "micropython") -> Path:
@@ -424,6 +518,15 @@ def generate_pyi_for_target(
     )
 
 
+def load_and_enrich_metadata(metadata_path: Path) -> Dict[str, Any]:
+    metadata = load_metadata(metadata_path)
+    pp_path = default_pp_path_for_metadata(metadata_path)
+    if pp_path is None:
+        return metadata
+    pp_index = parse_pp_prototypes(pp_path)
+    return enrich_ir_metadata(metadata, pp_index)
+
+
 def write_pyi(
     metadata_path: Path,
     output_path: Path,
@@ -434,7 +537,7 @@ def write_pyi(
     naming_style: Optional[str] = None,
     repo_root: Optional[Path] = None,
 ) -> None:
-    metadata = load_metadata(metadata_path)
+    metadata = load_and_enrich_metadata(metadata_path)
     repo_root = repo_root or metadata_path.resolve().parent.parent
 
     emitter = PyiEmitter(

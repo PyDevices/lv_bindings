@@ -2,6 +2,7 @@
 
 import collections
 import json
+from pathlib import Path
 
 from .helpers import sanitize
 from .model import GenerationResult
@@ -67,11 +68,27 @@ def align_namespace_to_ir(namespace, ir_path):
     namespace["_ir_struct_list"] = sorted(ir_structs)
 
 
+def _enrich_metadata_from_pp(metadata, metadata_path, namespace):
+    from .pyi_prototypes import (
+        default_pp_path_for_metadata,
+        enrich_ir_metadata,
+        parse_pp_prototypes,
+    )
+
+    pp_path = default_pp_path_for_metadata(Path(metadata_path))
+    if pp_path is None:
+        return metadata
+    module_prefix = namespace.get("module_prefix", "lv")
+    pp_index = parse_pp_prototypes(pp_path)
+    return enrich_ir_metadata(metadata, pp_index, module_prefix=module_prefix)
+
+
 def save_metadata(namespace, path):
     simplify_identifier = namespace["simplify_identifier"]
     get_enum_name = namespace["get_enum_name"]
 
     metadata = _build_metadata(namespace, simplify_identifier, get_enum_name)
+    metadata = _enrich_metadata_from_pp(metadata, path, namespace)
 
     with open(path, "w") as metadata_file:
         json.dump(metadata, metadata_file, indent=4)
