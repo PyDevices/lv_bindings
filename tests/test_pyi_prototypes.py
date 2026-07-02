@@ -15,6 +15,7 @@ from binding.pyi_prototypes import (
     parse_param,
     parse_pp_prototypes,
     split_params,
+    strip_receiver_args,
     struct_method_c_name,
 )
 
@@ -107,8 +108,57 @@ def test_enrich_struct_function_info_from_pp(tmp_path: Path):
     pp_index = parse_pp_prototypes(pp)
     info = {"type": "function", "args": [], "return_type": None}
     enriched = enrich_struct_function_info("color_t", "to_32", info, pp_index)
-    assert [a["name"] for a in enriched["args"]] == ["color", "opa"]
+    assert [a["name"] for a in enriched["args"]] == ["opa"]
     assert enriched["return_type"] == "int"
+
+
+def test_strip_receiver_args_struct_eq_keeps_second_operand():
+    args = [
+        {"type": "color_t", "name": "c1"},
+        {"type": "color_t", "name": "c2"},
+    ]
+    stripped = strip_receiver_args(args, receiver_struct="color_t")
+    assert [a["name"] for a in stripped] == ["c2"]
+
+
+def test_strip_receiver_args_obj_parent_is_not_receiver():
+    args = [{"type": "lv_obj_t*", "name": "parent"}]
+    stripped = strip_receiver_args(args, receiver_obj="obj")
+    assert stripped == args
+
+
+def test_enrich_function_info_align_to_keeps_base():
+    pp_index = {
+        "lv_obj_align_to": {
+            "type": "function",
+            "args": [
+                {"type": "obj", "name": "obj"},
+                {"type": "obj", "name": "base"},
+                {"type": "align_t", "name": "align"},
+                {"type": "int", "name": "x_ofs"},
+                {"type": "int", "name": "y_ofs"},
+            ],
+            "return_type": "NoneType",
+        }
+    }
+    info = {
+        "type": "function",
+        "args": [
+            {"type": "lv_obj_t*", "name": "base"},
+            {"type": "int", "name": "align"},
+            {"type": "int", "name": "x_ofs"},
+            {"type": "int", "name": "y_ofs"},
+            {"type": "lv_obj_t*", "name": "obj"},
+        ],
+        "return_type": "NoneType",
+    }
+    enriched = enrich_function_info("align_to", info, pp_index, obj_name="obj")
+    assert [a["name"] for a in enriched["args"]] == [
+        "base",
+        "align",
+        "x_ofs",
+        "y_ofs",
+    ]
 
 
 def test_enrich_ir_metadata_module_and_struct():
@@ -312,6 +362,60 @@ def test_emit_pyi_widget_method_uses_enriched_ir_arg_order():
     assert "event_cb: Callable[[event_t], None]" in sig
     assert sig.index("event_cb:") < sig.index("filter:")
     assert sig.index("filter:") < sig.index("user_data:")
+
+
+def test_emit_pyi_widget_inherits_obj_methods(tmp_path: Path):
+    from binding.emit_pyi import PyiEmitter
+    from io import StringIO
+
+    metadata = {
+        "structs": [],
+        "objects": {
+            "obj": {
+                "members": {
+                    "delete": {
+                        "type": "function",
+                        "args": [],
+                        "return_type": "NoneType",
+                    },
+                    "align": {
+                        "type": "function",
+                        "args": [{"type": "int", "name": "align"}],
+                        "return_type": "NoneType",
+                    },
+                }
+            },
+            "button": {
+                "members": {
+                    "delete": {
+                        "type": "function",
+                        "args": [],
+                        "return_type": "NoneType",
+                    },
+                    "set_label": {
+                        "type": "function",
+                        "args": [{"type": "str", "name": "text"}],
+                        "return_type": "NoneType",
+                    },
+                }
+            },
+        },
+        "enums": {},
+        "functions": {},
+        "struct_functions": {},
+        "blobs": [],
+        "int_constants": [],
+    }
+    emitter = PyiEmitter(metadata)
+    out = StringIO()
+    emitter.emit(out)
+    text = out.getvalue()
+    assert "class button(obj):" in text
+    assert "def set_label(text: str) -> None" in text
+    assert text.count("class button(obj):") == 1
+    button_block = text.split("class button(obj):", 1)[1].split("\nclass ", 1)[0]
+    assert "def delete(" not in button_block
+    assert "def align(" not in button_block
 
 
 def test_emit_pyi_struct_method_uses_enriched_ir_arg_order():

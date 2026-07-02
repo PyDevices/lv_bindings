@@ -172,21 +172,24 @@ def _struct_receiver_types(struct_name: str) -> frozenset[str]:
     return frozenset({struct_name, struct_prefix(struct_name)})
 
 
-def _obj_receiver_types(obj_name: Optional[str] = None) -> frozenset[str]:
-    types = {"obj", "lv_obj_t*"}
-    if obj_name and obj_name != "obj":
-        types.add(f"{obj_name}_obj_t*")
-    return frozenset(types)
-
-
-def _is_obj_receiver_arg(
-    arg: Mapping[str, Any],
-    obj_name: Optional[str] = None,
-) -> bool:
+def _is_named_obj_receiver(arg: Mapping[str, Any]) -> bool:
+    if arg.get("name") not in {"obj", "self"}:
+        return False
     arg_type = arg.get("type", "")
-    if arg_type in _obj_receiver_types(obj_name) or arg_type.endswith("_obj_t*"):
-        return True
-    return arg.get("name") in {"obj", "self"}
+    return arg_type in {"obj", "obj_t", "lv_obj_t*"} or arg_type.endswith("_obj_t*")
+
+
+def _is_trailing_obj_receiver(arg: Mapping[str, Any]) -> bool:
+    return arg.get("name") in {"obj", "self"} and _is_named_obj_receiver(arg)
+
+
+def _is_trailing_struct_receiver(arg: Mapping[str, Any], struct_name: str) -> bool:
+    arg_type = arg.get("type", "")
+    if arg_type not in _struct_receiver_types(struct_name):
+        return False
+    name = arg.get("name", "")
+    prefix = struct_prefix(struct_name)
+    return name in {prefix, "disp", "obj", "self", "a", "at", "area", "area_p", "color", "c"}
 
 
 def strip_receiver_args(
@@ -199,40 +202,70 @@ def strip_receiver_args(
         return []
     result = [dict(arg) for arg in args]
 
-    if receiver_obj and result and _is_obj_receiver_arg(result[0], receiver_obj):
-        result = result[1:]
-    elif receiver_struct:
-        receiver_types = _struct_receiver_types(receiver_struct)
-        first_type = result[0].get("type", "")
-        if first_type in receiver_types:
-            result = result[1:]
+    if receiver_obj:
+        if result and _is_named_obj_receiver(result[0]):
+            return result[1:]
+        if len(result) > 1 and _is_trailing_obj_receiver(result[-1]):
+            return result[:-1]
+        return result
 
-    if receiver_obj and result and _is_obj_receiver_arg(result[-1], receiver_obj):
-        result = result[:-1]
-    elif receiver_struct and result:
+    if receiver_struct:
         receiver_types = _struct_receiver_types(receiver_struct)
-        last_type = result[-1].get("type", "")
-        if last_type in receiver_types:
-            result = result[:-1]
+        if result and result[0].get("type", "") in receiver_types:
+            return result[1:]
+        if len(result) > 1 and _is_trailing_struct_receiver(result[-1], receiver_struct):
+            return result[:-1]
 
     return result
+
+
+_CALLBACK_TYPEDEFS: Dict[str, Dict[str, Any]] = {
+    "event_cb_t": {
+        "type": "callback",
+        "function": {
+            "args": [{"type": "event_t", "name": "e"}],
+            "return_type": "NoneType",
+        },
+    },
+    "lv_event_cb_t": {
+        "type": "callback",
+        "function": {
+            "args": [{"type": "event_t", "name": "e"}],
+            "return_type": "NoneType",
+        },
+    },
+}
+
+
+def normalize_callback_arg(arg: Mapping[str, Any]) -> Dict[str, Any]:
+    merged = dict(arg)
+    arg_type = merged.get("type", "")
+    if merged.get("type") == "callback" and isinstance(merged.get("function"), Mapping):
+        return merged
+    typedef = _CALLBACK_TYPEDEFS.get(str(arg_type))
+    if typedef is not None:
+        merged = dict(typedef)
+        if arg.get("name"):
+            merged["name"] = arg["name"]
+        return merged
+    return merged
 
 
 def merge_pp_arg(
     pp_arg: Mapping[str, Any],
     ir_arg: Optional[Mapping[str, Any]],
 ) -> Dict[str, Any]:
-    if ir_arg is None:
-        return dict(pp_arg)
-    if ir_arg.get("type") == "callback" and isinstance(ir_arg.get("function"), Mapping):
+    if ir_arg is not None:
+        if ir_arg.get("type") == "callback" and isinstance(ir_arg.get("function"), Mapping):
+            merged = dict(ir_arg)
+            if pp_arg.get("name"):
+                merged["name"] = pp_arg["name"]
+            return merged
         merged = dict(ir_arg)
         if pp_arg.get("name"):
             merged["name"] = pp_arg["name"]
         return merged
-    merged = dict(ir_arg)
-    if pp_arg.get("name"):
-        merged["name"] = pp_arg["name"]
-    return merged
+    return normalize_callback_arg(pp_arg)
 
 
 def align_args_to_pp(
@@ -310,9 +343,8 @@ def enrich_function_info(
                 break
         if not merged.get("return_type") and proto and proto.get("return_type"):
             merged["return_type"] = proto["return_type"]
-        return merged
 
-    if proto and proto.get("args") and obj_name is not None:
+    if proto and proto.get("args") and obj_name is not None and merged.get("args"):
         merged["args"] = align_args_to_pp(
             merged["args"],
             proto["args"],
@@ -352,7 +384,10 @@ def enrich_struct_function_info(
             candidate = pp_index.get(c_name)
             if candidate and candidate.get("args"):
                 proto = candidate
-                merged["args"] = list(candidate["args"])
+                merged["args"] = strip_receiver_args(
+                    list(candidate["args"]),
+                    receiver_struct=struct_name,
+                )
                 if not merged.get("return_type") and candidate.get("return_type"):
                     merged["return_type"] = candidate["return_type"]
                 break

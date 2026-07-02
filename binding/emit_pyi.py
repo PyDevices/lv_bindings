@@ -10,7 +10,9 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, TextIO, Un
 from .helpers import export_name
 from .naming import get_naming_style
 from .pyi_prototypes import (
-    _is_obj_receiver_arg,
+    _CALLBACK_TYPEDEFS,
+    _is_named_obj_receiver,
+    _is_trailing_obj_receiver,
     default_pp_path_for_metadata,
     enrich_ir_metadata,
     parse_pp_prototypes,
@@ -60,6 +62,24 @@ _PY_KEYWORDS = frozenset(
 )
 
 _OBJ_POINTER_TYPES = frozenset({"lv_obj_t*", "obj*"})
+
+# Map C typedef names to module-level enum classes in lvgl.pyi.
+_ENUM_TYPEDEFS: Dict[str, str] = {
+    "align_t": "ALIGN",
+    "color_format_t": "COLOR_FORMAT",
+    "grad_dir_t": "GRAD_DIR",
+    "grad_extend_t": "GRAD_EXTEND",
+    "base_dir_t": "BASE_DIR",
+    "opa_t": "OPA",
+    "text_align_t": "TEXT_ALIGN",
+    "palette_t": "PALETTE",
+    "font_kerning_t": "FONT_KERNING",
+    "font_subpx_t": "FONT_SUBPX",
+    "font_glyph_format_t": "FONT_GLYPH_FORMAT",
+    "dir_t": "DIR",
+    "result_t": "RESULT",
+    "log_level_t": "LOG_LEVEL",
+}
 
 
 def sanitize(name: str) -> str:
@@ -200,6 +220,7 @@ class PyiEmitter:
 
     def _emit_widget_types(self) -> None:
         objects = self.metadata.get("objects", {})
+        obj_members = objects.get("obj", {}).get("members", {})
         for obj_name in sorted(objects):
             members = objects[obj_name].get("members", {})
             if not members:
@@ -209,7 +230,12 @@ class PyiEmitter:
                 if obj_name != "obj"
                 else "Struct"
             )
-            self._emit_widget_class(obj_name, members, parent=parent)
+            self._emit_widget_class(
+                obj_name,
+                members,
+                parent=parent,
+                inherited_members=obj_members if obj_name != "obj" else None,
+            )
 
     def _emit_enum_class(self, name: str, members: Mapping[str, Any]) -> None:
         safe = export_name(name, "enum")
@@ -226,6 +252,7 @@ class PyiEmitter:
         members: Mapping[str, Any],
         *,
         parent: str,
+        inherited_members: Optional[Mapping[str, Any]] = None,
     ) -> None:
         safe = export_name(obj_name, "object")
         nested_enums: List[tuple[str, Mapping[str, Any]]] = []
@@ -238,9 +265,15 @@ class PyiEmitter:
                 if enum_members:
                     nested_enums.append((member_name, enum_members))
             elif member_type == "function":
+                if inherited_members is not None and member_name in inherited_members:
+                    continue
                 methods.append((member_name, info))
 
         self._add(f"class {safe}({parent}):")
+        if not methods and not nested_enums and obj_name != "obj":
+            self._add("    ...")
+            self._add()
+            return
         for enum_name, enum_members in sorted(nested_enums, key=lambda item: item[0]):
             enum_safe = export_name(enum_name, "enum")
             self._add(f"    class {enum_safe}:")
@@ -330,35 +363,14 @@ class PyiEmitter:
         receiver_obj: Optional[str] = None,
         receiver_struct: Optional[str] = None,
     ) -> List[Mapping[str, Any]]:
+        del receiver_struct
         if not args:
             return []
         result = list(args)
-
-        first = result[0]
-        arg_type = first.get("type", "")
-        if arg_type in _OBJ_POINTER_TYPES or arg_type.endswith("_obj_t*"):
-            result = result[1:]
-        elif receiver_obj and arg_type in {receiver_obj, f"{receiver_obj}_t"}:
-            result = result[1:]
-        elif first.get("name") in {"obj", "self"}:
-            result = result[1:]
-        elif receiver_struct and arg_type in {
-            receiver_struct,
-            struct_prefix_name(receiver_struct),
-        }:
-            result = result[1:]
-
-        if receiver_struct and result:
-            last = result[-1]
-            last_type = last.get("type", "")
-            if last_type in {receiver_struct, struct_prefix_name(receiver_struct)}:
-                result = result[:-1]
-
-        if receiver_obj and result:
-            last = result[-1]
-            if _is_obj_receiver_arg(last, receiver_obj):
-                result = result[:-1]
-
+        if receiver_obj and result and _is_named_obj_receiver(result[0]):
+            return result[1:]
+        if receiver_obj and len(result) > 1 and _is_trailing_obj_receiver(result[-1]):
+            return result[:-1]
         return result
 
     def _format_params(self, args: Sequence[Mapping[str, Any]]) -> str:
@@ -394,11 +406,17 @@ class PyiEmitter:
                 func_info = arg.get("function")
                 if isinstance(func_info, Mapping):
                     return self._format_callback_type(func_info)
-            return self._map_type(str(arg_type))
+            normalized = str(arg_type)
+            if normalized in _CALLBACK_TYPEDEFS:
+                typedef = _CALLBACK_TYPEDEFS[normalized]
+                func_info = typedef.get("function")
+                if isinstance(func_info, Mapping):
+                    return self._format_callback_type(func_info)
+            return self._map_type(normalized)
         if not arg:
             return "Any"
         c_type = str(arg)
-        if c_type in _OBJ_POINTER_TYPES:
+        if c_type in _OBJ_POINTER_TYPES or c_type in {"obj_t"}:
             return export_name("obj", "object")
         if c_type.endswith("_obj_t*"):
             widget = c_type[: -len("_obj_t*")]
@@ -419,7 +437,7 @@ class PyiEmitter:
             return "Any"
         if c_type == "NoneType":
             return "None"
-        if c_type in _OBJ_POINTER_TYPES:
+        if c_type in _OBJ_POINTER_TYPES or c_type in {"obj_t"}:
             return export_name("obj", "object")
         if c_type.endswith("_obj_t*"):
             widget = c_type[: -len("_obj_t*")]
@@ -435,6 +453,14 @@ class PyiEmitter:
     def _map_type(self, c_type: str) -> str:
         if c_type in {"int", "bool", "float", "str"}:
             return c_type
+        if c_type in _OBJ_POINTER_TYPES or c_type == "obj_t":
+            return export_name("obj", "object")
+        if c_type in _ENUM_TYPEDEFS:
+            enum_name = _ENUM_TYPEDEFS[c_type]
+            if enum_name in self.enum_names:
+                return export_name(enum_name, "enum")
+        if c_type in self.enum_names:
+            return export_name(c_type, "enum")
         if c_type in {"char*", "const char*"}:
             return "str"
         if c_type in {"void*", "const void*", "const uint8_t*"}:
