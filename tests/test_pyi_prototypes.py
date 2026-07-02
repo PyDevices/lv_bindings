@@ -38,6 +38,7 @@ def test_split_params_nested_parens():
 def test_parse_param_basic_and_callback():
     assert parse_param("int hor_res") == ("int", "hor_res")
     assert parse_param("lv_display_t * disp") == ("display_t", "disp")
+    assert parse_param("uint8_t * px_map") == ("Any", "px_map")
     assert parse_param("void (*event_cb)(lv_event_t * e)") == ("callback", "cb")
 
 
@@ -536,7 +537,7 @@ def test_emit_pyi_maps_enum_typedefs_to_module_enums():
         instance_method=True,
         receiver_obj="obj",
     )
-    assert "state: STATE" in sig
+    assert "state: STATE | int" in sig
 
 
 def test_emit_pyi_resolves_xcb_typedef_to_callable():
@@ -580,6 +581,7 @@ def test_emit_pyi_resolves_xcb_typedef_to_callable():
         receiver_struct="anim_t",
     )
     assert "exec_cb: Callable[[anim_t, int], None]" in sig
+    assert sig.startswith("set_exec_cb(self,")
 
 
 def test_emit_pyi_widget_inherits_obj_methods(tmp_path: Path):
@@ -629,7 +631,7 @@ def test_emit_pyi_widget_inherits_obj_methods(tmp_path: Path):
     emitter.emit(out)
     text = out.getvalue()
     assert "class button(obj):" in text
-    assert "def set_label(text: str) -> None" in text
+    assert "def set_label(self, text: str) -> None" in text
     assert text.count("class button(obj):") == 1
     button_block = text.split("class button(obj):", 1)[1].split("\nclass ", 1)[0]
     assert "def delete(" not in button_block
@@ -715,6 +717,7 @@ def test_emit_pyi_maps_style_selector_t_composite():
         receiver_obj="obj",
     )
     assert "selector: int | PART | STATE" in sig
+    assert sig.startswith("add_style(self,")
 
 
 def test_emit_pyi_maps_obj_flag_t_to_module_enum():
@@ -761,6 +764,7 @@ def test_emit_pyi_maps_obj_flag_t_to_module_enum():
         receiver_obj="obj",
     )
     assert "f: OBJ_FLAG | int" in sig
+    assert sig.startswith("add_flag(self,")
 
 
 def test_emit_pyi_suppresses_empty_indev_subtype_stubs():
@@ -1008,7 +1012,7 @@ def test_emit_pyi_driver_callback_signatures():
             instance_method=True,
             receiver_struct="indev_t",
         )
-        == "get_read_cb() -> Callable[[indev_t, indev_data_t], None]: ..."
+        == "get_read_cb(self) -> Callable[[indev_t, indev_data_t], None]: ..."
     )
     assert (
         emitter._format_function(
@@ -1017,7 +1021,7 @@ def test_emit_pyi_driver_callback_signatures():
             instance_method=True,
             receiver_struct="group_t",
         )
-        == "get_focus_cb() -> Callable[[group_t], None]: ..."
+        == "get_focus_cb(self) -> Callable[[group_t], None]: ..."
     )
     assert (
         emitter._format_function(
@@ -1026,7 +1030,7 @@ def test_emit_pyi_driver_callback_signatures():
             instance_method=True,
             receiver_struct="group_t",
         )
-        == "get_edge_cb() -> Callable[[group_t, bool], None]: ..."
+        == "get_edge_cb(self) -> Callable[[group_t, bool], None]: ..."
     )
     screen_sig = emitter._format_function(
         "add_screen_create_event",
@@ -1034,4 +1038,342 @@ def test_emit_pyi_driver_callback_signatures():
         instance_method=True,
         receiver_obj="obj",
     )
+    assert screen_sig.startswith("add_screen_create_event(self,")
     assert "screen_create_cb: Callable[[], obj]" in screen_sig
+
+
+def test_emit_pyi_golden_driver_signatures():
+    """Golden signatures from docs/pyi-generator-feedback.md (pydisplay)."""
+    from binding.emit_pyi import PyiEmitter
+
+    metadata = {
+        "structs": [
+            "display_t",
+            "indev_t",
+            "indev_data_t",
+            "style_t",
+            "area_t",
+            "theme_t",
+            "draw_buf_t",
+            "timer_t",
+            "color_t",
+        ],
+        "objects": {
+            "obj": {
+                "members": {
+                    "align": {
+                        "type": "function",
+                        "args": [
+                            {"type": "align_t", "name": "align"},
+                            {"type": "int", "name": "x_ofs"},
+                            {"type": "int", "name": "y_ofs"},
+                        ],
+                        "return_type": "NoneType",
+                    },
+                    "get_coords": {
+                        "type": "function",
+                        "args": [{"type": "area_t", "name": "coords"}],
+                        "return_type": "NoneType",
+                    },
+                    "add_style": {
+                        "type": "function",
+                        "args": [
+                            {"type": "style_t", "name": "style"},
+                            {"type": "style_selector_t", "name": "selector"},
+                        ],
+                        "return_type": "NoneType",
+                    },
+                },
+            },
+        },
+        "enums": {
+            "ALIGN": {"members": {"CENTER": {"type": "enum_member"}}},
+            "COLOR_FORMAT": {"members": {"RGB565": {"type": "enum_member"}}},
+            "INDEV_TYPE": {"members": {"POINTER": {"type": "enum_member"}}},
+            "PALETTE": {"members": {"BLUE": {"type": "enum_member"}}},
+            "PART": {"members": {"MAIN": {"type": "enum_member"}}},
+            "STATE": {"members": {"DEFAULT": {"type": "enum_member"}}},
+        },
+        "enum_typedefs": {
+            "align_t": "ALIGN",
+            "color_format_t": "COLOR_FORMAT",
+            "indev_type_t": "INDEV_TYPE",
+            "palette_t": "PALETTE",
+        },
+        "functions": {
+            "display_create": {
+                "type": "function",
+                "args": [
+                    {"type": "int", "name": "hor_res"},
+                    {"type": "int", "name": "ver_res"},
+                ],
+                "return_type": "display_t",
+            },
+            "draw_buf_create": {
+                "type": "function",
+                "args": [
+                    {"type": "int", "name": "w"},
+                    {"type": "int", "name": "h"},
+                    {"type": "color_format_t", "name": "cf"},
+                    {"type": "int", "name": "stride"},
+                ],
+                "return_type": "draw_buf_t",
+            },
+            "palette_main": {
+                "type": "function",
+                "args": [{"type": "palette_t", "name": "p"}],
+                "return_type": "color_t",
+            },
+        },
+        "struct_functions": {
+            "display_t": {
+                "set_flush_cb": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "callback",
+                            "name": "flush_cb",
+                            "function": {
+                                "args": [
+                                    {"type": "display_t", "name": "disp"},
+                                    {"type": "area_t", "name": "area"},
+                                    {"type": "void*", "name": "color_p"},
+                                ],
+                                "return_type": "NoneType",
+                            },
+                        }
+                    ],
+                    "return_type": "NoneType",
+                },
+                "set_theme": {
+                    "type": "function",
+                    "args": [{"type": "theme_t", "name": "th"}],
+                    "return_type": "NoneType",
+                },
+            },
+            "indev_t": {
+                "set_display": {
+                    "type": "function",
+                    "args": [{"type": "_lv_display_t", "name": "disp"}],
+                    "return_type": "NoneType",
+                },
+                "set_type": {
+                    "type": "function",
+                    "args": [{"type": "indev_type_t", "name": "indev_type"}],
+                    "return_type": "NoneType",
+                },
+                "set_read_cb": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "callback",
+                            "name": "read_cb",
+                            "function": {
+                                "args": [
+                                    {"type": "indev_t", "name": "indev"},
+                                    {"type": "indev_data_t", "name": "data"},
+                                ],
+                                "return_type": "NoneType",
+                            },
+                        }
+                    ],
+                    "return_type": "NoneType",
+                },
+            },
+            "style_t": {
+                "init": {
+                    "type": "function",
+                    "args": [],
+                    "return_type": "NoneType",
+                },
+                "set_width": {
+                    "type": "function",
+                    "args": [{"type": "int", "name": "value"}],
+                    "return_type": "NoneType",
+                },
+                "set_bg_color": {
+                    "type": "function",
+                    "args": [{"type": "color_t", "name": "value"}],
+                    "return_type": "NoneType",
+                },
+            },
+        },
+        "callback_typedefs": {},
+        "blobs": [],
+        "int_constants": [],
+    }
+
+    emitter = PyiEmitter(metadata)
+
+    assert (
+        emitter._format_function(
+            "display_create",
+            metadata["functions"]["display_create"],
+            instance_method=False,
+        )
+        == "display_create(hor_res: int, ver_res: int) -> display_t: ..."
+    )
+    assert (
+        emitter._format_function(
+            "palette_main",
+            metadata["functions"]["palette_main"],
+            instance_method=False,
+        )
+        == "palette_main(p: PALETTE | int) -> color_t: ..."
+    )
+    assert (
+        emitter._format_function(
+            "set_flush_cb",
+            metadata["struct_functions"]["display_t"]["set_flush_cb"],
+            instance_method=True,
+            receiver_struct="display_t",
+        )
+        == "set_flush_cb(self, flush_cb: Callable[[display_t, area_t, Any], None]) -> None: ..."
+    )
+    assert (
+        emitter._format_function(
+            "set_theme",
+            metadata["struct_functions"]["display_t"]["set_theme"],
+            instance_method=True,
+            receiver_struct="display_t",
+        )
+        == "set_theme(self, th: theme_t) -> None: ..."
+    )
+    assert (
+        emitter._format_function(
+            "set_display",
+            metadata["struct_functions"]["indev_t"]["set_display"],
+            instance_method=True,
+            receiver_struct="indev_t",
+        )
+        == "set_display(self, disp: display_t) -> None: ..."
+    )
+    assert (
+        emitter._format_function(
+            "set_type",
+            metadata["struct_functions"]["indev_t"]["set_type"],
+            instance_method=True,
+            receiver_struct="indev_t",
+        )
+        == "set_type(self, indev_type: INDEV_TYPE | int) -> None: ..."
+    )
+    assert (
+        emitter._format_function(
+            "align",
+            metadata["objects"]["obj"]["members"]["align"],
+            instance_method=True,
+            receiver_obj="obj",
+        )
+        == "align(self, align: ALIGN | int, x_ofs: int, y_ofs: int) -> None: ..."
+    )
+    assert (
+        emitter._format_function(
+            "get_coords",
+            metadata["objects"]["obj"]["members"]["get_coords"],
+            instance_method=True,
+            receiver_obj="obj",
+        )
+        == "get_coords(self, coords: area_t) -> None: ..."
+    )
+
+
+def test_is_static_struct_method():
+    from binding.pyi_prototypes import is_static_struct_method
+
+    pp_index = {
+        "lv_style_is_const": {
+            "type": "function",
+            "args": [{"type": "style_t", "name": "style"}],
+            "return_type": "bool",
+        },
+    }
+    info = {
+        "type": "function",
+        "args": [{"type": "style_t", "name": "style"}],
+        "return_type": "bool",
+    }
+    assert is_static_struct_method("style_t", "is_const", info, pp_index)
+    assert not is_static_struct_method(
+        "style_t",
+        "copy",
+        {"type": "function", "args": [{"type": "style_t", "name": "src"}], "return_type": "NoneType"},
+        pp_index,
+    )
+    assert is_static_struct_method(
+        "point_precise_t",
+        "from_precise",
+        {
+            "type": "function",
+            "args": [{"type": "point_precise_t", "name": "p"}],
+            "return_type": "point_t",
+        },
+        pp_index,
+    )
+
+
+def test_emit_pyi_static_struct_methods():
+    from binding.emit_pyi import PyiEmitter
+    from io import StringIO
+
+    metadata = {
+        "structs": ["style_t", "point_precise_t", "point_t"],
+        "objects": {},
+        "enums": {},
+        "functions": {},
+        "struct_functions": {
+            "style_t": {
+                "is_const": {
+                    "type": "function",
+                    "static": True,
+                    "args": [{"type": "style_t", "name": "style"}],
+                    "return_type": "bool",
+                },
+                "init": {
+                    "type": "function",
+                    "args": [],
+                    "return_type": "NoneType",
+                },
+            },
+            "point_precise_t": {
+                "from_precise": {
+                    "type": "function",
+                    "static": True,
+                    "args": [{"type": "point_precise_t", "name": "p"}],
+                    "return_type": "point_t",
+                },
+            },
+        },
+        "blobs": [],
+        "int_constants": [],
+    }
+    emitter = PyiEmitter(metadata)
+    out = StringIO()
+    emitter.emit(out)
+    text = out.getvalue()
+    assert "    @staticmethod" in text
+    assert "def is_const(style: style_t) -> bool: ..." in text
+    assert "def init(self) -> None: ..." in text
+    assert "def from_precise(p: point_precise_t) -> point_t: ..." in text
+    assert "def __init__(self, fields: dict[str, Any] | None = None" in text
+
+
+def test_emit_pyi_nesting_blob():
+    from binding.emit_pyi import PyiEmitter
+    from io import StringIO
+
+    metadata = {
+        "structs": [],
+        "objects": {},
+        "enums": {},
+        "functions": {"font_get_default": {"type": "function", "args": [], "return_type": "font_t"}},
+        "struct_functions": {},
+        "blobs": ["_nesting"],
+        "int_constants": [],
+    }
+    emitter = PyiEmitter(metadata)
+    text = StringIO()
+    emitter.emit(text)
+    out = text.getvalue()
+    assert "class _Nesting:" in out
+    assert "_nesting: _Nesting" in out
+    assert "def font_get_default() -> font_t: ..." in out

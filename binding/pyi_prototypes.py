@@ -155,6 +155,8 @@ def _normalize_c_type(type_str: str) -> str:
     if base.endswith("_obj_t"):
         return "obj"
     if pointer:
+        if base in _INT_TYPES:
+            return "Any"
         if base.endswith("_t"):
             return base[3:] if base.startswith("lv_") else base
         return "Any"
@@ -375,6 +377,42 @@ def struct_method_c_name(struct_name: str, method_name: str, *, module_prefix: s
     prefix = struct_prefix(struct_name)
     py_method = "del" if method_name == "delete" else method_name
     return f"{module_prefix}_{prefix}_{py_method}"
+
+
+_PP_STATIC_INLINE_FUNC_RE = re.compile(
+    r"static\s+inline\s+[\w\s\*]+?\s+(?P<name>lv_\w+)\s*\(",
+)
+
+
+def parse_pp_static_inline_functions(pp_path: Path) -> frozenset[str]:
+    text = pp_path.read_text(encoding="utf-8", errors="replace")
+    return frozenset(match.group("name") for match in _PP_STATIC_INLINE_FUNC_RE.finditer(text))
+
+
+def is_static_struct_method(
+    struct_name: str,
+    method_name: str,
+    info: Mapping[str, Any],
+    pp_index: Mapping[str, Dict[str, Any]],
+    *,
+    module_prefix: str = "lv",
+    pp_static_inline: Optional[frozenset[str]] = None,
+) -> bool:
+    """True when the binding exposes a struct member as an explicit-arg fun (no self)."""
+    args = list(info.get("args", []))
+    if method_name.startswith("from_") and args:
+        return True
+    if method_name.startswith("is_") and args:
+        first = args[0]
+        if first.get("type", "") in _struct_receiver_types(struct_name):
+            return True
+    c_name = struct_method_c_name(struct_name, method_name, module_prefix=module_prefix)
+    if pp_static_inline is not None and c_name in pp_static_inline:
+        return True
+    mod_name = module_c_name(method_name, module_prefix=module_prefix)
+    if mod_name in pp_index and c_name not in pp_index:
+        return True
+    return False
 
 
 def _struct_receiver_types(struct_name: str) -> frozenset[str]:
@@ -635,6 +673,7 @@ def enrich_struct_function_info(
     *,
     module_prefix: str = "lv",
     callback_typedefs: Optional[Mapping[str, Dict[str, Any]]] = None,
+    pp_static_inline: Optional[frozenset[str]] = None,
 ) -> Dict[str, Any]:
     merged = dict(info)
     proto = lookup_pp_proto(
@@ -672,7 +711,14 @@ def enrich_struct_function_info(
                 merged.get("return_type"),
                 proto.get("return_type"),
             )
-        return merged
+        return _mark_static_struct_method(
+            merged,
+            struct_name,
+            export_name,
+            pp_index,
+            module_prefix=module_prefix,
+            pp_static_inline=pp_static_inline,
+        )
 
     if proto and proto.get("args"):
         merged["args"] = align_args_to_pp(
@@ -690,6 +736,34 @@ def enrich_struct_function_info(
             merged.get("return_type"),
             proto.get("return_type"),
         )
+    return _mark_static_struct_method(
+        merged,
+        struct_name,
+        export_name,
+        pp_index,
+        module_prefix=module_prefix,
+        pp_static_inline=pp_static_inline,
+    )
+
+
+def _mark_static_struct_method(
+    merged: Dict[str, Any],
+    struct_name: str,
+    export_name: str,
+    pp_index: Mapping[str, Dict[str, Any]],
+    *,
+    module_prefix: str = "lv",
+    pp_static_inline: Optional[frozenset[str]] = None,
+) -> Dict[str, Any]:
+    if is_static_struct_method(
+        struct_name,
+        export_name,
+        merged,
+        pp_index,
+        module_prefix=module_prefix,
+        pp_static_inline=pp_static_inline,
+    ):
+        merged["static"] = True
     return merged
 
 
@@ -729,6 +803,10 @@ def enrich_ir_metadata(
     """Fill missing function args/return types from lvgl.pp (IR/.pyi only; no C emit)."""
     callback_typedefs = build_callback_typedef_map(pp_path)
     metadata["callback_typedefs"] = callback_typedefs
+    pp_static_inline: Optional[frozenset[str]] = None
+    if pp_path is not None and pp_path.is_file():
+        pp_static_inline = parse_pp_static_inline_functions(pp_path)
+        metadata["pp_static_inline"] = sorted(pp_static_inline)
     metadata["enum_typedefs"] = build_enum_typedef_map(
         list(metadata.get("enums", {})),
         pp_path,
@@ -769,6 +847,7 @@ def enrich_ir_metadata(
                     pp_index,
                     module_prefix=module_prefix,
                     callback_typedefs=callback_typedefs,
+                    pp_static_inline=pp_static_inline,
                 )
 
     return metadata

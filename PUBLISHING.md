@@ -105,8 +105,25 @@ Run this before publishing when you change the generator or LVGL config
   `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`,
   `lv_conf.h`
 - [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) — sync
-  `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`; see
+  `generated/lvgl_python.c`, `generated/lvgl.pyi`, `lvgl/`, `lv_conf.h`; see
   [CPython auto-release](#cpython-auto-release-lv_cpython_mod) below
+
+## Type stubs (`generated/lvgl.pyi`)
+
+Regenerated with every binding release. Used by Pylance, basedpyright, and mypy.
+
+**CPython (`lvgl-cpython`):** `pip install -e .` copies `generated/lvgl.pyi` beside
+the built `lvgl*.so` / `.pyd`. Wheels from this repo include the same file next to
+the extension after install.
+
+**Manual overlay** (any port): point the type checker at the stub file:
+
+- Pylance / VS Code: `python.analysis.stubPath` → directory containing `lvgl.pyi`
+- Pyright CLI: `stubPath` in `pyrightconfig.json`
+- Package layout: `typings/lvgl/__init__.pyi` can re-export or symlink to `lvgl.pyi`
+
+MicroPython / CircuitPython: copy or symlink `generated/lvgl.pyi` into your project
+or editor stub path (no `.so` packaging).
 
 After tagging, consumer repos can pin to a specific lv_bindings release with
 `git checkout v9.5.0` (or sync scripts that reference that tag).

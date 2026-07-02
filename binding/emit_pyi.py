@@ -12,11 +12,10 @@ from .naming import get_naming_style
 from .pyi_prototypes import (
     _CALLBACK_TYPEDEFS,
     _LEGACY_ENUM_TYPEDEFS,
-    _is_named_obj_receiver,
-    _is_trailing_obj_receiver,
     default_pp_path_for_metadata,
     enrich_ir_metadata,
     parse_pp_prototypes,
+    strip_receiver_args,
 )
 
 _LV_VERSION_DEFINE_RE = re.compile(
@@ -79,8 +78,8 @@ _MODULE_ALIAS_ENUM_TYPEDEFS: Dict[str, str] = {
 _MODULE_ALIAS_ENUM_SOURCES: Dict[str, tuple[str, str]] = {
     "OBJ_FLAG": ("obj", "FLAG"),
 }
-# Bitmask typedefs that also accept raw integer values.
-_INT_ALIAS_TYPEDEFS = frozenset({"obj_flag_t"})
+# Module enums are int-backed; parameters accept enum members (typed int) or raw int.
+_ENUM_INT_UNION = True
 
 # Empty struct typedefs suppressed in favor of another exported type.
 _SUPPRESSED_STRUCT_STUBS: Dict[str, str] = {
@@ -190,8 +189,14 @@ class PyiEmitter:
         self._add("class Blob:")
         self._add("    def __dereference__(self) -> Any: ...")
         self._add()
+        self._add("class _Nesting:")
+        self._add("    value: int")
+        self._add()
         self._add("class Struct:")
         self._add("    __SIZE__: ClassVar[int]")
+        self._add(
+            "    def __init__(self, fields: dict[str, Any] | None = None, /, **kwargs: Any) -> None: ..."
+        )
         self._add("    @classmethod")
         self._add("    def __cast__(cls, obj: Any) -> Any: ...")
         self._add("    @classmethod")
@@ -228,13 +233,22 @@ class PyiEmitter:
                 field_type = self._map_type(str(field.get("type", "Any")))
                 self._add(f"    {field_name}: {field_type}")
             for method_name, info in methods:
-                sig = self._format_function(
-                    method_name,
-                    info,
-                    instance_method=True,
-                    receiver_struct=struct_name,
-                )
-                self._add(f"    def {sig}")
+                if info.get("static"):
+                    sig = self._format_function(
+                        method_name,
+                        info,
+                        instance_method=False,
+                    )
+                    self._add("    @staticmethod")
+                    self._add(f"    def {sig}")
+                else:
+                    sig = self._format_function(
+                        method_name,
+                        info,
+                        instance_method=True,
+                        receiver_struct=struct_name,
+                    )
+                    self._add(f"    def {sig}")
         self._add()
 
     def _emit_module_enums(self) -> None:
@@ -369,6 +383,9 @@ class PyiEmitter:
         for blob_name in sorted(self.metadata.get("blobs", [])):
             if blob_name.startswith("SYMBOL_"):
                 continue
+            if blob_name == "_nesting":
+                self._add("_nesting: _Nesting")
+                continue
             self._add(f"{export_name(blob_name, 'blob')}: Any")
         for const_name in sorted(self.metadata.get("int_constants", [])):
             self._add(f"{export_name(const_name, 'constant')}: int")
@@ -384,12 +401,14 @@ class PyiEmitter:
     ) -> str:
         args = list(info.get("args", []))
         if instance_method:
-            args = self._strip_receiver_arg(
+            args = strip_receiver_args(
                 args,
                 receiver_obj=receiver_obj,
                 receiver_struct=receiver_struct,
             )
         params = self._format_params(args)
+        if instance_method:
+            params = f"self{', ' + params if params else ''}"
         return_type = self._format_return_type(
             info.get("return_type"),
             instance_method,
@@ -399,23 +418,6 @@ class PyiEmitter:
         if params:
             return f"{safe_name}({params}) -> {return_type}: ..."
         return f"{safe_name}() -> {return_type}: ..."
-
-    def _strip_receiver_arg(
-        self,
-        args: Sequence[Mapping[str, Any]],
-        *,
-        receiver_obj: Optional[str] = None,
-        receiver_struct: Optional[str] = None,
-    ) -> List[Mapping[str, Any]]:
-        del receiver_struct
-        if not args:
-            return []
-        result = list(args)
-        if receiver_obj and result and _is_named_obj_receiver(result[0]):
-            return result[1:]
-        if receiver_obj and len(result) > 1 and _is_trailing_obj_receiver(result[-1]):
-            return result[:-1]
-        return result
 
     def _format_params(self, args: Sequence[Mapping[str, Any]]) -> str:
         parts: List[str] = []
@@ -506,9 +508,29 @@ class PyiEmitter:
         enum_name = self.enum_typedefs.get(c_type) or _LEGACY_ENUM_TYPEDEFS.get(c_type)
         if enum_name and enum_name in self.enum_names:
             return export_name(enum_name, "enum")
+        alias_enum = _MODULE_ALIAS_ENUM_TYPEDEFS.get(c_type)
+        if alias_enum is not None:
+            return alias_enum
         return None
 
+    def _enum_type_with_int(self, enum_type: str) -> str:
+        if not _ENUM_INT_UNION or " | int" in enum_type:
+            return enum_type
+        return f"{enum_type} | int"
+
+    def _normalize_struct_typedef(self, c_type: str) -> str:
+        if c_type.startswith("_lv_") and c_type.endswith("_t"):
+            export = c_type[4:]
+            if export in self.known_structs:
+                return export
+        if c_type.startswith("lv_") and c_type.endswith("_t"):
+            export = c_type[3:]
+            if export in self.known_structs:
+                return export
+        return c_type
+
     def _map_type(self, c_type: str) -> str:
+        c_type = self._normalize_struct_typedef(c_type)
         if c_type in {"int", "bool", "float", "str"}:
             return c_type
         if c_type in {
@@ -530,16 +552,11 @@ class PyiEmitter:
         composite = _COMPOSITE_TYPEDEF_TYPES.get(c_type)
         if composite is not None:
             return composite
-        alias_enum = _MODULE_ALIAS_ENUM_TYPEDEFS.get(c_type)
-        if alias_enum is not None:
-            if c_type in _INT_ALIAS_TYPEDEFS:
-                return f"{alias_enum} | int"
-            return alias_enum
         resolved_enum = self._resolve_enum_typedef(c_type)
         if resolved_enum is not None:
-            return resolved_enum
+            return self._enum_type_with_int(resolved_enum)
         if c_type in self.enum_names:
-            return export_name(c_type, "enum")
+            return self._enum_type_with_int(export_name(c_type, "enum"))
         if c_type in {"char*", "const char*"}:
             return "str"
         if c_type in {"void*", "const void*", "const uint8_t*"}:
@@ -558,7 +575,7 @@ class PyiEmitter:
         if c_type in self.known_objects:
             return export_name(c_type, "object")
         if c_type.endswith("*"):
-            base = c_type[:-1]
+            base = self._normalize_struct_typedef(c_type[:-1])
             if base in self.known_structs:
                 return export_name(base, "struct")
             return "Any"
