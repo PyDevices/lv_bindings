@@ -105370,6 +105370,8 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     { PyObject *ns = PyType_GenericNew(&py_lv_LV_INDEV_GESTURE_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "INDEV_GESTURE", ns) < 0) return NULL; }
     if (PyType_Ready(&py_lv_LV_COVER_RES_type) < 0) return NULL;
     { PyObject *ns = PyType_GenericNew(&py_lv_LV_COVER_RES_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "COVER_RES", ns) < 0) return NULL; }
+    if (PyType_Ready(&py_lv_LV_OBJ_FLAG_type) < 0) return NULL;
+    { PyObject *ns = PyType_GenericNew(&py_lv_LV_OBJ_FLAG_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "OBJ_FLAG", ns) < 0) return NULL; }
     if (PyType_Ready(&py_lv_LV_SUBJECT_TYPE_type) < 0) return NULL;
     { PyObject *ns = PyType_GenericNew(&py_lv_LV_SUBJECT_TYPE_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "SUBJECT_TYPE", ns) < 0) return NULL; }
     if (PyType_Ready(&py_lv_LV_FONT_FMT_TXT_CMAP_type) < 0) return NULL;

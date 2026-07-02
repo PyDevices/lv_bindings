@@ -49541,6 +49541,7 @@ static const mp_rom_map_elem_t lvgl_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_INDEV_MODE), MP_ROM_PTR(&mp_lv_LV_INDEV_MODE_type_base) },
     { MP_ROM_QSTR(MP_QSTR_INDEV_GESTURE), MP_ROM_PTR(&mp_lv_LV_INDEV_GESTURE_type_base) },
     { MP_ROM_QSTR(MP_QSTR_COVER_RES), MP_ROM_PTR(&mp_lv_LV_COVER_RES_type_base) },
+    { MP_ROM_QSTR(MP_QSTR_OBJ_FLAG), MP_ROM_PTR(&mp_lv_LV_OBJ_FLAG_type_base) },
     { MP_ROM_QSTR(MP_QSTR_SUBJECT_TYPE), MP_ROM_PTR(&mp_lv_LV_SUBJECT_TYPE_type_base) },
     { MP_ROM_QSTR(MP_QSTR_FONT_FMT_TXT_CMAP), MP_ROM_PTR(&mp_lv_LV_FONT_FMT_TXT_CMAP_type_base) },
     { MP_ROM_QSTR(MP_QSTR_FONT_FMT_TXT), MP_ROM_PTR(&mp_lv_LV_FONT_FMT_TXT_type_base) },
