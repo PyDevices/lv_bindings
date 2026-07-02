@@ -11,6 +11,7 @@ from .helpers import export_name
 from .naming import get_naming_style
 from .pyi_prototypes import (
     _CALLBACK_TYPEDEFS,
+    _LEGACY_ENUM_TYPEDEFS,
     _is_named_obj_receiver,
     _is_trailing_obj_receiver,
     default_pp_path_for_metadata,
@@ -63,23 +64,8 @@ _PY_KEYWORDS = frozenset(
 
 _OBJ_POINTER_TYPES = frozenset({"lv_obj_t*", "obj*"})
 
-# Map C typedef names to module-level enum classes in lvgl.pyi.
-_ENUM_TYPEDEFS: Dict[str, str] = {
-    "align_t": "ALIGN",
-    "color_format_t": "COLOR_FORMAT",
-    "grad_dir_t": "GRAD_DIR",
-    "grad_extend_t": "GRAD_EXTEND",
-    "base_dir_t": "BASE_DIR",
-    "opa_t": "OPA",
-    "text_align_t": "TEXT_ALIGN",
-    "palette_t": "PALETTE",
-    "font_kerning_t": "FONT_KERNING",
-    "font_subpx_t": "FONT_SUBPX",
-    "font_glyph_format_t": "FONT_GLYPH_FORMAT",
-    "dir_t": "DIR",
-    "result_t": "RESULT",
-    "log_level_t": "LOG_LEVEL",
-}
+# Structs that have a dedicated helper stub in _emit_helper_types.
+_HELPER_STRUCT_STUBS = frozenset({"C_Pointer"})
 
 
 def sanitize(name: str) -> str:
@@ -134,6 +120,12 @@ class PyiEmitter:
         self.known_objects: Set[str] = set(metadata.get("objects", {}))
         self.lines: List[str] = []
         self.enum_names: Set[str] = set(metadata.get("enums", {}))
+        self.enum_typedefs: Mapping[str, str] = metadata.get(
+            "enum_typedefs", _LEGACY_ENUM_TYPEDEFS
+        )
+        self.callback_typedefs: Mapping[str, Dict[str, Any]] = metadata.get(
+            "callback_typedefs", _CALLBACK_TYPEDEFS
+        )
 
     def emit(self, out: TextIO) -> None:
         self.lines = []
@@ -189,7 +181,10 @@ class PyiEmitter:
 
     def _emit_struct_types(self) -> None:
         struct_funcs = self.metadata.get("struct_functions", {})
+        struct_fields = self.metadata.get("struct_fields", {})
         for struct_name in sorted(self.known_structs):
+            if struct_name in _HELPER_STRUCT_STUBS:
+                continue
             safe = export_name(struct_name, "struct")
             members = struct_funcs.get(struct_name, {})
             methods = [
@@ -197,10 +192,15 @@ class PyiEmitter:
                 for name, info in sorted(members.items())
                 if info.get("type") == "function"
             ]
-            if not methods:
+            fields = struct_fields.get(struct_name, [])
+            if not methods and not fields:
                 self._add(f"class {safe}(Struct): ...")
                 continue
             self._add(f"class {safe}(Struct):")
+            for field in fields:
+                field_name = sanitize(field.get("name") or "field")
+                field_type = self._map_type(str(field.get("type", "Any")))
+                self._add(f"    {field_name}: {field_type}")
             for method_name, info in methods:
                 sig = self._format_function(
                     method_name,
@@ -407,8 +407,10 @@ class PyiEmitter:
                 if isinstance(func_info, Mapping):
                     return self._format_callback_type(func_info)
             normalized = str(arg_type)
-            if normalized in _CALLBACK_TYPEDEFS:
-                typedef = _CALLBACK_TYPEDEFS[normalized]
+            typedef = self.callback_typedefs.get(normalized) or _CALLBACK_TYPEDEFS.get(
+                normalized
+            )
+            if typedef is not None:
                 func_info = typedef.get("function")
                 if isinstance(func_info, Mapping):
                     return self._format_callback_type(func_info)
@@ -448,17 +450,26 @@ class PyiEmitter:
             return export_name(c_type, "struct")
         if c_type in self.known_objects:
             return export_name(c_type, "object")
+        if c_type.endswith(("_cb_t", "_xcb_t")):
+            typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
+            if typedef and isinstance(typedef.get("function"), Mapping):
+                return self._format_callback_type(typedef["function"])
         return self._map_type(c_type)
+
+    def _resolve_enum_typedef(self, c_type: str) -> Optional[str]:
+        enum_name = self.enum_typedefs.get(c_type) or _LEGACY_ENUM_TYPEDEFS.get(c_type)
+        if enum_name and enum_name in self.enum_names:
+            return export_name(enum_name, "enum")
+        return None
 
     def _map_type(self, c_type: str) -> str:
         if c_type in {"int", "bool", "float", "str"}:
             return c_type
         if c_type in _OBJ_POINTER_TYPES or c_type == "obj_t":
             return export_name("obj", "object")
-        if c_type in _ENUM_TYPEDEFS:
-            enum_name = _ENUM_TYPEDEFS[c_type]
-            if enum_name in self.enum_names:
-                return export_name(enum_name, "enum")
+        resolved_enum = self._resolve_enum_typedef(c_type)
+        if resolved_enum is not None:
+            return resolved_enum
         if c_type in self.enum_names:
             return export_name(c_type, "enum")
         if c_type in {"char*", "const char*"}:
@@ -466,7 +477,14 @@ class PyiEmitter:
         if c_type in {"void*", "const void*", "const uint8_t*"}:
             return "Any"
         if c_type in {"function pointer", "callback"}:
+            typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
+            if typedef and isinstance(typedef.get("function"), Mapping):
+                return self._format_callback_type(typedef["function"])
             return "Callable[..., Any]"
+        if c_type.endswith(("_cb_t", "_xcb_t")):
+            typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
+            if typedef and isinstance(typedef.get("function"), Mapping):
+                return self._format_callback_type(typedef["function"])
         if c_type in self.known_structs:
             return export_name(c_type, "struct")
         if c_type in self.known_objects:
@@ -556,7 +574,7 @@ def load_and_enrich_metadata(metadata_path: Path) -> Dict[str, Any]:
     if pp_path is None:
         return metadata
     pp_index = parse_pp_prototypes(pp_path)
-    return enrich_ir_metadata(metadata, pp_index)
+    return enrich_ir_metadata(metadata, pp_index, pp_path=pp_path)
 
 
 def write_pyi(

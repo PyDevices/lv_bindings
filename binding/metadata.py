@@ -80,7 +80,12 @@ def _enrich_metadata_from_pp(metadata, metadata_path, namespace):
         return metadata
     module_prefix = namespace.get("module_prefix", "lv")
     pp_index = parse_pp_prototypes(pp_path)
-    return enrich_ir_metadata(metadata, pp_index, module_prefix=module_prefix)
+    return enrich_ir_metadata(
+        metadata,
+        pp_index,
+        module_prefix=module_prefix,
+        pp_path=pp_path,
+    )
 
 
 def save_metadata(namespace, path):

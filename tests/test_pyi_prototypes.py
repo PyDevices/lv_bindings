@@ -80,7 +80,7 @@ def test_enrich_function_info_backfills_empty_args():
     assert enriched["return_type"] == "display_t"
 
 
-def test_enrich_function_info_preserves_existing_args():
+def test_enrich_function_info_aligns_module_args_to_pp():
     existing = [{"type": "int", "name": "ms"}]
     pp_index = {
         "lv_tick_inc": {
@@ -91,7 +91,7 @@ def test_enrich_function_info_preserves_existing_args():
     }
     info = {"type": "function", "args": existing, "return_type": "NoneType"}
     enriched = enrich_function_info("tick_inc", info, pp_index)
-    assert enriched["args"] == existing
+    assert enriched["args"] == pp_index["lv_tick_inc"]["args"]
 
 
 def test_struct_method_c_name():
@@ -362,6 +362,224 @@ def test_emit_pyi_widget_method_uses_enriched_ir_arg_order():
     assert "event_cb: Callable[[event_t], None]" in sig
     assert sig.index("event_cb:") < sig.index("filter:")
     assert sig.index("filter:") < sig.index("user_data:")
+
+
+def test_enrich_function_info_swap_strips_obj1(tmp_path: Path):
+    pp_index = {
+        "lv_obj_swap": {
+            "type": "function",
+            "args": [
+                {"type": "obj_t", "name": "obj1"},
+                {"type": "obj_t", "name": "obj2"},
+            ],
+            "return_type": "NoneType",
+        }
+    }
+    info = {
+        "type": "function",
+        "args": [
+            {"type": "obj_t", "name": "obj1"},
+            {"type": "obj_t", "name": "obj2"},
+            {"type": "lv_obj_t*", "name": "parent"},
+        ],
+        "return_type": "NoneType",
+    }
+    enriched = enrich_function_info("swap", info, pp_index, obj_name="obj")
+    assert [a["name"] for a in enriched["args"]] == ["obj2"]
+
+
+def test_enrich_module_function_aligns_pp_types():
+    pp_index = {
+        "lv_screen_load_anim": {
+            "type": "function",
+            "args": [
+                {"type": "obj", "name": "scr"},
+                {"type": "screen_load_anim_t", "name": "anim_type"},
+                {"type": "int", "name": "time"},
+                {"type": "int", "name": "delay"},
+                {"type": "bool", "name": "auto_del"},
+            ],
+            "return_type": "NoneType",
+        }
+    }
+    info = {
+        "type": "function",
+        "args": [
+            {"type": "lv_obj_t*", "name": "scr"},
+            {"type": "int", "name": "anim_type"},
+            {"type": "int", "name": "time"},
+            {"type": "int", "name": "delay"},
+            {"type": "bool", "name": "auto_del"},
+        ],
+        "return_type": "NoneType",
+    }
+    enriched = enrich_function_info("screen_load_anim", info, pp_index)
+    assert enriched["args"][1]["type"] == "screen_load_anim_t"
+
+
+def test_parse_pp_callback_and_struct_fields(tmp_path: Path):
+    from binding.pyi_prototypes import (
+        build_callback_typedef_map,
+        parse_pp_callback_typedefs,
+        parse_pp_struct_fields,
+    )
+
+    pp = tmp_path / "sample.pp"
+    pp.write_text(
+        "typedef void (*lv_anim_custom_exec_cb_t)(lv_anim_t * a, int32_t v);\n"
+        "typedef void (*lv_anim_exec_xcb_t)(void *, int32_t v);\n"
+        "typedef struct {\n"
+        "    uint8_t blue;\n"
+        "    uint8_t green;\n"
+        "    uint8_t red;\n"
+        "} lv_color_t;\n",
+        encoding="utf-8",
+    )
+    callbacks = parse_pp_callback_typedefs(pp)
+    assert "anim_custom_exec_cb_t" in callbacks
+    assert callbacks["anim_custom_exec_cb_t"]["function"]["args"][0]["type"] == "anim_t"
+    xcb = callbacks["anim_exec_xcb_t"]["function"]["args"][0]
+    assert xcb["type"] == "anim_t"
+    fields = parse_pp_struct_fields(pp)
+    assert fields["color_t"] == [
+        {"name": "blue", "type": "int"},
+        {"name": "green", "type": "int"},
+        {"name": "red", "type": "int"},
+    ]
+    merged = build_callback_typedef_map(pp)
+    assert "anim_exec_xcb_t" in merged
+
+
+def test_build_enum_typedef_map_from_pp(tmp_path: Path):
+    from binding.pyi_prototypes import build_enum_typedef_map
+
+    pp = tmp_path / "sample.pp"
+    pp.write_text(
+        "typedef enum {\n"
+        "    LV_SCREEN_LOAD_ANIM_NONE,\n"
+        "} lv_screen_load_anim_t;\n"
+        "typedef enum {\n"
+        "    LV_EVENT_ALL,\n"
+        "} lv_event_code_t;\n"
+        "typedef enum {\n"
+        "    LV_PART_MAIN,\n"
+        "} lv_part_t;\n",
+        encoding="utf-8",
+    )
+    enum_names = ["SCREEN_LOAD_ANIM", "EVENT", "PART"]
+    mapping = build_enum_typedef_map(enum_names, pp)
+    assert mapping["screen_load_anim_t"] == "SCREEN_LOAD_ANIM"
+    assert mapping["event_code_t"] == "EVENT"
+    assert mapping["part_t"] == "PART"
+
+
+def test_emit_pyi_skips_duplicate_c_pointer_stub():
+    from binding.emit_pyi import PyiEmitter
+    from io import StringIO
+
+    metadata = {
+        "structs": ["C_Pointer", "color_t"],
+        "objects": {},
+        "enums": {},
+        "functions": {},
+        "struct_functions": {},
+        "struct_fields": {
+            "color_t": [
+                {"name": "red", "type": "int"},
+            ],
+        },
+        "blobs": [],
+        "int_constants": [],
+    }
+    emitter = PyiEmitter(metadata)
+    out = StringIO()
+    emitter.emit(out)
+    text = out.getvalue()
+    assert text.count("class C_Pointer:") == 1
+    assert "class C_Pointer(Struct)" not in text
+    assert "class color_t(Struct):" in text
+
+
+def test_emit_pyi_maps_enum_typedefs_to_module_enums():
+    from binding.emit_pyi import PyiEmitter
+
+    metadata = {
+        "structs": [],
+        "objects": {
+            "obj": {
+                "members": {
+                    "add_state": {
+                        "type": "function",
+                        "args": [{"type": "state_t", "name": "state"}],
+                        "return_type": "NoneType",
+                    },
+                },
+            },
+        },
+        "enums": {
+            "STATE": {
+                "members": {
+                    "DEFAULT": {"type": "enum_member"},
+                },
+            },
+        },
+        "enum_typedefs": {"state_t": "STATE"},
+        "functions": {},
+        "struct_functions": {},
+        "blobs": [],
+        "int_constants": [],
+    }
+    emitter = PyiEmitter(metadata)
+    sig = emitter._format_function(
+        "add_state",
+        metadata["objects"]["obj"]["members"]["add_state"],
+        instance_method=True,
+        receiver_obj="obj",
+    )
+    assert "state: STATE" in sig
+
+
+def test_emit_pyi_resolves_xcb_typedef_to_callable():
+    from binding.emit_pyi import PyiEmitter
+
+    pp_callbacks = {
+        "anim_exec_xcb_t": {
+            "type": "callback",
+            "function": {
+                "args": [
+                    {"type": "anim_t", "name": "a"},
+                    {"type": "int", "name": "v"},
+                ],
+                "return_type": "NoneType",
+            },
+        },
+    }
+    metadata = {
+        "structs": ["anim_t"],
+        "objects": {},
+        "enums": {},
+        "functions": {},
+        "struct_functions": {
+            "anim_t": {
+                "set_exec_cb": {
+                    "type": "function",
+                    "args": [{"type": "anim_exec_xcb_t", "name": "exec_cb"}],
+                    "return_type": "NoneType",
+                },
+            },
+        },
+        "callback_typedefs": pp_callbacks,
+        "blobs": [],
+        "int_constants": [],
+    }
+    emitter = PyiEmitter(metadata)
+    sig = emitter._format_function(
+        "set_exec_cb",
+        metadata["struct_functions"]["anim_t"]["set_exec_cb"],
+        instance_method=True,
+        receiver_struct="anim_t",
+    )
+    assert "exec_cb: Callable[[anim_t, int], None]" in sig
 
 
 def test_emit_pyi_widget_inherits_obj_methods(tmp_path: Path):
