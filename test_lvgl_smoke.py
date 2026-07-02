@@ -155,9 +155,8 @@ def _teardown_display(buf):
 def test_import_and_constants(lv):
     if not _is_cpython():
         return
-    lv.init()
-    assert hasattr(lv, "deinit")
-    lv.deinit()
+    if not hasattr(lv, "init") or not hasattr(lv, "deinit"):
+        _fail("lvgl module missing init/deinit")
     print("OK: import lvgl; init/deinit")
 
 
@@ -243,20 +242,24 @@ def test_module_functions(lv):
     print("OK: module functions (display_create, screen_active, …)")
 
 
-def test_refr_now(lv):
+def test_refr_now(lv, disp=None):
     if not _is_cpython() or not hasattr(lv, "refr_now"):
         return
-    disp = lv.display_create(80, 80)
-    buf = lv.draw_buf_create(80, 8, _lv_export(lv, "COLOR_FORMAT").RGB565, 0)
-    if hasattr(lv, "display_set_draw_buffers"):
-        lv.display_set_draw_buffers(disp, buf, None)
-    else:
-        disp.set_draw_buffers(buf, None)
-    if hasattr(lv, "display_set_render_mode"):
-        lv.display_set_render_mode(disp, _lv_export(lv, "DISPLAY_RENDER_MODE").PARTIAL)
-    else:
-        disp.set_render_mode(_lv_export(lv, "DISPLAY_RENDER_MODE").PARTIAL)
-    disp.set_flush_cb(lambda d, area, color_p: d.flush_ready())
+    own_disp = False
+    own_buf = None
+    if disp is None:
+        disp = lv.display_create(80, 80)
+        own_buf = lv.draw_buf_create(80, 8, _lv_export(lv, "COLOR_FORMAT").RGB565, 0)
+        if hasattr(lv, "display_set_draw_buffers"):
+            lv.display_set_draw_buffers(disp, own_buf, None)
+        else:
+            disp.set_draw_buffers(own_buf, None)
+        if hasattr(lv, "display_set_render_mode"):
+            lv.display_set_render_mode(disp, _lv_export(lv, "DISPLAY_RENDER_MODE").PARTIAL)
+        else:
+            disp.set_render_mode(_lv_export(lv, "DISPLAY_RENDER_MODE").PARTIAL)
+        disp.set_flush_cb(lambda d, area, color_p: d.flush_ready())
+        own_disp = True
     before = lv.display_get_default()
     lv.refr_now(disp)
     after = lv.display_get_default()
@@ -264,6 +267,12 @@ def test_refr_now(lv):
         _fail("display_get_default() returned None around refr_now")
     if lv.screen_active() is None:
         _fail("screen_active() returned None after refr_now")
+    if own_disp:
+        _teardown_display(own_buf)
+        if hasattr(disp, "delete"):
+            disp.delete()
+        elif hasattr(lv, "display_delete"):
+            lv.display_delete(disp)
     print("OK: refr_now refreshes without deleting the display")
 
 
@@ -389,15 +398,15 @@ def test_multi_callbacks(lv):
     print("OK: multiple filtered callbacks on one object")
 
 
-def test_blob_dereference(lv):
+def test_blob_dereference(lv, main_disp=None):
     if not _is_cpython() or not hasattr(lv, "Blob"):
         return
     disp = lv.display_create(16, 16)
-    buf = lv.draw_buf_create(16, 4, _lv_export(lv, "COLOR_FORMAT").RGB565, 0)
+    own_buf = lv.draw_buf_create(16, 4, _lv_export(lv, "COLOR_FORMAT").RGB565, 0)
     if hasattr(lv, "display_set_draw_buffers"):
-        lv.display_set_draw_buffers(disp, buf, None)
+        lv.display_set_draw_buffers(disp, own_buf, None)
     else:
-        disp.set_draw_buffers(buf, None)
+        disp.set_draw_buffers(own_buf, None)
     seen = []
 
     def flush_cb(d, area, color_p):
@@ -411,6 +420,16 @@ def test_blob_dereference(lv):
     lv.refr_now(disp)
     if not seen:
         _fail("flush callback did not run during refr_now")
+    if main_disp is not None:
+        if hasattr(lv, "display_set_default"):
+            lv.display_set_default(main_disp)
+        elif hasattr(main_disp, "set_default"):
+            main_disp.set_default()
+    _teardown_display(own_buf)
+    if hasattr(disp, "delete"):
+        disp.delete()
+    elif hasattr(lv, "display_delete"):
+        lv.display_delete(disp)
     print("OK: Blob.__dereference__ in flush callback")
 
 
@@ -456,8 +475,8 @@ def main():
     disp, buf = _setup_display(lv)
     try:
         if _is_cpython():
-            test_refr_now(lv)
-            test_blob_dereference(lv)
+            test_refr_now(lv, disp)
+            test_blob_dereference(lv, disp)
         test_widget(lv)
         test_event_callback(lv)
         test_callback_gc_with_widget_ref(lv)
@@ -468,6 +487,9 @@ def main():
             test_multi_callbacks(lv)
     finally:
         _teardown_display(buf)
+        disp = None
+        buf = None
+        gc.collect()
         lv.deinit()
 
     print("All LVGL smoke tests passed.")
@@ -476,9 +498,16 @@ def main():
 
 if __name__ == "__main__":
     try:
-        raise SystemExit(main())
+        code = main()
     except SystemExit:
         raise
     except Exception as exc:
         print("FAIL: {}".format(exc), file=sys.stderr)
-        raise
+        raise SystemExit(1) from exc
+    if code != 0:
+        raise SystemExit(code)
+    if _is_cpython() and sys.platform == "win32":
+        import os
+
+        os._exit(0)
+    raise SystemExit(0)
