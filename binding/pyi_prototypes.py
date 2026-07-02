@@ -229,6 +229,30 @@ def enrich_struct_function_info(
     return merged
 
 
+def lookup_pp_proto(
+    pp_index: Mapping[str, Dict[str, Any]],
+    export_name: str,
+    *,
+    obj_name: Optional[str] = None,
+    struct_name: Optional[str] = None,
+    module_prefix: str = "lv",
+) -> Optional[Dict[str, Any]]:
+    candidates: List[str] = []
+    if struct_name is not None:
+        candidates.append(
+            struct_method_c_name(struct_name, export_name, module_prefix=module_prefix)
+        )
+        candidates.append(method_c_name(struct_name, export_name, module_prefix=module_prefix))
+    if obj_name is not None:
+        candidates.append(method_c_name(obj_name, export_name, module_prefix=module_prefix))
+    candidates.append(module_c_name(export_name, module_prefix=module_prefix))
+    for c_name in candidates:
+        proto = pp_index.get(c_name)
+        if proto and proto.get("args"):
+            return proto
+    return None
+
+
 def enrich_ir_metadata(
     metadata: Dict[str, Any],
     pp_index: Mapping[str, Dict[str, Any]],

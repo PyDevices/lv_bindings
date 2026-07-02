@@ -10,6 +10,7 @@ from binding.pyi_prototypes import (
     enrich_function_info,
     enrich_ir_metadata,
     enrich_struct_function_info,
+    lookup_pp_proto,
     normalize_return_type,
     parse_param,
     parse_pp_prototypes,
@@ -143,3 +144,80 @@ def test_enrich_ir_metadata_module_and_struct():
     enriched = enrich_ir_metadata(metadata, pp_index)
     assert enriched["functions"]["display_create"]["args"]
     assert enriched["struct_functions"]["color_t"]["to_32"]["args"]
+
+
+def test_lookup_pp_proto_struct_method():
+    pp_index = {
+        "lv_display_add_event_cb": {
+            "type": "function",
+            "args": [
+                {"type": "display_t", "name": "disp"},
+                {"type": "callback", "name": "event_cb"},
+                {"type": "int", "name": "filter"},
+                {"type": "void*", "name": "user_data"},
+            ],
+            "return_type": "NoneType",
+        }
+    }
+    proto = lookup_pp_proto(pp_index, "add_event_cb", struct_name="display_t")
+    assert proto is not None
+    assert [a["name"] for a in proto["args"]] == [
+        "disp",
+        "event_cb",
+        "filter",
+        "user_data",
+    ]
+
+
+def test_emit_pyi_struct_method_uses_pp_arg_order(tmp_path: Path):
+    from binding.emit_pyi import PyiEmitter
+
+    pp_index = {
+        "lv_display_add_event_cb": {
+            "type": "function",
+            "args": [
+                {"type": "display_t", "name": "disp"},
+                {"type": "callback", "name": "event_cb", "function": {
+                    "type": "function",
+                    "args": [{"type": "event_t", "name": "e"}],
+                    "return_type": "NoneType",
+                }},
+                {"type": "int", "name": "filter"},
+                {"type": "void*", "name": "user_data"},
+            ],
+            "return_type": "NoneType",
+        }
+    }
+    metadata = {
+        "structs": ["display_t"],
+        "objects": {},
+        "enums": {},
+        "functions": {},
+        "struct_functions": {
+            "display_t": {
+                "add_event_cb": {
+                    "type": "function",
+                    "args": [
+                        {"type": "void*", "name": "user_data"},
+                        {"type": "callback", "name": "event_cb"},
+                        {"type": "int", "name": "filter"},
+                        {"type": "display_t", "name": "disp"},
+                    ],
+                    "return_type": "NoneType",
+                },
+            },
+        },
+        "blobs": [],
+        "int_constants": [],
+    }
+    emitter = PyiEmitter(metadata, pp_index=pp_index)
+    sig = emitter._format_function(
+        "add_event_cb",
+        metadata["struct_functions"]["display_t"]["add_event_cb"],
+        instance_method=True,
+        receiver_struct="display_t",
+    )
+    assert sig.startswith("add_event_cb(")
+    assert "event_cb:" in sig
+    assert sig.index("event_cb:") < sig.index("filter:")
+    assert sig.index("filter:") < sig.index("user_data:")

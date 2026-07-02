@@ -108,15 +108,12 @@ def build_arg_parser():
 def _save_outputs(namespace, args):
     import os
 
-    if args.ir and args.target == "cpython" and args.metadata and os.path.isfile(args.ir):
+    if args.ir and args.target == "cpython" and os.path.isfile(args.ir):
         align_namespace_to_ir(namespace, args.ir)
     if args.metadata:
         save_metadata(namespace, args.metadata)
-    if args.ir:
-        if args.target in ("micropython", "circuitpython"):
-            save_bindings_ir(namespace, args.ir)
-        elif args.target == "cpython" and not args.metadata:
-            save_bindings_ir(namespace, args.ir)
+    if args.ir and args.target in ("micropython", "circuitpython"):
+        save_bindings_ir(namespace, args.ir)
 
 
 def main(argv=None):
