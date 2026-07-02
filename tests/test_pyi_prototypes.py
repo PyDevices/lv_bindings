@@ -209,6 +209,111 @@ def test_enrich_struct_function_info_reorders_and_keeps_callback_typing():
     assert event_cb["function"]["args"] == [{"type": "event_t", "name": "e"}]
 
 
+def test_lookup_pp_proto_falls_back_to_obj_method():
+    pp_index = {
+        "lv_obj_add_event_cb": {
+            "type": "function",
+            "args": [
+                {"type": "obj", "name": "obj"},
+                {"type": "event_cb_t", "name": "event_cb"},
+                {"type": "int", "name": "filter"},
+                {"type": "void*", "name": "user_data"},
+            ],
+            "return_type": "event_dsc_t",
+        }
+    }
+    proto = lookup_pp_proto(pp_index, "add_event_cb", obj_name="btn")
+    assert proto is not None
+    assert [a["name"] for a in proto["args"]] == [
+        "obj",
+        "event_cb",
+        "filter",
+        "user_data",
+    ]
+
+
+def test_enrich_function_info_reorders_widget_method_args():
+    pp_index = {
+        "lv_obj_add_event_cb": {
+            "type": "function",
+            "args": [
+                {"type": "obj", "name": "obj"},
+                {"type": "event_cb_t", "name": "event_cb"},
+                {"type": "event_code_t", "name": "filter"},
+                {"type": "void*", "name": "user_data"},
+            ],
+            "return_type": "event_dsc_t",
+        }
+    }
+    info = {
+        "type": "function",
+        "args": [
+            {"type": "void*", "name": "user_data"},
+            {
+                "type": "callback",
+                "name": "event_cb",
+                "function": {
+                    "args": [{"type": "event_t", "name": "e"}],
+                    "return_type": None,
+                },
+            },
+            {"type": "int", "name": "filter"},
+            {"type": "lv_obj_t*", "name": "obj"},
+        ],
+        "return_type": "event_dsc_t",
+    }
+    enriched = enrich_function_info(
+        "add_event_cb", info, pp_index, obj_name="btn"
+    )
+    names = [arg["name"] for arg in enriched["args"]]
+    assert names == ["event_cb", "filter", "user_data"]
+    assert enriched["args"][0]["type"] == "callback"
+
+
+def test_emit_pyi_widget_method_uses_enriched_ir_arg_order():
+    from binding.emit_pyi import PyiEmitter
+
+    metadata = {
+        "structs": ["event_t"],
+        "objects": {"btn": {}},
+        "enums": {},
+        "functions": {},
+        "struct_functions": {},
+        "blobs": [],
+        "int_constants": [],
+    }
+    metadata["objects"]["btn"] = {
+        "members": {
+            "add_event_cb": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "callback",
+                        "name": "event_cb",
+                        "function": {
+                            "args": [{"type": "event_t", "name": "e"}],
+                            "return_type": "NoneType",
+                        },
+                    },
+                    {"type": "int", "name": "filter"},
+                    {"type": "void*", "name": "user_data"},
+                ],
+                "return_type": "event_dsc_t",
+            }
+        }
+    }
+    emitter = PyiEmitter(metadata)
+    sig = emitter._format_function(
+        "add_event_cb",
+        metadata["objects"]["btn"]["members"]["add_event_cb"],
+        instance_method=True,
+        receiver_obj="btn",
+    )
+    assert "event_cb: Callable[[event_t], None]" in sig
+    assert sig.index("event_cb:") < sig.index("filter:")
+    assert sig.index("filter:") < sig.index("user_data:")
+
+
 def test_emit_pyi_struct_method_uses_enriched_ir_arg_order():
     from binding.emit_pyi import PyiEmitter
 

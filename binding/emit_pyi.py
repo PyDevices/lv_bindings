@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, TextIO, Un
 from .helpers import export_name
 from .naming import get_naming_style
 from .pyi_prototypes import (
+    _is_obj_receiver_arg,
     default_pp_path_for_metadata,
     enrich_ir_metadata,
     parse_pp_prototypes,
@@ -351,6 +352,11 @@ class PyiEmitter:
             last = result[-1]
             last_type = last.get("type", "")
             if last_type in {receiver_struct, struct_prefix_name(receiver_struct)}:
+                result = result[:-1]
+
+        if receiver_obj and result:
+            last = result[-1]
+            if _is_obj_receiver_arg(last, receiver_obj):
                 result = result[:-1]
 
         return result

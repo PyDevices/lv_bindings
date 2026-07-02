@@ -172,26 +172,53 @@ def _struct_receiver_types(struct_name: str) -> frozenset[str]:
     return frozenset({struct_name, struct_prefix(struct_name)})
 
 
+def _obj_receiver_types(obj_name: Optional[str] = None) -> frozenset[str]:
+    types = {"obj", "lv_obj_t*"}
+    if obj_name and obj_name != "obj":
+        types.add(f"{obj_name}_obj_t*")
+    return frozenset(types)
+
+
+def _is_obj_receiver_arg(
+    arg: Mapping[str, Any],
+    obj_name: Optional[str] = None,
+) -> bool:
+    arg_type = arg.get("type", "")
+    if arg_type in _obj_receiver_types(obj_name) or arg_type.endswith("_obj_t*"):
+        return True
+    return arg.get("name") in {"obj", "self"}
+
+
 def strip_receiver_args(
     args: Sequence[Mapping[str, Any]],
     *,
     receiver_struct: Optional[str] = None,
+    receiver_obj: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
-    if not args or not receiver_struct:
-        return [dict(arg) for arg in args]
-    receiver_types = _struct_receiver_types(receiver_struct)
+    if not args:
+        return []
     result = [dict(arg) for arg in args]
-    first_type = result[0].get("type", "")
-    if first_type in receiver_types:
+
+    if receiver_obj and result and _is_obj_receiver_arg(result[0], receiver_obj):
         result = result[1:]
-    if result:
+    elif receiver_struct:
+        receiver_types = _struct_receiver_types(receiver_struct)
+        first_type = result[0].get("type", "")
+        if first_type in receiver_types:
+            result = result[1:]
+
+    if receiver_obj and result and _is_obj_receiver_arg(result[-1], receiver_obj):
+        result = result[:-1]
+    elif receiver_struct and result:
+        receiver_types = _struct_receiver_types(receiver_struct)
         last_type = result[-1].get("type", "")
         if last_type in receiver_types:
             result = result[:-1]
+
     return result
 
 
-def merge_struct_arg(
+def merge_pp_arg(
     pp_arg: Mapping[str, Any],
     ir_arg: Optional[Mapping[str, Any]],
 ) -> Dict[str, Any]:
@@ -213,10 +240,19 @@ def align_args_to_pp(
     pp_args: Sequence[Mapping[str, Any]],
     *,
     receiver_struct: Optional[str] = None,
+    receiver_obj: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
-    pp_params = strip_receiver_args(pp_args, receiver_struct=receiver_struct)
+    pp_params = strip_receiver_args(
+        pp_args,
+        receiver_struct=receiver_struct,
+        receiver_obj=receiver_obj,
+    )
     if not pp_params:
-        return strip_receiver_args(ir_args, receiver_struct=receiver_struct)
+        return strip_receiver_args(
+            ir_args,
+            receiver_struct=receiver_struct,
+            receiver_obj=receiver_obj,
+        )
 
     ir_by_name = {
         arg.get("name"): arg for arg in ir_args if arg.get("name")
@@ -226,11 +262,15 @@ def align_args_to_pp(
     for pp_arg in pp_params:
         name = pp_arg.get("name")
         ir_arg = ir_by_name.get(name) if name else None
-        aligned.append(merge_struct_arg(pp_arg, ir_arg))
+        aligned.append(merge_pp_arg(pp_arg, ir_arg))
         if name:
             used.add(name)
 
-    for ir_arg in strip_receiver_args(ir_args, receiver_struct=receiver_struct):
+    for ir_arg in strip_receiver_args(
+        ir_args,
+        receiver_struct=receiver_struct,
+        receiver_obj=receiver_obj,
+    ):
         name = ir_arg.get("name")
         if name and name not in used:
             aligned.append(dict(ir_arg))
@@ -246,21 +286,41 @@ def enrich_function_info(
     module_prefix: str = "lv",
 ) -> Dict[str, Any]:
     merged = dict(info)
-    if merged.get("args"):
+    proto = lookup_pp_proto(
+        pp_index,
+        export_name,
+        obj_name=obj_name,
+        module_prefix=module_prefix,
+    )
+
+    if not merged.get("args"):
+        candidates = []
+        if obj_name is not None:
+            candidates.append(method_c_name(obj_name, export_name, module_prefix=module_prefix))
+            if obj_name != "obj":
+                candidates.append(method_c_name("obj", export_name, module_prefix=module_prefix))
+        candidates.append(module_c_name(export_name, module_prefix=module_prefix))
+        for c_name in candidates:
+            candidate = pp_index.get(c_name)
+            if candidate and candidate.get("args"):
+                proto = candidate
+                merged["args"] = list(candidate["args"])
+                if not merged.get("return_type") and candidate.get("return_type"):
+                    merged["return_type"] = candidate["return_type"]
+                break
+        if not merged.get("return_type") and proto and proto.get("return_type"):
+            merged["return_type"] = proto["return_type"]
         return merged
-    candidates = []
-    if obj_name is not None:
-        candidates.append(method_c_name(obj_name, export_name, module_prefix=module_prefix))
-    candidates.append(module_c_name(export_name, module_prefix=module_prefix))
-    for c_name in candidates:
-        proto = pp_index.get(c_name)
-        if proto and proto.get("args"):
-            merged["args"] = list(proto["args"])
-            if not merged.get("return_type") and proto.get("return_type"):
-                merged["return_type"] = proto["return_type"]
-            return merged
-    if not merged.get("return_type"):
-        proto = pp_index.get(candidates[-1])
+
+    if proto and proto.get("args") and obj_name is not None:
+        merged["args"] = align_args_to_pp(
+            merged["args"],
+            proto["args"],
+            receiver_obj=obj_name,
+        )
+        if not merged.get("return_type") and proto.get("return_type"):
+            merged["return_type"] = proto["return_type"]
+    elif not merged.get("return_type"):
         if proto and proto.get("return_type"):
             merged["return_type"] = proto["return_type"]
     return merged
@@ -330,6 +390,8 @@ def lookup_pp_proto(
         candidates.append(method_c_name(struct_name, export_name, module_prefix=module_prefix))
     if obj_name is not None:
         candidates.append(method_c_name(obj_name, export_name, module_prefix=module_prefix))
+        if obj_name != "obj":
+            candidates.append(method_c_name("obj", export_name, module_prefix=module_prefix))
     candidates.append(module_c_name(export_name, module_prefix=module_prefix))
     for c_name in candidates:
         proto = pp_index.get(c_name)
