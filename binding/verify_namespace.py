@@ -6,9 +6,11 @@ import re
 import sys
 from pathlib import Path
 
+# Also exported at module level (lv.OBJ_FLAG) while nested on obj.FLAG.
+MODULE_LEVEL_DUPLEX_ENUMS = frozenset(["OBJ_FLAG"])
+
 WIDGET_SCOPED_MODULE_ENUMS = frozenset(
     [
-        "OBJ_FLAG",
         "IMAGE_FLAGS",
         "IMAGE_SRC",
         "IMAGE_ALIGN",
@@ -103,6 +105,9 @@ def verify(target, text, mp_names):
         for enum_name in WIDGET_SCOPED_MODULE_ENUMS:
             if enum_name in names:
                 errors.append("module exposes widget-scoped enum %s" % enum_name)
+        for enum_name in MODULE_LEVEL_DUPLEX_ENUMS:
+            if enum_name not in names:
+                errors.append("module missing duplex enum %s" % enum_name)
         for obj, expected in WIDGET_ENUM_ATTRS.items():
             attrs = mp_obj_enum_attrs(text, obj)
             for attr in expected:
@@ -114,6 +119,9 @@ def verify(target, text, mp_names):
     for enum_name in WIDGET_SCOPED_MODULE_ENUMS:
         if enum_name in names:
             errors.append("module exposes widget-scoped enum %s" % enum_name)
+    for enum_name in MODULE_LEVEL_DUPLEX_ENUMS:
+        if enum_name not in names:
+            errors.append("module missing duplex enum %s" % enum_name)
 
     if target == "CPython":
         symbol_strings = [n for n in names if n.startswith("SYMBOL_")]

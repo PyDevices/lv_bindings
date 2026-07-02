@@ -67,6 +67,27 @@ _OBJ_POINTER_TYPES = frozenset({"lv_obj_t*", "obj*"})
 # Structs that have a dedicated helper stub in _emit_helper_types.
 _HELPER_STRUCT_STUBS = frozenset({"C_Pointer"})
 
+# Composite typedefs: bitmask unions of module enums (no dedicated enum type).
+_COMPOSITE_TYPEDEF_TYPES: Dict[str, str] = {
+    "style_selector_t": "int | PART | STATE",
+}
+
+# C typedefs aliased to module-level enums (members copied from widget nested enums).
+_MODULE_ALIAS_ENUM_TYPEDEFS: Dict[str, str] = {
+    "obj_flag_t": "OBJ_FLAG",
+}
+_MODULE_ALIAS_ENUM_SOURCES: Dict[str, tuple[str, str]] = {
+    "OBJ_FLAG": ("obj", "FLAG"),
+}
+# Bitmask typedefs that also accept raw integer values.
+_INT_ALIAS_TYPEDEFS = frozenset({"obj_flag_t"})
+
+# Empty struct typedefs suppressed in favor of another exported type.
+_SUPPRESSED_STRUCT_STUBS: Dict[str, str] = {
+    "indev_pointer_t": "indev_t",
+    "indev_keypad_t": "indev_t",
+}
+
 
 def sanitize(name: str) -> str:
     if name in _PY_KEYWORDS:
@@ -185,6 +206,11 @@ class PyiEmitter:
         for struct_name in sorted(self.known_structs):
             if struct_name in _HELPER_STRUCT_STUBS:
                 continue
+            if struct_name in _SUPPRESSED_STRUCT_STUBS:
+                alias = _SUPPRESSED_STRUCT_STUBS[struct_name]
+                safe = export_name(struct_name, "struct")
+                self._add(f"# {safe}: use {alias} instead.")
+                continue
             safe = export_name(struct_name, "struct")
             members = struct_funcs.get(struct_name, {})
             methods = [
@@ -217,6 +243,24 @@ class PyiEmitter:
             if not members:
                 continue
             self._emit_enum_class(enum_name, members)
+        self._emit_module_alias_enums()
+
+    def _emit_module_alias_enums(self) -> None:
+        objects = self.metadata.get("objects", {})
+        for alias_name, (obj_name, nested_enum) in sorted(
+            _MODULE_ALIAS_ENUM_SOURCES.items()
+        ):
+            if alias_name in self.enum_names:
+                continue
+            flag_info = (
+                objects.get(obj_name, {})
+                .get("members", {})
+                .get(nested_enum, {})
+            )
+            members = flag_info.get("members", {})
+            if not members:
+                continue
+            self._emit_enum_class(alias_name, members)
 
     def _emit_widget_types(self) -> None:
         objects = self.metadata.get("objects", {})
@@ -396,7 +440,7 @@ class PyiEmitter:
         else:
             ret_str = self._map_type(str(ret))
         if not param_types:
-            return "Callable[..., Any]"
+            return "Callable[[], {}]".format(ret_str)
         return "Callable[[{}], {}]".format(", ".join(param_types), ret_str)
 
     def _format_arg_type(self, arg: Union[str, Mapping[str, Any], None]) -> str:
@@ -439,6 +483,8 @@ class PyiEmitter:
             return "Any"
         if c_type == "NoneType":
             return "None"
+        if c_type == "function pointer":
+            return "Callable[..., Any]"
         if c_type in _OBJ_POINTER_TYPES or c_type in {"obj_t"}:
             return export_name("obj", "object")
         if c_type.endswith("_obj_t*"):
@@ -465,8 +511,30 @@ class PyiEmitter:
     def _map_type(self, c_type: str) -> str:
         if c_type in {"int", "bool", "float", "str"}:
             return c_type
+        if c_type in {
+            "int8_t",
+            "uint8_t",
+            "int16_t",
+            "uint16_t",
+            "int32_t",
+            "uint32_t",
+            "int64_t",
+            "uint64_t",
+            "size_t",
+            "intptr_t",
+            "uintptr_t",
+        }:
+            return "int"
         if c_type in _OBJ_POINTER_TYPES or c_type == "obj_t":
             return export_name("obj", "object")
+        composite = _COMPOSITE_TYPEDEF_TYPES.get(c_type)
+        if composite is not None:
+            return composite
+        alias_enum = _MODULE_ALIAS_ENUM_TYPEDEFS.get(c_type)
+        if alias_enum is not None:
+            if c_type in _INT_ALIAS_TYPEDEFS:
+                return f"{alias_enum} | int"
+            return alias_enum
         resolved_enum = self._resolve_enum_typedef(c_type)
         if resolved_enum is not None:
             return resolved_enum

@@ -9,6 +9,7 @@ from .helpers import (
     export_name,
     get_enum_name,
     is_method_of,
+    is_widget_scoped_only_enum,
     method_name_from_func_name,
     sanitize,
     simplify_identifier,
@@ -230,7 +231,8 @@ def emit_phase2_enums():
                 obj_metadata[obj_name]["members"][
                     method_name_from_func_name(enum_name)
                 ].update(obj_metadata[enum_name])
-            enum_referenced[enum_name] = True
+            if is_widget_scoped_only_enum(enum_name):
+                enum_referenced[enum_name] = True
 
         locals_dict_entries = ",\n    ".join(enum_members + enum_types)
 

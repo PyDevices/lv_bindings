@@ -98,12 +98,21 @@ def get_enum_name(enum):
     return match_result.group(3) if match_result else enum
 
 
+# C enum names that are nested on widget types (e.g. obj.FLAG) and also lv.OBJ_FLAG.
+MODULE_LEVEL_DUPLEX_ENUMS = frozenset({"LV_OBJ_FLAG"})
+
+
+def is_widget_scoped_only_enum(enum_name):
+    """True when enum must not appear on the module (widget nested only)."""
+    return enum_name not in MODULE_LEVEL_DUPLEX_ENUMS
+
+
 def collect_enum_referenced(enums, obj_names):
     """Return enum names attached to widget types (MicroPython module-global semantics)."""
     enum_referenced = collections.OrderedDict()
     for obj_name in obj_names:
         for enum_name in enums.keys():
-            if is_method_of(enum_name, obj_name):
+            if is_method_of(enum_name, obj_name) and is_widget_scoped_only_enum(enum_name):
                 enum_referenced[enum_name] = True
     return enum_referenced
 

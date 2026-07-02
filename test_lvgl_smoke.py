@@ -194,14 +194,17 @@ def test_enums(lv):
         _fail("lv.obj missing FLAG enum namespace")
     if flag.SCROLLABLE != (1 << 4):
         _fail("lv.obj.FLAG.SCROLLABLE unexpected value")
-    if _lv_export(lv, "OBJ_FLAG") is not None:
-        _fail("lv.OBJ_FLAG must not be exposed at module level")
+    module_flag = _lv_export(lv, "OBJ_FLAG")
+    if module_flag is None or not hasattr(module_flag, "SCROLLABLE"):
+        _fail("lv.OBJ_FLAG missing at module level")
+    if module_flag.SCROLLABLE != flag.SCROLLABLE:
+        _fail("lv.OBJ_FLAG.SCROLLABLE must match lv.obj.FLAG.SCROLLABLE")
     label_type = _widget_type(lv, "label")
     if _widget_attr(label_type, "LONG_MODE") is None:
         _fail("lv.label missing LONG_MODE enum namespace")
     if _lv_export(lv, "LABEL_LONG_MODE") is not None:
         _fail("lv.LABEL_LONG_MODE must not be exposed at module level")
-    print("OK: enum namespaces (lv.EVENT, lv.obj.FLAG, lv.label.LONG_MODE)")
+    print("OK: enum namespaces (lv.EVENT, lv.OBJ_FLAG, lv.obj.FLAG, lv.label.LONG_MODE)")
 
 
 def test_module_types(lv):

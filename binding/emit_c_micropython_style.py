@@ -32,6 +32,7 @@ from .helpers import (
     is_method_of,
     is_obj_ctor,
     is_struct,
+    is_widget_scoped_only_enum,
     method_name_from_func_name,
     obj_name_from_ext_name,
     obj_name_from_func_name,
@@ -2502,7 +2503,8 @@ static mp_obj_t mp_{func}(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_fu
                 obj_metadata[obj_name]["members"][method_name_from_func_name(enum_name)].update(
                     obj_metadata[enum_name]
                 )
-                enum_referenced[enum_name] = True
+                if is_widget_scoped_only_enum(enum_name):
+                    enum_referenced[enum_name] = True
             return members + parent_members + enum_members + enum_types + helper_members
 
 

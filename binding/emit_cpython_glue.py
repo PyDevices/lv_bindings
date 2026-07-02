@@ -6,7 +6,7 @@ import collections
 from . import runtime
 from .analyze import get_enum_member_name, get_enum_members, get_enum_value
 from .emit_cpython_native import _resolved_py_func_name
-from .helpers import export_name, get_enum_name, is_method_of, method_name_from_func_name, sanitize, simplify_identifier
+from .helpers import export_name, get_enum_name, is_method_of, is_widget_scoped_only_enum, method_name_from_func_name, sanitize, simplify_identifier
 
 
 def _member_c_value(value):
@@ -60,7 +60,8 @@ def emit_phase2_enums_cpython():
                 obj_metadata[enum_name]["members"][
                     method_name_from_func_name(other)
                 ].update(obj_metadata[other])
-            enum_referenced[other] = True
+            if is_widget_scoped_only_enum(other):
+                enum_referenced[other] = True
         safe = sanitize(enum_name)
         py_name = export_name(enum_name, "enum")
 

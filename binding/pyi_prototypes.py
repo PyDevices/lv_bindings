@@ -32,8 +32,7 @@ _INT_TYPES = frozenset(
 
 
 _TYPEDEF_CB_RE = re.compile(
-    r"typedef\s+(?P<ret>.+?)\s+\(\s*\*\s*(?P<name>lv_\w+(?:_cb_t|_xcb_t))\s*\)\s*\((?P<params>[^;]*)\)\s*;",
-    re.DOTALL,
+    r"typedef\s+(?P<ret>[^\n(]+?)\s+\(\s*\*\s*(?P<name>lv_\w+(?:_cb_t|_xcb_t))\s*\)\s*\((?P<params>[^)]*)\)\s*;",
 )
 
 _ENUM_TYPEDEF_RE = re.compile(
@@ -439,6 +438,49 @@ def strip_receiver_args(
     return result
 
 
+def enrich_return_type_from_pp(
+    current: Optional[str],
+    proto_return: Optional[str],
+) -> Optional[str]:
+    if proto_return and current in (None, "", "function pointer"):
+        return proto_return
+    return current if current else proto_return
+
+
+def _ir_callback_signature_is_stale(
+    ir_arg: Mapping[str, Any],
+    pp_arg: Mapping[str, Any],
+    *,
+    callback_typedefs: Optional[Mapping[str, Dict[str, Any]]] = None,
+) -> bool:
+    if ir_arg.get("type") == "function pointer":
+        return True
+    if ir_arg.get("type") != "callback":
+        return False
+    ir_func = ir_arg.get("function")
+    if not isinstance(ir_func, Mapping):
+        return False
+    pp_type = str(pp_arg.get("type", ""))
+    if not pp_type.endswith(("_cb_t", "_xcb_t")):
+        return False
+    typedef_map = callback_typedefs if callback_typedefs is not None else _CALLBACK_TYPEDEFS
+    typedef = typedef_map.get(pp_type)
+    if typedef is None:
+        return False
+    td_func = typedef.get("function")
+    if not isinstance(td_func, Mapping):
+        return False
+    ir_args = ir_func.get("args") or []
+    td_args = td_func.get("args") or []
+    if len(ir_args) < len(td_args):
+        return True
+    ir_ret = ir_func.get("return_type")
+    td_ret = td_func.get("return_type")
+    if ir_ret in (None, "void", "Any") and td_ret not in (None, "void", "Any", ir_ret):
+        return True
+    return False
+
+
 def normalize_callback_arg(
     arg: Mapping[str, Any],
     *,
@@ -465,16 +507,25 @@ def merge_pp_arg(
     callback_typedefs: Optional[Mapping[str, Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     if ir_arg is not None:
-        if ir_arg.get("type") == "callback" and isinstance(ir_arg.get("function"), Mapping):
+        if ir_arg.get("type") in ("callback", "function pointer"):
             pp_type = str(pp_arg.get("type", ""))
             if pp_type.endswith(("_cb_t", "_xcb_t")):
                 return normalize_callback_arg(pp_arg, callback_typedefs=callback_typedefs)
-            merged = dict(ir_arg)
-            if pp_arg.get("name"):
-                merged["name"] = pp_arg["name"]
-            return merged
-        if ir_arg.get("type") == "function pointer":
-            return normalize_callback_arg(pp_arg, callback_typedefs=callback_typedefs)
+            if _ir_callback_signature_is_stale(
+                ir_arg,
+                pp_arg,
+                callback_typedefs=callback_typedefs,
+            ):
+                return normalize_callback_arg(pp_arg, callback_typedefs=callback_typedefs)
+            if ir_arg.get("type") == "callback" and isinstance(
+                ir_arg.get("function"), Mapping
+            ):
+                merged = dict(ir_arg)
+                if pp_arg.get("name"):
+                    merged["name"] = pp_arg["name"]
+                return merged
+            if ir_arg.get("type") == "function pointer":
+                return normalize_callback_arg(pp_arg, callback_typedefs=callback_typedefs)
         merged = dict(ir_arg)
         if pp_arg.get("name"):
             merged["name"] = pp_arg["name"]
@@ -548,14 +599,14 @@ def enrich_function_info(
         candidates.append(module_c_name(export_name, module_prefix=module_prefix))
         for c_name in candidates:
             candidate = pp_index.get(c_name)
-            if candidate and candidate.get("args"):
+            if candidate is not None:
                 proto = candidate
                 merged["args"] = list(candidate["args"])
-                if not merged.get("return_type") and candidate.get("return_type"):
-                    merged["return_type"] = candidate["return_type"]
+                merged["return_type"] = enrich_return_type_from_pp(
+                    merged.get("return_type"),
+                    candidate.get("return_type"),
+                )
                 break
-        if not merged.get("return_type") and proto and proto.get("return_type"):
-            merged["return_type"] = proto["return_type"]
 
     if proto and proto.get("args") and merged.get("args"):
         merged["args"] = align_args_to_pp(
@@ -568,11 +619,11 @@ def enrich_function_info(
             normalize_callback_arg(arg, callback_typedefs=callback_typedefs)
             for arg in merged["args"]
         ]
-        if not merged.get("return_type") and proto.get("return_type"):
-            merged["return_type"] = proto["return_type"]
-    elif not merged.get("return_type"):
-        if proto and proto.get("return_type"):
-            merged["return_type"] = proto["return_type"]
+    if proto:
+        merged["return_type"] = enrich_return_type_from_pp(
+            merged.get("return_type"),
+            proto.get("return_type"),
+        )
     return merged
 
 
@@ -601,21 +652,26 @@ def enrich_struct_function_info(
         ]
         for c_name in candidates:
             candidate = pp_index.get(c_name)
-            if candidate and candidate.get("args"):
+            if candidate is not None:
                 proto = candidate
                 merged["args"] = strip_receiver_args(
                     list(candidate["args"]),
                     receiver_struct=struct_name,
                 )
-                if not merged.get("return_type") and candidate.get("return_type"):
-                    merged["return_type"] = candidate["return_type"]
+                merged["return_type"] = enrich_return_type_from_pp(
+                    merged.get("return_type"),
+                    candidate.get("return_type"),
+                )
                 break
-        if not merged.get("return_type") and proto and proto.get("return_type"):
-            merged["return_type"] = proto["return_type"]
         merged["args"] = [
             normalize_callback_arg(arg, callback_typedefs=callback_typedefs)
             for arg in merged.get("args", [])
         ]
+        if proto:
+            merged["return_type"] = enrich_return_type_from_pp(
+                merged.get("return_type"),
+                proto.get("return_type"),
+            )
         return merged
 
     if proto and proto.get("args"):
@@ -629,11 +685,11 @@ def enrich_struct_function_info(
             normalize_callback_arg(arg, callback_typedefs=callback_typedefs)
             for arg in merged["args"]
         ]
-        if not merged.get("return_type") and proto.get("return_type"):
-            merged["return_type"] = proto["return_type"]
-    elif not merged.get("return_type"):
-        if proto and proto.get("return_type"):
-            merged["return_type"] = proto["return_type"]
+    if proto:
+        merged["return_type"] = enrich_return_type_from_pp(
+            merged.get("return_type"),
+            proto.get("return_type"),
+        )
     return merged
 
 
@@ -658,7 +714,7 @@ def lookup_pp_proto(
     candidates.append(module_c_name(export_name, module_prefix=module_prefix))
     for c_name in candidates:
         proto = pp_index.get(c_name)
-        if proto and proto.get("args"):
+        if proto is not None:
             return proto
     return None
 

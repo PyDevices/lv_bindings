@@ -12,6 +12,7 @@ from .helpers import (
     is_global_callback,
     is_method_of,
     is_struct,
+    is_widget_scoped_only_enum,
     method_name_from_func_name,
     sanitize as helper_sanitize,
     simplify_identifier,
@@ -1223,7 +1224,8 @@ def gen_py_obj(obj_name):
         obj_metadata[obj_name]["members"][member_name] = {"type": "enum_type"}
         if enum_name in obj_metadata:
             obj_metadata[obj_name]["members"][member_name].update(obj_metadata[enum_name])
-        enum_referenced[enum_name] = True
+        if is_widget_scoped_only_enum(enum_name):
+            enum_referenced[enum_name] = True
 
     ctor_name = "lv_obj_create"
     if has_ctor(obj_name):
