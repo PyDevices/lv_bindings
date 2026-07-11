@@ -165,10 +165,10 @@ MP_DEFINE_EXCEPTION(LvReferenceError, Exception)
     # Emit Mpy helper functions
     #
 
+    # MicroPython 1.28+ release tree exposes mp_obj_int_to_bytes_impl;
+    # mp_obj_int_to_bytes (signed/overflow kwargs) is master-only for now.
     _mp_obj_get_ull_to_bytes = (
         "mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);"
-        if _emit_target == "circuitpython"
-        else "mp_obj_int_to_bytes(obj, sizeof(val), (byte*)&val, big_endian, false, false);"
     )
 
     print(
@@ -1562,7 +1562,7 @@ MP_ARRAY_CONVERTOR(i64ptr, 8, true)
 
 static inline const mp_obj_type_t *get_mp_{sanitized_struct_name}_type(void);
 
-static inline void* mp_write_ptr_{sanitized_struct_name}(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_{sanitized_struct_name}(mp_obj_t self_in)
 {{
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_{sanitized_struct_name}_type()));
     return ({struct_tag}{struct_name}*)self->data;
@@ -1570,7 +1570,7 @@ static inline void* mp_write_ptr_{sanitized_struct_name}(mp_obj_t self_in)
 
 #define mp_write_{sanitized_struct_name}(struct_obj) *(({struct_tag}{struct_name}*)mp_write_ptr_{sanitized_struct_name}(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_{sanitized_struct_name}(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_{sanitized_struct_name}(void *field)
 {{
     return lv_to_mp_struct(get_mp_{sanitized_struct_name}_type(), field);
 }}
@@ -1859,7 +1859,7 @@ GENMPY_UNUSED static mp_obj_t {arr_to_mp_convertor_name}({qualified_type} *arr)
                     if _emit_max_phase is None or _emit_max_phase >= 4:
                         gen_mp_func(func, None)
                         print(
-                            "static inline mp_obj_t mp_lv_{f}(void *func){{ return mp_lv_funcptr(&mp_{f}_mpobj, func, NULL, MP_QSTR_, NULL); }}\n".format(
+                            "GENMPY_UNUSED static inline mp_obj_t mp_lv_{f}(void *func){{ return mp_lv_funcptr(&mp_{f}_mpobj, func, NULL, MP_QSTR_, NULL); }}\n".format(
                                 f=func_ptr_name
                             )
                         )

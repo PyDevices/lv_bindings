@@ -841,7 +841,7 @@ static unsigned long long mp_obj_get_ull(mp_obj_t obj)
 
     unsigned long long val = 0;
     bool big_endian = !(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__);
-    mp_obj_int_to_bytes(obj, sizeof(val), (byte*)&val, big_endian, false, false);
+    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);
     return val;
 }
 
@@ -1078,7 +1078,7 @@ typedef union {
 
 static inline const mp_obj_type_t *get_mp_C_Pointer_type(void);
 
-static inline void* mp_write_ptr_C_Pointer(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_C_Pointer(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_C_Pointer_type()));
     return (C_Pointer*)self->data;
@@ -1086,7 +1086,7 @@ static inline void* mp_write_ptr_C_Pointer(mp_obj_t self_in)
 
 #define mp_write_C_Pointer(struct_obj) *((C_Pointer*)mp_write_ptr_C_Pointer(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_C_Pointer(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_C_Pointer(void *field)
 {
     return lv_to_mp_struct(get_mp_C_Pointer_type(), field);
 }
@@ -6107,7 +6107,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_get_style_margin_right_mpobj, 2,
 
 static inline const mp_obj_type_t *get_mp_lv_color_t_type(void);
 
-static inline void* mp_write_ptr_lv_color_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_color_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_color_t_type()));
     return (lv_color_t*)self->data;
@@ -6115,7 +6115,7 @@ static inline void* mp_write_ptr_lv_color_t(mp_obj_t self_in)
 
 #define mp_write_lv_color_t(struct_obj) *((lv_color_t*)mp_write_ptr_lv_color_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_color_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_color_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_color_t_type(), field);
 }
@@ -6271,7 +6271,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_get_style_bg_grad_opa_mpobj, 2, 
 
 static inline const mp_obj_type_t *get_mp_lv_grad_stop_t_type(void);
 
-static inline void* mp_write_ptr_lv_grad_stop_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_grad_stop_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_grad_stop_t_type()));
     return (lv_grad_stop_t*)self->data;
@@ -6279,7 +6279,7 @@ static inline void* mp_write_ptr_lv_grad_stop_t(mp_obj_t self_in)
 
 #define mp_write_lv_grad_stop_t(struct_obj) *((lv_grad_stop_t*)mp_write_ptr_lv_grad_stop_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_grad_stop_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_grad_stop_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_grad_stop_t_type(), field);
 }
@@ -6385,7 +6385,7 @@ typedef __typeof__( ((lv_grad_dsc_params_t*)(0))->linear ) lv_grad_dsc_params_li
 
 static inline const mp_obj_type_t *get_mp_lv_point_t_type(void);
 
-static inline void* mp_write_ptr_lv_point_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_point_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_point_t_type()));
     return (lv_point_t*)self->data;
@@ -6393,7 +6393,7 @@ static inline void* mp_write_ptr_lv_point_t(mp_obj_t self_in)
 
 #define mp_write_lv_point_t(struct_obj) *((lv_point_t*)mp_write_ptr_lv_point_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_point_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_point_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_point_t_type(), field);
 }
@@ -6465,7 +6465,7 @@ static inline const mp_obj_type_t *get_mp_lv_point_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_grad_dsc_params_linear_t_type(void);
 
-static inline void* mp_write_ptr_lv_grad_dsc_params_linear_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_grad_dsc_params_linear_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_grad_dsc_params_linear_t_type()));
     return (lv_grad_dsc_params_linear_t*)self->data;
@@ -6473,7 +6473,7 @@ static inline void* mp_write_ptr_lv_grad_dsc_params_linear_t(mp_obj_t self_in)
 
 #define mp_write_lv_grad_dsc_params_linear_t(struct_obj) *((lv_grad_dsc_params_linear_t*)mp_write_ptr_lv_grad_dsc_params_linear_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_linear_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_linear_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_grad_dsc_params_linear_t_type(), field);
 }
@@ -6546,7 +6546,7 @@ typedef __typeof__( ((lv_grad_dsc_params_t*)(0))->radial ) lv_grad_dsc_params_ra
 
 static inline const mp_obj_type_t *get_mp_lv_grad_dsc_params_radial_t_type(void);
 
-static inline void* mp_write_ptr_lv_grad_dsc_params_radial_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_grad_dsc_params_radial_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_grad_dsc_params_radial_t_type()));
     return (lv_grad_dsc_params_radial_t*)self->data;
@@ -6554,7 +6554,7 @@ static inline void* mp_write_ptr_lv_grad_dsc_params_radial_t(mp_obj_t self_in)
 
 #define mp_write_lv_grad_dsc_params_radial_t(struct_obj) *((lv_grad_dsc_params_radial_t*)mp_write_ptr_lv_grad_dsc_params_radial_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_radial_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_radial_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_grad_dsc_params_radial_t_type(), field);
 }
@@ -6631,7 +6631,7 @@ typedef __typeof__( ((lv_grad_dsc_params_t*)(0))->conical ) lv_grad_dsc_params_c
 
 static inline const mp_obj_type_t *get_mp_lv_grad_dsc_params_conical_t_type(void);
 
-static inline void* mp_write_ptr_lv_grad_dsc_params_conical_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_grad_dsc_params_conical_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_grad_dsc_params_conical_t_type()));
     return (lv_grad_dsc_params_conical_t*)self->data;
@@ -6639,7 +6639,7 @@ static inline void* mp_write_ptr_lv_grad_dsc_params_conical_t(mp_obj_t self_in)
 
 #define mp_write_lv_grad_dsc_params_conical_t(struct_obj) *((lv_grad_dsc_params_conical_t*)mp_write_ptr_lv_grad_dsc_params_conical_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_conical_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_conical_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_grad_dsc_params_conical_t_type(), field);
 }
@@ -6713,7 +6713,7 @@ static inline const mp_obj_type_t *get_mp_lv_grad_dsc_params_conical_t_type(void
 
 static inline const mp_obj_type_t *get_mp_lv_grad_dsc_params_t_type(void);
 
-static inline void* mp_write_ptr_lv_grad_dsc_params_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_grad_dsc_params_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_grad_dsc_params_t_type()));
     return (lv_grad_dsc_params_t*)self->data;
@@ -6721,7 +6721,7 @@ static inline void* mp_write_ptr_lv_grad_dsc_params_t(mp_obj_t self_in)
 
 #define mp_write_lv_grad_dsc_params_t(struct_obj) *((lv_grad_dsc_params_t*)mp_write_ptr_lv_grad_dsc_params_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_grad_dsc_params_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_grad_dsc_params_t_type(), field);
 }
@@ -6795,7 +6795,7 @@ static inline const mp_obj_type_t *get_mp_lv_grad_dsc_params_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_grad_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_grad_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_grad_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_grad_dsc_t_type()));
     return (lv_grad_dsc_t*)self->data;
@@ -6803,7 +6803,7 @@ static inline void* mp_write_ptr_lv_grad_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_grad_dsc_t(struct_obj) *((lv_grad_dsc_t*)mp_write_ptr_lv_grad_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_grad_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_grad_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_grad_dsc_t_type(), field);
 }
@@ -7055,7 +7055,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_get_style_image_recolor_opa_mpob
 
 static inline const mp_obj_type_t *get_mp_lv_image_colorkey_t_type(void);
 
-static inline void* mp_write_ptr_lv_image_colorkey_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_image_colorkey_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_image_colorkey_t_type()));
     return (lv_image_colorkey_t*)self->data;
@@ -7063,7 +7063,7 @@ static inline void* mp_write_ptr_lv_image_colorkey_t(mp_obj_t self_in)
 
 #define mp_write_lv_image_colorkey_t(struct_obj) *((lv_image_colorkey_t*)mp_write_ptr_lv_image_colorkey_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_image_colorkey_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_image_colorkey_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_image_colorkey_t_type(), field);
 }
@@ -7220,7 +7220,7 @@ typedef __typeof__( ((lv_font_glyph_dsc_t*)(0))->gid ) lv_font_glyph_dsc_gid_t;
 
 static inline const mp_obj_type_t *get_mp_lv_font_glyph_dsc_gid_t_type(void);
 
-static inline void* mp_write_ptr_lv_font_glyph_dsc_gid_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_font_glyph_dsc_gid_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_font_glyph_dsc_gid_t_type()));
     return (lv_font_glyph_dsc_gid_t*)self->data;
@@ -7228,7 +7228,7 @@ static inline void* mp_write_ptr_lv_font_glyph_dsc_gid_t(mp_obj_t self_in)
 
 #define mp_write_lv_font_glyph_dsc_gid_t(struct_obj) *((lv_font_glyph_dsc_gid_t*)mp_write_ptr_lv_font_glyph_dsc_gid_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_font_glyph_dsc_gid_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_font_glyph_dsc_gid_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_font_glyph_dsc_gid_t_type(), field);
 }
@@ -7312,7 +7312,7 @@ static mp_obj_t mp_funcptr_lv_cache_alloc_cb_t(size_t mp_n_args, const mp_obj_t 
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_alloc_cb_t_mpobj, 0, mp_funcptr_lv_cache_alloc_cb_t, funcptr_lv_cache_alloc_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_alloc_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_alloc_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_alloc_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_alloc_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7340,7 +7340,7 @@ static mp_obj_t mp_funcptr_lv_cache_init_cb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_init_cb_t_mpobj, 1, mp_funcptr_lv_cache_init_cb_t, funcptr_lv_cache_init_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_init_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_init_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_init_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_init_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7369,7 +7369,7 @@ static mp_obj_t mp_funcptr_lv_cache_destroy_cb_t(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_destroy_cb_t_mpobj, 2, mp_funcptr_lv_cache_destroy_cb_t, funcptr_lv_cache_destroy_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_destroy_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_destroy_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_destroy_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_destroy_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7399,7 +7399,7 @@ static mp_obj_t mp_funcptr_lv_cache_get_cb_t(size_t mp_n_args, const mp_obj_t *m
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_get_cb_t_mpobj, 3, mp_funcptr_lv_cache_get_cb_t, funcptr_lv_cache_get_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_get_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_get_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_get_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_get_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7436,7 +7436,7 @@ static mp_obj_t mp_funcptr_lv_cache_remove_cb_t(size_t mp_n_args, const mp_obj_t
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_remove_cb_t_mpobj, 3, mp_funcptr_lv_cache_remove_cb_t, funcptr_lv_cache_remove_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_remove_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_remove_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_remove_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_remove_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7466,7 +7466,7 @@ static mp_obj_t mp_funcptr_lv_cache_drop_cb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_drop_cb_t_mpobj, 3, mp_funcptr_lv_cache_drop_cb_t, funcptr_lv_cache_drop_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_drop_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_drop_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_drop_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_drop_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7502,7 +7502,7 @@ static mp_obj_t mp_funcptr_lv_cache_get_victim_cb(size_t mp_n_args, const mp_obj
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_get_victim_cb_mpobj, 2, mp_funcptr_lv_cache_get_victim_cb, funcptr_lv_cache_get_victim_cb);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_get_victim_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_get_victim_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_get_victim_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_get_victim_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7533,7 +7533,7 @@ static mp_obj_t mp_funcptr_lv_cache_reserve_cond_cb(size_t mp_n_args, const mp_o
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_reserve_cond_cb_mpobj, 4, mp_funcptr_lv_cache_reserve_cond_cb, funcptr_lv_cache_reserve_cond_cb);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_reserve_cond_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_reserve_cond_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_reserve_cond_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_reserve_cond_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7551,7 +7551,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_cache_reserve_cond_cb(void *func){ retur
 
 static inline const mp_obj_type_t *get_mp_lv_iter_t_type(void);
 
-static inline void* mp_write_ptr_lv_iter_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_iter_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_iter_t_type()));
     return (lv_iter_t*)self->data;
@@ -7559,7 +7559,7 @@ static inline void* mp_write_ptr_lv_iter_t(mp_obj_t self_in)
 
 #define mp_write_lv_iter_t(struct_obj) *((lv_iter_t*)mp_write_ptr_lv_iter_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_iter_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_iter_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_iter_t_type(), field);
 }
@@ -7639,7 +7639,7 @@ static mp_obj_t mp_funcptr_lv_cache_iter_create_cb(size_t mp_n_args, const mp_ob
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_iter_create_cb_mpobj, 1, mp_funcptr_lv_cache_iter_create_cb, funcptr_lv_cache_iter_create_cb);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_iter_create_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_iter_create_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_iter_create_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_iter_create_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7655,7 +7655,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_cache_iter_create_cb(void *func){ return
 
 static inline const mp_obj_type_t *get_mp_lv_cache_class_t_type(void);
 
-static inline void* mp_write_ptr_lv_cache_class_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_cache_class_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_cache_class_t_type()));
     return (lv_cache_class_t*)self->data;
@@ -7663,7 +7663,7 @@ static inline void* mp_write_ptr_lv_cache_class_t(mp_obj_t self_in)
 
 #define mp_write_lv_cache_class_t(struct_obj) *((lv_cache_class_t*)mp_write_ptr_lv_cache_class_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_cache_class_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_cache_class_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_cache_class_t_type(), field);
 }
@@ -7766,7 +7766,7 @@ static mp_obj_t mp_funcptr_lv_cache_compare_cb_t(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_compare_cb_t_mpobj, 2, mp_funcptr_lv_cache_compare_cb_t, funcptr_lv_cache_compare_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_compare_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_compare_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_compare_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_compare_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7795,7 +7795,7 @@ static mp_obj_t mp_funcptr_lv_cache_create_cb_t(size_t mp_n_args, const mp_obj_t
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_create_cb_t_mpobj, 2, mp_funcptr_lv_cache_create_cb_t, funcptr_lv_cache_create_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_create_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_create_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_create_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_create_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7824,7 +7824,7 @@ static mp_obj_t mp_funcptr_lv_cache_free_cb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_cache_free_cb_t_mpobj, 2, mp_funcptr_lv_cache_free_cb_t, funcptr_lv_cache_free_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_cache_free_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_free_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_cache_free_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_cache_free_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -7840,7 +7840,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_cache_free_cb_t(void *func){ return mp_l
 
 static inline const mp_obj_type_t *get_mp_lv_cache_ops_t_type(void);
 
-static inline void* mp_write_ptr_lv_cache_ops_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_cache_ops_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_cache_ops_t_type()));
     return (lv_cache_ops_t*)self->data;
@@ -7848,7 +7848,7 @@ static inline void* mp_write_ptr_lv_cache_ops_t(mp_obj_t self_in)
 
 #define mp_write_lv_cache_ops_t(struct_obj) *((lv_cache_ops_t*)mp_write_ptr_lv_cache_ops_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_cache_ops_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_cache_ops_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_cache_ops_t_type(), field);
 }
@@ -7922,7 +7922,7 @@ static inline const mp_obj_type_t *get_mp_lv_cache_ops_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_cache_t_type(void);
 
-static inline void* mp_write_ptr_lv_cache_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_cache_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_cache_t_type()));
     return (lv_cache_t*)self->data;
@@ -7930,7 +7930,7 @@ static inline void* mp_write_ptr_lv_cache_t(mp_obj_t self_in)
 
 #define mp_write_lv_cache_t(struct_obj) *((lv_cache_t*)mp_write_ptr_lv_cache_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_cache_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_cache_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_cache_t_type(), field);
 }
@@ -8012,7 +8012,7 @@ static inline const mp_obj_type_t *get_mp_lv_cache_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_cache_entry_t_type(void);
 
-static inline void* mp_write_ptr_lv_cache_entry_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_cache_entry_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_cache_entry_t_type()));
     return (lv_cache_entry_t*)self->data;
@@ -8020,7 +8020,7 @@ static inline void* mp_write_ptr_lv_cache_entry_t(mp_obj_t self_in)
 
 #define mp_write_lv_cache_entry_t(struct_obj) *((lv_cache_entry_t*)mp_write_ptr_lv_cache_entry_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_cache_entry_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_cache_entry_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_cache_entry_t_type(), field);
 }
@@ -8096,7 +8096,7 @@ static inline const mp_obj_type_t *get_mp_lv_cache_entry_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_font_glyph_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_font_glyph_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_font_glyph_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_font_glyph_dsc_t_type()));
     return (lv_font_glyph_dsc_t*)self->data;
@@ -8104,7 +8104,7 @@ static inline void* mp_write_ptr_lv_font_glyph_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_font_glyph_dsc_t(struct_obj) *((lv_font_glyph_dsc_t*)mp_write_ptr_lv_font_glyph_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_font_glyph_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_font_glyph_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_font_glyph_dsc_t_type(), field);
 }
@@ -8211,7 +8211,7 @@ static mp_obj_t mp_funcptr_get_glyph_dsc(size_t mp_n_args, const mp_obj_t *mp_ar
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_get_glyph_dsc_mpobj, 4, mp_funcptr_get_glyph_dsc, funcptr_get_glyph_dsc);
     
-static inline mp_obj_t mp_lv_funcptr_get_glyph_dsc(void *func){ return mp_lv_funcptr(&mp_funcptr_get_glyph_dsc_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_get_glyph_dsc(void *func){ return mp_lv_funcptr(&mp_funcptr_get_glyph_dsc_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static bool lv_font_t_get_glyph_dsc_callback(const lv_font_t *, lv_font_glyph_dsc_t *, uint32_t letter, uint32_t letter_next);
 #define funcptr_get_glyph_bitmap NULL
@@ -8223,7 +8223,7 @@ static bool lv_font_t_get_glyph_dsc_callback(const lv_font_t *, lv_font_glyph_ds
 
 static inline const mp_obj_type_t *get_mp_lv_image_header_t_type(void);
 
-static inline void* mp_write_ptr_lv_image_header_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_image_header_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_image_header_t_type()));
     return (lv_image_header_t*)self->data;
@@ -8231,7 +8231,7 @@ static inline void* mp_write_ptr_lv_image_header_t(mp_obj_t self_in)
 
 #define mp_write_lv_image_header_t(struct_obj) *((lv_image_header_t*)mp_write_ptr_lv_image_header_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_image_header_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_image_header_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_image_header_t_type(), field);
 }
@@ -8326,7 +8326,7 @@ static mp_obj_t mp_funcptr_lv_draw_buf_malloc_cb_t(size_t mp_n_args, const mp_ob
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_buf_malloc_cb_t_mpobj, 2, mp_funcptr_lv_draw_buf_malloc_cb_t, funcptr_lv_draw_buf_malloc_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_malloc_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_malloc_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_malloc_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_malloc_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -8354,7 +8354,7 @@ static mp_obj_t mp_funcptr_lv_draw_buf_free_cb_t(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_buf_free_cb_t_mpobj, 1, mp_funcptr_lv_draw_buf_free_cb_t, funcptr_lv_draw_buf_free_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_free_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_free_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_free_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_free_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -8372,7 +8372,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_free_cb_t(void *func){ return m
 
 static inline const mp_obj_type_t *get_mp_lv_area_t_type(void);
 
-static inline void* mp_write_ptr_lv_area_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_area_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_area_t_type()));
     return (lv_area_t*)self->data;
@@ -8380,7 +8380,7 @@ static inline void* mp_write_ptr_lv_area_t(mp_obj_t self_in)
 
 #define mp_write_lv_area_t(struct_obj) *((lv_area_t*)mp_write_ptr_lv_area_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_area_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_area_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_area_t_type(), field);
 }
@@ -8469,7 +8469,7 @@ static mp_obj_t mp_funcptr_lv_draw_buf_copy_cb_t(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_buf_copy_cb_t_mpobj, 4, mp_funcptr_lv_draw_buf_copy_cb_t, funcptr_lv_draw_buf_copy_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_copy_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_copy_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_copy_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_copy_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -8498,7 +8498,7 @@ static mp_obj_t mp_funcptr_lv_draw_buf_align_cb_t(size_t mp_n_args, const mp_obj
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_buf_align_cb_t_mpobj, 2, mp_funcptr_lv_draw_buf_align_cb_t, funcptr_lv_draw_buf_align_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_align_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_align_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_align_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_align_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -8527,7 +8527,7 @@ static mp_obj_t mp_funcptr_lv_draw_buf_cache_operation_cb_t(size_t mp_n_args, co
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_buf_cache_operation_cb_t_mpobj, 2, mp_funcptr_lv_draw_buf_cache_operation_cb_t, funcptr_lv_draw_buf_cache_operation_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_cache_operation_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_cache_operation_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_cache_operation_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_cache_operation_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -8563,7 +8563,7 @@ static mp_obj_t mp_funcptr_lv_draw_buf_width_to_stride_cb_t(size_t mp_n_args, co
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_buf_width_to_stride_cb_t_mpobj, 2, mp_funcptr_lv_draw_buf_width_to_stride_cb_t, funcptr_lv_draw_buf_width_to_stride_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_width_to_stride_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_width_to_stride_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_width_to_stride_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_buf_width_to_stride_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -8579,7 +8579,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_draw_buf_width_to_stride_cb_t(void *func
 
 static inline const mp_obj_type_t *get_mp_lv_draw_buf_handlers_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_buf_handlers_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_buf_handlers_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_buf_handlers_t_type()));
     return (lv_draw_buf_handlers_t*)self->data;
@@ -8587,7 +8587,7 @@ static inline void* mp_write_ptr_lv_draw_buf_handlers_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_buf_handlers_t(struct_obj) *((lv_draw_buf_handlers_t*)mp_write_ptr_lv_draw_buf_handlers_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_buf_handlers_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_buf_handlers_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_buf_handlers_t_type(), field);
 }
@@ -8669,7 +8669,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_buf_handlers_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_buf_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_buf_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_buf_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_buf_t_type()));
     return (lv_draw_buf_t*)self->data;
@@ -8677,7 +8677,7 @@ static inline void* mp_write_ptr_lv_draw_buf_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_buf_t(struct_obj) *((lv_draw_buf_t*)mp_write_ptr_lv_draw_buf_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_buf_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_buf_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_buf_t_type(), field);
 }
@@ -8766,7 +8766,7 @@ static mp_obj_t mp_funcptr_get_glyph_bitmap(size_t mp_n_args, const mp_obj_t *mp
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_get_glyph_bitmap_mpobj, 2, mp_funcptr_get_glyph_bitmap, funcptr_get_glyph_bitmap);
     
-static inline mp_obj_t mp_lv_funcptr_get_glyph_bitmap(void *func){ return mp_lv_funcptr(&mp_funcptr_get_glyph_bitmap_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_get_glyph_bitmap(void *func){ return mp_lv_funcptr(&mp_funcptr_get_glyph_bitmap_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -8795,7 +8795,7 @@ static mp_obj_t mp_funcptr_release_glyph(size_t mp_n_args, const mp_obj_t *mp_ar
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_release_glyph_mpobj, 2, mp_funcptr_release_glyph, funcptr_release_glyph);
     
-static inline mp_obj_t mp_lv_funcptr_release_glyph(void *func){ return mp_lv_funcptr(&mp_funcptr_release_glyph_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_release_glyph(void *func){ return mp_lv_funcptr(&mp_funcptr_release_glyph_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_font_t_release_glyph_callback(const lv_font_t *, lv_font_glyph_dsc_t *);
 
@@ -8805,7 +8805,7 @@ static void lv_font_t_release_glyph_callback(const lv_font_t *, lv_font_glyph_ds
 
 static inline const mp_obj_type_t *get_mp_lv_font_t_type(void);
 
-static inline void* mp_write_ptr_lv_font_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_font_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_font_t_type()));
     return (lv_font_t*)self->data;
@@ -8813,7 +8813,7 @@ static inline void* mp_write_ptr_lv_font_t(mp_obj_t self_in)
 
 #define mp_write_lv_font_t(struct_obj) *((lv_font_t*)mp_write_ptr_lv_font_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_font_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_font_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_font_t_type(), field);
 }
@@ -9073,7 +9073,7 @@ static mp_obj_t mp_funcptr_lv_color_filter_cb_t(size_t mp_n_args, const mp_obj_t
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_color_filter_cb_t_mpobj, 3, mp_funcptr_lv_color_filter_cb_t, funcptr_lv_color_filter_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_color_filter_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_color_filter_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_color_filter_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_color_filter_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_color_t lv_color_filter_dsc_t_filter_cb_callback(const struct _lv_color_filter_dsc_t *, lv_color_t, lv_opa_t);
 
@@ -9083,7 +9083,7 @@ static lv_color_t lv_color_filter_dsc_t_filter_cb_callback(const struct _lv_colo
 
 static inline const mp_obj_type_t *get_mp_lv_color_filter_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_color_filter_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_color_filter_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_color_filter_dsc_t_type()));
     return (lv_color_filter_dsc_t*)self->data;
@@ -9091,7 +9091,7 @@ static inline void* mp_write_ptr_lv_color_filter_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_color_filter_dsc_t(struct_obj) *((lv_color_filter_dsc_t*)mp_write_ptr_lv_color_filter_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_color_filter_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_color_filter_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_color_filter_dsc_t_type(), field);
 }
@@ -9206,7 +9206,7 @@ static mp_obj_t mp_funcptr_lv_anim_exec_xcb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_anim_exec_xcb_t_mpobj, 2, mp_funcptr_lv_anim_exec_xcb_t, funcptr_lv_anim_exec_xcb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_anim_exec_xcb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_exec_xcb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_anim_exec_xcb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_exec_xcb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -9235,7 +9235,7 @@ static mp_obj_t mp_funcptr_lv_anim_custom_exec_cb_t(size_t mp_n_args, const mp_o
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_anim_custom_exec_cb_t_mpobj, 2, mp_funcptr_lv_anim_custom_exec_cb_t, funcptr_lv_anim_custom_exec_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_anim_custom_exec_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_custom_exec_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_anim_custom_exec_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_custom_exec_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_anim_t_custom_exec_cb_callback(lv_anim_t *, int32_t);
 #define funcptr_lv_anim_start_cb_t NULL
@@ -9257,7 +9257,7 @@ static mp_obj_t mp_funcptr_lv_anim_start_cb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_anim_start_cb_t_mpobj, 1, mp_funcptr_lv_anim_start_cb_t, funcptr_lv_anim_start_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_anim_start_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_start_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_anim_start_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_start_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_anim_t_start_cb_callback(lv_anim_t *);
 static void lv_anim_t_completed_cb_callback(lv_anim_t *);
@@ -9281,7 +9281,7 @@ static mp_obj_t mp_funcptr_lv_anim_get_value_cb_t(size_t mp_n_args, const mp_obj
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_anim_get_value_cb_t_mpobj, 1, mp_funcptr_lv_anim_get_value_cb_t, funcptr_lv_anim_get_value_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_anim_get_value_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_get_value_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_anim_get_value_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_anim_get_value_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static int32_t lv_anim_t_get_value_cb_callback(lv_anim_t *);
 static int32_t lv_anim_t_path_cb_callback(const lv_anim_t *);
@@ -9293,7 +9293,7 @@ typedef __typeof__( ((lv_anim_t*)(0))->parameter ) lv_anim_parameter_t;
 
 static inline const mp_obj_type_t *get_mp_lv_anim_bezier3_para_t_type(void);
 
-static inline void* mp_write_ptr_lv_anim_bezier3_para_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_anim_bezier3_para_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_anim_bezier3_para_t_type()));
     return (lv_anim_bezier3_para_t*)self->data;
@@ -9301,7 +9301,7 @@ static inline void* mp_write_ptr_lv_anim_bezier3_para_t(mp_obj_t self_in)
 
 #define mp_write_lv_anim_bezier3_para_t(struct_obj) *((lv_anim_bezier3_para_t*)mp_write_ptr_lv_anim_bezier3_para_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_anim_bezier3_para_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_anim_bezier3_para_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_anim_bezier3_para_t_type(), field);
 }
@@ -9377,7 +9377,7 @@ static inline const mp_obj_type_t *get_mp_lv_anim_bezier3_para_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_anim_parameter_t_type(void);
 
-static inline void* mp_write_ptr_lv_anim_parameter_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_anim_parameter_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_anim_parameter_t_type()));
     return (lv_anim_parameter_t*)self->data;
@@ -9385,7 +9385,7 @@ static inline void* mp_write_ptr_lv_anim_parameter_t(mp_obj_t self_in)
 
 #define mp_write_lv_anim_parameter_t(struct_obj) *((lv_anim_parameter_t*)mp_write_ptr_lv_anim_parameter_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_anim_parameter_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_anim_parameter_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_anim_parameter_t_type(), field);
 }
@@ -9455,7 +9455,7 @@ static inline const mp_obj_type_t *get_mp_lv_anim_parameter_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_anim_t_type(void);
 
-static inline void* mp_write_ptr_lv_anim_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_anim_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_anim_t_type()));
     return (lv_anim_t*)self->data;
@@ -9463,7 +9463,7 @@ static inline void* mp_write_ptr_lv_anim_t(mp_obj_t self_in)
 
 #define mp_write_lv_anim_t(struct_obj) *((lv_anim_t*)mp_write_ptr_lv_anim_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_anim_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_anim_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_anim_t_type(), field);
 }
@@ -9628,7 +9628,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_get_style_anim_duration_mpobj, 2
 
 static inline const mp_obj_type_t *get_mp_lv_style_transition_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_style_transition_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_style_transition_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_style_transition_dsc_t_type()));
     return (lv_style_transition_dsc_t*)self->data;
@@ -9636,7 +9636,7 @@ static inline void* mp_write_ptr_lv_style_transition_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_style_transition_dsc_t(struct_obj) *((lv_style_transition_dsc_t*)mp_write_ptr_lv_style_transition_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_style_transition_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_style_transition_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_style_transition_dsc_t_type(), field);
 }
@@ -10284,7 +10284,7 @@ static mp_obj_t mp_funcptr_lv_display_flush_cb_t(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_display_flush_cb_t_mpobj, 3, mp_funcptr_lv_display_flush_cb_t, funcptr_lv_display_flush_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_display_flush_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_display_flush_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_display_flush_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_display_flush_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_display_t_flush_cb_callback(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map);
 #define funcptr_lv_display_flush_wait_cb_t NULL
@@ -10306,7 +10306,7 @@ static mp_obj_t mp_funcptr_lv_display_flush_wait_cb_t(size_t mp_n_args, const mp
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_display_flush_wait_cb_t_mpobj, 1, mp_funcptr_lv_display_flush_wait_cb_t, funcptr_lv_display_flush_wait_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_display_flush_wait_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_display_flush_wait_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_display_flush_wait_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_display_flush_wait_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_display_t_flush_wait_cb_callback(lv_display_t *disp);
 
@@ -10376,7 +10376,7 @@ GENMPY_UNUSED static mp_obj_t mp_arr_from_uint8_t___32__(uint8_t *arr)
 
 static inline const mp_obj_type_t *get_mp_lv_ll_t_type(void);
 
-static inline void* mp_write_ptr_lv_ll_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_ll_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_ll_t_type()));
     return (lv_ll_t*)self->data;
@@ -10384,7 +10384,7 @@ static inline void* mp_write_ptr_lv_ll_t(mp_obj_t self_in)
 
 #define mp_write_lv_ll_t(struct_obj) *((lv_ll_t*)mp_write_ptr_lv_ll_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_ll_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_ll_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_ll_t_type(), field);
 }
@@ -10471,7 +10471,7 @@ static mp_obj_t mp_funcptr_dispatch_cb(size_t mp_n_args, const mp_obj_t *mp_args
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_dispatch_cb_mpobj, 2, mp_funcptr_dispatch_cb, funcptr_dispatch_cb);
     
-static inline mp_obj_t mp_lv_funcptr_dispatch_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dispatch_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_dispatch_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dispatch_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -10500,7 +10500,7 @@ static mp_obj_t mp_funcptr_evaluate_cb(size_t mp_n_args, const mp_obj_t *mp_args
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_evaluate_cb_mpobj, 2, mp_funcptr_evaluate_cb, funcptr_evaluate_cb);
     
-static inline mp_obj_t mp_lv_funcptr_evaluate_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_evaluate_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_evaluate_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_evaluate_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -10528,7 +10528,7 @@ static mp_obj_t mp_funcptr_wait_for_finish_cb(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_wait_for_finish_cb_mpobj, 1, mp_funcptr_wait_for_finish_cb, funcptr_wait_for_finish_cb);
     
-static inline mp_obj_t mp_lv_funcptr_wait_for_finish_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_wait_for_finish_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_wait_for_finish_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_wait_for_finish_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -10553,7 +10553,7 @@ static inline mp_obj_t mp_lv_funcptr_wait_for_finish_cb(void *func){ return mp_l
 
 static inline const mp_obj_type_t *get_mp_lv_event_t_type(void);
 
-static inline void* mp_write_ptr_lv_event_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_event_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_event_t_type()));
     return (lv_event_t*)self->data;
@@ -10561,7 +10561,7 @@ static inline void* mp_write_ptr_lv_event_t(mp_obj_t self_in)
 
 #define mp_write_lv_event_t(struct_obj) *((lv_event_t*)mp_write_ptr_lv_event_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_event_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_event_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_event_t_type(), field);
 }
@@ -10659,7 +10659,7 @@ static mp_obj_t mp_funcptr_event_cb(size_t mp_n_args, const mp_obj_t *mp_args, v
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_event_cb_mpobj, 1, mp_funcptr_event_cb, funcptr_event_cb);
     
-static inline mp_obj_t mp_lv_funcptr_event_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_event_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_event_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_event_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -10675,7 +10675,7 @@ static inline mp_obj_t mp_lv_funcptr_event_cb(void *func){ return mp_lv_funcptr(
 
 static inline const mp_obj_type_t *get_mp_lv_draw_unit_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_unit_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_unit_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_unit_t_type()));
     return (lv_draw_unit_t*)self->data;
@@ -10683,7 +10683,7 @@ static inline void* mp_write_ptr_lv_draw_unit_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_unit_t(struct_obj) *((lv_draw_unit_t*)mp_write_ptr_lv_draw_unit_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_unit_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_unit_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_unit_t_type(), field);
 }
@@ -10767,7 +10767,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_unit_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_task_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_task_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_task_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_task_t_type()));
     return (lv_draw_task_t*)self->data;
@@ -10775,7 +10775,7 @@ static inline void* mp_write_ptr_lv_draw_task_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_task_t(struct_obj) *((lv_draw_task_t*)mp_write_ptr_lv_draw_task_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_task_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_task_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_task_t_type(), field);
 }
@@ -10869,7 +10869,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_task_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_color32_t_type(void);
 
-static inline void* mp_write_ptr_lv_color32_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_color32_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_color32_t_type()));
     return (lv_color32_t*)self->data;
@@ -10877,7 +10877,7 @@ static inline void* mp_write_ptr_lv_color32_t(mp_obj_t self_in)
 
 #define mp_write_lv_color32_t(struct_obj) *((lv_color32_t*)mp_write_ptr_lv_color32_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_color32_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_color32_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_color32_t_type(), field);
 }
@@ -10953,7 +10953,7 @@ static inline const mp_obj_type_t *get_mp_lv_color32_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_layer_t_type(void);
 
-static inline void* mp_write_ptr_lv_layer_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_layer_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_layer_t_type()));
     return (lv_layer_t*)self->data;
@@ -10961,7 +10961,7 @@ static inline void* mp_write_ptr_lv_layer_t(mp_obj_t self_in)
 
 #define mp_write_lv_layer_t(struct_obj) *((lv_layer_t*)mp_write_ptr_lv_layer_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_layer_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_layer_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_layer_t_type(), field);
 }
@@ -11068,7 +11068,7 @@ static mp_obj_t mp_funcptr_layer_init(size_t mp_n_args, const mp_obj_t *mp_args,
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_layer_init_mpobj, 2, mp_funcptr_layer_init, funcptr_layer_init);
     
-static inline mp_obj_t mp_lv_funcptr_layer_init(void *func){ return mp_lv_funcptr(&mp_funcptr_layer_init_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_layer_init(void *func){ return mp_lv_funcptr(&mp_funcptr_layer_init_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_display_t_layer_init_callback(lv_display_t *disp, lv_layer_t *layer);
 static void lv_display_t_layer_deinit_callback(lv_display_t *disp, lv_layer_t *layer);
@@ -11079,7 +11079,7 @@ static void lv_display_t_layer_deinit_callback(lv_display_t *disp, lv_layer_t *l
 
 static inline const mp_obj_type_t *get_mp_lv_array_t_type(void);
 
-static inline void* mp_write_ptr_lv_array_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_array_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_array_t_type()));
     return (lv_array_t*)self->data;
@@ -11087,7 +11087,7 @@ static inline void* mp_write_ptr_lv_array_t(mp_obj_t self_in)
 
 #define mp_write_lv_array_t(struct_obj) *((lv_array_t*)mp_write_ptr_lv_array_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_array_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_array_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_array_t_type(), field);
 }
@@ -11165,7 +11165,7 @@ static inline const mp_obj_type_t *get_mp_lv_array_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_event_list_t_type(void);
 
-static inline void* mp_write_ptr_lv_event_list_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_event_list_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_event_list_t_type()));
     return (lv_event_list_t*)self->data;
@@ -11173,7 +11173,7 @@ static inline void* mp_write_ptr_lv_event_list_t(mp_obj_t self_in)
 
 #define mp_write_lv_event_list_t(struct_obj) *((lv_event_list_t*)mp_write_ptr_lv_event_list_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_event_list_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_event_list_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_event_list_t_type(), field);
 }
@@ -11260,7 +11260,7 @@ static mp_obj_t mp_funcptr_lv_theme_apply_cb_t(size_t mp_n_args, const mp_obj_t 
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_theme_apply_cb_t_mpobj, 2, mp_funcptr_lv_theme_apply_cb_t, funcptr_lv_theme_apply_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_theme_apply_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_theme_apply_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_theme_apply_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_theme_apply_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_theme_t_apply_cb_callback(lv_theme_t *, lv_obj_t *);
 
@@ -11270,7 +11270,7 @@ static void lv_theme_t_apply_cb_callback(lv_theme_t *, lv_obj_t *);
 
 static inline const mp_obj_type_t *get_mp_lv_theme_t_type(void);
 
-static inline void* mp_write_ptr_lv_theme_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_theme_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_theme_t_type()));
     return (lv_theme_t*)self->data;
@@ -11278,7 +11278,7 @@ static inline void* mp_write_ptr_lv_theme_t(mp_obj_t self_in)
 
 #define mp_write_lv_theme_t(struct_obj) *((lv_theme_t*)mp_write_ptr_lv_theme_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_theme_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_theme_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_theme_t_type(), field);
 }
@@ -11378,7 +11378,7 @@ static mp_obj_t mp_funcptr_lv_timer_cb_t(size_t mp_n_args, const mp_obj_t *mp_ar
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_timer_cb_t_mpobj, 1, mp_funcptr_lv_timer_cb_t, funcptr_lv_timer_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_timer_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_timer_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_timer_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_timer_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_timer_t_timer_cb_callback(lv_timer_t *);
 
@@ -11388,7 +11388,7 @@ static void lv_timer_t_timer_cb_callback(lv_timer_t *);
 
 static inline const mp_obj_type_t *get_mp_lv_timer_t_type(void);
 
-static inline void* mp_write_ptr_lv_timer_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_timer_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_timer_t_type()));
     return (lv_timer_t*)self->data;
@@ -11396,7 +11396,7 @@ static inline void* mp_write_ptr_lv_timer_t(mp_obj_t self_in)
 
 #define mp_write_lv_timer_t(struct_obj) *((lv_timer_t*)mp_write_ptr_lv_timer_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_timer_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_timer_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_timer_t_type(), field);
 }
@@ -11478,7 +11478,7 @@ static inline const mp_obj_type_t *get_mp_lv_timer_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_display_t_type(void);
 
-static inline void* mp_write_ptr_lv_display_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_display_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_display_t_type()));
     return (lv_display_t*)self->data;
@@ -11486,7 +11486,7 @@ static inline void* mp_write_ptr_lv_display_t(mp_obj_t self_in)
 
 #define mp_write_lv_display_t(struct_obj) *((lv_display_t*)mp_write_ptr_lv_display_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_display_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_display_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_display_t_type(), field);
 }
@@ -11712,7 +11712,7 @@ static mp_obj_t mp_funcptr_constructor_cb(size_t mp_n_args, const mp_obj_t *mp_a
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_constructor_cb_mpobj, 2, mp_funcptr_constructor_cb, funcptr_constructor_cb);
     
-static inline mp_obj_t mp_lv_funcptr_constructor_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_constructor_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_constructor_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_constructor_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_obj_class_t_constructor_cb_callback(const lv_obj_class_t *class_p, lv_obj_t *obj);
 static void lv_obj_class_t_destructor_cb_callback(const lv_obj_class_t *class_p, lv_obj_t *obj);
@@ -11736,7 +11736,7 @@ static mp_obj_t mp_funcptr_event_cb_1(size_t mp_n_args, const mp_obj_t *mp_args,
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_event_cb_1_mpobj, 2, mp_funcptr_event_cb_1, funcptr_event_cb_1);
     
-static inline mp_obj_t mp_lv_funcptr_event_cb_1(void *func){ return mp_lv_funcptr(&mp_funcptr_event_cb_1_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_event_cb_1(void *func){ return mp_lv_funcptr(&mp_funcptr_event_cb_1_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_obj_class_t_event_cb_callback(const lv_obj_class_t *class_p, lv_event_t *e);
 
@@ -11746,7 +11746,7 @@ static void lv_obj_class_t_event_cb_callback(const lv_obj_class_t *class_p, lv_e
 
 static inline const mp_obj_type_t *get_mp_lv_obj_class_t_type(void);
 
-static inline void* mp_write_ptr_lv_obj_class_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_obj_class_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_obj_class_t_type()));
     return (lv_obj_class_t*)self->data;
@@ -11754,7 +11754,7 @@ static inline void* mp_write_ptr_lv_obj_class_t(mp_obj_t self_in)
 
 #define mp_write_lv_obj_class_t(struct_obj) *((lv_obj_class_t*)mp_write_ptr_lv_obj_class_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_obj_class_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_obj_class_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_obj_class_t_type(), field);
 }
@@ -12153,7 +12153,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_center_mpobj, 1, mp_lv_obj_move_
 
 static inline const mp_obj_type_t *get_mp_lv_matrix_t_type(void);
 
-static inline void* mp_write_ptr_lv_matrix_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_matrix_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_matrix_t_type()));
     return (lv_matrix_t*)self->data;
@@ -12161,7 +12161,7 @@ static inline void* mp_write_ptr_lv_matrix_t(mp_obj_t self_in)
 
 #define mp_write_lv_matrix_t(struct_obj) *((lv_matrix_t*)mp_write_ptr_lv_matrix_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_matrix_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_matrix_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_matrix_t_type(), field);
 }
@@ -12865,7 +12865,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_readjust_scroll_mpobj, 2, mp_lv_
 
 static inline const mp_obj_type_t *get_mp_lv_style_t_type(void);
 
-static inline void* mp_write_ptr_lv_style_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_style_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_style_t_type()));
     return (lv_style_t*)self->data;
@@ -12873,7 +12873,7 @@ static inline void* mp_write_ptr_lv_style_t(mp_obj_t self_in)
 
 #define mp_write_lv_style_t(struct_obj) *((lv_style_t*)mp_write_ptr_lv_style_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_style_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_style_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_style_t_type(), field);
 }
@@ -13104,7 +13104,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_obj_enable_style_refresh_mpob
 
 static inline const mp_obj_type_t *get_mp_lv_style_value_t_type(void);
 
-static inline void* mp_write_ptr_lv_style_value_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_style_value_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_style_value_t_type()));
     return (lv_style_value_t*)self->data;
@@ -13112,7 +13112,7 @@ static inline void* mp_write_ptr_lv_style_value_t(mp_obj_t self_in)
 
 #define mp_write_lv_style_value_t(struct_obj) *((lv_style_value_t*)mp_write_ptr_lv_style_value_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_style_value_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_style_value_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_style_value_t_type(), field);
 }
@@ -14272,7 +14272,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_get_style_recolor_recursive_mpob
 
 static inline const mp_obj_type_t *get_mp_lv_subject_value_t_type(void);
 
-static inline void* mp_write_ptr_lv_subject_value_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_subject_value_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_subject_value_t_type()));
     return (lv_subject_value_t*)self->data;
@@ -14280,7 +14280,7 @@ static inline void* mp_write_ptr_lv_subject_value_t(mp_obj_t self_in)
 
 #define mp_write_lv_subject_value_t(struct_obj) *((lv_subject_value_t*)mp_write_ptr_lv_subject_value_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_subject_value_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_subject_value_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_subject_value_t_type(), field);
 }
@@ -14354,7 +14354,7 @@ static inline const mp_obj_type_t *get_mp_lv_subject_value_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_subject_t_type(void);
 
-static inline void* mp_write_ptr_lv_subject_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_subject_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_subject_t_type()));
     return (lv_subject_t*)self->data;
@@ -14362,7 +14362,7 @@ static inline void* mp_write_ptr_lv_subject_t(mp_obj_t self_in)
 
 #define mp_write_lv_subject_t(struct_obj) *((lv_subject_t*)mp_write_ptr_lv_subject_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_subject_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_subject_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_subject_t_type(), field);
 }
@@ -14461,7 +14461,7 @@ static mp_obj_t mp_funcptr_lv_observer_cb_t(size_t mp_n_args, const mp_obj_t *mp
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_observer_cb_t_mpobj, 2, mp_funcptr_lv_observer_cb_t, funcptr_lv_observer_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_observer_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_observer_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_observer_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_observer_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_observer_t_cb_callback(lv_observer_t *observer, lv_subject_t *subject);
 
@@ -14471,7 +14471,7 @@ static void lv_observer_t_cb_callback(lv_observer_t *observer, lv_subject_t *sub
 
 static inline const mp_obj_type_t *get_mp_lv_observer_t_type(void);
 
-static inline void* mp_write_ptr_lv_observer_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_observer_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_observer_t_type()));
     return (lv_observer_t*)self->data;
@@ -14479,7 +14479,7 @@ static inline void* mp_write_ptr_lv_observer_t(mp_obj_t self_in)
 
 #define mp_write_lv_observer_t(struct_obj) *((lv_observer_t*)mp_write_ptr_lv_observer_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_observer_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_observer_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_observer_t_type(), field);
 }
@@ -14602,7 +14602,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_bind_style_prop_mpobj, 4, mp_lv_
 
 static inline const mp_obj_type_t *get_mp_lv_draw_dsc_base_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_dsc_base_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_dsc_base_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_dsc_base_t_type()));
     return (lv_draw_dsc_base_t*)self->data;
@@ -14610,7 +14610,7 @@ static inline void* mp_write_ptr_lv_draw_dsc_base_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_dsc_base_t(struct_obj) *((lv_draw_dsc_base_t*)mp_write_ptr_lv_draw_dsc_base_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_dsc_base_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_dsc_base_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_dsc_base_t_type(), field);
 }
@@ -14704,7 +14704,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_dsc_base_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_rect_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_rect_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_rect_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_rect_dsc_t_type()));
     return (lv_draw_rect_dsc_t*)self->data;
@@ -14712,7 +14712,7 @@ static inline void* mp_write_ptr_lv_draw_rect_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_rect_dsc_t(struct_obj) *((lv_draw_rect_dsc_t*)mp_write_ptr_lv_draw_rect_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_rect_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_rect_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_rect_dsc_t_type(), field);
 }
@@ -14853,7 +14853,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_init_draw_rect_dsc_mpobj, 3, mp_
 
 static inline const mp_obj_type_t *get_mp_lv_draw_label_hint_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_label_hint_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_label_hint_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_label_hint_t_type()));
     return (lv_draw_label_hint_t*)self->data;
@@ -14861,7 +14861,7 @@ static inline void* mp_write_ptr_lv_draw_label_hint_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_label_hint_t(struct_obj) *((lv_draw_label_hint_t*)mp_write_ptr_lv_draw_label_hint_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_label_hint_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_label_hint_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_label_hint_t_type(), field);
 }
@@ -14935,7 +14935,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_label_hint_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_label_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_label_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_label_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_label_dsc_t_type()));
     return (lv_draw_label_dsc_t*)self->data;
@@ -14943,7 +14943,7 @@ static inline void* mp_write_ptr_lv_draw_label_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_label_dsc_t(struct_obj) *((lv_draw_label_dsc_t*)mp_write_ptr_lv_draw_label_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_label_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_label_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_label_dsc_t_type(), field);
 }
@@ -15084,7 +15084,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_init_draw_label_dsc_mpobj, 3, mp
 
 static inline const mp_obj_type_t *get_mp_lv_draw_image_sup_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_image_sup_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_image_sup_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_image_sup_t_type()));
     return (lv_draw_image_sup_t*)self->data;
@@ -15092,7 +15092,7 @@ static inline void* mp_write_ptr_lv_draw_image_sup_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_image_sup_t(struct_obj) *((lv_draw_image_sup_t*)mp_write_ptr_lv_draw_image_sup_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_image_sup_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_image_sup_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_image_sup_t_type(), field);
 }
@@ -15166,7 +15166,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_image_sup_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_image_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_image_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_image_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_image_dsc_t_type()));
     return (lv_image_dsc_t*)self->data;
@@ -15174,7 +15174,7 @@ static inline void* mp_write_ptr_lv_image_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_image_dsc_t(struct_obj) *((lv_image_dsc_t*)mp_write_ptr_lv_image_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_image_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_image_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_image_dsc_t_type(), field);
 }
@@ -15252,7 +15252,7 @@ static inline const mp_obj_type_t *get_mp_lv_image_dsc_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_image_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_image_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_image_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_image_dsc_t_type()));
     return (lv_draw_image_dsc_t*)self->data;
@@ -15260,7 +15260,7 @@ static inline void* mp_write_ptr_lv_draw_image_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_image_dsc_t(struct_obj) *((lv_draw_image_dsc_t*)mp_write_ptr_lv_draw_image_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_image_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_image_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_image_dsc_t_type(), field);
 }
@@ -15387,7 +15387,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_init_draw_image_dsc_mpobj, 3, mp
 
 static inline const mp_obj_type_t *get_mp_lv_point_precise_t_type(void);
 
-static inline void* mp_write_ptr_lv_point_precise_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_point_precise_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_point_precise_t_type()));
     return (lv_point_precise_t*)self->data;
@@ -15395,7 +15395,7 @@ static inline void* mp_write_ptr_lv_point_precise_t(mp_obj_t self_in)
 
 #define mp_write_lv_point_precise_t(struct_obj) *((lv_point_precise_t*)mp_write_ptr_lv_point_precise_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_point_precise_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_point_precise_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_point_precise_t_type(), field);
 }
@@ -15467,7 +15467,7 @@ static inline const mp_obj_type_t *get_mp_lv_point_precise_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_line_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_line_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_line_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_line_dsc_t_type()));
     return (lv_draw_line_dsc_t*)self->data;
@@ -15475,7 +15475,7 @@ static inline void* mp_write_ptr_lv_draw_line_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_line_dsc_t(struct_obj) *((lv_draw_line_dsc_t*)mp_write_ptr_lv_draw_line_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_line_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_line_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_line_dsc_t_type(), field);
 }
@@ -15588,7 +15588,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_init_draw_line_dsc_mpobj, 3, mp_
 
 static inline const mp_obj_type_t *get_mp_lv_draw_arc_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_arc_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_arc_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_arc_dsc_t_type()));
     return (lv_draw_arc_dsc_t*)self->data;
@@ -15596,7 +15596,7 @@ static inline void* mp_write_ptr_lv_draw_arc_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_arc_dsc_t(struct_obj) *((lv_draw_arc_dsc_t*)mp_write_ptr_lv_draw_arc_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_arc_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_arc_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_arc_dsc_t_type(), field);
 }
@@ -15703,7 +15703,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_init_draw_arc_dsc_mpobj, 3, mp_l
 
 static inline const mp_obj_type_t *get_mp_lv_draw_blur_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_blur_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_blur_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_blur_dsc_t_type()));
     return (lv_draw_blur_dsc_t*)self->data;
@@ -15711,7 +15711,7 @@ static inline void* mp_write_ptr_lv_draw_blur_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_blur_dsc_t(struct_obj) *((lv_draw_blur_dsc_t*)mp_write_ptr_lv_draw_blur_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_blur_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_blur_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_blur_dsc_t_type(), field);
 }
@@ -15894,7 +15894,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_event_base_mpobj, 2, mp_lv_obj_e
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_event_cb_t_mpobj, 1, mp_funcptr_event_cb, funcptr_lv_event_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_event_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_event_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_event_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_event_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -15910,7 +15910,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_event_cb_t(void *func){ return mp_lv_fun
 
 static inline const mp_obj_type_t *get_mp_lv_event_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_event_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_event_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_event_dsc_t_type()));
     return (lv_event_dsc_t*)self->data;
@@ -15918,7 +15918,7 @@ static inline void* mp_write_ptr_lv_event_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_event_dsc_t(struct_obj) *((lv_event_dsc_t*)mp_write_ptr_lv_event_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_event_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_event_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_event_dsc_t_type(), field);
 }
@@ -16362,7 +16362,7 @@ static mp_obj_t mp_funcptr_lv_group_focus_cb_t(size_t mp_n_args, const mp_obj_t 
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_group_focus_cb_t_mpobj, 1, mp_funcptr_lv_group_focus_cb_t, funcptr_lv_group_focus_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_group_focus_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_group_focus_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_group_focus_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_group_focus_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_group_t_focus_cb_callback(lv_group_t *);
 #define funcptr_lv_group_edge_cb_t NULL
@@ -16385,7 +16385,7 @@ static mp_obj_t mp_funcptr_lv_group_edge_cb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_group_edge_cb_t_mpobj, 2, mp_funcptr_lv_group_edge_cb_t, funcptr_lv_group_edge_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_group_edge_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_group_edge_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_group_edge_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_group_edge_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_group_t_edge_cb_callback(lv_group_t *, bool);
 
@@ -16395,7 +16395,7 @@ static void lv_group_t_edge_cb_callback(lv_group_t *, bool);
 
 static inline const mp_obj_type_t *get_mp_lv_group_t_type(void);
 
-static inline void* mp_write_ptr_lv_group_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_group_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_group_t_type()));
     return (lv_group_t*)self->data;
@@ -16403,7 +16403,7 @@ static inline void* mp_write_ptr_lv_group_t(mp_obj_t self_in)
 
 #define mp_write_lv_group_t(struct_obj) *((lv_group_t*)mp_write_ptr_lv_group_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_group_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_group_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_group_t_type(), field);
 }
@@ -16628,7 +16628,7 @@ static mp_obj_t mp_funcptr_lv_screen_create_cb_t(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_screen_create_cb_t_mpobj, 0, mp_funcptr_lv_screen_create_cb_t, funcptr_lv_screen_create_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_screen_create_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_screen_create_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_screen_create_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_screen_create_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -16659,7 +16659,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_add_screen_create_event_mpobj, 6
 
 static inline const mp_obj_type_t *get_mp_lv_anim_timeline_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_anim_timeline_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_anim_timeline_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_anim_timeline_dsc_t_type()));
     return (lv_anim_timeline_dsc_t*)self->data;
@@ -16667,7 +16667,7 @@ static inline void* mp_write_ptr_lv_anim_timeline_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_anim_timeline_dsc_t(struct_obj) *((lv_anim_timeline_dsc_t*)mp_write_ptr_lv_anim_timeline_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_anim_timeline_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_anim_timeline_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_anim_timeline_dsc_t_type(), field);
 }
@@ -16743,7 +16743,7 @@ static inline const mp_obj_type_t *get_mp_lv_anim_timeline_dsc_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_anim_timeline_t_type(void);
 
-static inline void* mp_write_ptr_lv_anim_timeline_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_anim_timeline_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_anim_timeline_t_type()));
     return (lv_anim_timeline_t*)self->data;
@@ -16751,7 +16751,7 @@ static inline void* mp_write_ptr_lv_anim_timeline_t(mp_obj_t self_in)
 
 #define mp_write_lv_anim_timeline_t(struct_obj) *((lv_anim_timeline_t*)mp_write_ptr_lv_anim_timeline_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_anim_timeline_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_anim_timeline_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_anim_timeline_t_type(), field);
 }
@@ -16892,7 +16892,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_remove_from_subject_mpobj, 2, mp
 
 static inline const mp_obj_type_t *get_mp_lv_subject_increment_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_subject_increment_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_subject_increment_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_subject_increment_dsc_t_type()));
     return (lv_subject_increment_dsc_t*)self->data;
@@ -16900,7 +16900,7 @@ static inline void* mp_write_ptr_lv_subject_increment_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_subject_increment_dsc_t(struct_obj) *((lv_subject_increment_dsc_t*)mp_write_ptr_lv_subject_increment_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_subject_increment_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_subject_increment_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_subject_increment_dsc_t_type(), field);
 }
@@ -17229,7 +17229,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_obj_style_deinit_mpobj, 0, mp
 
 static inline const mp_obj_type_t *get_mp_lv_obj_style_transition_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_obj_style_transition_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_obj_style_transition_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_obj_style_transition_dsc_t_type()));
     return (lv_obj_style_transition_dsc_t*)self->data;
@@ -17237,7 +17237,7 @@ static inline void* mp_write_ptr_lv_obj_style_transition_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_obj_style_transition_dsc_t(struct_obj) *((lv_obj_style_transition_dsc_t*)mp_write_ptr_lv_obj_style_transition_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_obj_style_transition_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_obj_style_transition_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_obj_style_transition_dsc_t_type(), field);
 }
@@ -18045,7 +18045,7 @@ static mp_obj_t mp_funcptr_lv_image_decoder_info_f_t(size_t mp_n_args, const mp_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_image_decoder_info_f_t_mpobj, 3, mp_funcptr_lv_image_decoder_info_f_t, funcptr_lv_image_decoder_info_f_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_info_f_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_info_f_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_info_f_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_info_f_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_result_t lv_image_decoder_t_info_cb_callback(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc, lv_image_header_t *header);
 #define funcptr_lv_image_decoder_open_f_t NULL
@@ -18068,7 +18068,7 @@ static mp_obj_t mp_funcptr_lv_image_decoder_open_f_t(size_t mp_n_args, const mp_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_image_decoder_open_f_t_mpobj, 2, mp_funcptr_lv_image_decoder_open_f_t, funcptr_lv_image_decoder_open_f_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_open_f_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_open_f_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_open_f_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_open_f_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_result_t lv_image_decoder_t_open_cb_callback(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc);
 #define funcptr_lv_image_decoder_get_area_cb_t NULL
@@ -18093,7 +18093,7 @@ static mp_obj_t mp_funcptr_lv_image_decoder_get_area_cb_t(size_t mp_n_args, cons
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_image_decoder_get_area_cb_t_mpobj, 4, mp_funcptr_lv_image_decoder_get_area_cb_t, funcptr_lv_image_decoder_get_area_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_get_area_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_get_area_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_get_area_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_get_area_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_result_t lv_image_decoder_t_get_area_cb_callback(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc, const lv_area_t *full_area, lv_area_t *decoded_area);
 #define funcptr_lv_image_decoder_close_f_t NULL
@@ -18116,7 +18116,7 @@ static mp_obj_t mp_funcptr_lv_image_decoder_close_f_t(size_t mp_n_args, const mp
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_image_decoder_close_f_t_mpobj, 2, mp_funcptr_lv_image_decoder_close_f_t, funcptr_lv_image_decoder_close_f_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_close_f_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_close_f_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_close_f_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_close_f_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_image_decoder_t_close_cb_callback(lv_image_decoder_t *decoder, lv_image_decoder_dsc_t *dsc);
 #define funcptr_lv_image_decoder_custom_draw_t NULL
@@ -18142,7 +18142,7 @@ static mp_obj_t mp_funcptr_lv_image_decoder_custom_draw_t(size_t mp_n_args, cons
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_image_decoder_custom_draw_t_mpobj, 5, mp_funcptr_lv_image_decoder_custom_draw_t, funcptr_lv_image_decoder_custom_draw_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_custom_draw_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_custom_draw_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_custom_draw_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_image_decoder_custom_draw_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -18158,7 +18158,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_image_decoder_custom_draw_t(void *func){
 
 static inline const mp_obj_type_t *get_mp_lv_image_decoder_t_type(void);
 
-static inline void* mp_write_ptr_lv_image_decoder_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_image_decoder_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_image_decoder_t_type()));
     return (lv_image_decoder_t*)self->data;
@@ -18166,7 +18166,7 @@ static inline void* mp_write_ptr_lv_image_decoder_t(mp_obj_t self_in)
 
 #define mp_write_lv_image_decoder_t(struct_obj) *((lv_image_decoder_t*)mp_write_ptr_lv_image_decoder_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_image_decoder_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_image_decoder_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_image_decoder_t_type(), field);
 }
@@ -18248,7 +18248,7 @@ static inline const mp_obj_type_t *get_mp_lv_image_decoder_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_image_decoder_args_t_type(void);
 
-static inline void* mp_write_ptr_lv_image_decoder_args_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_image_decoder_args_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_image_decoder_args_t_type()));
     return (lv_image_decoder_args_t*)self->data;
@@ -18256,7 +18256,7 @@ static inline void* mp_write_ptr_lv_image_decoder_args_t(mp_obj_t self_in)
 
 #define mp_write_lv_image_decoder_args_t(struct_obj) *((lv_image_decoder_args_t*)mp_write_ptr_lv_image_decoder_args_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_image_decoder_args_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_image_decoder_args_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_image_decoder_args_t_type(), field);
 }
@@ -18346,7 +18346,7 @@ static mp_obj_t mp_funcptr_ready_cb(size_t mp_n_args, const mp_obj_t *mp_args, v
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_ready_cb_mpobj, 1, mp_funcptr_ready_cb, funcptr_ready_cb);
     
-static inline mp_obj_t mp_lv_funcptr_ready_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_ready_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_ready_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_ready_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static bool lv_fs_drv_t_ready_cb_callback(lv_fs_drv_t *drv);
 #define funcptr_remove_cb NULL
@@ -18368,7 +18368,7 @@ static mp_obj_t mp_funcptr_remove_cb(size_t mp_n_args, const mp_obj_t *mp_args, 
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_remove_cb_mpobj, 1, mp_funcptr_remove_cb, funcptr_remove_cb);
     
-static inline mp_obj_t mp_lv_funcptr_remove_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_remove_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_remove_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_remove_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_fs_drv_t_remove_cb_callback(lv_fs_drv_t *drv);
 #define funcptr_open_cb NULL
@@ -18392,7 +18392,7 @@ static mp_obj_t mp_funcptr_open_cb(size_t mp_n_args, const mp_obj_t *mp_args, vo
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_open_cb_mpobj, 3, mp_funcptr_open_cb, funcptr_open_cb);
     
-static inline mp_obj_t mp_lv_funcptr_open_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_open_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_open_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_open_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void * lv_fs_drv_t_open_cb_callback(lv_fs_drv_t *drv, const char *path, lv_fs_mode_t mode);
 #define funcptr_close_cb NULL
@@ -18415,7 +18415,7 @@ static mp_obj_t mp_funcptr_close_cb(size_t mp_n_args, const mp_obj_t *mp_args, v
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_close_cb_mpobj, 2, mp_funcptr_close_cb, funcptr_close_cb);
     
-static inline mp_obj_t mp_lv_funcptr_close_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_close_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_close_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_close_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_fs_res_t lv_fs_drv_t_close_cb_callback(lv_fs_drv_t *drv, void *file_p);
 #define funcptr_read_cb NULL
@@ -18441,7 +18441,7 @@ static mp_obj_t mp_funcptr_read_cb(size_t mp_n_args, const mp_obj_t *mp_args, vo
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_read_cb_mpobj, 5, mp_funcptr_read_cb, funcptr_read_cb);
     
-static inline mp_obj_t mp_lv_funcptr_read_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_read_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_read_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_read_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_fs_res_t lv_fs_drv_t_read_cb_callback(lv_fs_drv_t *drv, void *file_p, void *buf, uint32_t btr, uint32_t *br);
 #define funcptr_write_cb NULL
@@ -18467,7 +18467,7 @@ static mp_obj_t mp_funcptr_write_cb(size_t mp_n_args, const mp_obj_t *mp_args, v
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_write_cb_mpobj, 5, mp_funcptr_write_cb, funcptr_write_cb);
     
-static inline mp_obj_t mp_lv_funcptr_write_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_write_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_write_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_write_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_fs_res_t lv_fs_drv_t_write_cb_callback(lv_fs_drv_t *drv, void *file_p, const void *buf, uint32_t btw, uint32_t *bw);
 #define funcptr_seek_cb NULL
@@ -18492,7 +18492,7 @@ static mp_obj_t mp_funcptr_seek_cb(size_t mp_n_args, const mp_obj_t *mp_args, vo
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_seek_cb_mpobj, 4, mp_funcptr_seek_cb, funcptr_seek_cb);
     
-static inline mp_obj_t mp_lv_funcptr_seek_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_seek_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_seek_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_seek_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_fs_res_t lv_fs_drv_t_seek_cb_callback(lv_fs_drv_t *drv, void *file_p, uint32_t pos, lv_fs_whence_t whence);
 #define funcptr_tell_cb NULL
@@ -18516,7 +18516,7 @@ static mp_obj_t mp_funcptr_tell_cb(size_t mp_n_args, const mp_obj_t *mp_args, vo
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_tell_cb_mpobj, 3, mp_funcptr_tell_cb, funcptr_tell_cb);
     
-static inline mp_obj_t mp_lv_funcptr_tell_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_tell_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_tell_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_tell_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_fs_res_t lv_fs_drv_t_tell_cb_callback(lv_fs_drv_t *drv, void *file_p, uint32_t *pos_p);
 #define funcptr_dir_open_cb NULL
@@ -18539,7 +18539,7 @@ static mp_obj_t mp_funcptr_dir_open_cb(size_t mp_n_args, const mp_obj_t *mp_args
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_dir_open_cb_mpobj, 2, mp_funcptr_dir_open_cb, funcptr_dir_open_cb);
     
-static inline mp_obj_t mp_lv_funcptr_dir_open_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dir_open_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_dir_open_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dir_open_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void * lv_fs_drv_t_dir_open_cb_callback(lv_fs_drv_t *drv, const char *path);
 #define funcptr_dir_read_cb NULL
@@ -18564,7 +18564,7 @@ static mp_obj_t mp_funcptr_dir_read_cb(size_t mp_n_args, const mp_obj_t *mp_args
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_dir_read_cb_mpobj, 4, mp_funcptr_dir_read_cb, funcptr_dir_read_cb);
     
-static inline mp_obj_t mp_lv_funcptr_dir_read_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dir_read_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_dir_read_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dir_read_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_fs_res_t lv_fs_drv_t_dir_read_cb_callback(lv_fs_drv_t *drv, void *rddir_p, char *fn, uint32_t fn_len);
 #define funcptr_dir_close_cb NULL
@@ -18573,7 +18573,7 @@ static lv_fs_res_t lv_fs_drv_t_dir_read_cb_callback(lv_fs_drv_t *drv, void *rddi
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_dir_close_cb_mpobj, 2, mp_funcptr_close_cb, funcptr_dir_close_cb);
     
-static inline mp_obj_t mp_lv_funcptr_dir_close_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dir_close_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_dir_close_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dir_close_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_fs_res_t lv_fs_drv_t_dir_close_cb_callback(lv_fs_drv_t *drv, void *rddir_p);
 
@@ -18583,7 +18583,7 @@ static lv_fs_res_t lv_fs_drv_t_dir_close_cb_callback(lv_fs_drv_t *drv, void *rdd
 
 static inline const mp_obj_type_t *get_mp_lv_fs_drv_t_type(void);
 
-static inline void* mp_write_ptr_lv_fs_drv_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_fs_drv_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_fs_drv_t_type()));
     return (lv_fs_drv_t*)self->data;
@@ -18591,7 +18591,7 @@ static inline void* mp_write_ptr_lv_fs_drv_t(mp_obj_t self_in)
 
 #define mp_write_lv_fs_drv_t(struct_obj) *((lv_fs_drv_t*)mp_write_ptr_lv_fs_drv_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_fs_drv_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_fs_drv_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_fs_drv_t_type(), field);
 }
@@ -18687,7 +18687,7 @@ static inline const mp_obj_type_t *get_mp_lv_fs_drv_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_fs_file_cache_t_type(void);
 
-static inline void* mp_write_ptr_lv_fs_file_cache_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_fs_file_cache_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_fs_file_cache_t_type()));
     return (lv_fs_file_cache_t*)self->data;
@@ -18695,7 +18695,7 @@ static inline void* mp_write_ptr_lv_fs_file_cache_t(mp_obj_t self_in)
 
 #define mp_write_lv_fs_file_cache_t(struct_obj) *((lv_fs_file_cache_t*)mp_write_ptr_lv_fs_file_cache_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_fs_file_cache_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_fs_file_cache_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_fs_file_cache_t_type(), field);
 }
@@ -18771,7 +18771,7 @@ static inline const mp_obj_type_t *get_mp_lv_fs_file_cache_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_fs_file_t_type(void);
 
-static inline void* mp_write_ptr_lv_fs_file_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_fs_file_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_fs_file_t_type()));
     return (lv_fs_file_t*)self->data;
@@ -18779,7 +18779,7 @@ static inline void* mp_write_ptr_lv_fs_file_t(mp_obj_t self_in)
 
 #define mp_write_lv_fs_file_t(struct_obj) *((lv_fs_file_t*)mp_write_ptr_lv_fs_file_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_fs_file_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_fs_file_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_fs_file_t_type(), field);
 }
@@ -18853,7 +18853,7 @@ static inline const mp_obj_type_t *get_mp_lv_fs_file_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_image_decoder_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_image_decoder_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_image_decoder_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_image_decoder_dsc_t_type()));
     return (lv_image_decoder_dsc_t*)self->data;
@@ -18861,7 +18861,7 @@ static inline void* mp_write_ptr_lv_image_decoder_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_image_decoder_dsc_t(struct_obj) *((lv_image_decoder_dsc_t*)mp_write_ptr_lv_image_decoder_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_image_decoder_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_image_decoder_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_image_decoder_dsc_t_type(), field);
 }
@@ -19210,7 +19210,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_image_decoder_set_close_cb_mpobj, 2,
 
 static inline const mp_obj_type_t *get_mp_lv_cache_slot_size_t_type(void);
 
-static inline void* mp_write_ptr_lv_cache_slot_size_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_cache_slot_size_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_cache_slot_size_t_type()));
     return (lv_cache_slot_size_t*)self->data;
@@ -19218,7 +19218,7 @@ static inline void* mp_write_ptr_lv_cache_slot_size_t(mp_obj_t self_in)
 
 #define mp_write_lv_cache_slot_size_t(struct_obj) *((lv_cache_slot_size_t*)mp_write_ptr_lv_cache_slot_size_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_cache_slot_size_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_cache_slot_size_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_cache_slot_size_t_type(), field);
 }
@@ -19288,7 +19288,7 @@ static inline const mp_obj_type_t *get_mp_lv_cache_slot_size_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_image_cache_data_t_type(void);
 
-static inline void* mp_write_ptr_lv_image_cache_data_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_image_cache_data_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_image_cache_data_t_type()));
     return (lv_image_cache_data_t*)self->data;
@@ -19296,7 +19296,7 @@ static inline void* mp_write_ptr_lv_image_cache_data_t(mp_obj_t self_in)
 
 #define mp_write_lv_image_cache_data_t(struct_obj) *((lv_image_cache_data_t*)mp_write_ptr_lv_image_cache_data_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_image_cache_data_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_image_cache_data_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_image_cache_data_t_type(), field);
 }
@@ -21579,7 +21579,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_calendar_set_shown_month_mpobj, 2, m
 
 static inline const mp_obj_type_t *get_mp_lv_calendar_date_t_type(void);
 
-static inline void* mp_write_ptr_lv_calendar_date_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_calendar_date_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_calendar_date_t_type()));
     return (lv_calendar_date_t*)self->data;
@@ -21587,7 +21587,7 @@ static inline void* mp_write_ptr_lv_calendar_date_t(mp_obj_t self_in)
 
 #define mp_write_lv_calendar_date_t(struct_obj) *((lv_calendar_date_t*)mp_write_ptr_lv_calendar_date_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_calendar_date_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_calendar_date_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_calendar_date_t_type(), field);
 }
@@ -22308,7 +22308,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_chart_get_ver_div_line_count_mpobj, 
 
 static inline const mp_obj_type_t *get_mp_lv_chart_series_t_type(void);
 
-static inline void* mp_write_ptr_lv_chart_series_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_chart_series_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_chart_series_t_type()));
     return (lv_chart_series_t*)self->data;
@@ -22316,7 +22316,7 @@ static inline void* mp_write_ptr_lv_chart_series_t(mp_obj_t self_in)
 
 #define mp_write_lv_chart_series_t(struct_obj) *((lv_chart_series_t*)mp_write_ptr_lv_chart_series_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_chart_series_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_chart_series_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_chart_series_t_type(), field);
 }
@@ -22574,7 +22574,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_chart_get_series_next_mpobj, 2, mp_l
 
 static inline const mp_obj_type_t *get_mp_lv_chart_cursor_t_type(void);
 
-static inline void* mp_write_ptr_lv_chart_cursor_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_chart_cursor_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_chart_cursor_t_type()));
     return (lv_chart_cursor_t*)self->data;
@@ -22582,7 +22582,7 @@ static inline void* mp_write_ptr_lv_chart_cursor_t(mp_obj_t self_in)
 
 #define mp_write_lv_chart_cursor_t(struct_obj) *((lv_chart_cursor_t*)mp_write_ptr_lv_chart_cursor_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_chart_cursor_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_chart_cursor_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_chart_cursor_t_type(), field);
 }
@@ -25128,7 +25128,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_scale_set_draw_ticks_on_top_mpobj, 2
 
 static inline const mp_obj_type_t *get_mp_lv_scale_section_t_type(void);
 
-static inline void* mp_write_ptr_lv_scale_section_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_scale_section_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_scale_section_t_type()));
     return (lv_scale_section_t*)self->data;
@@ -25136,7 +25136,7 @@ static inline void* mp_write_ptr_lv_scale_section_t(mp_obj_t self_in)
 
 #define mp_write_lv_scale_section_t(struct_obj) *((lv_scale_section_t*)mp_write_ptr_lv_scale_section_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_scale_section_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_scale_section_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_scale_section_t_type(), field);
 }
@@ -25699,7 +25699,7 @@ GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_slider_type = {
 
 static inline const mp_obj_type_t *get_mp_lv_span_t_type(void);
 
-static inline void* mp_write_ptr_lv_span_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_span_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_span_t_type()));
     return (lv_span_t*)self->data;
@@ -25707,7 +25707,7 @@ static inline void* mp_write_ptr_lv_span_t(mp_obj_t self_in)
 
 #define mp_write_lv_span_t(struct_obj) *((lv_span_t*)mp_write_ptr_lv_span_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_span_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_span_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_span_t_type(), field);
 }
@@ -26052,7 +26052,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_spangroup_get_expand_height_mpobj, 2
 
 static inline const mp_obj_type_t *get_mp_lv_span_coords_t_type(void);
 
-static inline void* mp_write_ptr_lv_span_coords_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_span_coords_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_span_coords_t_type()));
     return (lv_span_coords_t*)self->data;
@@ -26060,7 +26060,7 @@ static inline void* mp_write_ptr_lv_span_coords_t(mp_obj_t self_in)
 
 #define mp_write_lv_span_coords_t(struct_obj) *((lv_span_coords_t*)mp_write_ptr_lv_span_coords_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_span_coords_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_span_coords_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_span_coords_t_type(), field);
 }
@@ -27783,7 +27783,7 @@ static const mp_lv_struct_t mp_lv_color_filter_shade = {
 
 static inline const mp_obj_type_t *get_mp_lv_tree_node_t_type(void);
 
-static inline void* mp_write_ptr_lv_tree_node_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_tree_node_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_tree_node_t_type()));
     return (lv_tree_node_t*)self->data;
@@ -27791,7 +27791,7 @@ static inline void* mp_write_ptr_lv_tree_node_t(mp_obj_t self_in)
 
 #define mp_write_lv_tree_node_t(struct_obj) *((lv_tree_node_t*)mp_write_ptr_lv_tree_node_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_tree_node_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_tree_node_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_tree_node_t_type(), field);
 }
@@ -27880,7 +27880,7 @@ static mp_obj_t mp_funcptr_lv_tree_constructor_cb_t(size_t mp_n_args, const mp_o
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_tree_constructor_cb_t_mpobj, 2, mp_funcptr_lv_tree_constructor_cb_t, funcptr_lv_tree_constructor_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_tree_constructor_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_tree_constructor_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_tree_constructor_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_tree_constructor_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -27903,7 +27903,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_tree_constructor_cb_t(void *func){ retur
 
 static inline const mp_obj_type_t *get_mp_lv_tree_class_t_type(void);
 
-static inline void* mp_write_ptr_lv_tree_class_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_tree_class_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_tree_class_t_type()));
     return (lv_tree_class_t*)self->data;
@@ -27911,7 +27911,7 @@ static inline void* mp_write_ptr_lv_tree_class_t(mp_obj_t self_in)
 
 #define mp_write_lv_tree_class_t(struct_obj) *((lv_tree_class_t*)mp_write_ptr_lv_tree_class_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_tree_class_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_tree_class_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_tree_class_t_type(), field);
 }
@@ -28033,7 +28033,7 @@ typedef struct {
 
 static inline const mp_obj_type_t *get_mp__lv_mp_int_wrapper_type(void);
 
-static inline void* mp_write_ptr__lv_mp_int_wrapper(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr__lv_mp_int_wrapper(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp__lv_mp_int_wrapper_type()));
     return (_lv_mp_int_wrapper*)self->data;
@@ -28041,7 +28041,7 @@ static inline void* mp_write_ptr__lv_mp_int_wrapper(mp_obj_t self_in)
 
 #define mp_write__lv_mp_int_wrapper(struct_obj) *((_lv_mp_int_wrapper*)mp_write_ptr__lv_mp_int_wrapper(struct_obj))
 
-static inline mp_obj_t mp_read_ptr__lv_mp_int_wrapper(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr__lv_mp_int_wrapper(void *field)
 {
     return lv_to_mp_struct(get_mp__lv_mp_int_wrapper_type(), field);
 }
@@ -28133,7 +28133,7 @@ static const mp_lv_struct_t mp_lv_obj_class = {
 
 static inline const mp_obj_type_t *get_mp_lv_font_info_t_type(void);
 
-static inline void* mp_write_ptr_lv_font_info_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_font_info_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_font_info_t_type()));
     return (lv_font_info_t*)self->data;
@@ -28141,7 +28141,7 @@ static inline void* mp_write_ptr_lv_font_info_t(mp_obj_t self_in)
 
 #define mp_write_lv_font_info_t(struct_obj) *((lv_font_info_t*)mp_write_ptr_lv_font_info_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_font_info_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_font_info_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_font_info_t_type(), field);
 }
@@ -28232,7 +28232,7 @@ static mp_obj_t mp_funcptr_create_cb(size_t mp_n_args, const mp_obj_t *mp_args, 
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_create_cb_mpobj, 2, mp_funcptr_create_cb, funcptr_create_cb);
     
-static inline mp_obj_t mp_lv_funcptr_create_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_create_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_create_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_create_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -28260,7 +28260,7 @@ static mp_obj_t mp_funcptr_delete_cb(size_t mp_n_args, const mp_obj_t *mp_args, 
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_delete_cb_mpobj, 1, mp_funcptr_delete_cb, funcptr_delete_cb);
     
-static inline mp_obj_t mp_lv_funcptr_delete_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_delete_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_delete_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_delete_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -28288,7 +28288,7 @@ static mp_obj_t mp_funcptr_dup_src_cb(size_t mp_n_args, const mp_obj_t *mp_args,
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_dup_src_cb_mpobj, 1, mp_funcptr_dup_src_cb, funcptr_dup_src_cb);
     
-static inline mp_obj_t mp_lv_funcptr_dup_src_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dup_src_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_dup_src_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_dup_src_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -28303,7 +28303,7 @@ static inline mp_obj_t mp_lv_funcptr_dup_src_cb(void *func){ return mp_lv_funcpt
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_free_src_cb_mpobj, 1, mp_funcptr_lv_draw_buf_free_cb_t, funcptr_free_src_cb);
     
-static inline mp_obj_t mp_lv_funcptr_free_src_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_free_src_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_free_src_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_free_src_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -28319,7 +28319,7 @@ static inline mp_obj_t mp_lv_funcptr_free_src_cb(void *func){ return mp_lv_funcp
 
 static inline const mp_obj_type_t *get_mp_lv_font_class_t_type(void);
 
-static inline void* mp_write_ptr_lv_font_class_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_font_class_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_font_class_t_type()));
     return (lv_font_class_t*)self->data;
@@ -28327,7 +28327,7 @@ static inline void* mp_write_ptr_lv_font_class_t(mp_obj_t self_in)
 
 #define mp_write_lv_font_class_t(struct_obj) *((lv_font_class_t*)mp_write_ptr_lv_font_class_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_font_class_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_font_class_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_font_class_t_type(), field);
 }
@@ -29033,7 +29033,7 @@ static const mp_lv_struct_t mp__nesting = {
 
 static inline const mp_obj_type_t *get_mp_lv_color16_t_type(void);
 
-static inline void* mp_write_ptr_lv_color16_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_color16_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_color16_t_type()));
     return (lv_color16_t*)self->data;
@@ -29041,7 +29041,7 @@ static inline void* mp_write_ptr_lv_color16_t(mp_obj_t self_in)
 
 #define mp_write_lv_color16_t(struct_obj) *((lv_color16_t*)mp_write_ptr_lv_color16_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_color16_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_color16_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_color16_t_type(), field);
 }
@@ -29115,7 +29115,7 @@ static inline const mp_obj_type_t *get_mp_lv_color16_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_mem_monitor_t_type(void);
 
-static inline void* mp_write_ptr_lv_mem_monitor_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_mem_monitor_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_mem_monitor_t_type()));
     return (lv_mem_monitor_t*)self->data;
@@ -29123,7 +29123,7 @@ static inline void* mp_write_ptr_lv_mem_monitor_t(mp_obj_t self_in)
 
 #define mp_write_lv_mem_monitor_t(struct_obj) *((lv_mem_monitor_t*)mp_write_ptr_lv_mem_monitor_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_mem_monitor_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_mem_monitor_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_mem_monitor_t_type(), field);
 }
@@ -29219,7 +29219,7 @@ static mp_obj_t mp_funcptr_lv_delay_cb_t(size_t mp_n_args, const mp_obj_t *mp_ar
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_delay_cb_t_mpobj, 1, mp_funcptr_lv_delay_cb_t, funcptr_lv_delay_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_delay_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_delay_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_delay_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_delay_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 #define funcptr_lv_tick_get_cb_t NULL
 
@@ -29240,7 +29240,7 @@ static mp_obj_t mp_funcptr_lv_tick_get_cb_t(size_t mp_n_args, const mp_obj_t *mp
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_tick_get_cb_t_mpobj, 0, mp_funcptr_lv_tick_get_cb_t, funcptr_lv_tick_get_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_tick_get_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_tick_get_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_tick_get_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_tick_get_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 #define funcptr_lv_timer_handler_resume_cb_t NULL
 
@@ -29248,7 +29248,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_tick_get_cb_t(void *func){ return mp_lv_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_timer_handler_resume_cb_t_mpobj, 1, mp_funcptr_lv_draw_buf_free_cb_t, funcptr_lv_timer_handler_resume_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_timer_handler_resume_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_timer_handler_resume_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_timer_handler_resume_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_timer_handler_resume_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 #define funcptr_lv_async_cb_t NULL
 
@@ -29256,7 +29256,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_timer_handler_resume_cb_t(void *func){ r
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_async_cb_t_mpobj, 1, mp_funcptr_lv_draw_buf_free_cb_t, funcptr_lv_async_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_async_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_async_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_async_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_async_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -29265,7 +29265,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_async_cb_t(void *func){ return mp_lv_fun
 
 static inline const mp_obj_type_t *get_mp_lv_rb_node_t_type(void);
 
-static inline void* mp_write_ptr_lv_rb_node_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_rb_node_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_rb_node_t_type()));
     return (lv_rb_node_t*)self->data;
@@ -29273,7 +29273,7 @@ static inline void* mp_write_ptr_lv_rb_node_t(mp_obj_t self_in)
 
 #define mp_write_lv_rb_node_t(struct_obj) *((lv_rb_node_t*)mp_write_ptr_lv_rb_node_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_rb_node_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_rb_node_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_rb_node_t_type(), field);
 }
@@ -29364,7 +29364,7 @@ static mp_obj_t mp_funcptr_lv_rb_compare_t(size_t mp_n_args, const mp_obj_t *mp_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_rb_compare_t_mpobj, 2, mp_funcptr_lv_rb_compare_t, funcptr_lv_rb_compare_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_rb_compare_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_rb_compare_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_rb_compare_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_rb_compare_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -29380,7 +29380,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_rb_compare_t(void *func){ return mp_lv_f
 
 static inline const mp_obj_type_t *get_mp_lv_rb_t_type(void);
 
-static inline void* mp_write_ptr_lv_rb_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_rb_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_rb_t_type()));
     return (lv_rb_t*)self->data;
@@ -29388,7 +29388,7 @@ static inline void* mp_write_ptr_lv_rb_t(mp_obj_t self_in)
 
 #define mp_write_lv_rb_t(struct_obj) *((lv_rb_t*)mp_write_ptr_lv_rb_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_rb_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_rb_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_rb_t_type(), field);
 }
@@ -29462,7 +29462,7 @@ static inline const mp_obj_type_t *get_mp_lv_rb_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_circle_buf_t_type(void);
 
-static inline void* mp_write_ptr_lv_circle_buf_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_circle_buf_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_circle_buf_t_type()));
     return (lv_circle_buf_t*)self->data;
@@ -29470,7 +29470,7 @@ static inline void* mp_write_ptr_lv_circle_buf_t(mp_obj_t self_in)
 
 #define mp_write_lv_circle_buf_t(struct_obj) *((lv_circle_buf_t*)mp_write_ptr_lv_circle_buf_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_circle_buf_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_circle_buf_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_circle_buf_t_type(), field);
 }
@@ -29539,7 +29539,7 @@ static inline const mp_obj_type_t *get_mp_lv_circle_buf_t_type(void)
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_funcptr_lv_layout_update_cb_t_mpobj, 2, mp_lv_obj_set_user_data, funcptr_lv_layout_update_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_layout_update_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_layout_update_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_layout_update_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_layout_update_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -29570,7 +29570,7 @@ static mp_obj_t mp_funcptr_lv_layout_get_min_size_cb_t(size_t mp_n_args, const m
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_funcptr_lv_layout_get_min_size_cb_t_mpobj, 4, mp_funcptr_lv_layout_get_min_size_cb_t, funcptr_lv_layout_get_min_size_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_layout_get_min_size_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_layout_get_min_size_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_layout_get_min_size_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_layout_get_min_size_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -29586,7 +29586,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_layout_get_min_size_cb_t(void *func){ re
 
 static inline const mp_obj_type_t *get_mp_lv_layout_callbacks_t_type(void);
 
-static inline void* mp_write_ptr_lv_layout_callbacks_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_layout_callbacks_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_layout_callbacks_t_type()));
     return (lv_layout_callbacks_t*)self->data;
@@ -29594,7 +29594,7 @@ static inline void* mp_write_ptr_lv_layout_callbacks_t(mp_obj_t self_in)
 
 #define mp_write_lv_layout_callbacks_t(struct_obj) *((lv_layout_callbacks_t*)mp_write_ptr_lv_layout_callbacks_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_layout_callbacks_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_layout_callbacks_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_layout_callbacks_t_type(), field);
 }
@@ -29696,7 +29696,7 @@ GENMPY_UNUSED static mp_obj_t mp_arr_from_char___64__(char *arr)
 
 static inline const mp_obj_type_t *get_mp_lv_fs_path_ex_t_type(void);
 
-static inline void* mp_write_ptr_lv_fs_path_ex_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_fs_path_ex_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_fs_path_ex_t_type()));
     return (lv_fs_path_ex_t*)self->data;
@@ -29704,7 +29704,7 @@ static inline void* mp_write_ptr_lv_fs_path_ex_t(mp_obj_t self_in)
 
 #define mp_write_lv_fs_path_ex_t(struct_obj) *((lv_fs_path_ex_t*)mp_write_ptr_lv_fs_path_ex_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_fs_path_ex_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_fs_path_ex_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_fs_path_ex_t_type(), field);
 }
@@ -29774,7 +29774,7 @@ static inline const mp_obj_type_t *get_mp_lv_fs_path_ex_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_fs_dir_t_type(void);
 
-static inline void* mp_write_ptr_lv_fs_dir_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_fs_dir_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_fs_dir_t_type()));
     return (lv_fs_dir_t*)self->data;
@@ -29782,7 +29782,7 @@ static inline void* mp_write_ptr_lv_fs_dir_t(mp_obj_t self_in)
 
 #define mp_write_lv_fs_dir_t(struct_obj) *((lv_fs_dir_t*)mp_write_ptr_lv_fs_dir_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_fs_dir_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_fs_dir_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_fs_dir_t_type(), field);
 }
@@ -29854,7 +29854,7 @@ static inline const mp_obj_type_t *get_mp_lv_fs_dir_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_fill_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_fill_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_fill_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_fill_dsc_t_type()));
     return (lv_draw_fill_dsc_t*)self->data;
@@ -29862,7 +29862,7 @@ static inline void* mp_write_ptr_lv_draw_fill_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_fill_dsc_t(struct_obj) *((lv_draw_fill_dsc_t*)mp_write_ptr_lv_draw_fill_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_fill_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_fill_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_fill_dsc_t_type(), field);
 }
@@ -29940,7 +29940,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_fill_dsc_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_border_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_border_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_border_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_border_dsc_t_type()));
     return (lv_draw_border_dsc_t*)self->data;
@@ -29948,7 +29948,7 @@ static inline void* mp_write_ptr_lv_draw_border_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_border_dsc_t(struct_obj) *((lv_draw_border_dsc_t*)mp_write_ptr_lv_draw_border_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_border_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_border_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_border_dsc_t_type(), field);
 }
@@ -30028,7 +30028,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_border_dsc_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_box_shadow_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_box_shadow_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_box_shadow_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_box_shadow_dsc_t_type()));
     return (lv_draw_box_shadow_dsc_t*)self->data;
@@ -30036,7 +30036,7 @@ static inline void* mp_write_ptr_lv_draw_box_shadow_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_box_shadow_dsc_t(struct_obj) *((lv_draw_box_shadow_dsc_t*)mp_write_ptr_lv_draw_box_shadow_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_box_shadow_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_box_shadow_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_box_shadow_dsc_t_type(), field);
 }
@@ -30122,7 +30122,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_box_shadow_dsc_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_letter_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_letter_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_letter_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_letter_dsc_t_type()));
     return (lv_draw_letter_dsc_t*)self->data;
@@ -30130,7 +30130,7 @@ static inline void* mp_write_ptr_lv_draw_letter_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_letter_dsc_t(struct_obj) *((lv_draw_letter_dsc_t*)mp_write_ptr_lv_draw_letter_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_letter_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_letter_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_letter_dsc_t_type(), field);
 }
@@ -30230,7 +30230,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_letter_dsc_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_glyph_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_glyph_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_glyph_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_glyph_dsc_t_type()));
     return (lv_draw_glyph_dsc_t*)self->data;
@@ -30238,7 +30238,7 @@ static inline void* mp_write_ptr_lv_draw_glyph_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_glyph_dsc_t(struct_obj) *((lv_draw_glyph_dsc_t*)mp_write_ptr_lv_draw_glyph_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_glyph_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_glyph_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_glyph_dsc_t_type(), field);
 }
@@ -30362,7 +30362,7 @@ GENMPY_UNUSED static mp_obj_t mp_arr_from_lv_point_precise_t___3__(lv_point_prec
 
 static inline const mp_obj_type_t *get_mp_lv_draw_triangle_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_triangle_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_triangle_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_triangle_dsc_t_type()));
     return (lv_draw_triangle_dsc_t*)self->data;
@@ -30370,7 +30370,7 @@ static inline void* mp_write_ptr_lv_draw_triangle_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_triangle_dsc_t(struct_obj) *((lv_draw_triangle_dsc_t*)mp_write_ptr_lv_draw_triangle_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_triangle_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_triangle_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_triangle_dsc_t_type(), field);
 }
@@ -30510,7 +30510,7 @@ GENMPY_UNUSED static mp_obj_t mp_arr_from_void_ptr__LV_INDEV_GESTURE_CNT__(void 
 
 static inline const mp_obj_type_t *get_mp_lv_indev_data_t_type(void);
 
-static inline void* mp_write_ptr_lv_indev_data_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_data_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_data_t_type()));
     return (lv_indev_data_t*)self->data;
@@ -30518,7 +30518,7 @@ static inline void* mp_write_ptr_lv_indev_data_t(mp_obj_t self_in)
 
 #define mp_write_lv_indev_data_t(struct_obj) *((lv_indev_data_t*)mp_write_ptr_lv_indev_data_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_indev_data_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_data_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_indev_data_t_type(), field);
 }
@@ -30615,7 +30615,7 @@ static mp_obj_t mp_funcptr_lv_indev_read_cb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_indev_read_cb_t_mpobj, 2, mp_funcptr_lv_indev_read_cb_t, funcptr_lv_indev_read_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_indev_read_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_indev_read_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_indev_read_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_indev_read_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static void lv_indev_t_read_cb_callback(lv_indev_t *indev, lv_indev_data_t *data);
 typedef __typeof__( ((lv_indev_t*)(0))->pointer ) lv_indev_pointer_t;
@@ -30686,7 +30686,7 @@ GENMPY_UNUSED static mp_obj_t mp_arr_from_uint32_t___8__(uint32_t *arr)
 
 static inline const mp_obj_type_t *get_mp_lv_indev_pointer_t_type(void);
 
-static inline void* mp_write_ptr_lv_indev_pointer_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_pointer_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_pointer_t_type()));
     return (lv_indev_pointer_t*)self->data;
@@ -30694,7 +30694,7 @@ static inline void* mp_write_ptr_lv_indev_pointer_t(mp_obj_t self_in)
 
 #define mp_write_lv_indev_pointer_t(struct_obj) *((lv_indev_pointer_t*)mp_write_ptr_lv_indev_pointer_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_indev_pointer_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_pointer_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_indev_pointer_t_type(), field);
 }
@@ -30813,7 +30813,7 @@ typedef __typeof__( ((lv_indev_t*)(0))->keypad ) lv_indev_keypad_t;
 
 static inline const mp_obj_type_t *get_mp_lv_indev_keypad_t_type(void);
 
-static inline void* mp_write_ptr_lv_indev_keypad_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_keypad_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_keypad_t_type()));
     return (lv_indev_keypad_t*)self->data;
@@ -30821,7 +30821,7 @@ static inline void* mp_write_ptr_lv_indev_keypad_t(mp_obj_t self_in)
 
 #define mp_write_lv_indev_keypad_t(struct_obj) *((lv_indev_keypad_t*)mp_write_ptr_lv_indev_keypad_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_indev_keypad_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_keypad_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_indev_keypad_t_type(), field);
 }
@@ -30906,7 +30906,7 @@ static mp_obj_t mp_funcptr_lv_indev_key_remap_cb_t(size_t mp_n_args, const mp_ob
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_indev_key_remap_cb_t_mpobj, 2, mp_funcptr_lv_indev_key_remap_cb_t, funcptr_lv_indev_key_remap_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_indev_key_remap_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_indev_key_remap_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_indev_key_remap_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_indev_key_remap_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 static lv_key_t lv_indev_t_key_remap_cb_callback(lv_indev_t *indev, lv_key_t key);
 
@@ -30916,7 +30916,7 @@ static lv_key_t lv_indev_t_key_remap_cb_callback(lv_indev_t *indev, lv_key_t key
 
 static inline const mp_obj_type_t *get_mp_lv_indev_t_type(void);
 
-static inline void* mp_write_ptr_lv_indev_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_t_type()));
     return (lv_indev_t*)self->data;
@@ -30924,7 +30924,7 @@ static inline void* mp_write_ptr_lv_indev_t(mp_obj_t self_in)
 
 #define mp_write_lv_indev_t(struct_obj) *((lv_indev_t*)mp_write_ptr_lv_indev_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_indev_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_indev_t_type(), field);
 }
@@ -31056,7 +31056,7 @@ static inline const mp_obj_type_t *get_mp_lv_indev_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_mask_rect_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_mask_rect_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_mask_rect_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_mask_rect_dsc_t_type()));
     return (lv_draw_mask_rect_dsc_t*)self->data;
@@ -31064,7 +31064,7 @@ static inline void* mp_write_ptr_lv_draw_mask_rect_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_mask_rect_dsc_t(struct_obj) *((lv_draw_mask_rect_dsc_t*)mp_write_ptr_lv_draw_mask_rect_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_mask_rect_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_mask_rect_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_mask_rect_dsc_t_type(), field);
 }
@@ -31156,7 +31156,7 @@ static mp_obj_t mp_funcptr_lv_draw_sw_mask_xcb_t(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_sw_mask_xcb_t_mpobj, 5, mp_funcptr_lv_draw_sw_mask_xcb_t, funcptr_lv_draw_sw_mask_xcb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_sw_mask_xcb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_sw_mask_xcb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_sw_mask_xcb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_sw_mask_xcb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -31172,7 +31172,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_draw_sw_mask_xcb_t(void *func){ return m
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_common_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_common_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_common_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_common_dsc_t_type()));
     return (lv_draw_sw_mask_common_dsc_t*)self->data;
@@ -31180,7 +31180,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_common_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_sw_mask_common_dsc_t(struct_obj) *((lv_draw_sw_mask_common_dsc_t*)mp_write_ptr_lv_draw_sw_mask_common_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_common_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_common_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_common_dsc_t_type(), field);
 }
@@ -31253,7 +31253,7 @@ typedef __typeof__( ((lv_draw_sw_mask_line_param_t*)(0))->cfg ) lv_draw_sw_mask_
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_line_param_cfg_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_line_param_cfg_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_line_param_cfg_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_line_param_cfg_t_type()));
     return (lv_draw_sw_mask_line_param_cfg_t*)self->data;
@@ -31261,7 +31261,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_line_param_cfg_t(mp_obj_t self_
 
 #define mp_write_lv_draw_sw_mask_line_param_cfg_t(struct_obj) *((lv_draw_sw_mask_line_param_cfg_t*)mp_write_ptr_lv_draw_sw_mask_line_param_cfg_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_line_param_cfg_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_line_param_cfg_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_line_param_cfg_t_type(), field);
 }
@@ -31335,7 +31335,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_line_param_cfg_t_type(
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_line_param_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_line_param_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_line_param_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_line_param_t_type()));
     return (lv_draw_sw_mask_line_param_t*)self->data;
@@ -31343,7 +31343,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_line_param_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_sw_mask_line_param_t(struct_obj) *((lv_draw_sw_mask_line_param_t*)mp_write_ptr_lv_draw_sw_mask_line_param_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_line_param_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_line_param_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_line_param_t_type(), field);
 }
@@ -31430,7 +31430,7 @@ typedef __typeof__( ((lv_draw_sw_mask_angle_param_t*)(0))->cfg ) lv_draw_sw_mask
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_angle_param_cfg_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_angle_param_cfg_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_angle_param_cfg_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_angle_param_cfg_t_type()));
     return (lv_draw_sw_mask_angle_param_cfg_t*)self->data;
@@ -31438,7 +31438,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_angle_param_cfg_t(mp_obj_t self
 
 #define mp_write_lv_draw_sw_mask_angle_param_cfg_t(struct_obj) *((lv_draw_sw_mask_angle_param_cfg_t*)mp_write_ptr_lv_draw_sw_mask_angle_param_cfg_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_angle_param_cfg_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_angle_param_cfg_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_angle_param_cfg_t_type(), field);
 }
@@ -31512,7 +31512,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_angle_param_cfg_t_type
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_angle_param_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_angle_param_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_angle_param_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_angle_param_t_type()));
     return (lv_draw_sw_mask_angle_param_t*)self->data;
@@ -31520,7 +31520,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_angle_param_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_sw_mask_angle_param_t(struct_obj) *((lv_draw_sw_mask_angle_param_t*)mp_write_ptr_lv_draw_sw_mask_angle_param_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_angle_param_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_angle_param_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_angle_param_t_type(), field);
 }
@@ -31599,7 +31599,7 @@ typedef __typeof__( ((lv_draw_sw_mask_radius_param_t*)(0))->cfg ) lv_draw_sw_mas
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_radius_param_cfg_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_radius_param_cfg_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_radius_param_cfg_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_radius_param_cfg_t_type()));
     return (lv_draw_sw_mask_radius_param_cfg_t*)self->data;
@@ -31607,7 +31607,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_radius_param_cfg_t(mp_obj_t sel
 
 #define mp_write_lv_draw_sw_mask_radius_param_cfg_t(struct_obj) *((lv_draw_sw_mask_radius_param_cfg_t*)mp_write_ptr_lv_draw_sw_mask_radius_param_cfg_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_radius_param_cfg_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_radius_param_cfg_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_radius_param_cfg_t_type(), field);
 }
@@ -31681,7 +31681,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_radius_param_cfg_t_typ
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_radius_circle_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_radius_circle_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_radius_circle_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_radius_circle_dsc_t_type()));
     return (lv_draw_sw_mask_radius_circle_dsc_t*)self->data;
@@ -31689,7 +31689,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_radius_circle_dsc_t(mp_obj_t se
 
 #define mp_write_lv_draw_sw_mask_radius_circle_dsc_t(struct_obj) *((lv_draw_sw_mask_radius_circle_dsc_t*)mp_write_ptr_lv_draw_sw_mask_radius_circle_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_radius_circle_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_radius_circle_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_radius_circle_dsc_t_type(), field);
 }
@@ -31771,7 +31771,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_radius_circle_dsc_t_ty
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_radius_param_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_radius_param_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_radius_param_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_radius_param_t_type()));
     return (lv_draw_sw_mask_radius_param_t*)self->data;
@@ -31779,7 +31779,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_radius_param_t(mp_obj_t self_in
 
 #define mp_write_lv_draw_sw_mask_radius_param_t(struct_obj) *((lv_draw_sw_mask_radius_param_t*)mp_write_ptr_lv_draw_sw_mask_radius_param_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_radius_param_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_radius_param_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_radius_param_t_type(), field);
 }
@@ -31854,7 +31854,7 @@ typedef __typeof__( ((lv_draw_sw_mask_fade_param_t*)(0))->cfg ) lv_draw_sw_mask_
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_fade_param_cfg_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_fade_param_cfg_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_fade_param_cfg_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_fade_param_cfg_t_type()));
     return (lv_draw_sw_mask_fade_param_cfg_t*)self->data;
@@ -31862,7 +31862,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_fade_param_cfg_t(mp_obj_t self_
 
 #define mp_write_lv_draw_sw_mask_fade_param_cfg_t(struct_obj) *((lv_draw_sw_mask_fade_param_cfg_t*)mp_write_ptr_lv_draw_sw_mask_fade_param_cfg_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_fade_param_cfg_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_fade_param_cfg_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_fade_param_cfg_t_type(), field);
 }
@@ -31940,7 +31940,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_fade_param_cfg_t_type(
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_fade_param_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_fade_param_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_fade_param_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_fade_param_t_type()));
     return (lv_draw_sw_mask_fade_param_t*)self->data;
@@ -31948,7 +31948,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_fade_param_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_sw_mask_fade_param_t(struct_obj) *((lv_draw_sw_mask_fade_param_t*)mp_write_ptr_lv_draw_sw_mask_fade_param_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_fade_param_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_fade_param_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_fade_param_t_type(), field);
 }
@@ -32021,7 +32021,7 @@ typedef __typeof__( ((lv_draw_sw_mask_map_param_t*)(0))->cfg ) lv_draw_sw_mask_m
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_map_param_cfg_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_map_param_cfg_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_map_param_cfg_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_map_param_cfg_t_type()));
     return (lv_draw_sw_mask_map_param_cfg_t*)self->data;
@@ -32029,7 +32029,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_map_param_cfg_t(mp_obj_t self_i
 
 #define mp_write_lv_draw_sw_mask_map_param_cfg_t(struct_obj) *((lv_draw_sw_mask_map_param_cfg_t*)mp_write_ptr_lv_draw_sw_mask_map_param_cfg_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_map_param_cfg_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_map_param_cfg_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_map_param_cfg_t_type(), field);
 }
@@ -32101,7 +32101,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_map_param_cfg_t_type(v
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_map_param_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_mask_map_param_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_mask_map_param_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_mask_map_param_t_type()));
     return (lv_draw_sw_mask_map_param_t*)self->data;
@@ -32109,7 +32109,7 @@ static inline void* mp_write_ptr_lv_draw_sw_mask_map_param_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_sw_mask_map_param_t(struct_obj) *((lv_draw_sw_mask_map_param_t*)mp_write_ptr_lv_draw_sw_mask_map_param_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_map_param_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_mask_map_param_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_mask_map_param_t_type(), field);
 }
@@ -32183,7 +32183,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_mask_map_param_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_blend_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_blend_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_blend_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_blend_dsc_t_type()));
     return (lv_draw_sw_blend_dsc_t*)self->data;
@@ -32191,7 +32191,7 @@ static inline void* mp_write_ptr_lv_draw_sw_blend_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_sw_blend_dsc_t(struct_obj) *((lv_draw_sw_blend_dsc_t*)mp_write_ptr_lv_draw_sw_blend_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_blend_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_blend_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_blend_dsc_t_type(), field);
 }
@@ -32294,7 +32294,7 @@ static mp_obj_t mp_funcptr_lv_draw_sw_blend_handler_t(size_t mp_n_args, const mp
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_sw_blend_handler_t_mpobj, 2, mp_funcptr_lv_draw_sw_blend_handler_t, funcptr_lv_draw_sw_blend_handler_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_sw_blend_handler_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_sw_blend_handler_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_sw_blend_handler_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_sw_blend_handler_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -32310,7 +32310,7 @@ static inline mp_obj_t mp_lv_funcptr_lv_draw_sw_blend_handler_t(void *func){ ret
 
 static inline const mp_obj_type_t *get_mp_lv_draw_sw_custom_blend_handler_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_sw_custom_blend_handler_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_sw_custom_blend_handler_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_sw_custom_blend_handler_t_type()));
     return (lv_draw_sw_custom_blend_handler_t*)self->data;
@@ -32318,7 +32318,7 @@ static inline void* mp_write_ptr_lv_draw_sw_custom_blend_handler_t(mp_obj_t self
 
 #define mp_write_lv_draw_sw_custom_blend_handler_t(struct_obj) *((lv_draw_sw_custom_blend_handler_t*)mp_write_ptr_lv_draw_sw_custom_blend_handler_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_sw_custom_blend_handler_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_sw_custom_blend_handler_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_sw_custom_blend_handler_t_type(), field);
 }
@@ -32390,7 +32390,7 @@ static inline const mp_obj_type_t *get_mp_lv_draw_sw_custom_blend_handler_t_type
 
 static inline const mp_obj_type_t *get_mp_lv_text_attributes_t_type(void);
 
-static inline void* mp_write_ptr_lv_text_attributes_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_text_attributes_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_text_attributes_t_type()));
     return (lv_text_attributes_t*)self->data;
@@ -32398,7 +32398,7 @@ static inline void* mp_write_ptr_lv_text_attributes_t(mp_obj_t self_in)
 
 #define mp_write_lv_text_attributes_t(struct_obj) *((lv_text_attributes_t*)mp_write_ptr_lv_text_attributes_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_text_attributes_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_text_attributes_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_text_attributes_t_type(), field);
 }
@@ -32623,7 +32623,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_color_darken_mpobj, 2, mp_lv_color_l
 
 static inline const mp_obj_type_t *get_mp_lv_color_hsv_t_type(void);
 
-static inline void* mp_write_ptr_lv_color_hsv_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_color_hsv_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_color_hsv_t_type()));
     return (lv_color_hsv_t*)self->data;
@@ -32631,7 +32631,7 @@ static inline void* mp_write_ptr_lv_color_hsv_t(mp_obj_t self_in)
 
 #define mp_write_lv_color_hsv_t(struct_obj) *((lv_color_hsv_t*)mp_write_ptr_lv_color_hsv_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_color_hsv_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_color_hsv_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_color_hsv_t_type(), field);
 }
@@ -33949,7 +33949,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_iter_peek_reset_mpobj, 1, mp_lv_iter
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_iter_inspect_cb_mpobj, 1, mp_funcptr_lv_draw_buf_free_cb_t, funcptr_lv_iter_inspect_cb);
     
-static inline mp_obj_t mp_lv_funcptr_lv_iter_inspect_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_iter_inspect_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_iter_inspect_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_iter_inspect_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -36962,7 +36962,7 @@ static mp_obj_t mp_funcptr_lv_draw_glyph_cb_t(size_t mp_n_args, const mp_obj_t *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_glyph_cb_t_mpobj, 4, mp_funcptr_lv_draw_glyph_cb_t, funcptr_lv_draw_glyph_cb_t);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_glyph_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_glyph_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_glyph_cb_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_glyph_cb_t_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -37074,7 +37074,7 @@ static mp_obj_t mp_funcptr_draw_line_cb(size_t mp_n_args, const mp_obj_t *mp_arg
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_draw_line_cb_mpobj, 2, mp_funcptr_draw_line_cb, funcptr_draw_line_cb);
     
-static inline mp_obj_t mp_lv_funcptr_draw_line_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_draw_line_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_draw_line_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_draw_line_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -37394,7 +37394,7 @@ static mp_obj_t mp_funcptr_lv_draw_image_core_cb(size_t mp_n_args, const mp_obj_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_draw_image_core_cb_mpobj, 6, mp_funcptr_lv_draw_image_core_cb, funcptr_lv_draw_image_core_cb);
     
-static inline mp_obj_t mp_lv_funcptr_lv_draw_image_core_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_image_core_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_draw_image_core_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_draw_image_core_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -37713,7 +37713,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_self_size_info_mpobj, 1, m
 
 static inline const mp_obj_type_t *get_mp_lv_hit_test_info_t_type(void);
 
-static inline void* mp_write_ptr_lv_hit_test_info_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_hit_test_info_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_hit_test_info_t_type()));
     return (lv_hit_test_info_t*)self->data;
@@ -37721,7 +37721,7 @@ static inline void* mp_write_ptr_lv_hit_test_info_t(mp_obj_t self_in)
 
 #define mp_write_lv_hit_test_info_t(struct_obj) *((lv_hit_test_info_t*)mp_write_ptr_lv_hit_test_info_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_hit_test_info_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_hit_test_info_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_hit_test_info_t_type(), field);
 }
@@ -45052,7 +45052,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_atan2_mpobj, 2, mp_lv_atan2, 
 
 static inline const mp_obj_type_t *get_mp_lv_sqrt_res_t_type(void);
 
-static inline void* mp_write_ptr_lv_sqrt_res_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_sqrt_res_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_sqrt_res_t_type()));
     return (lv_sqrt_res_t*)self->data;
@@ -45060,7 +45060,7 @@ static inline void* mp_write_ptr_lv_sqrt_res_t(mp_obj_t self_in)
 
 #define mp_write_lv_sqrt_res_t(struct_obj) *((lv_sqrt_res_t*)mp_write_ptr_lv_sqrt_res_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_sqrt_res_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_sqrt_res_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_sqrt_res_t_type(), field);
 }
@@ -45714,7 +45714,7 @@ static mp_obj_t mp_funcptr_cmp(size_t mp_n_args, const mp_obj_t *mp_args, void *
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_cmp_mpobj, 2, mp_funcptr_cmp, funcptr_cmp);
     
-static inline mp_obj_t mp_lv_funcptr_cmp(void *func){ return mp_lv_funcptr(&mp_funcptr_cmp_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_cmp(void *func){ return mp_lv_funcptr(&mp_funcptr_cmp_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -45765,7 +45765,7 @@ static mp_obj_t mp_funcptr_lv_iter_next_cb(size_t mp_n_args, const mp_obj_t *mp_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_iter_next_cb_mpobj, 3, mp_funcptr_lv_iter_next_cb, funcptr_lv_iter_next_cb);
     
-static inline mp_obj_t mp_lv_funcptr_lv_iter_next_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_iter_next_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_iter_next_cb(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_iter_next_cb_mpobj, func, NULL, MP_QSTR_, NULL); }
 
 
 /*
@@ -47562,7 +47562,7 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_layout_apply_mpobj, 1, mp_lv_obj_mov
 
 static inline const mp_obj_type_t *get_mp_lv_layout_dsc_t_type(void);
 
-static inline void* mp_write_ptr_lv_layout_dsc_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_layout_dsc_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_layout_dsc_t_type()));
     return (lv_layout_dsc_t*)self->data;
@@ -47570,7 +47570,7 @@ static inline void* mp_write_ptr_lv_layout_dsc_t(mp_obj_t self_in)
 
 #define mp_write_lv_layout_dsc_t(struct_obj) *((lv_layout_dsc_t*)mp_write_ptr_lv_layout_dsc_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_layout_dsc_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_layout_dsc_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_layout_dsc_t_type(), field);
 }
@@ -47649,7 +47649,7 @@ static inline const mp_obj_type_t *get_mp_lv_layout_dsc_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_timer_state_t_type(void);
 
-static inline void* mp_write_ptr_lv_timer_state_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_timer_state_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_timer_state_t_type()));
     return (lv_timer_state_t*)self->data;
@@ -47657,7 +47657,7 @@ static inline void* mp_write_ptr_lv_timer_state_t(mp_obj_t self_in)
 
 #define mp_write_lv_timer_state_t(struct_obj) *((lv_timer_state_t*)mp_write_ptr_lv_timer_state_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_timer_state_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_timer_state_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_timer_state_t_type(), field);
 }
@@ -47751,7 +47751,7 @@ static inline const mp_obj_type_t *get_mp_lv_timer_state_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_anim_state_t_type(void);
 
-static inline void* mp_write_ptr_lv_anim_state_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_anim_state_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_anim_state_t_type()));
     return (lv_anim_state_t*)self->data;
@@ -47759,7 +47759,7 @@ static inline void* mp_write_ptr_lv_anim_state_t(mp_obj_t self_in)
 
 #define mp_write_lv_anim_state_t(struct_obj) *((lv_anim_state_t*)mp_write_ptr_lv_anim_state_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_anim_state_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_anim_state_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_anim_state_t_type(), field);
 }
@@ -47851,7 +47851,7 @@ static inline const mp_obj_type_t *get_mp_lv_anim_state_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_tick_state_t_type(void);
 
-static inline void* mp_write_ptr_lv_tick_state_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_tick_state_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_tick_state_t_type()));
     return (lv_tick_state_t*)self->data;
@@ -47859,7 +47859,7 @@ static inline void* mp_write_ptr_lv_tick_state_t(mp_obj_t self_in)
 
 #define mp_write_lv_tick_state_t(struct_obj) *((lv_tick_state_t*)mp_write_ptr_lv_tick_state_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_tick_state_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_tick_state_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_tick_state_t_type(), field);
 }
@@ -47935,7 +47935,7 @@ static inline const mp_obj_type_t *get_mp_lv_tick_state_t_type(void)
 
 static inline const mp_obj_type_t *get_mp_lv_draw_global_info_t_type(void);
 
-static inline void* mp_write_ptr_lv_draw_global_info_t(mp_obj_t self_in)
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_draw_global_info_t(mp_obj_t self_in)
 {
     mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_draw_global_info_t_type()));
     return (lv_draw_global_info_t*)self->data;
@@ -47943,7 +47943,7 @@ static inline void* mp_write_ptr_lv_draw_global_info_t(mp_obj_t self_in)
 
 #define mp_write_lv_draw_global_info_t(struct_obj) *((lv_draw_global_info_t*)mp_write_ptr_lv_draw_global_info_t(struct_obj))
 
-static inline mp_obj_t mp_read_ptr_lv_draw_global_info_t(void *field)
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_draw_global_info_t(void *field)
 {
     return lv_to_mp_struct(get_mp_lv_draw_global_info_t_type(), field);
 }
