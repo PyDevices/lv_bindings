@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>lv_bindings — PyDevices</title>
+  <meta name="description" content="LVGL header-to-C binding generator for MicroPython, CircuitPython, and CPython.">
+  <link rel="icon" type="image/svg+xml" href="https://pydevices.github.io/assets/img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="https://pydevices.github.io/assets/css/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="https://pydevices.github.io/">
+        <span class="logo"><img src="https://pydevices.github.io/assets/img/logo.svg" alt="" width="30" height="30"></span>
+        PyDevices
+      </a>
+      <nav class="nav">
+        <a href="https://pydevices.github.io/pydisplay/">pydisplay</a>
+        <a href="https://pydevices.github.io/cmods/">cmods</a>
+        <a href="https://github.com/PyDevices/lv_bindings">Source</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero wrap">
+    <span class="eyebrow">PyDevices / lv_bindings</span>
+    <h1>One LVGL C API. Three Python bindings.</h1>
+    <p>lv_bindings parses LVGL's C headers and generates native bindings for MicroPython, CircuitPython, and CPython from a single source of truth — so <code>import lvgl</code> means the same thing everywhere.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/PyDevices/lv_bindings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-1-2.6c3-.3 6-1.5 6-6.5a5 5 0 0 0-1.4-3.5 4.6 4.6 0 0 0-.1-3.5s-1.1-.3-3.5 1.3a12 12 0 0 0-6 0C6.6 1.7 5.5 2 5.5 2a4.6 4.6 0 0 0-.1 3.5A5 5 0 0 0 4 9c0 5 3 6.2 6 6.5a3.4 3.4 0 0 0-1 2.6V22"/></svg>
+        Source on GitHub
+      </a>
+      <a class="btn" href="https://pydevices.github.io/">PyDevices</a>
+    </div>
+  </section>
+
+  <main class="cards wrap">
+    <div class="section-head">
+      <h2>What it generates</h2>
+      <span class="hint">One generator, three targets</span>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7l8-4 8 4v10l-8 4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></span>
+        <h3>MicroPython</h3>
+        <p><code>generated/lvgl_micropython.c</code> — consumed by <a href="https://github.com/PyDevices/lv_micropython_cmod">lv_micropython_cmod</a>.</p>
+      </div>
+      <div class="card">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="4"/></svg></span>
+        <h3>CircuitPython</h3>
+        <p><code>generated/lvgl_circuitpython.{c,h}</code> — consumed by <a href="https://github.com/PyDevices/lv_circuitpython_mod">lv_circuitpython_mod</a>.</p>
+      </div>
+      <div class="card">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v1a4 4 0 0 1-4 4h-1v1a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-1H6a4 4 0 0 1-4-4v-1a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/></svg></span>
+        <h3>CPython</h3>
+        <p><code>generated/lvgl_python.c</code> — auto-synced into <a href="https://github.com/PyDevices/lv_cpython_mod">lv_cpython_mod</a> on push to <code>main</code>.</p>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top: 36px;">
+      <h2>Regenerate after changes</h2>
+      <span class="hint">After editing <code>lvgl/</code>, <code>lv_conf.h</code>, or <code>binding/</code></span>
+    </div>
+    <div class="install-block">
+      <pre><code>git clone https://github.com/PyDevices/lv_bindings.git
+cd lv_bindings
+git submodule update --init lvgl
+
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+
+./regenerate_lvmp.sh   # MicroPython  -> lvgl_micropython.c
+./regenerate_lvcp.sh   # CircuitPython -> lvgl_circuitpython.c/.h
+./regenerate_lvpy.sh   # CPython       -> lvgl_python.c
+./regenerate_all.sh    # all three, plus commit + tag
+
+./scripts/verify_bindings.sh   # regen + regression checks</code></pre>
+    </div>
+
+    <div class="section-head" style="margin-top: 36px;">
+      <h2>Related</h2>
+    </div>
+    <ul class="linklist">
+      <li><a href="https://pydevices.github.io/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>PyDevices org site</a></li>
+      <li><a href="https://pydevices.github.io/cmods/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 5v10l-9 5-9-5V7z"/></svg>cmods build workspace</a></li>
+      <li><a href="https://pydevices.github.io/pydisplay/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>pydisplay</a></li>
+      <li><a href="https://github.com/PyDevices/lv_bindings/blob/main/PUBLISHING.md"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/></svg>Release &amp; publishing docs</a></li>
+    </ul>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>lv_bindings &middot; <a href="https://github.com/PyDevices/lv_bindings">PyDevices/lv_bindings</a></span>
+      <span><a href="https://pydevices.github.io/">PyDevices</a></span>
+    </div>
+  </footer>
+</body>
+</html>
