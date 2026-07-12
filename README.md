@@ -26,7 +26,7 @@ git submodule update --init lvgl
 
 Place `lv_bindings/` as a sibling of `lv_micropython_cmod/`, `lv_circuitpython_mod/`, and/or `lv_cpython_mod/` in your workspace. ([cmods](https://github.com/PyDevices/cmods) is an optional convenience workspace — not required.)
 
-## Setup
+## 🚀 Setup
 
 ```bash
 python3 -m venv .venv
