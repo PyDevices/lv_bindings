@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Preprocess lvgl/lvgl.h once with MicroPython-canonical flags (no CMODS_*_BUILD).
+# Preprocess lvgl/lvgl.h once with MicroPython-canonical flags (no LV_*_BUILD).
 # Writes generated/lvgl.pp and prints that path on stdout.
 set -e
 

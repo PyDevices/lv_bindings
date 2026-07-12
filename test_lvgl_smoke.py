@@ -282,8 +282,8 @@ def test_refr_now(lv, disp=None):
 def test_widget(lv):
     scr = lv.screen_active()
     label = _widget_type(lv, "label")(scr)
-    label.set_text("cmods smoke")
-    if label.get_text() != "cmods smoke":
+    label.set_text("lvgl smoke")
+    if label.get_text() != "lvgl smoke":
         _fail("label text mismatch: {!r}".format(label.get_text()))
     print("OK: label create/set_text on active screen")
 

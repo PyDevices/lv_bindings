@@ -497,7 +497,7 @@ void mp_lv_deinit_gc(void)
 
 }
 
-#ifndef CMODS_CIRCUITPYTHON_BUILD
+#ifndef LV_CIRCUITPYTHON_BUILD
 static mp_obj_t lvgl_mod___init__(void) {
     if (!MP_STATE_VM(lvgl_mod_initialized)) {
         // __init__ for builtins is called each time the module is imported,
@@ -517,7 +517,7 @@ static mp_obj_t lvgl_mod___del__(void) {
     return mp_const_none;
 }
 static MP_DEFINE_CONST_FUN_OBJ_0(lvgl_mod___del___obj, lvgl_mod___del__);
-#endif /* !CMODS_CIRCUITPYTHON_BUILD */
+#endif /* !LV_CIRCUITPYTHON_BUILD */
 
 #else // LV_OBJ_T
 

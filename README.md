@@ -24,7 +24,7 @@ cd lv_bindings
 git submodule update --init lvgl
 ```
 
-Place `lv_bindings/` as a sibling of `lv_micropython_cmod/` or `lv_circuitpython_mod/` in your workspace (or clone into `cmods/` when using the cmods workspace).
+Place `lv_bindings/` as a sibling of `lv_micropython_cmod/`, `lv_circuitpython_mod/`, and/or `lv_cpython_mod/` in your workspace. ([cmods](https://github.com/PyDevices/cmods) is an optional convenience workspace — not required.)
 
 ## Setup
 
@@ -55,7 +55,7 @@ to set that for all three targets.
 ./scripts/verify_bindings.sh  # Regenerate all targets + regression checks
 ```
 
-After regen in a cmods workspace, run `../build_all.sh` (see [cmods AGENTS.md](../AGENTS.md)).
+After regen, rebuild the consumer repo(s) (`lv_micropython_cmod`, `lv_circuitpython_mod`, `lv_cpython_mod`) as usual. With the optional [cmods](https://github.com/PyDevices/cmods) workspace, `../build_all.sh` rebuilds and smoke-tests all of them at once.
 
 Release workflow and tagging: [PUBLISHING.md](PUBLISHING.md).
 
