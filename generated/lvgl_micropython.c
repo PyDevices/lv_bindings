@@ -3,7 +3,7 @@
  * Auto-Generated file, DO NOT EDIT!
  *
  * Command line:
- * /home/brad/github/cmods/lv_bindings/binding/gen_binding.py --target micropython -M lvgl -MP lv --ir /home/brad/github/cmods/lv_bindings/generated/lvgl.json -E /home/brad/github/cmods/lv_bindings/generated/lvgl.pp lvgl/lvgl.h
+ * /home/brad/gh/pydevices/cmods/lv_bindings/binding/gen_binding.py --target micropython -M lvgl -MP lv --ir /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.json -E /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.pp lvgl/lvgl.h
  *
  * Preprocessing command:
  * Preprocessing was disabled.
