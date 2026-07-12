@@ -5,3 +5,7 @@ yacctab.py
 
 __pycache__/
 *.pyc
+
+# Scratch logs from cmods' build_all.sh / build_target.sh (run from the
+# sibling cmods workspace, writes into whichever repo it builds).
+.cursor/
