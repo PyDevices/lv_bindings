@@ -81,35 +81,11 @@ lvgl_git_label() {
     fi
 }
 
-next_bindings_tag() {
-    local prefix="v${LVGL_MAJOR}.${LVGL_MINOR}."
-    local latest next_patch remote_tag
-
-    git fetch origin --tags 2>/dev/null || true
-    remote_tag=$(
-        git ls-remote --tags origin "${prefix}*" 2>/dev/null \
-            | awk '{print $2}' \
-            | sed 's|refs/tags/||' \
-            | grep -v '\^{}$' \
-            | sort -V \
-            | tail -n 1
-    )
-    if [[ -n "$remote_tag" ]]; then
-        latest=$remote_tag
-    else
-        latest=$(git -C "$LV_BINDINGS_DIR" tag -l "${prefix}*" | sort -V | tail -n 1)
-    fi
-    if [[ -z "$latest" ]]; then
-        echo "v${LVGL_MAJOR}.${LVGL_MINOR}.0"
-        return
-    fi
-    next_patch=$(("${latest##*.}" + 1))
-    echo "v${LVGL_MAJOR}.${LVGL_MINOR}.${next_patch}"
-}
-
 read_lvgl_version
 LVGL_LABEL=$(lvgl_git_label)
-BINDINGS_TAG=$(next_bindings_tag)
+# Version is calculated by the shared-name script (LVGL major.minor + next patch,
+# resetting to 0 on a new LVGL line); regenerate_all.sh drives regeneration.
+BINDINGS_TAG="v$("$LV_BINDINGS_DIR/scripts/next_release_version.sh")"
 
 planned_commit_message() {
     cat <<EOF
