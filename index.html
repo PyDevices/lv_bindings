@@ -33,17 +33,18 @@
   </header>
 
   <section class="hero wrap">
-    <div class="logo-badge"><img src="https://pydevices.github.io/assets/img/logo.svg" alt="PyDevices logo" width="112" height="112"></div>
+    <div class="logo-badge product-mark"><img src="https://pydevices.github.io/assets/img/products/lv_bindings.svg" alt="lv_bindings" width="112" height="112"></div>
     <span class="eyebrow">PyDevices / lv_bindings</span>
-    <h1>One LVGL C API. Three Python bindings.</h1>
-    <p>lv_bindings is the generator that turns LVGL&apos;s C headers into native Python bindings for MicroPython, CircuitPython, and CPython from one source of truth. You regenerate after LVGL or <code>lv_conf.h</code> changes; the outputs are the <code>generated/</code> trees consumed by the runtime-specific cmods.</p>
-    <p>That single pipeline is what keeps <code>import lvgl</code> coherent across three interpreters. When the API surface moves, fix and regenerate here — do not hand-edit three binding trees — then rebuild the matching cmod and smoke-test through cmods or the per-repo scripts.</p>
+    <h1>lv_bindings</h1>
+    <p>LVGL header-to-C binding generator for MicroPython, CircuitPython, and CPython from one source of truth. You regenerate after LVGL or <code>lv_conf.h</code> changes; the outputs are the <code>generated/</code> trees consumed by the runtime-specific cmods.</p>
+    <p>That single pipeline keeps <code>import lvgl</code> coherent across three interpreters. When the API surface moves, fix and regenerate here — do not hand-edit three binding trees — then rebuild the matching consumer and smoke-test through cmods or the per-repo scripts.</p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/PyDevices/lv_bindings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-1-2.6c3-.3 6-1.5 6-6.5a5 5 0 0 0-1.4-3.5 4.6 4.6 0 0 0-.1-3.5s-1.1-.3-3.5 1.3a12 12 0 0 0-6 0C6.6 1.7 5.5 2 5.5 2a4.6 4.6 0 0 0-.1 3.5A5 5 0 0 0 4 9c0 5 3 6.2 6 6.5a3.4 3.4 0 0 0-1 2.6V22"/></svg>
         Source on GitHub
       </a>
-      <a class="btn" href="https://pydevices.github.io/">PyDevices</a>
+      <a class="btn" href="https://pydevices.github.io/cmods/">cmods</a>
+      <a class="btn" href="https://github.com/PyDevices/lv_bindings/blob/main/PUBLISHING.md">Publishing</a>
     </div>
   </section>
 
@@ -56,17 +57,17 @@
       <div class="card">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7l8-4 8 4v10l-8 4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></span>
         <h3>MicroPython</h3>
-        <p><code>generated/lvgl_micropython.c</code> — consumed by <a href="https://github.com/PyDevices/lv_micropython_cmod">lv_micropython_cmod</a>.</p>
+        <p><code>generated/lvgl_micropython.c</code> — consumed by <a href="https://pydevices.github.io/lv_micropython_cmod/">lv_micropython_cmod</a>.</p>
       </div>
       <div class="card">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="4"/></svg></span>
         <h3>CircuitPython</h3>
-        <p><code>generated/lvgl_circuitpython.{c,h}</code> — consumed by <a href="https://github.com/PyDevices/lv_circuitpython_mod">lv_circuitpython_mod</a>.</p>
+        <p><code>generated/lvgl_circuitpython.{c,h}</code> — consumed by <a href="https://pydevices.github.io/lv_circuitpython_mod/">lv_circuitpython_mod</a>.</p>
       </div>
       <div class="card">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v1a4 4 0 0 1-4 4h-1v1a4 4 0 0 1-4 4 4 4 0 0 1-4-4v-1H6a4 4 0 0 1-4-4v-1a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z"/></svg></span>
         <h3>CPython</h3>
-        <p><code>generated/lvgl_python.c</code> — auto-synced into <a href="https://github.com/PyDevices/lv_cpython_mod">lv_cpython_mod</a> on push to <code>main</code>.</p>
+        <p><code>generated/lvgl_python.c</code> — auto-synced into <a href="https://pydevices.github.io/lv_cpython_mod/">lv_cpython_mod</a> on push to <code>main</code>.</p>
       </div>
     </div>
 
@@ -82,13 +83,23 @@ git submodule update --init lvgl
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 
-./regenerate_lvmp.sh   # MicroPython  -> lvgl_micropython.c
-./regenerate_lvcp.sh   # CircuitPython -> lvgl_circuitpython.c/.h
-./regenerate_lvpy.sh   # CPython       -> lvgl_python.c
+./regenerate_lvmp.sh   # MicroPython  → lvgl_micropython.c
+./regenerate_lvcp.sh   # CircuitPython → lvgl_circuitpython.c/.h
+./regenerate_lvpy.sh   # CPython       → lvgl_python.c
 ./regenerate_all.sh    # all three, plus commit + tag
 
 ./scripts/verify_bindings.sh   # regen + regression checks</code></pre>
     </div>
+
+    <div class="section-head" style="margin-top: 36px;">
+      <h2>Consumers</h2>
+      <span class="hint">Rebuild these after regenerating</span>
+    </div>
+    <ul class="linklist">
+      <li><a href="https://pydevices.github.io/lv_micropython_cmod/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>lv_micropython_cmod — MicroPython usermod</a></li>
+      <li><a href="https://pydevices.github.io/lv_circuitpython_mod/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>lv_circuitpython_mod — CircuitPython integration</a></li>
+      <li><a href="https://pydevices.github.io/lv_cpython_mod/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>lv_cpython_mod — CPython <code>import lvgl</code></a></li>
+    </ul>
 
     <div class="section-head" style="margin-top: 36px;">
       <h2>Related</h2>
