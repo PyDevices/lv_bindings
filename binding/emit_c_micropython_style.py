@@ -165,10 +165,15 @@ MP_DEFINE_EXCEPTION(LvReferenceError, Exception)
     # Emit Mpy helper functions
     #
 
-    # MicroPython 1.28+ release tree exposes mp_obj_int_to_bytes_impl;
-    # mp_obj_int_to_bytes (signed/overflow kwargs) is master-only for now.
+    # Dual-version: v1.28.0 / CircuitPython expose mp_obj_int_to_bytes_impl;
+    # MicroPython master (1.29+) replaced it with mp_obj_int_to_bytes(...).
+    # Guard on MICROPY_VERSION so one generated tree builds on both.
     _mp_obj_get_ull_to_bytes = (
-        "mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);"
+        "#if MICROPY_VERSION > MICROPY_MAKE_VERSION(1, 28, 0)\n"
+        "    mp_obj_int_to_bytes(obj, sizeof(val), (byte*)&val, big_endian, false, false);\n"
+        "#else\n"
+        "    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);\n"
+        "#endif"
     )
 
     print(
