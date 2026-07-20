@@ -353,17 +353,22 @@ MP_REGISTER_ROOT_POINTER(void *mp_lv_user_data);
 MP_REGISTER_ROOT_POINTER(int mp_lv_roots_initialized);
 MP_REGISTER_ROOT_POINTER(int lvgl_mod_initialized);
 
-void *mp_lv_roots;
 void *mp_lv_user_data;
-int mp_lv_roots_initialized = 0;
 int lvgl_mod_initialized = 0;
+
+/* LV_GLOBAL_CUSTOM() must use this — not a cached C global. GC moves the
+ * lv_global_t allocation and only updates MP_STATE_VM(mp_lv_roots). */
+void *mp_lv_get_roots(void)
+{
+    return MP_STATE_VM(mp_lv_roots);
+}
 
 void mp_lv_init_gc(void)
 {
     if (!MP_STATE_VM(mp_lv_roots_initialized)) {
         // mp_printf(&mp_plat_print, "[ INIT GC ]");
-        mp_lv_roots = MP_STATE_VM(mp_lv_roots) = m_new0(lv_global_t, 1);
-        mp_lv_roots_initialized = MP_STATE_VM(mp_lv_roots_initialized) = 1;
+        MP_STATE_VM(mp_lv_roots) = m_new0(lv_global_t, 1);
+        MP_STATE_VM(mp_lv_roots_initialized) = 1;
     }
 }
 
@@ -371,10 +376,11 @@ void mp_lv_deinit_gc(void)
 {
 
     // mp_printf(&mp_plat_print, "[ DEINIT GC ]");
-    mp_lv_roots = MP_STATE_VM(mp_lv_roots) = NULL;
-    mp_lv_user_data = MP_STATE_VM(mp_lv_user_data) = NULL;
-    mp_lv_roots_initialized = MP_STATE_VM(mp_lv_roots_initialized) = 0;
-    lvgl_mod_initialized = MP_STATE_VM(lvgl_mod_initialized) = 0;
+    MP_STATE_VM(mp_lv_roots) = NULL;
+    MP_STATE_VM(mp_lv_user_data) = NULL;
+    MP_STATE_VM(mp_lv_roots_initialized) = 0;
+    MP_STATE_VM(lvgl_mod_initialized) = 0;
+    lvgl_mod_initialized = 0;
 
 }
 
@@ -843,7 +849,10 @@ static unsigned long long mp_obj_get_ull(mp_obj_t obj)
 
     unsigned long long val = 0;
     bool big_endian = !(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__);
-#if MICROPY_VERSION > MICROPY_MAKE_VERSION(1, 28, 0)
+#if defined(CIRCUITPY)
+    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);
+#elif defined(MICROPY_VERSION_MAJOR) && defined(MICROPY_VERSION_MINOR) && \
+    ((MICROPY_VERSION_MAJOR > 1) || (MICROPY_VERSION_MAJOR == 1 && MICROPY_VERSION_MINOR > 28))
     mp_obj_int_to_bytes(obj, sizeof(val), (byte*)&val, big_endian, false, false);
 #else
     mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);
