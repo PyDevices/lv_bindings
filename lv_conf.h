@@ -321,8 +321,12 @@ extern void mp_lv_deinit_gc(void);
 #define LV_GC_DEINIT() mp_lv_deinit_gc()
 #define LV_ENABLE_GLOBAL_CUSTOM 1
 #if LV_ENABLE_GLOBAL_CUSTOM
-    extern void *mp_lv_roots;
-    #define LV_GLOBAL_CUSTOM() ((lv_global_t*)mp_lv_roots)
+    /* Must read the VM root each time: MicroPython's GC moves the
+     * lv_global_t heap object and updates MP_STATE_VM(mp_lv_roots) only.
+     * A cached file-scope pointer goes stale → width_to_stride_cb junk
+     * (Illegal instruction / huge MemoryError on ESP32-P4). */
+    extern void *mp_lv_get_roots(void);
+    #define LV_GLOBAL_CUSTOM() ((lv_global_t *)mp_lv_get_roots())
 #endif
 #endif
 
