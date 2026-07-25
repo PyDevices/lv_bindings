@@ -5993,6 +5993,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -13165,6 +13183,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -19921,6 +19957,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -20588,22 +20642,22 @@
                 "get_angle_start": {
                     "type": "function",
                     "args": [],
-                    "return_type": "int"
+                    "return_type": "float"
                 },
                 "get_angle_end": {
                     "type": "function",
                     "args": [],
-                    "return_type": "int"
+                    "return_type": "float"
                 },
                 "get_bg_angle_start": {
                     "type": "function",
                     "args": [],
-                    "return_type": "int"
+                    "return_type": "float"
                 },
                 "get_bg_angle_end": {
                     "type": "function",
                     "args": [],
-                    "return_type": "int"
+                    "return_type": "float"
                 },
                 "get_value": {
                     "type": "function",
@@ -26669,6 +26723,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -27338,12 +27410,12 @@
                 "get_angle_start": {
                     "type": "function",
                     "args": [],
-                    "return_type": "int"
+                    "return_type": "float"
                 },
                 "get_angle_size": {
                     "type": "function",
                     "args": [],
-                    "return_type": "int"
+                    "return_type": "float"
                 },
                 "get_dir": {
                     "type": "function",
@@ -27393,7 +27465,7 @@
                 "get_text_angle": {
                     "type": "function",
                     "args": [],
-                    "return_type": "int"
+                    "return_type": "float"
                 },
                 "style_get_selector_state": {
                     "type": "function",
@@ -33381,6 +33453,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -40096,6 +40186,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -46746,6 +46854,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -53272,6 +53398,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -59911,6 +60055,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -66683,6 +66845,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -73352,6 +73532,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -80392,6 +80590,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -86969,6 +87185,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -93670,6 +93904,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -100266,6 +100518,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -106854,6 +107124,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -113476,6 +113764,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -120053,6 +120359,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -126619,6 +126943,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -133165,6 +133507,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -139832,6 +140192,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -146360,6 +146738,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -152858,6 +153254,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -159366,6 +159780,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -165864,6 +166296,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -172467,6 +172917,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -179079,6 +179547,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -185951,6 +186437,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -192607,6 +193111,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -199333,6 +199855,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -206096,6 +206636,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -212787,6 +213345,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -219334,6 +219910,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -225847,6 +226441,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -232569,6 +233181,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -239201,6 +239831,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -245764,6 +246412,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -252306,6 +252972,24 @@
                         },
                         {
                             "type": "int",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
                             "name": "value"
                         }
                     ],
@@ -258904,6 +259588,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -265468,6 +266170,24 @@
                     ],
                     "return_type": "NoneType"
                 },
+                "add_subject_set_float_event": {
+                    "type": "function",
+                    "args": [
+                        {
+                            "type": "subject_t",
+                            "name": "subject"
+                        },
+                        {
+                            "type": "event_code_t",
+                            "name": "trigger"
+                        },
+                        {
+                            "type": "float",
+                            "name": "value"
+                        }
+                    ],
+                    "return_type": "NoneType"
+                },
                 "add_subject_set_string_event": {
                     "type": "function",
                     "args": [
@@ -266302,6 +267022,11 @@
             "type": "function",
             "args": [],
             "return_type": "NoneType"
+        },
+        "mp_lv_get_roots": {
+            "type": "function",
+            "args": [],
+            "return_type": "void*"
         },
         "init": {
             "type": "function",
@@ -268878,16 +269603,6 @@
             "return_type": "NoneType"
         },
         "lodepng_deinit": {
-            "type": "function",
-            "args": [],
-            "return_type": "NoneType"
-        },
-        "tjpgd_init": {
-            "type": "function",
-            "args": [],
-            "return_type": "NoneType"
-        },
-        "tjpgd_deinit": {
             "type": "function",
             "args": [],
             "return_type": "NoneType"
@@ -271900,6 +272615,25 @@
                 }
             }
         },
+        "INDEV_GESTURE_STATE": {
+            "members": {
+                "NONE": {
+                    "type": "enum_member"
+                },
+                "ONGOING": {
+                    "type": "enum_member"
+                },
+                "RECOGNIZED": {
+                    "type": "enum_member"
+                },
+                "ENDED": {
+                    "type": "enum_member"
+                },
+                "CANCELED": {
+                    "type": "enum_member"
+                }
+            }
+        },
         "FONT_FMT_TXT_CMAP": {
             "members": {
                 "FORMAT0_FULL": {
@@ -272355,6 +273089,10 @@
         "indev_data_t",
         "indev_pointer_t",
         "indev_keypad_t",
+        "indev_gesture_recognizer_t",
+        "indev_gesture_t",
+        "indev_gesture_configuration_t",
+        "indev_touch_data_t",
         "draw_mask_rect_dsc_t",
         "draw_sw_mask_line_param_t",
         "draw_sw_mask_common_dsc_t",
@@ -275929,6 +276667,41 @@
                 "args": [],
                 "return_type": "int"
             },
+            "get_pinch_scale": {
+                "type": "function",
+                "args": [],
+                "return_type": "float"
+            },
+            "get_rotation": {
+                "type": "function",
+                "args": [],
+                "return_type": "float"
+            },
+            "get_two_fingers_swipe_distance": {
+                "type": "function",
+                "args": [],
+                "return_type": "float"
+            },
+            "get_two_fingers_swipe_dir": {
+                "type": "function",
+                "args": [],
+                "return_type": "int"
+            },
+            "get_gesture_state": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "indev_gesture_type_t",
+                        "name": "type"
+                    }
+                ],
+                "return_type": "int"
+            },
+            "get_gesture_type": {
+                "type": "function",
+                "args": [],
+                "return_type": "int"
+            },
             "push": {
                 "type": "function",
                 "args": [],
@@ -278149,6 +278922,56 @@
                 ],
                 "return_type": "NoneType"
             },
+            "init_float": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "float",
+                        "name": "value"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "set_float": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "float",
+                        "name": "value"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "get_float": {
+                "type": "function",
+                "args": [],
+                "return_type": "float"
+            },
+            "get_previous_float": {
+                "type": "function",
+                "args": [],
+                "return_type": "float"
+            },
+            "set_min_value_float": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "float",
+                        "name": "min_value"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "set_max_value_float": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "float",
+                        "name": "max_value"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
             "init_string": {
                 "type": "function",
                 "args": [
@@ -280257,6 +281080,65 @@
                 ],
                 "return_type": "NoneType"
             },
+            "gesture_init": {
+                "type": "function",
+                "args": [],
+                "return_type": "NoneType"
+            },
+            "set_pinch_up_threshold": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "float",
+                        "name": "threshold"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "set_pinch_down_threshold": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "float",
+                        "name": "threshold"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "set_rotation_rad_threshold": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "float",
+                        "name": "threshold"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "gesture_recognizers_update": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "indev_touch_data_t",
+                        "name": "touches"
+                    },
+                    {
+                        "type": "int",
+                        "name": "touch_cnt"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "gesture_recognizers_set_data": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "indev_data_t",
+                        "name": "data"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
             "scroll_handler": {
                 "type": "function",
                 "args": [],
@@ -280281,6 +281163,111 @@
                 "type": "function",
                 "args": [],
                 "return_type": "lv_obj_t*"
+            }
+        },
+        "indev_data_t": {
+            "set_gesture_data": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "indev_data_t",
+                        "name": "data"
+                    },
+                    {
+                        "type": "indev_gesture_recognizer_t",
+                        "name": "recognizer"
+                    },
+                    {
+                        "type": "int",
+                        "name": "type"
+                    }
+                ],
+                "return_type": "NoneType"
+            }
+        },
+        "indev_gesture_recognizer_t": {
+            "detect_pinch": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "void*"
+                    },
+                    {
+                        "type": "indev_touch_data_t"
+                    },
+                    {
+                        "type": "int"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "detect_rotation": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "void*"
+                    },
+                    {
+                        "type": "indev_touch_data_t"
+                    },
+                    {
+                        "type": "int"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "detect_two_fingers_swipe": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "void*"
+                    },
+                    {
+                        "type": "indev_touch_data_t"
+                    },
+                    {
+                        "type": "int"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "get_gesture_center_point": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "indev_gesture_recognizer_t",
+                        "name": "recognizer"
+                    },
+                    {
+                        "type": "point_t",
+                        "name": "point"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "get_gesture_primary_point": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "indev_gesture_recognizer_t",
+                        "name": "recognizer"
+                    },
+                    {
+                        "type": "point_t",
+                        "name": "point"
+                    }
+                ],
+                "return_type": "NoneType"
+            },
+            "recognizer_is_active": {
+                "type": "function",
+                "args": [
+                    {
+                        "type": "indev_gesture_recognizer_t",
+                        "name": "recognizer"
+                    }
+                ],
+                "return_type": "bool"
             }
         },
         "draw_mask_rect_dsc_t": {
@@ -282579,6 +283566,7 @@
         "cover_res_t": "COVER_RES",
         "obj_flag_t": "OBJ_FLAG",
         "subject_type_t": "SUBJECT_TYPE",
+        "indev_gesture_state_t": "INDEV_GESTURE_STATE",
         "span_overflow_t": "SPAN_OVERFLOW",
         "span_mode_t": "SPAN_MODE",
         "draw_sw_mask_res_t": "DRAW_SW_MASK_RES",

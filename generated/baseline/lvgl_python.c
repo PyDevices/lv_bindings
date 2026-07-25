@@ -5,7 +5,7 @@
  *
  * Target: cpython
  * Command line:
- * lv_bindings/binding/gen_binding.py --target cpython -M lvgl -MP lv --ir lv_bindings/generated/lvgl.json -E lv_bindings/generated/lvgl.pp lvgl/lvgl.h
+ * /home/brad/gh/pydevices/cmods/lv_bindings/binding/gen_binding.py --target cpython -M lvgl -MP lv --ir /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.json -E /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.pp lvgl/lvgl.h
  *
  * Preprocessing command:
  * Preprocessing was disabled.
@@ -2312,6 +2312,37 @@ static PyTypeObject py_lv_LV_SUBJECT_TYPE_type = {
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_getattro = py_lv_LV_SUBJECT_TYPE_getattro,
     .tp_doc = "LVGL SUBJECT_TYPE enum namespace",
+};
+
+
+static PyObject *py_lv_LV_INDEV_GESTURE_STATE_getattro(PyObject *self, PyObject *name)
+{
+    (void)self;
+    if (!PyUnicode_Check(name)) {
+        PyErr_SetString(PyExc_TypeError, "attribute name must be string");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) {
+        return NULL;
+    }
+
+    if (strcmp(attr, "NONE") == 0) return PyLong_FromLong(LV_INDEV_GESTURE_STATE_NONE);
+    if (strcmp(attr, "ONGOING") == 0) return PyLong_FromLong(LV_INDEV_GESTURE_STATE_ONGOING);
+    if (strcmp(attr, "RECOGNIZED") == 0) return PyLong_FromLong(LV_INDEV_GESTURE_STATE_RECOGNIZED);
+    if (strcmp(attr, "ENDED") == 0) return PyLong_FromLong(LV_INDEV_GESTURE_STATE_ENDED);
+    if (strcmp(attr, "CANCELED") == 0) return PyLong_FromLong(LV_INDEV_GESTURE_STATE_CANCELED);
+
+    PyErr_Format(PyExc_AttributeError, "'lvgl.INDEV_GESTURE_STATE' object has no attribute '%s'", attr);
+    return NULL;
+}
+
+static PyTypeObject py_lv_LV_INDEV_GESTURE_STATE_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.INDEV_GESTURE_STATE",
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_getattro = py_lv_LV_INDEV_GESTURE_STATE_getattro,
+    .tp_doc = "LVGL INDEV_GESTURE_STATE enum namespace",
 };
 
 
@@ -18910,6 +18941,7 @@ static PyObject *py_lv_subject_value_t_getattro(PyObject *self, PyObject *name)
     if (strcmp(attr, "num") == 0) return mp_obj_new_int(data->num);
     if (strcmp(attr, "pointer") == 0) return ptr_to_mp((void*)data->pointer);
     if (strcmp(attr, "color") == 0) return mp_read_byref_lv_color_t(data->color);
+    if (strcmp(attr, "float_v") == 0) return mp_obj_new_float_from_f(data->float_v);
     for (PyMethodDef *m = py_lv_subject_value_t_methods; m->ml_name != NULL; m++) {
         if (strcmp(attr, m->ml_name) == 0)
             return PyCFunction_NewEx(m, self, NULL);
@@ -18935,6 +18967,7 @@ static int py_lv_subject_value_t_setattro(PyObject *self, PyObject *name, PyObje
     if (strcmp(attr, "num") == 0) { data->num = (int32_t)mp_obj_get_int(value); result = 0; }
     if (strcmp(attr, "pointer") == 0) { data->pointer = (void*)mp_to_ptr(value); result = 0; }
     if (strcmp(attr, "color") == 0) { data->color = mp_write_lv_color_t(value); result = 0; }
+    if (strcmp(attr, "float_v") == 0) { data->float_v = (float)mp_obj_get_float(value); result = 0; }
     if (result < 0) {
         PyErr_Format(PyExc_AttributeError, "'lv_subject_value_t' object has no attribute '%s'", attr);
     }
@@ -20141,8 +20174,8 @@ static PyObject *py_lv_point_precise_t_getattro(PyObject *self, PyObject *name)
     }
     const char *attr = PyUnicode_AsUTF8(name);
     if (attr == NULL) return NULL;
-    if (strcmp(attr, "x") == 0) return mp_obj_new_int(data->x);
-    if (strcmp(attr, "y") == 0) return mp_obj_new_int(data->y);
+    if (strcmp(attr, "x") == 0) return mp_obj_new_float_from_f(data->x);
+    if (strcmp(attr, "y") == 0) return mp_obj_new_float_from_f(data->y);
     for (PyMethodDef *m = py_lv_point_precise_t_methods; m->ml_name != NULL; m++) {
         if (strcmp(attr, m->ml_name) == 0)
             return PyCFunction_NewEx(m, self, NULL);
@@ -20165,8 +20198,8 @@ static int py_lv_point_precise_t_setattro(PyObject *self, PyObject *name, PyObje
     const char *attr = PyUnicode_AsUTF8(name);
     if (attr == NULL) return -1;
     int result = -1;
-    if (strcmp(attr, "x") == 0) { data->x = (int32_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "y") == 0) { data->y = (int32_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "x") == 0) { data->x = (float)mp_obj_get_float(value); result = 0; }
+    if (strcmp(attr, "y") == 0) { data->y = (float)mp_obj_get_float(value); result = 0; }
     if (result < 0) {
         PyErr_Format(PyExc_AttributeError, "'lv_point_precise_t' object has no attribute '%s'", attr);
     }
@@ -20372,8 +20405,8 @@ static PyObject *py_lv_draw_arc_dsc_t_getattro(PyObject *self, PyObject *name)
     if (strcmp(attr, "base") == 0) return mp_read_byref_lv_draw_dsc_base_t(data->base);
     if (strcmp(attr, "color") == 0) return mp_read_byref_lv_color_t(data->color);
     if (strcmp(attr, "width") == 0) return mp_obj_new_int(data->width);
-    if (strcmp(attr, "start_angle") == 0) return mp_obj_new_int(data->start_angle);
-    if (strcmp(attr, "end_angle") == 0) return mp_obj_new_int(data->end_angle);
+    if (strcmp(attr, "start_angle") == 0) return mp_obj_new_float_from_f(data->start_angle);
+    if (strcmp(attr, "end_angle") == 0) return mp_obj_new_float_from_f(data->end_angle);
     if (strcmp(attr, "center") == 0) return mp_read_byref_lv_point_t(data->center);
     if (strcmp(attr, "img_src") == 0) return ptr_to_mp((void*)data->img_src);
     if (strcmp(attr, "radius") == 0) return mp_obj_new_int_from_uint(data->radius);
@@ -20404,8 +20437,8 @@ static int py_lv_draw_arc_dsc_t_setattro(PyObject *self, PyObject *name, PyObjec
     if (strcmp(attr, "base") == 0) { data->base = mp_write_lv_draw_dsc_base_t(value); result = 0; }
     if (strcmp(attr, "color") == 0) { data->color = mp_write_lv_color_t(value); result = 0; }
     if (strcmp(attr, "width") == 0) { data->width = (int32_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "start_angle") == 0) { data->start_angle = (int32_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "end_angle") == 0) { data->end_angle = (int32_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "start_angle") == 0) { data->start_angle = (float)mp_obj_get_float(value); result = 0; }
+    if (strcmp(attr, "end_angle") == 0) { data->end_angle = (float)mp_obj_get_float(value); result = 0; }
     if (strcmp(attr, "center") == 0) { data->center = mp_write_lv_point_t(value); result = 0; }
     if (strcmp(attr, "img_src") == 0) { data->img_src = (void*)mp_to_ptr(value); result = 0; }
     if (strcmp(attr, "radius") == 0) { data->radius = (uint16_t)mp_obj_get_int(value); result = 0; }
@@ -22688,6 +22721,37 @@ static PyMethodDef py_lv_obj_add_subject_set_int_event_def = {
 
 /*
  * lvgl extension definition for:
+ * void lv_obj_add_subject_set_float_event(lv_obj_t *obj, lv_subject_t *subject, lv_event_code_t trigger, float value)
+ */
+static PyObject *py_lv_obj_add_subject_set_float_event(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *subject_py; PyObject *trigger_py; double value_val;
+    if (!PyArg_ParseTuple(py_args, "OOd", &subject_py, &trigger_py, &value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_obj_t *obj = mp_to_lv(self);
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(subject_py);
+    lv_event_code_t trigger = (int)mp_obj_get_int(trigger_py);
+    float value = (float)value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_obj_t *, lv_subject_t *, lv_event_code_t, float))lv_obj_add_subject_set_float_event)(obj, subject, trigger, value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_obj_add_subject_set_float_event_def = {
+    "lv_obj_add_subject_set_float_event",
+    (PyCFunction)py_lv_obj_add_subject_set_float_event,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
  * void lv_obj_add_subject_set_string_event(lv_obj_t *obj, lv_subject_t *subject, lv_event_code_t trigger, const char *value)
  */
 static PyObject *py_lv_obj_add_subject_set_string_event(PyObject *self, PyObject *py_args, PyObject *py_kwds)
@@ -24053,6 +24117,7 @@ static PyMethodDef py_lv_obj_methods[] = {
     {"set_subject_increment_event_rollover", (PyCFunction)py_lv_obj_set_subject_increment_event_rollover, METH_VARARGS | METH_KEYWORDS, NULL},
     {"add_subject_toggle_event", (PyCFunction)py_lv_obj_add_subject_toggle_event, METH_VARARGS | METH_KEYWORDS, NULL},
     {"add_subject_set_int_event", (PyCFunction)py_lv_obj_add_subject_set_int_event, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"add_subject_set_float_event", (PyCFunction)py_lv_obj_add_subject_set_float_event, METH_VARARGS | METH_KEYWORDS, NULL},
     {"add_subject_set_string_event", (PyCFunction)py_lv_obj_add_subject_set_string_event, METH_VARARGS | METH_KEYWORDS, NULL},
     {"bind_flag_if_eq", (PyCFunction)py_lv_obj_bind_flag_if_eq, METH_VARARGS | METH_KEYWORDS, NULL},
     {"bind_flag_if_not_eq", (PyCFunction)py_lv_obj_bind_flag_if_not_eq, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -28194,7 +28259,7 @@ static PyObject *py_lv_arc_set_start_angle(PyObject *self, PyObject *py_args, Py
     PyObject *start_py;
     if (!PyArg_ParseTuple(py_args, "O", &start_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t start = (int32_t)mp_obj_get_int(start_py);
+    lv_value_precise_t start = (float)mp_obj_get_float(start_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t))lv_arc_set_start_angle)(obj, start);
@@ -28223,7 +28288,7 @@ static PyObject *py_lv_arc_set_end_angle(PyObject *self, PyObject *py_args, PyOb
     PyObject *end_py;
     if (!PyArg_ParseTuple(py_args, "O", &end_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t end = (int32_t)mp_obj_get_int(end_py);
+    lv_value_precise_t end = (float)mp_obj_get_float(end_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t))lv_arc_set_end_angle)(obj, end);
@@ -28252,8 +28317,8 @@ static PyObject *py_lv_arc_set_angles(PyObject *self, PyObject *py_args, PyObjec
     PyObject *start_py; PyObject *end_py;
     if (!PyArg_ParseTuple(py_args, "OO", &start_py, &end_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t start = (int32_t)mp_obj_get_int(start_py);
-    lv_value_precise_t end = (int32_t)mp_obj_get_int(end_py);
+    lv_value_precise_t start = (float)mp_obj_get_float(start_py);
+    lv_value_precise_t end = (float)mp_obj_get_float(end_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t, lv_value_precise_t))lv_arc_set_angles)(obj, start, end);
@@ -28282,7 +28347,7 @@ static PyObject *py_lv_arc_set_bg_start_angle(PyObject *self, PyObject *py_args,
     PyObject *start_py;
     if (!PyArg_ParseTuple(py_args, "O", &start_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t start = (int32_t)mp_obj_get_int(start_py);
+    lv_value_precise_t start = (float)mp_obj_get_float(start_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t))lv_arc_set_bg_start_angle)(obj, start);
@@ -28311,7 +28376,7 @@ static PyObject *py_lv_arc_set_bg_end_angle(PyObject *self, PyObject *py_args, P
     PyObject *end_py;
     if (!PyArg_ParseTuple(py_args, "O", &end_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t end = (int32_t)mp_obj_get_int(end_py);
+    lv_value_precise_t end = (float)mp_obj_get_float(end_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t))lv_arc_set_bg_end_angle)(obj, end);
@@ -28340,8 +28405,8 @@ static PyObject *py_lv_arc_set_bg_angles(PyObject *self, PyObject *py_args, PyOb
     PyObject *start_py; PyObject *end_py;
     if (!PyArg_ParseTuple(py_args, "OO", &start_py, &end_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t start = (int32_t)mp_obj_get_int(start_py);
-    lv_value_precise_t end = (int32_t)mp_obj_get_int(end_py);
+    lv_value_precise_t start = (float)mp_obj_get_float(start_py);
+    lv_value_precise_t end = (float)mp_obj_get_float(end_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t, lv_value_precise_t))lv_arc_set_bg_angles)(obj, start, end);
@@ -28609,7 +28674,7 @@ static PyObject *py_lv_arc_get_angle_start(PyObject *self, PyObject *py_args, Py
     lvpy_unlock();
     
     PyGILState_Release(gstate);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
 static PyMethodDef py_lv_arc_get_angle_start_def = {
@@ -28637,7 +28702,7 @@ static PyObject *py_lv_arc_get_angle_end(PyObject *self, PyObject *py_args, PyOb
     lvpy_unlock();
     
     PyGILState_Release(gstate);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
 static PyMethodDef py_lv_arc_get_angle_end_def = {
@@ -28665,7 +28730,7 @@ static PyObject *py_lv_arc_get_bg_angle_start(PyObject *self, PyObject *py_args,
     lvpy_unlock();
     
     PyGILState_Release(gstate);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
 static PyMethodDef py_lv_arc_get_bg_angle_start_def = {
@@ -28693,7 +28758,7 @@ static PyObject *py_lv_arc_get_bg_angle_end(PyObject *self, PyObject *py_args, P
     lvpy_unlock();
     
     PyGILState_Release(gstate);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
 static PyMethodDef py_lv_arc_get_bg_angle_end_def = {
@@ -29191,7 +29256,7 @@ static PyObject *py_lv_arclabel_set_angle_start(PyObject *self, PyObject *py_arg
     PyObject *start_py;
     if (!PyArg_ParseTuple(py_args, "O", &start_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t start = (int32_t)mp_obj_get_int(start_py);
+    lv_value_precise_t start = (float)mp_obj_get_float(start_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t))lv_arclabel_set_angle_start)(obj, start);
@@ -29220,7 +29285,7 @@ static PyObject *py_lv_arclabel_set_angle_size(PyObject *self, PyObject *py_args
     PyObject *size_py;
     if (!PyArg_ParseTuple(py_args, "O", &size_py)) { PyGILState_Release(gstate); return NULL; }
     lv_obj_t *obj = mp_to_lv(self);
-    lv_value_precise_t size = (int32_t)mp_obj_get_int(size_py);
+    lv_value_precise_t size = (float)mp_obj_get_float(size_py);
     
     lvpy_lock();
     ((void (*)(lv_obj_t *, lv_value_precise_t))lv_arclabel_set_angle_size)(obj, size);
@@ -29545,7 +29610,7 @@ static PyObject *py_lv_arclabel_get_angle_start(PyObject *self, PyObject *py_arg
     lvpy_unlock();
     
     PyGILState_Release(gstate);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
 static PyMethodDef py_lv_arclabel_get_angle_start_def = {
@@ -29573,7 +29638,7 @@ static PyObject *py_lv_arclabel_get_angle_size(PyObject *self, PyObject *py_args
     lvpy_unlock();
     
     PyGILState_Release(gstate);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
 static PyMethodDef py_lv_arclabel_get_angle_size_def = {
@@ -29853,7 +29918,7 @@ static PyObject *py_lv_arclabel_get_text_angle(PyObject *self, PyObject *py_args
     lvpy_unlock();
     
     PyGILState_Release(gstate);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
 static PyMethodDef py_lv_arclabel_get_text_angle_def = {
@@ -48048,6 +48113,293 @@ static inline PyObject *mp_lv_funcptr_lv_indev_key_remap_cb_t(void *func){ retur
 static lv_key_t lv_indev_t_key_remap_cb_callback(lv_indev_t *indev, lv_key_t key);
 
 /*
+ * Struct lv_indev_gesture_t (CPython)
+ */
+
+extern PyMethodDef py_lv_indev_gesture_t_methods[];
+
+static PyObject *py_lv_indev_gesture_t_getattro(PyObject *self, PyObject *name)
+{
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_gesture_t *data = (lv_indev_gesture_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return NULL;
+    (void)attr;
+    for (PyMethodDef *m = py_lv_indev_gesture_t_methods; m->ml_name != NULL; m++) {
+        if (strcmp(attr, m->ml_name) == 0)
+            return PyCFunction_NewEx(m, self, NULL);
+    }
+    return PyObject_GenericGetAttr((PyObject *)self, name);
+}
+
+static int py_lv_indev_gesture_t_setattro(PyObject *self, PyObject *name, PyObject *value)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
+        return -1;
+    }
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_gesture_t *data = (lv_indev_gesture_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return -1;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return -1;
+    int result = -1;
+    (void)value;
+    if (result < 0) {
+        PyErr_Format(PyExc_AttributeError, "'lv_indev_gesture_t' object has no attribute '%s'", attr);
+    }
+    return result;
+}
+
+static PyObject *py_lv_indev_gesture_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    return make_new_lv_struct(type, args, kwds, 0);
+}
+
+static void py_lv_indev_gesture_t_dealloc(py_lv_struct_t *self)
+{
+    py_lv_struct_dealloc(self);
+}
+
+PyTypeObject py_lv_indev_gesture_t_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.lv_indev_gesture_t",
+    .tp_basicsize = sizeof(py_lv_struct_t),
+    .tp_dealloc = (destructor)py_lv_indev_gesture_t_dealloc,
+    .tp_getattro = (getter)py_lv_indev_gesture_t_getattro,
+    .tp_setattro = (setter)py_lv_indev_gesture_t_setattro,
+    .tp_new = py_lv_indev_gesture_t_new,
+    .tp_base = &py_lv_base_struct_type,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+static inline void* mp_write_ptr_lv_indev_gesture_t(PyObject *self_in)
+{
+    if (!self_in || self_in == Py_None) return NULL;
+    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
+    return (lv_indev_gesture_t*)self->data;
+}
+
+#define mp_write_lv_indev_gesture_t(struct_obj) (*((lv_indev_gesture_t*)mp_write_ptr_lv_indev_gesture_t(struct_obj)))
+
+static inline PyObject *mp_read_ptr_lv_indev_gesture_t(void *field)
+{
+    return lv_to_mp_struct(&py_lv_indev_gesture_t_type, field);
+}
+
+#define mp_read_lv_indev_gesture_t(field) lv_to_mp_struct_own(&py_lv_indev_gesture_t_type, copy_buffer(&field, sizeof(lv_indev_gesture_t)))
+#define mp_read_byref_lv_indev_gesture_t(field) mp_read_ptr_lv_indev_gesture_t(&field)
+
+
+/*
+ * Struct lv_indev_gesture_configuration_t (CPython)
+ */
+
+extern PyMethodDef py_lv_indev_gesture_configuration_t_methods[];
+
+static PyObject *py_lv_indev_gesture_configuration_t_getattro(PyObject *self, PyObject *name)
+{
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_gesture_configuration_t *data = (lv_indev_gesture_configuration_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return NULL;
+    (void)attr;
+    for (PyMethodDef *m = py_lv_indev_gesture_configuration_t_methods; m->ml_name != NULL; m++) {
+        if (strcmp(attr, m->ml_name) == 0)
+            return PyCFunction_NewEx(m, self, NULL);
+    }
+    return PyObject_GenericGetAttr((PyObject *)self, name);
+}
+
+static int py_lv_indev_gesture_configuration_t_setattro(PyObject *self, PyObject *name, PyObject *value)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
+        return -1;
+    }
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_gesture_configuration_t *data = (lv_indev_gesture_configuration_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return -1;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return -1;
+    int result = -1;
+    (void)value;
+    if (result < 0) {
+        PyErr_Format(PyExc_AttributeError, "'lv_indev_gesture_configuration_t' object has no attribute '%s'", attr);
+    }
+    return result;
+}
+
+static PyObject *py_lv_indev_gesture_configuration_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    return make_new_lv_struct(type, args, kwds, 0);
+}
+
+static void py_lv_indev_gesture_configuration_t_dealloc(py_lv_struct_t *self)
+{
+    py_lv_struct_dealloc(self);
+}
+
+PyTypeObject py_lv_indev_gesture_configuration_t_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.lv_indev_gesture_configuration_t",
+    .tp_basicsize = sizeof(py_lv_struct_t),
+    .tp_dealloc = (destructor)py_lv_indev_gesture_configuration_t_dealloc,
+    .tp_getattro = (getter)py_lv_indev_gesture_configuration_t_getattro,
+    .tp_setattro = (setter)py_lv_indev_gesture_configuration_t_setattro,
+    .tp_new = py_lv_indev_gesture_configuration_t_new,
+    .tp_base = &py_lv_base_struct_type,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+static inline void* mp_write_ptr_lv_indev_gesture_configuration_t(PyObject *self_in)
+{
+    if (!self_in || self_in == Py_None) return NULL;
+    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
+    return (lv_indev_gesture_configuration_t*)self->data;
+}
+
+#define mp_write_lv_indev_gesture_configuration_t(struct_obj) (*((lv_indev_gesture_configuration_t*)mp_write_ptr_lv_indev_gesture_configuration_t(struct_obj)))
+
+static inline PyObject *mp_read_ptr_lv_indev_gesture_configuration_t(void *field)
+{
+    return lv_to_mp_struct(&py_lv_indev_gesture_configuration_t_type, field);
+}
+
+#define mp_read_lv_indev_gesture_configuration_t(field) lv_to_mp_struct_own(&py_lv_indev_gesture_configuration_t_type, copy_buffer(&field, sizeof(lv_indev_gesture_configuration_t)))
+#define mp_read_byref_lv_indev_gesture_configuration_t(field) mp_read_ptr_lv_indev_gesture_configuration_t(&field)
+
+#define funcptr_lv_recognizer_func_t NULL
+
+static inline PyObject *mp_lv_funcptr_lv_recognizer_func_t(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
+
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' field for callback 'lv_indev_gesture_recognizer_t_recog_fn'
+ * lv_recognizer_func_t recog_fn
+ */
+    
+
+/*
+ * Struct lv_indev_gesture_recognizer_t (CPython)
+ */
+
+extern PyMethodDef py_lv_indev_gesture_recognizer_t_methods[];
+
+static PyObject *py_lv_indev_gesture_recognizer_t_getattro(PyObject *self, PyObject *name)
+{
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_gesture_recognizer_t *data = (lv_indev_gesture_recognizer_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return NULL;
+    if (strcmp(attr, "type") == 0) return mp_obj_new_int(data->type);
+    if (strcmp(attr, "state") == 0) return mp_obj_new_int(data->state);
+    if (strcmp(attr, "info") == 0) return mp_read_ptr_lv_indev_gesture_t((void*)data->info);
+    if (strcmp(attr, "scale") == 0) return mp_obj_new_float_from_f(data->scale);
+    if (strcmp(attr, "rotation") == 0) return mp_obj_new_float_from_f(data->rotation);
+    if (strcmp(attr, "distance") == 0) return mp_obj_new_float_from_f(data->distance);
+    if (strcmp(attr, "speed") == 0) return mp_obj_new_float_from_f(data->speed);
+    if (strcmp(attr, "two_fingers_swipe_dir") == 0) return mp_obj_new_int(data->two_fingers_swipe_dir);
+    if (strcmp(attr, "config") == 0) return mp_read_ptr_lv_indev_gesture_configuration_t((void*)data->config);
+    if (strcmp(attr, "recog_fn") == 0) return mp_lv_funcptr(NULL, data->recog_fn, NULL, "lv_indev_gesture_recognizer_t_recog_fn", NULL);
+    for (PyMethodDef *m = py_lv_indev_gesture_recognizer_t_methods; m->ml_name != NULL; m++) {
+        if (strcmp(attr, m->ml_name) == 0)
+            return PyCFunction_NewEx(m, self, NULL);
+    }
+    return PyObject_GenericGetAttr((PyObject *)self, name);
+}
+
+static int py_lv_indev_gesture_recognizer_t_setattro(PyObject *self, PyObject *name, PyObject *value)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
+        return -1;
+    }
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_gesture_recognizer_t *data = (lv_indev_gesture_recognizer_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return -1;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return -1;
+    int result = -1;
+    if (strcmp(attr, "type") == 0) { data->type = (int)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "state") == 0) { data->state = (int)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "info") == 0) { data->info = (void*)mp_write_ptr_lv_indev_gesture_t(value); result = 0; }
+    if (strcmp(attr, "scale") == 0) { data->scale = (float)mp_obj_get_float(value); result = 0; }
+    if (strcmp(attr, "rotation") == 0) { data->rotation = (float)mp_obj_get_float(value); result = 0; }
+    if (strcmp(attr, "distance") == 0) { data->distance = (float)mp_obj_get_float(value); result = 0; }
+    if (strcmp(attr, "speed") == 0) { data->speed = (float)mp_obj_get_float(value); result = 0; }
+    if (strcmp(attr, "two_fingers_swipe_dir") == 0) { data->two_fingers_swipe_dir = (int)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "config") == 0) { data->config = (void*)mp_write_ptr_lv_indev_gesture_configuration_t(value); result = 0; }
+    if (strcmp(attr, "recog_fn") == 0) { data->recog_fn = mp_lv_callback(value, NULL, "lv_indev_gesture_recognizer_t_recog_fn", NULL, NULL, NULL, NULL); result = 0; }
+    if (result < 0) {
+        PyErr_Format(PyExc_AttributeError, "'lv_indev_gesture_recognizer_t' object has no attribute '%s'", attr);
+    }
+    return result;
+}
+
+static PyObject *py_lv_indev_gesture_recognizer_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    return make_new_lv_struct(type, args, kwds, sizeof(lv_indev_gesture_recognizer_t));
+}
+
+static void py_lv_indev_gesture_recognizer_t_dealloc(py_lv_struct_t *self)
+{
+    py_lv_struct_dealloc(self);
+}
+
+PyTypeObject py_lv_indev_gesture_recognizer_t_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.lv_indev_gesture_recognizer_t",
+    .tp_basicsize = sizeof(py_lv_struct_t),
+    .tp_dealloc = (destructor)py_lv_indev_gesture_recognizer_t_dealloc,
+    .tp_getattro = (getter)py_lv_indev_gesture_recognizer_t_getattro,
+    .tp_setattro = (setter)py_lv_indev_gesture_recognizer_t_setattro,
+    .tp_new = py_lv_indev_gesture_recognizer_t_new,
+    .tp_base = &py_lv_base_struct_type,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+static inline void* mp_write_ptr_lv_indev_gesture_recognizer_t(PyObject *self_in)
+{
+    if (!self_in || self_in == Py_None) return NULL;
+    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
+    return (lv_indev_gesture_recognizer_t*)self->data;
+}
+
+#define mp_write_lv_indev_gesture_recognizer_t(struct_obj) (*((lv_indev_gesture_recognizer_t*)mp_write_ptr_lv_indev_gesture_recognizer_t(struct_obj)))
+
+static inline PyObject *mp_read_ptr_lv_indev_gesture_recognizer_t(void *field)
+{
+    return lv_to_mp_struct(&py_lv_indev_gesture_recognizer_t_type, field);
+}
+
+#define mp_read_lv_indev_gesture_recognizer_t(field) lv_to_mp_struct_own(&py_lv_indev_gesture_recognizer_t_type, copy_buffer(&field, sizeof(lv_indev_gesture_recognizer_t)))
+#define mp_read_byref_lv_indev_gesture_recognizer_t(field) mp_read_ptr_lv_indev_gesture_recognizer_t(&field)
+
+
+/*
  * Struct lv_indev_t (CPython)
  */
 
@@ -48093,6 +48445,10 @@ static PyObject *py_lv_indev_t_getattro(PyObject *self, PyObject *name)
     if (strcmp(attr, "event_list") == 0) return mp_read_byref_lv_event_list_t(data->event_list);
     if (strcmp(attr, "scroll_throw_anim") == 0) return mp_read_ptr_lv_anim_t((void*)data->scroll_throw_anim);
     if (strcmp(attr, "key_remap_cb") == 0) return mp_lv_funcptr(NULL, data->key_remap_cb, lv_indev_t_key_remap_cb_callback, "lv_indev_t_key_remap_cb", data->user_data);
+    if (strcmp(attr, "recognizers") == 0) return ptr_to_mp(data->recognizers);
+    if (strcmp(attr, "cur_gesture") == 0) return mp_obj_new_int(data->cur_gesture);
+    if (strcmp(attr, "gesture_data") == 0) return ptr_to_mp(data->gesture_data);
+    if (strcmp(attr, "gesture_type") == 0) return ptr_to_mp(data->gesture_type);
     for (PyMethodDef *m = py_lv_indev_t_methods; m->ml_name != NULL; m++) {
         if (strcmp(attr, m->ml_name) == 0)
             return PyCFunction_NewEx(m, self, NULL);
@@ -48145,6 +48501,10 @@ static int py_lv_indev_t_setattro(PyObject *self, PyObject *name, PyObject *valu
     if (strcmp(attr, "event_list") == 0) { data->event_list = mp_write_lv_event_list_t(value); result = 0; }
     if (strcmp(attr, "scroll_throw_anim") == 0) { data->scroll_throw_anim = (void*)mp_write_ptr_lv_anim_t(value); result = 0; }
     if (strcmp(attr, "key_remap_cb") == 0) { data->key_remap_cb = mp_lv_callback(value, lv_indev_t_key_remap_cb_callback, "lv_indev_t_key_remap_cb", &data->user_data, NULL, NULL, NULL); result = 0; }
+    if (strcmp(attr, "recognizers") == 0) { memcpy((void*)&data->recognizers, mp_to_ptr(value), sizeof(lv_indev_gesture_recognizer_t)*LV_INDEV_GESTURE_CNT); result = 0; }
+    if (strcmp(attr, "cur_gesture") == 0) { data->cur_gesture = (int)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "gesture_data") == 0) { memcpy((void*)&data->gesture_data, mp_to_ptr(value), sizeof(void *)*LV_INDEV_GESTURE_CNT); result = 0; }
+    if (strcmp(attr, "gesture_type") == 0) { memcpy((void*)&data->gesture_type, mp_to_ptr(value), sizeof(lv_indev_gesture_type_t)*LV_INDEV_GESTURE_CNT); result = 0; }
     if (result < 0) {
         PyErr_Format(PyExc_AttributeError, "'lv_indev_t' object has no attribute '%s'", attr);
     }
@@ -48189,6 +48549,108 @@ static inline PyObject *mp_read_ptr_lv_indev_t(void *field)
 
 #define mp_read_lv_indev_t(field) lv_to_mp_struct_own(&py_lv_indev_t_type, copy_buffer(&field, sizeof(lv_indev_t)))
 #define mp_read_byref_lv_indev_t(field) mp_read_ptr_lv_indev_t(&field)
+
+
+/*
+ * Struct lv_indev_data_t (CPython)
+ */
+
+extern PyMethodDef py_lv_indev_data_t_methods[];
+
+static PyObject *py_lv_indev_data_t_getattro(PyObject *self, PyObject *name)
+{
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_data_t *data = (lv_indev_data_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return NULL;
+    if (strcmp(attr, "gesture_type") == 0) return ptr_to_mp(data->gesture_type);
+    if (strcmp(attr, "gesture_data") == 0) return ptr_to_mp(data->gesture_data);
+    if (strcmp(attr, "state") == 0) return mp_obj_new_int(data->state);
+    if (strcmp(attr, "point") == 0) return mp_read_byref_lv_point_t(data->point);
+    if (strcmp(attr, "key") == 0) return mp_obj_new_int_from_uint(data->key);
+    if (strcmp(attr, "btn_id") == 0) return mp_obj_new_int_from_uint(data->btn_id);
+    if (strcmp(attr, "enc_diff") == 0) return mp_obj_new_int(data->enc_diff);
+    if (strcmp(attr, "timestamp") == 0) return mp_obj_new_int_from_uint(data->timestamp);
+    if (strcmp(attr, "continue_reading") == 0) return convert_to_bool(data->continue_reading);
+    for (PyMethodDef *m = py_lv_indev_data_t_methods; m->ml_name != NULL; m++) {
+        if (strcmp(attr, m->ml_name) == 0)
+            return PyCFunction_NewEx(m, self, NULL);
+    }
+    return PyObject_GenericGetAttr((PyObject *)self, name);
+}
+
+static int py_lv_indev_data_t_setattro(PyObject *self, PyObject *name, PyObject *value)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
+        return -1;
+    }
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_data_t *data = (lv_indev_data_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return -1;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return -1;
+    int result = -1;
+    if (strcmp(attr, "gesture_type") == 0) { memcpy((void*)&data->gesture_type, mp_to_ptr(value), sizeof(lv_indev_gesture_type_t)*LV_INDEV_GESTURE_CNT); result = 0; }
+    if (strcmp(attr, "gesture_data") == 0) { memcpy((void*)&data->gesture_data, mp_to_ptr(value), sizeof(void *)*LV_INDEV_GESTURE_CNT); result = 0; }
+    if (strcmp(attr, "state") == 0) { data->state = (int)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "point") == 0) { data->point = mp_write_lv_point_t(value); result = 0; }
+    if (strcmp(attr, "key") == 0) { data->key = (uint32_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "btn_id") == 0) { data->btn_id = (uint32_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "enc_diff") == 0) { data->enc_diff = (int16_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "timestamp") == 0) { data->timestamp = (uint32_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "continue_reading") == 0) { data->continue_reading = mp_obj_is_true(value); result = 0; }
+    if (result < 0) {
+        PyErr_Format(PyExc_AttributeError, "'lv_indev_data_t' object has no attribute '%s'", attr);
+    }
+    return result;
+}
+
+static PyObject *py_lv_indev_data_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    return make_new_lv_struct(type, args, kwds, sizeof(lv_indev_data_t));
+}
+
+static void py_lv_indev_data_t_dealloc(py_lv_struct_t *self)
+{
+    py_lv_struct_dealloc(self);
+}
+
+PyTypeObject py_lv_indev_data_t_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.lv_indev_data_t",
+    .tp_basicsize = sizeof(py_lv_struct_t),
+    .tp_dealloc = (destructor)py_lv_indev_data_t_dealloc,
+    .tp_getattro = (getter)py_lv_indev_data_t_getattro,
+    .tp_setattro = (setter)py_lv_indev_data_t_setattro,
+    .tp_new = py_lv_indev_data_t_new,
+    .tp_base = &py_lv_base_struct_type,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+static inline void* mp_write_ptr_lv_indev_data_t(PyObject *self_in)
+{
+    if (!self_in || self_in == Py_None) return NULL;
+    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
+    return (lv_indev_data_t*)self->data;
+}
+
+#define mp_write_lv_indev_data_t(struct_obj) (*((lv_indev_data_t*)mp_write_ptr_lv_indev_data_t(struct_obj)))
+
+static inline PyObject *mp_read_ptr_lv_indev_data_t(void *field)
+{
+    return lv_to_mp_struct(&py_lv_indev_data_t_type, field);
+}
+
+#define mp_read_lv_indev_data_t(field) lv_to_mp_struct_own(&py_lv_indev_data_t_type, copy_buffer(&field, sizeof(lv_indev_data_t)))
+#define mp_read_byref_lv_indev_data_t(field) mp_read_ptr_lv_indev_data_t(&field)
 
 
 /*
@@ -57365,8 +57827,8 @@ static PyObject *py_lv_point_precise_set(PyObject *self, PyObject *py_args, PyOb
     PyObject *p_py; PyObject *x_py; PyObject *y_py;
     if (!PyArg_ParseTuple(py_args, "OOO", &p_py, &x_py, &y_py)) { PyGILState_Release(gstate); return NULL; }
     lv_point_precise_t *p = mp_write_ptr_lv_point_precise_t(p_py);
-    lv_value_precise_t x = (int32_t)mp_obj_get_int(x_py);
-    lv_value_precise_t y = (int32_t)mp_obj_get_int(y_py);
+    lv_value_precise_t x = (float)mp_obj_get_float(x_py);
+    lv_value_precise_t y = (float)mp_obj_get_float(y_py);
     
     lvpy_lock();
     ((void (*)(lv_point_precise_t *, lv_value_precise_t, lv_value_precise_t))lv_point_precise_set)(p, x, y);
@@ -71650,8 +72112,8 @@ static PyObject *py_lv_draw_arc_get_area(PyObject *self, PyObject *py_args, PyOb
     int32_t x = (int32_t)x_val;
     int32_t y = (int32_t)y_val;
     uint16_t radius = (uint16_t)radius_val;
-    lv_value_precise_t start_angle = (int32_t)mp_obj_get_int(start_angle_py);
-    lv_value_precise_t end_angle = (int32_t)mp_obj_get_int(end_angle_py);
+    lv_value_precise_t start_angle = (float)mp_obj_get_float(start_angle_py);
+    lv_value_precise_t end_angle = (float)mp_obj_get_float(end_angle_py);
     int32_t w = (int32_t)w_val;
     bool rounded = (rounded_val != 0);
     lv_area_t *area = mp_write_ptr_lv_area_t(area_py);
@@ -72999,108 +73461,6 @@ static PyMethodDef py_lv_indev_set_type_def = {
     METH_VARARGS | METH_KEYWORDS,
     NULL
 };
-
-
-/*
- * Struct lv_indev_data_t (CPython)
- */
-
-extern PyMethodDef py_lv_indev_data_t_methods[];
-
-static PyObject *py_lv_indev_data_t_getattro(PyObject *self, PyObject *name)
-{
-    py_lv_struct_t *inst = (py_lv_struct_t *)self;
-    lv_indev_data_t *data = (lv_indev_data_t*)inst->data;
-    if (data == NULL) {
-        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
-        return NULL;
-    }
-    const char *attr = PyUnicode_AsUTF8(name);
-    if (attr == NULL) return NULL;
-    if (strcmp(attr, "gesture_type") == 0) return ptr_to_mp(data->gesture_type);
-    if (strcmp(attr, "gesture_data") == 0) return ptr_to_mp(data->gesture_data);
-    if (strcmp(attr, "state") == 0) return mp_obj_new_int(data->state);
-    if (strcmp(attr, "point") == 0) return mp_read_byref_lv_point_t(data->point);
-    if (strcmp(attr, "key") == 0) return mp_obj_new_int_from_uint(data->key);
-    if (strcmp(attr, "btn_id") == 0) return mp_obj_new_int_from_uint(data->btn_id);
-    if (strcmp(attr, "enc_diff") == 0) return mp_obj_new_int(data->enc_diff);
-    if (strcmp(attr, "timestamp") == 0) return mp_obj_new_int_from_uint(data->timestamp);
-    if (strcmp(attr, "continue_reading") == 0) return convert_to_bool(data->continue_reading);
-    for (PyMethodDef *m = py_lv_indev_data_t_methods; m->ml_name != NULL; m++) {
-        if (strcmp(attr, m->ml_name) == 0)
-            return PyCFunction_NewEx(m, self, NULL);
-    }
-    return PyObject_GenericGetAttr((PyObject *)self, name);
-}
-
-static int py_lv_indev_data_t_setattro(PyObject *self, PyObject *name, PyObject *value)
-{
-    if (value == NULL) {
-        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
-        return -1;
-    }
-    py_lv_struct_t *inst = (py_lv_struct_t *)self;
-    lv_indev_data_t *data = (lv_indev_data_t*)inst->data;
-    if (data == NULL) {
-        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
-        return -1;
-    }
-    const char *attr = PyUnicode_AsUTF8(name);
-    if (attr == NULL) return -1;
-    int result = -1;
-    if (strcmp(attr, "gesture_type") == 0) { memcpy((void*)&data->gesture_type, mp_to_ptr(value), sizeof(lv_indev_gesture_type_t)*LV_INDEV_GESTURE_CNT); result = 0; }
-    if (strcmp(attr, "gesture_data") == 0) { memcpy((void*)&data->gesture_data, mp_to_ptr(value), sizeof(void *)*LV_INDEV_GESTURE_CNT); result = 0; }
-    if (strcmp(attr, "state") == 0) { data->state = (int)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "point") == 0) { data->point = mp_write_lv_point_t(value); result = 0; }
-    if (strcmp(attr, "key") == 0) { data->key = (uint32_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "btn_id") == 0) { data->btn_id = (uint32_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "enc_diff") == 0) { data->enc_diff = (int16_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "timestamp") == 0) { data->timestamp = (uint32_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "continue_reading") == 0) { data->continue_reading = mp_obj_is_true(value); result = 0; }
-    if (result < 0) {
-        PyErr_Format(PyExc_AttributeError, "'lv_indev_data_t' object has no attribute '%s'", attr);
-    }
-    return result;
-}
-
-static PyObject *py_lv_indev_data_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-    return make_new_lv_struct(type, args, kwds, sizeof(lv_indev_data_t));
-}
-
-static void py_lv_indev_data_t_dealloc(py_lv_struct_t *self)
-{
-    py_lv_struct_dealloc(self);
-}
-
-PyTypeObject py_lv_indev_data_t_type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "lvgl.lv_indev_data_t",
-    .tp_basicsize = sizeof(py_lv_struct_t),
-    .tp_dealloc = (destructor)py_lv_indev_data_t_dealloc,
-    .tp_getattro = (getter)py_lv_indev_data_t_getattro,
-    .tp_setattro = (setter)py_lv_indev_data_t_setattro,
-    .tp_new = py_lv_indev_data_t_new,
-    .tp_base = &py_lv_base_struct_type,
-    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
-};
-
-static inline void* mp_write_ptr_lv_indev_data_t(PyObject *self_in)
-{
-    if (!self_in || self_in == Py_None) return NULL;
-    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
-    return (lv_indev_data_t*)self->data;
-}
-
-#define mp_write_lv_indev_data_t(struct_obj) (*((lv_indev_data_t*)mp_write_ptr_lv_indev_data_t(struct_obj)))
-
-static inline PyObject *mp_read_ptr_lv_indev_data_t(void *field)
-{
-    return lv_to_mp_struct(&py_lv_indev_data_t_type, field);
-}
-
-#define mp_read_lv_indev_data_t(field) lv_to_mp_struct_own(&py_lv_indev_data_t_type, copy_buffer(&field, sizeof(lv_indev_data_t)))
-#define mp_read_byref_lv_indev_data_t(field) mp_read_ptr_lv_indev_data_t(&field)
 
 
 /*
@@ -75344,6 +75704,186 @@ static PyMethodDef py_lv_subject_set_max_value_int_def = {
 
 /*
  * lvgl extension definition for:
+ * void lv_subject_init_float(lv_subject_t *subject, float value)
+ */
+static PyObject *py_lv_subject_init_float(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *subject_py; double value_val;
+    if (!PyArg_ParseTuple(py_args, "Od", &subject_py, &value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(subject_py);
+    float value = (float)value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_init_float)(subject, value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_init_float_def = {
+    "lv_subject_init_float",
+    (PyCFunction)py_lv_subject_init_float,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_subject_set_float(lv_subject_t *subject, float value)
+ */
+static PyObject *py_lv_subject_set_float(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *subject_py; double value_val;
+    if (!PyArg_ParseTuple(py_args, "Od", &subject_py, &value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(subject_py);
+    float value = (float)value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_set_float)(subject, value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_set_float_def = {
+    "lv_subject_set_float",
+    (PyCFunction)py_lv_subject_set_float,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_subject_get_float(lv_subject_t *subject)
+ */
+static PyObject *py_lv_subject_get_float(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *subject_py;
+    if (!PyArg_ParseTuple(py_args, "O", &subject_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(subject_py);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_subject_t *))lv_subject_get_float)(subject);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_subject_get_float_def = {
+    "lv_subject_get_float",
+    (PyCFunction)py_lv_subject_get_float,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_subject_get_previous_float(lv_subject_t *subject)
+ */
+static PyObject *py_lv_subject_get_previous_float(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *subject_py;
+    if (!PyArg_ParseTuple(py_args, "O", &subject_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(subject_py);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_subject_t *))lv_subject_get_previous_float)(subject);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_subject_get_previous_float_def = {
+    "lv_subject_get_previous_float",
+    (PyCFunction)py_lv_subject_get_previous_float,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_subject_set_min_value_float(lv_subject_t *subject, float min_value)
+ */
+static PyObject *py_lv_subject_set_min_value_float(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *subject_py; double min_value_val;
+    if (!PyArg_ParseTuple(py_args, "Od", &subject_py, &min_value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(subject_py);
+    float min_value = (float)min_value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_set_min_value_float)(subject, min_value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_set_min_value_float_def = {
+    "lv_subject_set_min_value_float",
+    (PyCFunction)py_lv_subject_set_min_value_float,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_subject_set_max_value_float(lv_subject_t *subject, float max_value)
+ */
+static PyObject *py_lv_subject_set_max_value_float(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *subject_py; double max_value_val;
+    if (!PyArg_ParseTuple(py_args, "Od", &subject_py, &max_value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(subject_py);
+    float max_value = (float)max_value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_set_max_value_float)(subject, max_value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_set_max_value_float_def = {
+    "lv_subject_set_max_value_float",
+    (PyCFunction)py_lv_subject_set_max_value_float,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
  * void lv_subject_init_string(lv_subject_t *subject, char *buf, char *prev_buf, size_t size, const char *value)
  */
 static PyObject *py_lv_subject_init_string(PyObject *self, PyObject *py_args, PyObject *py_kwds)
@@ -76148,6 +76688,673 @@ static PyObject *py_lv_subject_notify(PyObject *self, PyObject *py_args, PyObjec
 static PyMethodDef py_lv_subject_notify_def = {
     "lv_subject_notify",
     (PyCFunction)py_lv_subject_notify,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_init(lv_indev_t *indev)
+ */
+static PyObject *py_lv_indev_gesture_init(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *indev_py;
+    if (!PyArg_ParseTuple(py_args, "O", &indev_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(indev_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *))lv_indev_gesture_init)(indev);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_init_def = {
+    "lv_indev_gesture_init",
+    (PyCFunction)py_lv_indev_gesture_init,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * Struct lv_indev_touch_data_t (CPython)
+ */
+
+extern PyMethodDef py_lv_indev_touch_data_t_methods[];
+
+static PyObject *py_lv_indev_touch_data_t_getattro(PyObject *self, PyObject *name)
+{
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_touch_data_t *data = (lv_indev_touch_data_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return NULL;
+    if (strcmp(attr, "point") == 0) return mp_read_byref_lv_point_t(data->point);
+    if (strcmp(attr, "state") == 0) return mp_obj_new_int(data->state);
+    if (strcmp(attr, "id") == 0) return mp_obj_new_int_from_uint(data->id);
+    if (strcmp(attr, "timestamp") == 0) return mp_obj_new_int_from_uint(data->timestamp);
+    for (PyMethodDef *m = py_lv_indev_touch_data_t_methods; m->ml_name != NULL; m++) {
+        if (strcmp(attr, m->ml_name) == 0)
+            return PyCFunction_NewEx(m, self, NULL);
+    }
+    return PyObject_GenericGetAttr((PyObject *)self, name);
+}
+
+static int py_lv_indev_touch_data_t_setattro(PyObject *self, PyObject *name, PyObject *value)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
+        return -1;
+    }
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_indev_touch_data_t *data = (lv_indev_touch_data_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return -1;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return -1;
+    int result = -1;
+    if (strcmp(attr, "point") == 0) { data->point = mp_write_lv_point_t(value); result = 0; }
+    if (strcmp(attr, "state") == 0) { data->state = (int)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "id") == 0) { data->id = (uint8_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "timestamp") == 0) { data->timestamp = (uint32_t)mp_obj_get_int(value); result = 0; }
+    if (result < 0) {
+        PyErr_Format(PyExc_AttributeError, "'lv_indev_touch_data_t' object has no attribute '%s'", attr);
+    }
+    return result;
+}
+
+static PyObject *py_lv_indev_touch_data_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    return make_new_lv_struct(type, args, kwds, sizeof(lv_indev_touch_data_t));
+}
+
+static void py_lv_indev_touch_data_t_dealloc(py_lv_struct_t *self)
+{
+    py_lv_struct_dealloc(self);
+}
+
+PyTypeObject py_lv_indev_touch_data_t_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.lv_indev_touch_data_t",
+    .tp_basicsize = sizeof(py_lv_struct_t),
+    .tp_dealloc = (destructor)py_lv_indev_touch_data_t_dealloc,
+    .tp_getattro = (getter)py_lv_indev_touch_data_t_getattro,
+    .tp_setattro = (setter)py_lv_indev_touch_data_t_setattro,
+    .tp_new = py_lv_indev_touch_data_t_new,
+    .tp_base = &py_lv_base_struct_type,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+static inline void* mp_write_ptr_lv_indev_touch_data_t(PyObject *self_in)
+{
+    if (!self_in || self_in == Py_None) return NULL;
+    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
+    return (lv_indev_touch_data_t*)self->data;
+}
+
+#define mp_write_lv_indev_touch_data_t(struct_obj) (*((lv_indev_touch_data_t*)mp_write_ptr_lv_indev_touch_data_t(struct_obj)))
+
+static inline PyObject *mp_read_ptr_lv_indev_touch_data_t(void *field)
+{
+    return lv_to_mp_struct(&py_lv_indev_touch_data_t_type, field);
+}
+
+#define mp_read_lv_indev_touch_data_t(field) lv_to_mp_struct_own(&py_lv_indev_touch_data_t_type, copy_buffer(&field, sizeof(lv_indev_touch_data_t)))
+#define mp_read_byref_lv_indev_touch_data_t(field) mp_read_ptr_lv_indev_touch_data_t(&field)
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_detect_pinch(lv_indev_gesture_recognizer_t *recognizer, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_detect_pinch(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *recognizer_py; PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "OOl", &recognizer_py, &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_detect_pinch)(recognizer, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_detect_pinch_def = {
+    "lv_indev_gesture_detect_pinch",
+    (PyCFunction)py_lv_indev_gesture_detect_pinch,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_detect_rotation(lv_indev_gesture_recognizer_t *recognizer, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_detect_rotation(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *recognizer_py; PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "OOl", &recognizer_py, &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_detect_rotation)(recognizer, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_detect_rotation_def = {
+    "lv_indev_gesture_detect_rotation",
+    (PyCFunction)py_lv_indev_gesture_detect_rotation,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_detect_two_fingers_swipe(lv_indev_gesture_recognizer_t *recognizer, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_detect_two_fingers_swipe(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *recognizer_py; PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "OOl", &recognizer_py, &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_detect_two_fingers_swipe)(recognizer, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_detect_two_fingers_swipe_def = {
+    "lv_indev_gesture_detect_two_fingers_swipe",
+    (PyCFunction)py_lv_indev_gesture_detect_two_fingers_swipe,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_pinch_up_threshold(lv_indev_t *indev, float threshold)
+ */
+static PyObject *py_lv_indev_set_pinch_up_threshold(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *indev_py; double threshold_val;
+    if (!PyArg_ParseTuple(py_args, "Od", &indev_py, &threshold_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(indev_py);
+    float threshold = (float)threshold_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, float))lv_indev_set_pinch_up_threshold)(indev, threshold);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_pinch_up_threshold_def = {
+    "lv_indev_set_pinch_up_threshold",
+    (PyCFunction)py_lv_indev_set_pinch_up_threshold,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_pinch_down_threshold(lv_indev_t *indev, float threshold)
+ */
+static PyObject *py_lv_indev_set_pinch_down_threshold(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *indev_py; double threshold_val;
+    if (!PyArg_ParseTuple(py_args, "Od", &indev_py, &threshold_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(indev_py);
+    float threshold = (float)threshold_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, float))lv_indev_set_pinch_down_threshold)(indev, threshold);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_pinch_down_threshold_def = {
+    "lv_indev_set_pinch_down_threshold",
+    (PyCFunction)py_lv_indev_set_pinch_down_threshold,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_rotation_rad_threshold(lv_indev_t *indev, float threshold)
+ */
+static PyObject *py_lv_indev_set_rotation_rad_threshold(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *indev_py; double threshold_val;
+    if (!PyArg_ParseTuple(py_args, "Od", &indev_py, &threshold_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(indev_py);
+    float threshold = (float)threshold_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, float))lv_indev_set_rotation_rad_threshold)(indev, threshold);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_rotation_rad_threshold_def = {
+    "lv_indev_set_rotation_rad_threshold",
+    (PyCFunction)py_lv_indev_set_rotation_rad_threshold,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_event_get_pinch_scale(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_pinch_scale(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *gesture_event_py;
+    if (!PyArg_ParseTuple(py_args, "O", &gesture_event_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(gesture_event_py);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_event_t *))lv_event_get_pinch_scale)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_event_get_pinch_scale_def = {
+    "lv_event_get_pinch_scale",
+    (PyCFunction)py_lv_event_get_pinch_scale,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_event_get_rotation(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_rotation(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *gesture_event_py;
+    if (!PyArg_ParseTuple(py_args, "O", &gesture_event_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(gesture_event_py);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_event_t *))lv_event_get_rotation)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_event_get_rotation_def = {
+    "lv_event_get_rotation",
+    (PyCFunction)py_lv_event_get_rotation,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_event_get_two_fingers_swipe_distance(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_two_fingers_swipe_distance(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *gesture_event_py;
+    if (!PyArg_ParseTuple(py_args, "O", &gesture_event_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(gesture_event_py);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_event_t *))lv_event_get_two_fingers_swipe_distance)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_event_get_two_fingers_swipe_distance_def = {
+    "lv_event_get_two_fingers_swipe_distance",
+    (PyCFunction)py_lv_event_get_two_fingers_swipe_distance,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * lv_dir_t lv_event_get_two_fingers_swipe_dir(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_two_fingers_swipe_dir(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *gesture_event_py;
+    if (!PyArg_ParseTuple(py_args, "O", &gesture_event_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(gesture_event_py);
+    
+    lv_dir_t _res;
+    lvpy_lock();
+    _res = ((lv_dir_t (*)(lv_event_t *))lv_event_get_two_fingers_swipe_dir)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_int(_res);
+}
+
+static PyMethodDef py_lv_event_get_two_fingers_swipe_dir_def = {
+    "lv_event_get_two_fingers_swipe_dir",
+    (PyCFunction)py_lv_event_get_two_fingers_swipe_dir,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_gesture_data(lv_indev_data_t *data, lv_indev_gesture_recognizer_t *recognizer, lv_indev_gesture_type_t type)
+ */
+static PyObject *py_lv_indev_set_gesture_data(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *data_py; PyObject *recognizer_py; PyObject *type_py;
+    if (!PyArg_ParseTuple(py_args, "OOO", &data_py, &recognizer_py, &type_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_data_t *data = mp_write_ptr_lv_indev_data_t(data_py);
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    lv_indev_gesture_type_t type = (int)mp_obj_get_int(type_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_data_t *, lv_indev_gesture_recognizer_t *, lv_indev_gesture_type_t))lv_indev_set_gesture_data)(data, recognizer, type);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_gesture_data_def = {
+    "lv_indev_set_gesture_data",
+    (PyCFunction)py_lv_indev_set_gesture_data,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_get_gesture_center_point(lv_indev_gesture_recognizer_t *recognizer, lv_point_t *point)
+ */
+static PyObject *py_lv_indev_get_gesture_center_point(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *recognizer_py; PyObject *point_py;
+    if (!PyArg_ParseTuple(py_args, "OO", &recognizer_py, &point_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    lv_point_t *point = mp_write_ptr_lv_point_t(point_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_point_t *))lv_indev_get_gesture_center_point)(recognizer, point);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_get_gesture_center_point_def = {
+    "lv_indev_get_gesture_center_point",
+    (PyCFunction)py_lv_indev_get_gesture_center_point,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * lv_indev_gesture_state_t lv_event_get_gesture_state(lv_event_t *gesture_event, lv_indev_gesture_type_t type)
+ */
+static PyObject *py_lv_event_get_gesture_state(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *gesture_event_py; PyObject *type_py;
+    if (!PyArg_ParseTuple(py_args, "OO", &gesture_event_py, &type_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(gesture_event_py);
+    lv_indev_gesture_type_t type = (int)mp_obj_get_int(type_py);
+    
+    lv_indev_gesture_state_t _res;
+    lvpy_lock();
+    _res = ((lv_indev_gesture_state_t (*)(lv_event_t *, lv_indev_gesture_type_t))lv_event_get_gesture_state)(gesture_event, type);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_int(_res);
+}
+
+static PyMethodDef py_lv_event_get_gesture_state_def = {
+    "lv_event_get_gesture_state",
+    (PyCFunction)py_lv_event_get_gesture_state,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * lv_indev_gesture_type_t lv_event_get_gesture_type(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_gesture_type(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *gesture_event_py;
+    if (!PyArg_ParseTuple(py_args, "O", &gesture_event_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(gesture_event_py);
+    
+    lv_indev_gesture_type_t _res;
+    lvpy_lock();
+    _res = ((lv_indev_gesture_type_t (*)(lv_event_t *))lv_event_get_gesture_type)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_int(_res);
+}
+
+static PyMethodDef py_lv_event_get_gesture_type_def = {
+    "lv_event_get_gesture_type",
+    (PyCFunction)py_lv_event_get_gesture_type,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_get_gesture_primary_point(lv_indev_gesture_recognizer_t *recognizer, lv_point_t *point)
+ */
+static PyObject *py_lv_indev_get_gesture_primary_point(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *recognizer_py; PyObject *point_py;
+    if (!PyArg_ParseTuple(py_args, "OO", &recognizer_py, &point_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    lv_point_t *point = mp_write_ptr_lv_point_t(point_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_point_t *))lv_indev_get_gesture_primary_point)(recognizer, point);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_get_gesture_primary_point_def = {
+    "lv_indev_get_gesture_primary_point",
+    (PyCFunction)py_lv_indev_get_gesture_primary_point,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * bool lv_indev_recognizer_is_active(lv_indev_gesture_recognizer_t *recognizer)
+ */
+static PyObject *py_lv_indev_recognizer_is_active(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *recognizer_py;
+    if (!PyArg_ParseTuple(py_args, "O", &recognizer_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    
+    bool _res;
+    lvpy_lock();
+    _res = ((bool (*)(lv_indev_gesture_recognizer_t *))lv_indev_recognizer_is_active)(recognizer);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return convert_to_bool(_res);
+}
+
+static PyMethodDef py_lv_indev_recognizer_is_active_def = {
+    "lv_indev_recognizer_is_active",
+    (PyCFunction)py_lv_indev_recognizer_is_active,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_recognizers_update(lv_indev_t *indev, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_recognizers_update(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *indev_py; PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "OOl", &indev_py, &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(indev_py);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_recognizers_update)(indev, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_recognizers_update_def = {
+    "lv_indev_gesture_recognizers_update",
+    (PyCFunction)py_lv_indev_gesture_recognizers_update,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_recognizers_set_data(lv_indev_t *indev, lv_indev_data_t *data)
+ */
+static PyObject *py_lv_indev_gesture_recognizers_set_data(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)self;
+    (void)py_kwds;
+    PyObject *indev_py; PyObject *data_py;
+    if (!PyArg_ParseTuple(py_args, "OO", &indev_py, &data_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(indev_py);
+    lv_indev_data_t *data = mp_write_ptr_lv_indev_data_t(data_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, lv_indev_data_t *))lv_indev_gesture_recognizers_set_data)(indev, data);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_recognizers_set_data_def = {
+    "lv_indev_gesture_recognizers_set_data",
+    (PyCFunction)py_lv_indev_gesture_recognizers_set_data,
     METH_VARARGS | METH_KEYWORDS,
     NULL
 };
@@ -95215,6 +96422,178 @@ static PyMethodDef py_lv_subject_set_max_value_int_struct_method_def = {
 
 /*
  * lvgl extension definition for:
+ * void lv_subject_init_float(lv_subject_t *subject, float value)
+ */
+static PyObject *py_lv_subject_init_float_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    double value_val;
+    if (!PyArg_ParseTuple(py_args, "d", &value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = (lv_subject_t *)mp_write_ptr_lv_subject_t(self);
+    float value = (float)value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_init_float)(subject, value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_init_float_struct_method_def = {
+    "lv_subject_init_float",
+    (PyCFunction)py_lv_subject_init_float_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_subject_set_float(lv_subject_t *subject, float value)
+ */
+static PyObject *py_lv_subject_set_float_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    double value_val;
+    if (!PyArg_ParseTuple(py_args, "d", &value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = (lv_subject_t *)mp_write_ptr_lv_subject_t(self);
+    float value = (float)value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_set_float)(subject, value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_set_float_struct_method_def = {
+    "lv_subject_set_float",
+    (PyCFunction)py_lv_subject_set_float_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_subject_get_float(lv_subject_t *subject)
+ */
+static PyObject *py_lv_subject_get_float_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_subject_t *subject = (lv_subject_t *)mp_write_ptr_lv_subject_t(self);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_subject_t *))lv_subject_get_float)(subject);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_subject_get_float_struct_method_def = {
+    "lv_subject_get_float",
+    (PyCFunction)py_lv_subject_get_float_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_subject_get_previous_float(lv_subject_t *subject)
+ */
+static PyObject *py_lv_subject_get_previous_float_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_subject_t *subject = (lv_subject_t *)mp_write_ptr_lv_subject_t(self);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_subject_t *))lv_subject_get_previous_float)(subject);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_subject_get_previous_float_struct_method_def = {
+    "lv_subject_get_previous_float",
+    (PyCFunction)py_lv_subject_get_previous_float_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_subject_set_min_value_float(lv_subject_t *subject, float min_value)
+ */
+static PyObject *py_lv_subject_set_min_value_float_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    double min_value_val;
+    if (!PyArg_ParseTuple(py_args, "d", &min_value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = (lv_subject_t *)mp_write_ptr_lv_subject_t(self);
+    float min_value = (float)min_value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_set_min_value_float)(subject, min_value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_set_min_value_float_struct_method_def = {
+    "lv_subject_set_min_value_float",
+    (PyCFunction)py_lv_subject_set_min_value_float_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_subject_set_max_value_float(lv_subject_t *subject, float max_value)
+ */
+static PyObject *py_lv_subject_set_max_value_float_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    double max_value_val;
+    if (!PyArg_ParseTuple(py_args, "d", &max_value_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_subject_t *subject = (lv_subject_t *)mp_write_ptr_lv_subject_t(self);
+    float max_value = (float)max_value_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_subject_t *, float))lv_subject_set_max_value_float)(subject, max_value);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_subject_set_max_value_float_struct_method_def = {
+    "lv_subject_set_max_value_float",
+    (PyCFunction)py_lv_subject_set_max_value_float_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
  * void lv_subject_init_string(lv_subject_t *subject, char *buf, char *prev_buf, size_t size, const char *value)
  */
 static PyObject *py_lv_subject_init_string_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
@@ -95803,6 +97182,12 @@ PyMethodDef py_lv_subject_t_methods[] = {
     {"get_previous_int", (PyCFunction)py_lv_subject_get_previous_int_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"set_min_value_int", (PyCFunction)py_lv_subject_set_min_value_int_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"set_max_value_int", (PyCFunction)py_lv_subject_set_max_value_int_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"init_float", (PyCFunction)py_lv_subject_init_float_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"set_float", (PyCFunction)py_lv_subject_set_float_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_float", (PyCFunction)py_lv_subject_get_float_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_previous_float", (PyCFunction)py_lv_subject_get_previous_float_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"set_min_value_float", (PyCFunction)py_lv_subject_set_min_value_float_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"set_max_value_float", (PyCFunction)py_lv_subject_set_max_value_float_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"init_string", (PyCFunction)py_lv_subject_init_string_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"copy_string", (PyCFunction)py_lv_subject_copy_string_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"snprintf", (PyCFunction)py_lv_subject_snprintf_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
@@ -96066,8 +97451,8 @@ static PyObject *py_lv_point_precise_set_struct_method(PyObject *self, PyObject 
     PyObject *x_py; PyObject *y_py;
     if (!PyArg_ParseTuple(py_args, "OO", &x_py, &y_py)) { PyGILState_Release(gstate); return NULL; }
     lv_point_precise_t *p = (lv_point_precise_t *)mp_write_ptr_lv_point_precise_t(self);
-    lv_value_precise_t x = (int32_t)mp_obj_get_int(x_py);
-    lv_value_precise_t y = (int32_t)mp_obj_get_int(y_py);
+    lv_value_precise_t x = (float)mp_obj_get_float(x_py);
+    lv_value_precise_t y = (float)mp_obj_get_float(y_py);
     
     lvpy_lock();
     ((void (*)(lv_point_precise_t *, lv_value_precise_t, lv_value_precise_t))lv_point_precise_set)(p, x, y);
@@ -96888,6 +98273,176 @@ static PyMethodDef py_lv_event_get_prev_state_struct_method_def = {
 
 /*
  * lvgl extension definition for:
+ * float lv_event_get_pinch_scale(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_pinch_scale_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_event_t *gesture_event = (lv_event_t *)mp_write_ptr_lv_event_t(self);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_event_t *))lv_event_get_pinch_scale)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_event_get_pinch_scale_struct_method_def = {
+    "lv_event_get_pinch_scale",
+    (PyCFunction)py_lv_event_get_pinch_scale_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_event_get_rotation(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_rotation_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_event_t *gesture_event = (lv_event_t *)mp_write_ptr_lv_event_t(self);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_event_t *))lv_event_get_rotation)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_event_get_rotation_struct_method_def = {
+    "lv_event_get_rotation",
+    (PyCFunction)py_lv_event_get_rotation_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * float lv_event_get_two_fingers_swipe_distance(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_two_fingers_swipe_distance_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_event_t *gesture_event = (lv_event_t *)mp_write_ptr_lv_event_t(self);
+    
+    float _res;
+    lvpy_lock();
+    _res = ((float (*)(lv_event_t *))lv_event_get_two_fingers_swipe_distance)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_float_from_f(_res);
+}
+
+static PyMethodDef py_lv_event_get_two_fingers_swipe_distance_struct_method_def = {
+    "lv_event_get_two_fingers_swipe_distance",
+    (PyCFunction)py_lv_event_get_two_fingers_swipe_distance_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * lv_dir_t lv_event_get_two_fingers_swipe_dir(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_two_fingers_swipe_dir_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_event_t *gesture_event = (lv_event_t *)mp_write_ptr_lv_event_t(self);
+    
+    lv_dir_t _res;
+    lvpy_lock();
+    _res = ((lv_dir_t (*)(lv_event_t *))lv_event_get_two_fingers_swipe_dir)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_int(_res);
+}
+
+static PyMethodDef py_lv_event_get_two_fingers_swipe_dir_struct_method_def = {
+    "lv_event_get_two_fingers_swipe_dir",
+    (PyCFunction)py_lv_event_get_two_fingers_swipe_dir_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * lv_indev_gesture_state_t lv_event_get_gesture_state(lv_event_t *gesture_event, lv_indev_gesture_type_t type)
+ */
+static PyObject *py_lv_event_get_gesture_state_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *type_py;
+    if (!PyArg_ParseTuple(py_args, "O", &type_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_event_t *gesture_event = (lv_event_t *)mp_write_ptr_lv_event_t(self);
+    lv_indev_gesture_type_t type = (int)mp_obj_get_int(type_py);
+    
+    lv_indev_gesture_state_t _res;
+    lvpy_lock();
+    _res = ((lv_indev_gesture_state_t (*)(lv_event_t *, lv_indev_gesture_type_t))lv_event_get_gesture_state)(gesture_event, type);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_int(_res);
+}
+
+static PyMethodDef py_lv_event_get_gesture_state_struct_method_def = {
+    "lv_event_get_gesture_state",
+    (PyCFunction)py_lv_event_get_gesture_state_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * lv_indev_gesture_type_t lv_event_get_gesture_type(lv_event_t *gesture_event)
+ */
+static PyObject *py_lv_event_get_gesture_type_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_event_t *gesture_event = (lv_event_t *)mp_write_ptr_lv_event_t(self);
+    
+    lv_indev_gesture_type_t _res;
+    lvpy_lock();
+    _res = ((lv_indev_gesture_type_t (*)(lv_event_t *))lv_event_get_gesture_type)(gesture_event);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_obj_new_int(_res);
+}
+
+static PyMethodDef py_lv_event_get_gesture_type_struct_method_def = {
+    "lv_event_get_gesture_type",
+    (PyCFunction)py_lv_event_get_gesture_type_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
  * void lv_event_push(lv_event_t *e)
  */
 static PyObject *py_lv_event_push_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
@@ -96966,6 +98521,12 @@ PyMethodDef py_lv_event_t_methods[] = {
     {"set_cover_res", (PyCFunction)py_lv_event_set_cover_res_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"get_draw_task", (PyCFunction)py_lv_event_get_draw_task_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"get_prev_state", (PyCFunction)py_lv_event_get_prev_state_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_pinch_scale", (PyCFunction)py_lv_event_get_pinch_scale_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_rotation", (PyCFunction)py_lv_event_get_rotation_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_two_fingers_swipe_distance", (PyCFunction)py_lv_event_get_two_fingers_swipe_distance_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_two_fingers_swipe_dir", (PyCFunction)py_lv_event_get_two_fingers_swipe_dir_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_gesture_state", (PyCFunction)py_lv_event_get_gesture_state_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_gesture_type", (PyCFunction)py_lv_event_get_gesture_type_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"push", (PyCFunction)py_lv_event_push_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"pop", (PyCFunction)py_lv_event_pop_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {NULL}
@@ -103460,6 +105021,179 @@ static PyMethodDef py_lv_indev_set_key_remap_cb_struct_method_def = {
 
 /*
  * lvgl extension definition for:
+ * void lv_indev_gesture_init(lv_indev_t *indev)
+ */
+static PyObject *py_lv_indev_gesture_init_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_indev_t *indev = (lv_indev_t *)mp_write_ptr_lv_indev_t(self);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *))lv_indev_gesture_init)(indev);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_init_struct_method_def = {
+    "lv_indev_gesture_init",
+    (PyCFunction)py_lv_indev_gesture_init_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_pinch_up_threshold(lv_indev_t *indev, float threshold)
+ */
+static PyObject *py_lv_indev_set_pinch_up_threshold_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    double threshold_val;
+    if (!PyArg_ParseTuple(py_args, "d", &threshold_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = (lv_indev_t *)mp_write_ptr_lv_indev_t(self);
+    float threshold = (float)threshold_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, float))lv_indev_set_pinch_up_threshold)(indev, threshold);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_pinch_up_threshold_struct_method_def = {
+    "lv_indev_set_pinch_up_threshold",
+    (PyCFunction)py_lv_indev_set_pinch_up_threshold_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_pinch_down_threshold(lv_indev_t *indev, float threshold)
+ */
+static PyObject *py_lv_indev_set_pinch_down_threshold_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    double threshold_val;
+    if (!PyArg_ParseTuple(py_args, "d", &threshold_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = (lv_indev_t *)mp_write_ptr_lv_indev_t(self);
+    float threshold = (float)threshold_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, float))lv_indev_set_pinch_down_threshold)(indev, threshold);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_pinch_down_threshold_struct_method_def = {
+    "lv_indev_set_pinch_down_threshold",
+    (PyCFunction)py_lv_indev_set_pinch_down_threshold_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_rotation_rad_threshold(lv_indev_t *indev, float threshold)
+ */
+static PyObject *py_lv_indev_set_rotation_rad_threshold_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    double threshold_val;
+    if (!PyArg_ParseTuple(py_args, "d", &threshold_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = (lv_indev_t *)mp_write_ptr_lv_indev_t(self);
+    float threshold = (float)threshold_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, float))lv_indev_set_rotation_rad_threshold)(indev, threshold);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_rotation_rad_threshold_struct_method_def = {
+    "lv_indev_set_rotation_rad_threshold",
+    (PyCFunction)py_lv_indev_set_rotation_rad_threshold_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_recognizers_update(lv_indev_t *indev, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_recognizers_update_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "Ol", &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = (lv_indev_t *)mp_write_ptr_lv_indev_t(self);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_recognizers_update)(indev, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_recognizers_update_struct_method_def = {
+    "lv_indev_gesture_recognizers_update",
+    (PyCFunction)py_lv_indev_gesture_recognizers_update_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_recognizers_set_data(lv_indev_t *indev, lv_indev_data_t *data)
+ */
+static PyObject *py_lv_indev_gesture_recognizers_set_data_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *data_py;
+    if (!PyArg_ParseTuple(py_args, "O", &data_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_t *indev = (lv_indev_t *)mp_write_ptr_lv_indev_t(self);
+    lv_indev_data_t *data = mp_write_ptr_lv_indev_data_t(data_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_t *, lv_indev_data_t *))lv_indev_gesture_recognizers_set_data)(indev, data);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_recognizers_set_data_struct_method_def = {
+    "lv_indev_gesture_recognizers_set_data",
+    (PyCFunction)py_lv_indev_gesture_recognizers_set_data_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
  * void lv_indev_scroll_handler(lv_indev_t *indev)
  */
 static PyObject *py_lv_indev_scroll_handler_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
@@ -103619,10 +105353,241 @@ PyMethodDef py_lv_indev_t_methods[] = {
     {"remove_event_cb_with_user_data", (PyCFunction)py_lv_indev_remove_event_cb_with_user_data_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"send_event", (PyCFunction)py_lv_indev_send_event_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"set_key_remap_cb", (PyCFunction)py_lv_indev_set_key_remap_cb_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"gesture_init", (PyCFunction)py_lv_indev_gesture_init_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"set_pinch_up_threshold", (PyCFunction)py_lv_indev_set_pinch_up_threshold_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"set_pinch_down_threshold", (PyCFunction)py_lv_indev_set_pinch_down_threshold_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"set_rotation_rad_threshold", (PyCFunction)py_lv_indev_set_rotation_rad_threshold_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"gesture_recognizers_update", (PyCFunction)py_lv_indev_gesture_recognizers_update_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"gesture_recognizers_set_data", (PyCFunction)py_lv_indev_gesture_recognizers_set_data_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"scroll_handler", (PyCFunction)py_lv_indev_scroll_handler_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"scroll_throw_handler", (PyCFunction)py_lv_indev_scroll_throw_handler_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"scroll_throw_predict", (PyCFunction)py_lv_indev_scroll_throw_predict_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {"find_scroll_obj", (PyCFunction)py_lv_indev_find_scroll_obj_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {NULL}
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_detect_pinch(lv_indev_gesture_recognizer_t *recognizer, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_detect_pinch_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "Ol", &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = (lv_indev_gesture_recognizer_t *)mp_write_ptr_lv_indev_gesture_recognizer_t(self);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_detect_pinch)(recognizer, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_detect_pinch_struct_method_def = {
+    "lv_indev_gesture_detect_pinch",
+    (PyCFunction)py_lv_indev_gesture_detect_pinch_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_detect_rotation(lv_indev_gesture_recognizer_t *recognizer, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_detect_rotation_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "Ol", &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = (lv_indev_gesture_recognizer_t *)mp_write_ptr_lv_indev_gesture_recognizer_t(self);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_detect_rotation)(recognizer, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_detect_rotation_struct_method_def = {
+    "lv_indev_gesture_detect_rotation",
+    (PyCFunction)py_lv_indev_gesture_detect_rotation_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_detect_two_fingers_swipe(lv_indev_gesture_recognizer_t *recognizer, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+static PyObject *py_lv_indev_gesture_detect_two_fingers_swipe_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *touches_py; long touch_cnt_val;
+    if (!PyArg_ParseTuple(py_args, "Ol", &touches_py, &touch_cnt_val)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = (lv_indev_gesture_recognizer_t *)mp_write_ptr_lv_indev_gesture_recognizer_t(self);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(touches_py);
+    uint16_t touch_cnt = (uint16_t)touch_cnt_val;
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t))lv_indev_gesture_detect_two_fingers_swipe)(recognizer, touches, touch_cnt);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_gesture_detect_two_fingers_swipe_struct_method_def = {
+    "lv_indev_gesture_detect_two_fingers_swipe",
+    (PyCFunction)py_lv_indev_gesture_detect_two_fingers_swipe_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_get_gesture_center_point(lv_indev_gesture_recognizer_t *recognizer, lv_point_t *point)
+ */
+static PyObject *py_lv_indev_get_gesture_center_point_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *point_py;
+    if (!PyArg_ParseTuple(py_args, "O", &point_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = (lv_indev_gesture_recognizer_t *)mp_write_ptr_lv_indev_gesture_recognizer_t(self);
+    lv_point_t *point = mp_write_ptr_lv_point_t(point_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_point_t *))lv_indev_get_gesture_center_point)(recognizer, point);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_get_gesture_center_point_struct_method_def = {
+    "lv_indev_get_gesture_center_point",
+    (PyCFunction)py_lv_indev_get_gesture_center_point_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_get_gesture_primary_point(lv_indev_gesture_recognizer_t *recognizer, lv_point_t *point)
+ */
+static PyObject *py_lv_indev_get_gesture_primary_point_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *point_py;
+    if (!PyArg_ParseTuple(py_args, "O", &point_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_gesture_recognizer_t *recognizer = (lv_indev_gesture_recognizer_t *)mp_write_ptr_lv_indev_gesture_recognizer_t(self);
+    lv_point_t *point = mp_write_ptr_lv_point_t(point_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_point_t *))lv_indev_get_gesture_primary_point)(recognizer, point);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_get_gesture_primary_point_struct_method_def = {
+    "lv_indev_get_gesture_primary_point",
+    (PyCFunction)py_lv_indev_get_gesture_primary_point_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+/*
+ * lvgl extension definition for:
+ * bool lv_indev_recognizer_is_active(lv_indev_gesture_recognizer_t *recognizer)
+ */
+static PyObject *py_lv_indev_recognizer_is_active_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+
+    lv_indev_gesture_recognizer_t *recognizer = (lv_indev_gesture_recognizer_t *)mp_write_ptr_lv_indev_gesture_recognizer_t(self);
+    
+    bool _res;
+    lvpy_lock();
+    _res = ((bool (*)(lv_indev_gesture_recognizer_t *))lv_indev_recognizer_is_active)(recognizer);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return convert_to_bool(_res);
+}
+
+static PyMethodDef py_lv_indev_recognizer_is_active_struct_method_def = {
+    "lv_indev_recognizer_is_active",
+    (PyCFunction)py_lv_indev_recognizer_is_active_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+PyMethodDef py_lv_indev_gesture_recognizer_t_methods[] = {
+    {"detect_pinch", (PyCFunction)py_lv_indev_gesture_detect_pinch_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"detect_rotation", (PyCFunction)py_lv_indev_gesture_detect_rotation_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"detect_two_fingers_swipe", (PyCFunction)py_lv_indev_gesture_detect_two_fingers_swipe_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_gesture_center_point", (PyCFunction)py_lv_indev_get_gesture_center_point_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"get_gesture_primary_point", (PyCFunction)py_lv_indev_get_gesture_primary_point_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {"recognizer_is_active", (PyCFunction)py_lv_indev_recognizer_is_active_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {NULL}
+};
+
+PyMethodDef py_lv_indev_gesture_t_methods[] = {{NULL}};
+PyMethodDef py_lv_indev_gesture_configuration_t_methods[] = {{NULL}};
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_gesture_data(lv_indev_data_t *data, lv_indev_gesture_recognizer_t *recognizer, lv_indev_gesture_type_t type)
+ */
+static PyObject *py_lv_indev_set_gesture_data_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *recognizer_py; PyObject *type_py;
+    if (!PyArg_ParseTuple(py_args, "OO", &recognizer_py, &type_py)) { PyGILState_Release(gstate); return NULL; }
+    lv_indev_data_t *data = (lv_indev_data_t *)mp_write_ptr_lv_indev_data_t(self);
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(recognizer_py);
+    lv_indev_gesture_type_t type = (int)mp_obj_get_int(type_py);
+    
+    lvpy_lock();
+    ((void (*)(lv_indev_data_t *, lv_indev_gesture_recognizer_t *, lv_indev_gesture_type_t))lv_indev_set_gesture_data)(data, recognizer, type);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    Py_RETURN_NONE;
+}
+
+static PyMethodDef py_lv_indev_set_gesture_data_struct_method_def = {
+    "lv_indev_set_gesture_data",
+    (PyCFunction)py_lv_indev_set_gesture_data_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+PyMethodDef py_lv_indev_data_t_methods[] = {
+    {"set_gesture_data", (PyCFunction)py_lv_indev_set_gesture_data_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
     {NULL}
 };
 
@@ -103952,8 +105917,8 @@ PyMethodDef py_lv_text_attributes_t_methods[] = {
 
 PyMethodDef py_lv_sqrt_res_t_methods[] = {{NULL}};
 PyMethodDef py_lv_color_hsv_t_methods[] = {{NULL}};
-PyMethodDef py_lv_indev_data_t_methods[] = {{NULL}};
 PyMethodDef py_lv_hit_test_info_t_methods[] = {{NULL}};
+PyMethodDef py_lv_indev_touch_data_t_methods[] = {{NULL}};
 PyMethodDef py_lv_draw_sw_blend_dsc_t_methods[] = {{NULL}};
 PyMethodDef py_lv_layout_dsc_t_methods[] = {{NULL}};
 PyMethodDef py_lv_timer_state_t_methods[] = {{NULL}};
@@ -103965,6 +105930,7 @@ PyMethodDef py_lv_draw_global_info_t_methods[] = {{NULL}};
  * Functions not generated:
  * mp_lv_init_gc
  * mp_lv_deinit_gc
+ * mp_lv_get_roots
  * lv_tjpgd_init
  * lv_tjpgd_deinit
  *
@@ -105110,6 +107076,13 @@ static lv_key_t lv_indev_t_key_remap_cb_callback(lv_indev_t *arg0, lv_key_t arg1
 
 /*
  * Function NOT generated:
+ * Callback: user_data NOT FOUND! void lv_recognizer_func_t(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t)
+ * void lv_recognizer_func_t(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t)
+ */
+    
+
+/*
+ * Function NOT generated:
  * Callback: user_data NOT FOUND! lv_draw_sw_mask_res_t lv_draw_sw_mask_xcb_t(lv_opa_t *mask_buf, int32_t abs_x, int32_t abs_y, int32_t len, void *p)
  * lv_draw_sw_mask_res_t lv_draw_sw_mask_xcb_t(lv_opa_t *mask_buf, int32_t abs_x, int32_t abs_y, int32_t len, void *p)
  */
@@ -105374,6 +107347,8 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     { PyObject *ns = PyType_GenericNew(&py_lv_LV_OBJ_FLAG_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "OBJ_FLAG", ns) < 0) return NULL; }
     if (PyType_Ready(&py_lv_LV_SUBJECT_TYPE_type) < 0) return NULL;
     { PyObject *ns = PyType_GenericNew(&py_lv_LV_SUBJECT_TYPE_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "SUBJECT_TYPE", ns) < 0) return NULL; }
+    if (PyType_Ready(&py_lv_LV_INDEV_GESTURE_STATE_type) < 0) return NULL;
+    { PyObject *ns = PyType_GenericNew(&py_lv_LV_INDEV_GESTURE_STATE_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "INDEV_GESTURE_STATE", ns) < 0) return NULL; }
     if (PyType_Ready(&py_lv_LV_FONT_FMT_TXT_CMAP_type) < 0) return NULL;
     { PyObject *ns = PyType_GenericNew(&py_lv_LV_FONT_FMT_TXT_CMAP_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "FONT_FMT_TXT_CMAP", ns) < 0) return NULL; }
     if (PyType_Ready(&py_lv_LV_FONT_FMT_TXT_type) < 0) return NULL;
@@ -105841,6 +107816,22 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     lv_struct_expose_size(&py_lv_indev_t_type);
     Py_INCREF((PyObject *)&py_lv_indev_t_type);
     if (PyModule_AddObject(m, "indev_t", (PyObject *)&py_lv_indev_t_type) < 0) return NULL;
+    if (PyType_Ready(&py_lv_indev_gesture_recognizer_t_type) < 0) return NULL;
+    lv_struct_register_size(&py_lv_indev_gesture_recognizer_t_type, sizeof(lv_indev_gesture_recognizer_t));
+    lv_struct_expose_size(&py_lv_indev_gesture_recognizer_t_type);
+    Py_INCREF((PyObject *)&py_lv_indev_gesture_recognizer_t_type);
+    if (PyModule_AddObject(m, "indev_gesture_recognizer_t", (PyObject *)&py_lv_indev_gesture_recognizer_t_type) < 0) return NULL;
+    if (PyType_Ready(&py_lv_indev_gesture_t_type) < 0) return NULL;
+    Py_INCREF((PyObject *)&py_lv_indev_gesture_t_type);
+    if (PyModule_AddObject(m, "indev_gesture_t", (PyObject *)&py_lv_indev_gesture_t_type) < 0) return NULL;
+    if (PyType_Ready(&py_lv_indev_gesture_configuration_t_type) < 0) return NULL;
+    Py_INCREF((PyObject *)&py_lv_indev_gesture_configuration_t_type);
+    if (PyModule_AddObject(m, "indev_gesture_configuration_t", (PyObject *)&py_lv_indev_gesture_configuration_t_type) < 0) return NULL;
+    if (PyType_Ready(&py_lv_indev_data_t_type) < 0) return NULL;
+    lv_struct_register_size(&py_lv_indev_data_t_type, sizeof(lv_indev_data_t));
+    lv_struct_expose_size(&py_lv_indev_data_t_type);
+    Py_INCREF((PyObject *)&py_lv_indev_data_t_type);
+    if (PyModule_AddObject(m, "indev_data_t", (PyObject *)&py_lv_indev_data_t_type) < 0) return NULL;
     if (PyType_Ready(&py_lv_draw_mask_rect_dsc_t_type) < 0) return NULL;
     lv_struct_register_size(&py_lv_draw_mask_rect_dsc_t_type, sizeof(lv_draw_mask_rect_dsc_t));
     lv_struct_expose_size(&py_lv_draw_mask_rect_dsc_t_type);
@@ -105901,16 +107892,16 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     lv_struct_expose_size(&py_lv_color_hsv_t_type);
     Py_INCREF((PyObject *)&py_lv_color_hsv_t_type);
     if (PyModule_AddObject(m, "color_hsv_t", (PyObject *)&py_lv_color_hsv_t_type) < 0) return NULL;
-    if (PyType_Ready(&py_lv_indev_data_t_type) < 0) return NULL;
-    lv_struct_register_size(&py_lv_indev_data_t_type, sizeof(lv_indev_data_t));
-    lv_struct_expose_size(&py_lv_indev_data_t_type);
-    Py_INCREF((PyObject *)&py_lv_indev_data_t_type);
-    if (PyModule_AddObject(m, "indev_data_t", (PyObject *)&py_lv_indev_data_t_type) < 0) return NULL;
     if (PyType_Ready(&py_lv_hit_test_info_t_type) < 0) return NULL;
     lv_struct_register_size(&py_lv_hit_test_info_t_type, sizeof(lv_hit_test_info_t));
     lv_struct_expose_size(&py_lv_hit_test_info_t_type);
     Py_INCREF((PyObject *)&py_lv_hit_test_info_t_type);
     if (PyModule_AddObject(m, "hit_test_info_t", (PyObject *)&py_lv_hit_test_info_t_type) < 0) return NULL;
+    if (PyType_Ready(&py_lv_indev_touch_data_t_type) < 0) return NULL;
+    lv_struct_register_size(&py_lv_indev_touch_data_t_type, sizeof(lv_indev_touch_data_t));
+    lv_struct_expose_size(&py_lv_indev_touch_data_t_type);
+    Py_INCREF((PyObject *)&py_lv_indev_touch_data_t_type);
+    if (PyModule_AddObject(m, "indev_touch_data_t", (PyObject *)&py_lv_indev_touch_data_t_type) < 0) return NULL;
     if (PyType_Ready(&py_lv_draw_sw_blend_dsc_t_type) < 0) return NULL;
     lv_struct_register_size(&py_lv_draw_sw_blend_dsc_t_type, sizeof(lv_draw_sw_blend_dsc_t));
     lv_struct_expose_size(&py_lv_draw_sw_blend_dsc_t_type);
@@ -106914,6 +108905,12 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     { PyObject *fn = PyCFunction_New(&py_lv_subject_get_previous_int_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_get_previous_int", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_subject_set_min_value_int_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_set_min_value_int", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_subject_set_max_value_int_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_set_max_value_int", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_subject_init_float_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_init_float", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_subject_set_float_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_set_float", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_subject_get_float_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_get_float", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_subject_get_previous_float_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_get_previous_float", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_subject_set_min_value_float_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_set_min_value_float", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_subject_set_max_value_float_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_set_max_value_float", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_subject_init_string_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_init_string", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_subject_copy_string_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_copy_string", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_subject_snprintf_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_snprintf", fn) < 0) return NULL; }
@@ -106938,6 +108935,25 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     { PyObject *fn = PyCFunction_New(&py_lv_observer_get_target_obj_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "observer_get_target_obj", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_observer_get_user_data_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "observer_get_user_data", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_subject_notify_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "subject_notify", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_gesture_init_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_gesture_init", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_gesture_detect_pinch_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_gesture_detect_pinch", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_gesture_detect_rotation_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_gesture_detect_rotation", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_gesture_detect_two_fingers_swipe_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_gesture_detect_two_fingers_swipe", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_set_pinch_up_threshold_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_set_pinch_up_threshold", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_set_pinch_down_threshold_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_set_pinch_down_threshold", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_set_rotation_rad_threshold_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_set_rotation_rad_threshold", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_event_get_pinch_scale_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "event_get_pinch_scale", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_event_get_rotation_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "event_get_rotation", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_event_get_two_fingers_swipe_distance_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "event_get_two_fingers_swipe_distance", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_event_get_two_fingers_swipe_dir_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "event_get_two_fingers_swipe_dir", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_set_gesture_data_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_set_gesture_data", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_get_gesture_center_point_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_get_gesture_center_point", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_event_get_gesture_state_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "event_get_gesture_state", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_event_get_gesture_type_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "event_get_gesture_type", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_get_gesture_primary_point_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_get_gesture_primary_point", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_recognizer_is_active_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_recognizer_is_active", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_gesture_recognizers_update_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_gesture_recognizers_update", fn) < 0) return NULL; }
+    { PyObject *fn = PyCFunction_New(&py_lv_indev_gesture_recognizers_set_data_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "indev_gesture_recognizers_set_data", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_binfont_create_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "binfont_create", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_binfont_create_from_buffer_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "binfont_create_from_buffer", fn) < 0) return NULL; }
     { PyObject *fn = PyCFunction_New(&py_lv_binfont_destroy_def, NULL); if (fn == NULL) return NULL; if (PyModule_AddObject(m, "binfont_destroy", fn) < 0) return NULL; }

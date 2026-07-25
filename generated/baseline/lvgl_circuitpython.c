@@ -5,7 +5,7 @@
  *
  * Target: circuitpython
  * Command line:
- * lv_bindings/binding/gen_binding.py --target circuitpython -M lvgl -MP lv --ir lv_bindings/generated/lvgl.json -E lv_bindings/generated/lvgl.pp lvgl/lvgl.h
+ * /home/brad/gh/pydevices/cmods/lv_bindings/binding/gen_binding.py --target circuitpython -M lvgl -MP lv --ir /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.json -E /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.pp lvgl/lvgl.h
  *
  * Preprocessing command:
  * Preprocessing was disabled.
@@ -849,7 +849,7 @@ static unsigned long long mp_obj_get_ull(mp_obj_t obj)
 
     unsigned long long val = 0;
     bool big_endian = !(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__);
-#if defined(CIRCUITPY)
+    #if defined(CIRCUITPY)
     mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);
 #elif defined(MICROPY_VERSION_MAJOR) && defined(MICROPY_VERSION_MINOR) && \
     ((MICROPY_VERSION_MAJOR > 1) || (MICROPY_VERSION_MAJOR == 1 && MICROPY_VERSION_MINOR > 28))
@@ -3870,6 +3870,44 @@ GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_LV_SUBJECT_TYPE_type = {
     .lv_obj_class = NULL,
 #endif
     .mp_obj_type = &mp_lv_LV_SUBJECT_TYPE_type_base,
+};
+
+
+/*
+ * lvgl LV_INDEV_GESTURE_STATE object definitions
+ */
+
+static const mp_rom_map_elem_t LV_INDEV_GESTURE_STATE_locals_dict_table[] = {
+    { MP_ROM_QSTR(MP_QSTR_NONE), MP_ROM_PTR(MP_ROM_INT(LV_INDEV_GESTURE_STATE_NONE)) },
+    { MP_ROM_QSTR(MP_QSTR_ONGOING), MP_ROM_PTR(MP_ROM_INT(LV_INDEV_GESTURE_STATE_ONGOING)) },
+    { MP_ROM_QSTR(MP_QSTR_RECOGNIZED), MP_ROM_PTR(MP_ROM_INT(LV_INDEV_GESTURE_STATE_RECOGNIZED)) },
+    { MP_ROM_QSTR(MP_QSTR_ENDED), MP_ROM_PTR(MP_ROM_INT(LV_INDEV_GESTURE_STATE_ENDED)) },
+    { MP_ROM_QSTR(MP_QSTR_CANCELED), MP_ROM_PTR(MP_ROM_INT(LV_INDEV_GESTURE_STATE_CANCELED)) }
+};
+
+static MP_DEFINE_CONST_DICT(LV_INDEV_GESTURE_STATE_locals_dict, LV_INDEV_GESTURE_STATE_locals_dict_table);
+
+static void LV_INDEV_GESTURE_STATE_print(const mp_print_t *print,
+    mp_obj_t self_in,
+    mp_print_kind_t kind)
+{
+    mp_printf(print, "lvgl LV_INDEV_GESTURE_STATE");
+}
+
+static MP_DEFINE_CONST_OBJ_TYPE(
+    mp_lv_LV_INDEV_GESTURE_STATE_type_base,
+    MP_QSTR_LV_INDEV_GESTURE_STATE,
+    MP_TYPE_FLAG_NONE,
+    print, LV_INDEV_GESTURE_STATE_print,
+    attr, call_parent_methods,
+    locals_dict, &LV_INDEV_GESTURE_STATE_locals_dict
+);
+
+GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_LV_INDEV_GESTURE_STATE_type = {
+#ifdef LV_OBJ_T
+    .lv_obj_class = NULL,
+#endif
+    .mp_obj_type = &mp_lv_LV_INDEV_GESTURE_STATE_type_base,
 };
 
 
@@ -13648,6 +13686,7 @@ static void mp_lv_subject_value_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *de
             case MP_QSTR_num: dest[0] = mp_obj_new_int(data->num); break; // converting from int32_t;
             case MP_QSTR_pointer: dest[0] = ptr_to_mp((void*)data->pointer); break; // converting from void *;
             case MP_QSTR_color: dest[0] = mp_read_byref_lv_color_t(data->color); break; // converting from lv_color_t;
+            case MP_QSTR_float_v: dest[0] = mp_obj_new_float_from_f(data->float_v); break; // converting from float;
             default: call_parent_methods(self_in, attr, dest); // fallback to locals_dict lookup
         }
     } else {
@@ -13659,6 +13698,7 @@ static void mp_lv_subject_value_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *de
                 case MP_QSTR_num: data->num = (int32_t)mp_obj_get_int(dest[1]); break; // converting to int32_t;
                 case MP_QSTR_pointer: data->pointer = (void*)mp_to_ptr(dest[1]); break; // converting to void *;
                 case MP_QSTR_color: data->color = mp_write_lv_color_t(dest[1]); break; // converting to lv_color_t;
+                case MP_QSTR_float_v: data->float_v = (float)mp_obj_get_float(dest[1]); break; // converting to float;
                 default: return;
             }
 
@@ -14760,8 +14800,8 @@ static void mp_lv_point_precise_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *de
         // load attribute
         switch(attr)
         {
-            case MP_QSTR_x: dest[0] = mp_obj_new_int(data->x); break; // converting from lv_value_precise_t;
-            case MP_QSTR_y: dest[0] = mp_obj_new_int(data->y); break; // converting from lv_value_precise_t;
+            case MP_QSTR_x: dest[0] = mp_obj_new_float_from_f(data->x); break; // converting from lv_value_precise_t;
+            case MP_QSTR_y: dest[0] = mp_obj_new_float_from_f(data->y); break; // converting from lv_value_precise_t;
             default: call_parent_methods(self_in, attr, dest); // fallback to locals_dict lookup
         }
     } else {
@@ -14770,8 +14810,8 @@ static void mp_lv_point_precise_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *de
             // store attribute
             switch(attr)
             {
-                case MP_QSTR_x: data->x = (int32_t)mp_obj_get_int(dest[1]); break; // converting to lv_value_precise_t;
-                case MP_QSTR_y: data->y = (int32_t)mp_obj_get_int(dest[1]); break; // converting to lv_value_precise_t;
+                case MP_QSTR_x: data->x = (float)mp_obj_get_float(dest[1]); break; // converting to lv_value_precise_t;
+                case MP_QSTR_y: data->y = (float)mp_obj_get_float(dest[1]); break; // converting to lv_value_precise_t;
                 default: return;
             }
 
@@ -14964,8 +15004,8 @@ static void mp_lv_draw_arc_dsc_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *des
             case MP_QSTR_base: dest[0] = mp_read_byref_lv_draw_dsc_base_t(data->base); break; // converting from lv_draw_dsc_base_t;
             case MP_QSTR_color: dest[0] = mp_read_byref_lv_color_t(data->color); break; // converting from lv_color_t;
             case MP_QSTR_width: dest[0] = mp_obj_new_int(data->width); break; // converting from int32_t;
-            case MP_QSTR_start_angle: dest[0] = mp_obj_new_int(data->start_angle); break; // converting from lv_value_precise_t;
-            case MP_QSTR_end_angle: dest[0] = mp_obj_new_int(data->end_angle); break; // converting from lv_value_precise_t;
+            case MP_QSTR_start_angle: dest[0] = mp_obj_new_float_from_f(data->start_angle); break; // converting from lv_value_precise_t;
+            case MP_QSTR_end_angle: dest[0] = mp_obj_new_float_from_f(data->end_angle); break; // converting from lv_value_precise_t;
             case MP_QSTR_center: dest[0] = mp_read_byref_lv_point_t(data->center); break; // converting from lv_point_t;
             case MP_QSTR_img_src: dest[0] = ptr_to_mp((void*)data->img_src); break; // converting from void *;
             case MP_QSTR_radius: dest[0] = mp_obj_new_int_from_uint(data->radius); break; // converting from uint16_t;
@@ -14982,8 +15022,8 @@ static void mp_lv_draw_arc_dsc_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *des
                 case MP_QSTR_base: data->base = mp_write_lv_draw_dsc_base_t(dest[1]); break; // converting to lv_draw_dsc_base_t;
                 case MP_QSTR_color: data->color = mp_write_lv_color_t(dest[1]); break; // converting to lv_color_t;
                 case MP_QSTR_width: data->width = (int32_t)mp_obj_get_int(dest[1]); break; // converting to int32_t;
-                case MP_QSTR_start_angle: data->start_angle = (int32_t)mp_obj_get_int(dest[1]); break; // converting to lv_value_precise_t;
-                case MP_QSTR_end_angle: data->end_angle = (int32_t)mp_obj_get_int(dest[1]); break; // converting to lv_value_precise_t;
+                case MP_QSTR_start_angle: data->start_angle = (float)mp_obj_get_float(dest[1]); break; // converting to lv_value_precise_t;
+                case MP_QSTR_end_angle: data->end_angle = (float)mp_obj_get_float(dest[1]); break; // converting to lv_value_precise_t;
                 case MP_QSTR_center: data->center = mp_write_lv_point_t(dest[1]); break; // converting to lv_point_t;
                 case MP_QSTR_img_src: data->img_src = (void*)mp_to_ptr(dest[1]); break; // converting to void *;
                 case MP_QSTR_radius: data->radius = (uint16_t)mp_obj_get_int(dest[1]); break; // converting to uint16_t;
@@ -16423,6 +16463,26 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_add_subject_set_int_event_mpobj,
 
 /*
  * lvgl extension definition for:
+ * void lv_obj_add_subject_set_float_event(lv_obj_t *obj, lv_subject_t *subject, lv_event_code_t trigger, float value)
+ */
+
+static mp_obj_t mp_lv_obj_add_subject_set_float_event(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_obj_t *obj = mp_to_lv(mp_args[0]);
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(mp_args[1]);
+    lv_event_code_t trigger = (int)mp_obj_get_int(mp_args[2]);
+    float value = (float)mp_obj_get_float(mp_args[3]);
+    ((void (*)(lv_obj_t *, lv_subject_t *, lv_event_code_t, float))lv_func_ptr)(obj, subject, trigger, value);
+    return mp_const_none;
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_obj_add_subject_set_float_event_mpobj, 4, mp_lv_obj_add_subject_set_float_event, lv_obj_add_subject_set_float_event);
+    
+
+/*
+ * lvgl extension definition for:
  * void lv_obj_add_subject_set_string_event(lv_obj_t *obj, lv_subject_t *subject, lv_event_code_t trigger, const char *value)
  */
 
@@ -17245,6 +17305,7 @@ static const mp_rom_map_elem_t obj_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_set_subject_increment_event_rollover), MP_ROM_PTR(&mp_lv_obj_set_subject_increment_event_rollover_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_add_subject_toggle_event), MP_ROM_PTR(&mp_lv_obj_add_subject_toggle_event_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_add_subject_set_int_event), MP_ROM_PTR(&mp_lv_obj_add_subject_set_int_event_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_add_subject_set_float_event), MP_ROM_PTR(&mp_lv_obj_add_subject_set_float_event_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_add_subject_set_string_event), MP_ROM_PTR(&mp_lv_obj_add_subject_set_string_event_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_bind_flag_if_eq), MP_ROM_PTR(&mp_lv_obj_bind_flag_if_eq_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_bind_flag_if_not_eq), MP_ROM_PTR(&mp_lv_obj_bind_flag_if_not_eq_mpobj) },
@@ -19550,7 +19611,7 @@ GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_animimg_type = {
 static mp_obj_t mp_lv_arc_set_start_angle(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
 {
     lv_obj_t *obj = mp_to_lv(mp_args[0]);
-    lv_value_precise_t start = (int32_t)mp_obj_get_int(mp_args[1]);
+    lv_value_precise_t start = (float)mp_obj_get_float(mp_args[1]);
     ((void (*)(lv_obj_t *, lv_value_precise_t))lv_func_ptr)(obj, start);
     return mp_const_none;
 }
@@ -19572,8 +19633,8 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_arc_set_end_angle_mpobj, 2, mp_lv_ar
 static mp_obj_t mp_lv_arc_set_angles(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
 {
     lv_obj_t *obj = mp_to_lv(mp_args[0]);
-    lv_value_precise_t start = (int32_t)mp_obj_get_int(mp_args[1]);
-    lv_value_precise_t end = (int32_t)mp_obj_get_int(mp_args[2]);
+    lv_value_precise_t start = (float)mp_obj_get_float(mp_args[1]);
+    lv_value_precise_t end = (float)mp_obj_get_float(mp_args[2]);
     ((void (*)(lv_obj_t *, lv_value_precise_t, lv_value_precise_t))lv_func_ptr)(obj, start, end);
     return mp_const_none;
 }
@@ -19650,7 +19711,7 @@ static mp_obj_t mp_lv_arc_get_angle_start(size_t mp_n_args, const mp_obj_t *mp_a
 {
     lv_obj_t *obj = mp_to_lv(mp_args[0]);
     lv_value_precise_t _res = ((lv_value_precise_t (*)(lv_obj_t *))lv_func_ptr)(obj);
-    return mp_obj_new_int(_res);
+    return mp_obj_new_float_from_f(_res);
 }
 
  
@@ -30259,6 +30320,402 @@ GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_indev_key_remap_cb_t(void 
 static lv_key_t lv_indev_t_key_remap_cb_callback(lv_indev_t *indev, lv_key_t key);
 
 /*
+ * Struct lv_indev_gesture_t
+ */
+
+static inline const mp_obj_type_t *get_mp_lv_indev_gesture_t_type(void);
+
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_gesture_t(mp_obj_t self_in)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_gesture_t_type()));
+    return (lv_indev_gesture_t*)self->data;
+}
+
+#define mp_write_lv_indev_gesture_t(struct_obj) *((lv_indev_gesture_t*)mp_write_ptr_lv_indev_gesture_t(struct_obj))
+
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_gesture_t(void *field)
+{
+    return lv_to_mp_struct(get_mp_lv_indev_gesture_t_type(), field);
+}
+
+#define mp_read_lv_indev_gesture_t(field) mp_read_ptr_lv_indev_gesture_t(copy_buffer(&field, sizeof(lv_indev_gesture_t)))
+#define mp_read_byref_lv_indev_gesture_t(field) mp_read_ptr_lv_indev_gesture_t(&field)
+
+static void mp_lv_indev_gesture_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(self_in);
+    GENMPY_UNUSED lv_indev_gesture_t *data = (lv_indev_gesture_t*)self->data;
+
+    if (dest[0] == MP_OBJ_NULL) {
+        // load attribute
+        switch(attr)
+        {
+            ;
+            default: call_parent_methods(self_in, attr, dest); // fallback to locals_dict lookup
+        }
+    } else {
+        if (dest[1])
+        {
+            // store attribute
+            switch(attr)
+            {
+                ;
+                default: return;
+            }
+
+            dest[0] = MP_OBJ_NULL; // indicate success
+        }
+    }
+}
+
+static void mp_lv_indev_gesture_t_print(const mp_print_t *print,
+    mp_obj_t self_in,
+    mp_print_kind_t kind)
+{
+    mp_printf(print, "struct lv_indev_gesture_t");
+}
+
+static const mp_obj_dict_t mp_lv_indev_gesture_t_locals_dict;
+
+static MP_DEFINE_CONST_OBJ_TYPE(
+    mp_lv_indev_gesture_t_type,
+    MP_QSTR_lv_indev_gesture_t,
+    MP_TYPE_FLAG_NONE,
+    print, mp_lv_indev_gesture_t_print,
+    make_new, make_new_lv_struct,
+    binary_op, lv_struct_binary_op,
+    subscr, lv_struct_subscr,
+    attr, mp_lv_indev_gesture_t_attr,
+    locals_dict, &mp_lv_indev_gesture_t_locals_dict,
+    buffer, mp_blob_get_buffer,
+    parent, &mp_lv_base_struct_type
+);
+
+static inline const mp_obj_type_t *get_mp_lv_indev_gesture_t_type(void)
+{
+    return &mp_lv_indev_gesture_t_type;
+}
+    
+
+/*
+ * Struct lv_indev_gesture_configuration_t
+ */
+
+static inline const mp_obj_type_t *get_mp_lv_indev_gesture_configuration_t_type(void);
+
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_gesture_configuration_t(mp_obj_t self_in)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_gesture_configuration_t_type()));
+    return (lv_indev_gesture_configuration_t*)self->data;
+}
+
+#define mp_write_lv_indev_gesture_configuration_t(struct_obj) *((lv_indev_gesture_configuration_t*)mp_write_ptr_lv_indev_gesture_configuration_t(struct_obj))
+
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_gesture_configuration_t(void *field)
+{
+    return lv_to_mp_struct(get_mp_lv_indev_gesture_configuration_t_type(), field);
+}
+
+#define mp_read_lv_indev_gesture_configuration_t(field) mp_read_ptr_lv_indev_gesture_configuration_t(copy_buffer(&field, sizeof(lv_indev_gesture_configuration_t)))
+#define mp_read_byref_lv_indev_gesture_configuration_t(field) mp_read_ptr_lv_indev_gesture_configuration_t(&field)
+
+static void mp_lv_indev_gesture_configuration_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(self_in);
+    GENMPY_UNUSED lv_indev_gesture_configuration_t *data = (lv_indev_gesture_configuration_t*)self->data;
+
+    if (dest[0] == MP_OBJ_NULL) {
+        // load attribute
+        switch(attr)
+        {
+            ;
+            default: call_parent_methods(self_in, attr, dest); // fallback to locals_dict lookup
+        }
+    } else {
+        if (dest[1])
+        {
+            // store attribute
+            switch(attr)
+            {
+                ;
+                default: return;
+            }
+
+            dest[0] = MP_OBJ_NULL; // indicate success
+        }
+    }
+}
+
+static void mp_lv_indev_gesture_configuration_t_print(const mp_print_t *print,
+    mp_obj_t self_in,
+    mp_print_kind_t kind)
+{
+    mp_printf(print, "struct lv_indev_gesture_configuration_t");
+}
+
+static const mp_obj_dict_t mp_lv_indev_gesture_configuration_t_locals_dict;
+
+static MP_DEFINE_CONST_OBJ_TYPE(
+    mp_lv_indev_gesture_configuration_t_type,
+    MP_QSTR_lv_indev_gesture_configuration_t,
+    MP_TYPE_FLAG_NONE,
+    print, mp_lv_indev_gesture_configuration_t_print,
+    make_new, make_new_lv_struct,
+    binary_op, lv_struct_binary_op,
+    subscr, lv_struct_subscr,
+    attr, mp_lv_indev_gesture_configuration_t_attr,
+    locals_dict, &mp_lv_indev_gesture_configuration_t_locals_dict,
+    buffer, mp_blob_get_buffer,
+    parent, &mp_lv_base_struct_type
+);
+
+static inline const mp_obj_type_t *get_mp_lv_indev_gesture_configuration_t_type(void)
+{
+    return &mp_lv_indev_gesture_configuration_t_type;
+}
+    
+#define funcptr_lv_recognizer_func_t NULL
+
+
+/*
+ * Struct lv_indev_touch_data_t
+ */
+
+static inline const mp_obj_type_t *get_mp_lv_indev_touch_data_t_type(void);
+
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_touch_data_t(mp_obj_t self_in)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_touch_data_t_type()));
+    return (lv_indev_touch_data_t*)self->data;
+}
+
+#define mp_write_lv_indev_touch_data_t(struct_obj) *((lv_indev_touch_data_t*)mp_write_ptr_lv_indev_touch_data_t(struct_obj))
+
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_touch_data_t(void *field)
+{
+    return lv_to_mp_struct(get_mp_lv_indev_touch_data_t_type(), field);
+}
+
+#define mp_read_lv_indev_touch_data_t(field) mp_read_ptr_lv_indev_touch_data_t(copy_buffer(&field, sizeof(lv_indev_touch_data_t)))
+#define mp_read_byref_lv_indev_touch_data_t(field) mp_read_ptr_lv_indev_touch_data_t(&field)
+
+static void mp_lv_indev_touch_data_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(self_in);
+    GENMPY_UNUSED lv_indev_touch_data_t *data = (lv_indev_touch_data_t*)self->data;
+
+    if (dest[0] == MP_OBJ_NULL) {
+        // load attribute
+        switch(attr)
+        {
+            case MP_QSTR_point: dest[0] = mp_read_byref_lv_point_t(data->point); break; // converting from lv_point_t;
+            case MP_QSTR_state: dest[0] = mp_obj_new_int(data->state); break; // converting from lv_indev_state_t;
+            case MP_QSTR_id: dest[0] = mp_obj_new_int_from_uint(data->id); break; // converting from uint8_t;
+            case MP_QSTR_timestamp: dest[0] = mp_obj_new_int_from_uint(data->timestamp); break; // converting from uint32_t;
+            default: call_parent_methods(self_in, attr, dest); // fallback to locals_dict lookup
+        }
+    } else {
+        if (dest[1])
+        {
+            // store attribute
+            switch(attr)
+            {
+                case MP_QSTR_point: data->point = mp_write_lv_point_t(dest[1]); break; // converting to lv_point_t;
+                case MP_QSTR_state: data->state = (int)mp_obj_get_int(dest[1]); break; // converting to lv_indev_state_t;
+                case MP_QSTR_id: data->id = (uint8_t)mp_obj_get_int(dest[1]); break; // converting to uint8_t;
+                case MP_QSTR_timestamp: data->timestamp = (uint32_t)mp_obj_get_int(dest[1]); break; // converting to uint32_t;
+                default: return;
+            }
+
+            dest[0] = MP_OBJ_NULL; // indicate success
+        }
+    }
+}
+
+static void mp_lv_indev_touch_data_t_print(const mp_print_t *print,
+    mp_obj_t self_in,
+    mp_print_kind_t kind)
+{
+    mp_printf(print, "struct lv_indev_touch_data_t");
+}
+
+static const mp_obj_dict_t mp_lv_indev_touch_data_t_locals_dict;
+
+static MP_DEFINE_CONST_OBJ_TYPE(
+    mp_lv_indev_touch_data_t_type,
+    MP_QSTR_lv_indev_touch_data_t,
+    MP_TYPE_FLAG_NONE,
+    print, mp_lv_indev_touch_data_t_print,
+    make_new, make_new_lv_struct,
+    binary_op, lv_struct_binary_op,
+    subscr, lv_struct_subscr,
+    attr, mp_lv_indev_touch_data_t_attr,
+    locals_dict, &mp_lv_indev_touch_data_t_locals_dict,
+    buffer, mp_blob_get_buffer,
+    parent, &mp_lv_base_struct_type
+);
+
+static inline const mp_obj_type_t *get_mp_lv_indev_touch_data_t_type(void)
+{
+    return &mp_lv_indev_touch_data_t_type;
+}
+    
+
+/*
+ * lvgl extension definition for:
+ * void lv_recognizer_func_t(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t)
+ */
+
+static mp_obj_t mp_funcptr_lv_recognizer_func_t(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_indev_gesture_recognizer_t *arg0 = mp_to_ptr(mp_args[0]);
+    lv_indev_touch_data_t *arg1 = mp_write_ptr_lv_indev_touch_data_t(mp_args[1]);
+    uint16_t arg2 = (uint16_t)mp_obj_get_int(mp_args[2]);
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t))lv_func_ptr)(arg0, arg1, arg2);
+    return mp_const_none;
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_funcptr_lv_recognizer_func_t_mpobj, 3, mp_funcptr_lv_recognizer_func_t, funcptr_lv_recognizer_func_t);
+    
+GENMPY_UNUSED static inline mp_obj_t mp_lv_funcptr_lv_recognizer_func_t(void *func){ return mp_lv_funcptr(&mp_funcptr_lv_recognizer_func_t_mpobj, func, NULL, MP_QSTR_, NULL); }
+
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' as a field of the first parameter of the callback function 'lv_indev_gesture_recognizer_t_recog_fn_callback'
+ * lv_recognizer_func_t recog_fn
+ */
+    
+
+/*
+ * Struct lv_indev_gesture_recognizer_t
+ */
+
+static inline const mp_obj_type_t *get_mp_lv_indev_gesture_recognizer_t_type(void);
+
+GENMPY_UNUSED static inline void* mp_write_ptr_lv_indev_gesture_recognizer_t(mp_obj_t self_in)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_lv_indev_gesture_recognizer_t_type()));
+    return (lv_indev_gesture_recognizer_t*)self->data;
+}
+
+#define mp_write_lv_indev_gesture_recognizer_t(struct_obj) *((lv_indev_gesture_recognizer_t*)mp_write_ptr_lv_indev_gesture_recognizer_t(struct_obj))
+
+GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_lv_indev_gesture_recognizer_t(void *field)
+{
+    return lv_to_mp_struct(get_mp_lv_indev_gesture_recognizer_t_type(), field);
+}
+
+#define mp_read_lv_indev_gesture_recognizer_t(field) mp_read_ptr_lv_indev_gesture_recognizer_t(copy_buffer(&field, sizeof(lv_indev_gesture_recognizer_t)))
+#define mp_read_byref_lv_indev_gesture_recognizer_t(field) mp_read_ptr_lv_indev_gesture_recognizer_t(&field)
+
+static void mp_lv_indev_gesture_recognizer_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
+{
+    mp_lv_struct_t *self = MP_OBJ_TO_PTR(self_in);
+    GENMPY_UNUSED lv_indev_gesture_recognizer_t *data = (lv_indev_gesture_recognizer_t*)self->data;
+
+    if (dest[0] == MP_OBJ_NULL) {
+        // load attribute
+        switch(attr)
+        {
+            case MP_QSTR_type: dest[0] = mp_obj_new_int(data->type); break; // converting from lv_indev_gesture_type_t;
+            case MP_QSTR_state: dest[0] = mp_obj_new_int(data->state); break; // converting from lv_indev_gesture_state_t;
+            case MP_QSTR_info: dest[0] = mp_read_ptr_lv_indev_gesture_t((void*)data->info); break; // converting from lv_indev_gesture_t *;
+            case MP_QSTR_scale: dest[0] = mp_obj_new_float_from_f(data->scale); break; // converting from float;
+            case MP_QSTR_rotation: dest[0] = mp_obj_new_float_from_f(data->rotation); break; // converting from float;
+            case MP_QSTR_distance: dest[0] = mp_obj_new_float_from_f(data->distance); break; // converting from float;
+            case MP_QSTR_speed: dest[0] = mp_obj_new_float_from_f(data->speed); break; // converting from float;
+            case MP_QSTR_two_fingers_swipe_dir: dest[0] = mp_obj_new_int(data->two_fingers_swipe_dir); break; // converting from lv_dir_t;
+            case MP_QSTR_config: dest[0] = mp_read_ptr_lv_indev_gesture_configuration_t((void*)data->config); break; // converting from lv_indev_gesture_configuration_t *;
+            case MP_QSTR_recog_fn: dest[0] = mp_lv_funcptr(&mp_funcptr_lv_recognizer_func_t_mpobj, data->recog_fn, NULL ,MP_QSTR_lv_indev_gesture_recognizer_t_recog_fn, NULL); break; // converting from callback lv_recognizer_func_t;
+            default: call_parent_methods(self_in, attr, dest); // fallback to locals_dict lookup
+        }
+    } else {
+        if (dest[1])
+        {
+            // store attribute
+            switch(attr)
+            {
+                case MP_QSTR_type: data->type = (int)mp_obj_get_int(dest[1]); break; // converting to lv_indev_gesture_type_t;
+                case MP_QSTR_state: data->state = (int)mp_obj_get_int(dest[1]); break; // converting to lv_indev_gesture_state_t;
+                case MP_QSTR_info: data->info = (void*)mp_write_ptr_lv_indev_gesture_t(dest[1]); break; // converting to lv_indev_gesture_t *;
+                case MP_QSTR_scale: data->scale = (float)mp_obj_get_float(dest[1]); break; // converting to float;
+                case MP_QSTR_rotation: data->rotation = (float)mp_obj_get_float(dest[1]); break; // converting to float;
+                case MP_QSTR_distance: data->distance = (float)mp_obj_get_float(dest[1]); break; // converting to float;
+                case MP_QSTR_speed: data->speed = (float)mp_obj_get_float(dest[1]); break; // converting to float;
+                case MP_QSTR_two_fingers_swipe_dir: data->two_fingers_swipe_dir = (int)mp_obj_get_int(dest[1]); break; // converting to lv_dir_t;
+                case MP_QSTR_config: data->config = (void*)mp_write_ptr_lv_indev_gesture_configuration_t(dest[1]); break; // converting to lv_indev_gesture_configuration_t *;
+                case MP_QSTR_recog_fn: data->recog_fn = mp_lv_callback(dest[1], NULL ,MP_QSTR_lv_indev_gesture_recognizer_t_recog_fn, NULL, NULL, NULL, NULL); break; // converting to callback lv_recognizer_func_t;
+                default: return;
+            }
+
+            dest[0] = MP_OBJ_NULL; // indicate success
+        }
+    }
+}
+
+static void mp_lv_indev_gesture_recognizer_t_print(const mp_print_t *print,
+    mp_obj_t self_in,
+    mp_print_kind_t kind)
+{
+    mp_printf(print, "struct lv_indev_gesture_recognizer_t");
+}
+
+static const mp_obj_dict_t mp_lv_indev_gesture_recognizer_t_locals_dict;
+
+static MP_DEFINE_CONST_OBJ_TYPE(
+    mp_lv_indev_gesture_recognizer_t_type,
+    MP_QSTR_lv_indev_gesture_recognizer_t,
+    MP_TYPE_FLAG_NONE,
+    print, mp_lv_indev_gesture_recognizer_t_print,
+    make_new, make_new_lv_struct,
+    binary_op, lv_struct_binary_op,
+    subscr, lv_struct_subscr,
+    attr, mp_lv_indev_gesture_recognizer_t_attr,
+    locals_dict, &mp_lv_indev_gesture_recognizer_t_locals_dict,
+    buffer, mp_blob_get_buffer,
+    parent, &mp_lv_base_struct_type
+);
+
+static inline const mp_obj_type_t *get_mp_lv_indev_gesture_recognizer_t_type(void)
+{
+    return &mp_lv_indev_gesture_recognizer_t_type;
+}
+    
+
+/*
+ * Array convertors for lv_indev_gesture_recognizer_t [LV_INDEV_GESTURE_CNT]
+ */
+
+GENMPY_UNUSED static lv_indev_gesture_recognizer_t *mp_arr_to_lv_indev_gesture_recognizer_t___LV_INDEV_GESTURE_CNT__(mp_obj_t mp_arr)
+{
+    mp_obj_t mp_len = mp_obj_len_maybe(mp_arr);
+    if (mp_len == MP_OBJ_NULL) return mp_to_ptr(mp_arr);
+    mp_int_t len = mp_obj_get_int(mp_len);
+    //TODO check dim!
+    lv_indev_gesture_recognizer_t *lv_arr = (lv_indev_gesture_recognizer_t*)m_malloc(len * sizeof(lv_indev_gesture_recognizer_t));
+    mp_obj_t iter = mp_getiter(mp_arr, NULL);
+    mp_obj_t item;
+    size_t i = 0;
+    while ((item = mp_iternext(iter)) != MP_OBJ_STOP_ITERATION) {
+        lv_arr[i++] = mp_write_lv_indev_gesture_recognizer_t(item);
+    }
+    return (lv_indev_gesture_recognizer_t *)lv_arr;
+}
+
+GENMPY_UNUSED static mp_obj_t mp_arr_from_lv_indev_gesture_recognizer_t___LV_INDEV_GESTURE_CNT__(lv_indev_gesture_recognizer_t *arr)
+{
+    mp_obj_t obj_arr[LV_INDEV_GESTURE_CNT];
+    for (size_t i=0; i<LV_INDEV_GESTURE_CNT; i++){
+        obj_arr[i] = mp_read_lv_indev_gesture_recognizer_t(arr[i]);
+    }
+    return mp_obj_new_list(LV_INDEV_GESTURE_CNT, obj_arr); // TODO: return custom iterable object!
+}
+
+
+/*
  * Struct lv_indev_t
  */
 
@@ -30321,6 +30778,10 @@ static void mp_lv_indev_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
             case MP_QSTR_event_list: dest[0] = mp_read_byref_lv_event_list_t(data->event_list); break; // converting from lv_event_list_t;
             case MP_QSTR_scroll_throw_anim: dest[0] = mp_read_ptr_lv_anim_t((void*)data->scroll_throw_anim); break; // converting from lv_anim_t *;
             case MP_QSTR_key_remap_cb: dest[0] = mp_lv_funcptr(&mp_funcptr_lv_indev_key_remap_cb_t_mpobj, data->key_remap_cb, lv_indev_t_key_remap_cb_callback ,MP_QSTR_lv_indev_t_key_remap_cb, data->user_data); break; // converting from callback lv_indev_key_remap_cb_t;
+            case MP_QSTR_recognizers: dest[0] = mp_arr_from_lv_indev_gesture_recognizer_t___LV_INDEV_GESTURE_CNT__(data->recognizers); break; // converting from lv_indev_gesture_recognizer_t [LV_INDEV_GESTURE_CNT];
+            case MP_QSTR_cur_gesture: dest[0] = mp_obj_new_int(data->cur_gesture); break; // converting from lv_indev_gesture_type_t;
+            case MP_QSTR_gesture_data: dest[0] = mp_arr_from_void_ptr__LV_INDEV_GESTURE_CNT__(data->gesture_data); break; // converting from void *[LV_INDEV_GESTURE_CNT];
+            case MP_QSTR_gesture_type: dest[0] = mp_arr_from_lv_indev_gesture_type_t___LV_INDEV_GESTURE_CNT__(data->gesture_type); break; // converting from lv_indev_gesture_type_t [LV_INDEV_GESTURE_CNT];
             default: call_parent_methods(self_in, attr, dest); // fallback to locals_dict lookup
         }
     } else {
@@ -30361,6 +30822,10 @@ static void mp_lv_indev_t_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest)
                 case MP_QSTR_event_list: data->event_list = mp_write_lv_event_list_t(dest[1]); break; // converting to lv_event_list_t;
                 case MP_QSTR_scroll_throw_anim: data->scroll_throw_anim = (void*)mp_write_ptr_lv_anim_t(dest[1]); break; // converting to lv_anim_t *;
                 case MP_QSTR_key_remap_cb: data->key_remap_cb = mp_lv_callback(dest[1], lv_indev_t_key_remap_cb_callback ,MP_QSTR_lv_indev_t_key_remap_cb, &data->user_data, NULL, NULL, NULL); break; // converting to callback lv_indev_key_remap_cb_t;
+                case MP_QSTR_recognizers: memcpy((void*)&data->recognizers, mp_arr_to_lv_indev_gesture_recognizer_t___LV_INDEV_GESTURE_CNT__(dest[1]), sizeof(lv_indev_gesture_recognizer_t)*LV_INDEV_GESTURE_CNT); break; // converting to lv_indev_gesture_recognizer_t [LV_INDEV_GESTURE_CNT];
+                case MP_QSTR_cur_gesture: data->cur_gesture = (int)mp_obj_get_int(dest[1]); break; // converting to lv_indev_gesture_type_t;
+                case MP_QSTR_gesture_data: memcpy((void*)&data->gesture_data, mp_arr_to_void_ptr__LV_INDEV_GESTURE_CNT__(dest[1]), sizeof(void *)*LV_INDEV_GESTURE_CNT); break; // converting to void *[LV_INDEV_GESTURE_CNT];
+                case MP_QSTR_gesture_type: memcpy((void*)&data->gesture_type, mp_arr_to_lv_indev_gesture_type_t___LV_INDEV_GESTURE_CNT__(dest[1]), sizeof(lv_indev_gesture_type_t)*LV_INDEV_GESTURE_CNT); break; // converting to lv_indev_gesture_type_t [LV_INDEV_GESTURE_CNT];
                 default: return;
             }
 
@@ -37211,6 +37676,83 @@ static mp_obj_t mp_lv_event_get_prev_state(size_t mp_n_args, const mp_obj_t *mp_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_prev_state_mpobj, 1, mp_lv_event_get_prev_state, lv_event_get_prev_state);
     
+
+/*
+ * lvgl extension definition for:
+ * float lv_event_get_pinch_scale(lv_event_t *gesture_event)
+ */
+
+static mp_obj_t mp_lv_event_get_pinch_scale(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(mp_args[0]);
+    float _res = ((float (*)(lv_event_t *))lv_func_ptr)(gesture_event);
+    return mp_obj_new_float_from_f(_res);
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_pinch_scale_mpobj, 1, mp_lv_event_get_pinch_scale, lv_event_get_pinch_scale);
+    
+/* Reusing lv_event_get_pinch_scale for lv_event_get_rotation */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_rotation_mpobj, 1, mp_lv_event_get_pinch_scale, lv_event_get_rotation);
+    
+/* Reusing lv_event_get_pinch_scale for lv_event_get_two_fingers_swipe_distance */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_two_fingers_swipe_distance_mpobj, 1, mp_lv_event_get_pinch_scale, lv_event_get_two_fingers_swipe_distance);
+    
+
+/*
+ * lvgl extension definition for:
+ * lv_dir_t lv_event_get_two_fingers_swipe_dir(lv_event_t *gesture_event)
+ */
+
+static mp_obj_t mp_lv_event_get_two_fingers_swipe_dir(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(mp_args[0]);
+    lv_dir_t _res = ((lv_dir_t (*)(lv_event_t *))lv_func_ptr)(gesture_event);
+    return mp_obj_new_int(_res);
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_two_fingers_swipe_dir_mpobj, 1, mp_lv_event_get_two_fingers_swipe_dir, lv_event_get_two_fingers_swipe_dir);
+    
+
+/*
+ * lvgl extension definition for:
+ * lv_indev_gesture_state_t lv_event_get_gesture_state(lv_event_t *gesture_event, lv_indev_gesture_type_t type)
+ */
+
+static mp_obj_t mp_lv_event_get_gesture_state(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(mp_args[0]);
+    lv_indev_gesture_type_t type = (int)mp_obj_get_int(mp_args[1]);
+    lv_indev_gesture_state_t _res = ((lv_indev_gesture_state_t (*)(lv_event_t *, lv_indev_gesture_type_t))lv_func_ptr)(gesture_event, type);
+    return mp_obj_new_int(_res);
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_gesture_state_mpobj, 2, mp_lv_event_get_gesture_state, lv_event_get_gesture_state);
+    
+
+/*
+ * lvgl extension definition for:
+ * lv_indev_gesture_type_t lv_event_get_gesture_type(lv_event_t *gesture_event)
+ */
+
+static mp_obj_t mp_lv_event_get_gesture_type(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_event_t *gesture_event = mp_write_ptr_lv_event_t(mp_args[0]);
+    lv_indev_gesture_type_t _res = ((lv_indev_gesture_type_t (*)(lv_event_t *))lv_func_ptr)(gesture_event);
+    return mp_obj_new_int(_res);
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_get_gesture_type_mpobj, 1, mp_lv_event_get_gesture_type, lv_event_get_gesture_type);
+    
 /* Reusing funcptr_event_cb for lv_event_push */
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_event_push_mpobj, 1, mp_funcptr_event_cb, lv_event_push);
@@ -37247,6 +37789,12 @@ static const mp_rom_map_elem_t mp_lv_event_t_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_set_cover_res), MP_ROM_PTR(&mp_lv_event_set_cover_res_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_get_draw_task), MP_ROM_PTR(&mp_lv_event_get_draw_task_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_get_prev_state), MP_ROM_PTR(&mp_lv_event_get_prev_state_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_pinch_scale), MP_ROM_PTR(&mp_lv_event_get_pinch_scale_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_rotation), MP_ROM_PTR(&mp_lv_event_get_rotation_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_two_fingers_swipe_distance), MP_ROM_PTR(&mp_lv_event_get_two_fingers_swipe_distance_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_two_fingers_swipe_dir), MP_ROM_PTR(&mp_lv_event_get_two_fingers_swipe_dir_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_gesture_state), MP_ROM_PTR(&mp_lv_event_get_gesture_state_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_gesture_type), MP_ROM_PTR(&mp_lv_event_get_gesture_type_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_push), MP_ROM_PTR(&mp_lv_event_push_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_pop), MP_ROM_PTR(&mp_lv_event_pop_mpobj) },
     
@@ -39484,6 +40032,57 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_subject_set_max_value_int_mpobj, 2, 
 
 /*
  * lvgl extension definition for:
+ * void lv_subject_init_float(lv_subject_t *subject, float value)
+ */
+
+static mp_obj_t mp_lv_subject_init_float(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(mp_args[0]);
+    float value = (float)mp_obj_get_float(mp_args[1]);
+    ((void (*)(lv_subject_t *, float))lv_func_ptr)(subject, value);
+    return mp_const_none;
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_subject_init_float_mpobj, 2, mp_lv_subject_init_float, lv_subject_init_float);
+    
+/* Reusing lv_subject_init_float for lv_subject_set_float */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_subject_set_float_mpobj, 2, mp_lv_subject_init_float, lv_subject_set_float);
+    
+
+/*
+ * lvgl extension definition for:
+ * float lv_subject_get_float(lv_subject_t *subject)
+ */
+
+static mp_obj_t mp_lv_subject_get_float(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_subject_t *subject = mp_write_ptr_lv_subject_t(mp_args[0]);
+    float _res = ((float (*)(lv_subject_t *))lv_func_ptr)(subject);
+    return mp_obj_new_float_from_f(_res);
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_subject_get_float_mpobj, 1, mp_lv_subject_get_float, lv_subject_get_float);
+    
+/* Reusing lv_subject_get_float for lv_subject_get_previous_float */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_subject_get_previous_float_mpobj, 1, mp_lv_subject_get_float, lv_subject_get_previous_float);
+    
+/* Reusing lv_subject_init_float for lv_subject_set_min_value_float */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_subject_set_min_value_float_mpobj, 2, mp_lv_subject_init_float, lv_subject_set_min_value_float);
+    
+/* Reusing lv_subject_init_float for lv_subject_set_max_value_float */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_subject_set_max_value_float_mpobj, 2, mp_lv_subject_init_float, lv_subject_set_max_value_float);
+    
+
+/*
+ * lvgl extension definition for:
  * void lv_subject_init_string(lv_subject_t *subject, char *buf, char *prev_buf, size_t size, const char *value)
  */
 
@@ -39840,6 +40439,12 @@ static const mp_rom_map_elem_t mp_lv_subject_t_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_get_previous_int), MP_ROM_PTR(&mp_lv_subject_get_previous_int_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_set_min_value_int), MP_ROM_PTR(&mp_lv_subject_set_min_value_int_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_set_max_value_int), MP_ROM_PTR(&mp_lv_subject_set_max_value_int_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_init_float), MP_ROM_PTR(&mp_lv_subject_init_float_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_set_float), MP_ROM_PTR(&mp_lv_subject_set_float_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_float), MP_ROM_PTR(&mp_lv_subject_get_float_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_previous_float), MP_ROM_PTR(&mp_lv_subject_get_previous_float_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_set_min_value_float), MP_ROM_PTR(&mp_lv_subject_set_min_value_float_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_set_max_value_float), MP_ROM_PTR(&mp_lv_subject_set_max_value_float_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_init_string), MP_ROM_PTR(&mp_lv_subject_init_string_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_copy_string), MP_ROM_PTR(&mp_lv_subject_copy_string_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_get_string), MP_ROM_PTR(&mp_lv_subject_get_string_mpobj) },
@@ -40036,8 +40641,8 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_point_from_precise_mpobj, 1, mp_lv_p
 static mp_obj_t mp_lv_point_precise_set(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
 {
     lv_point_precise_t *p = mp_write_ptr_lv_point_precise_t(mp_args[0]);
-    lv_value_precise_t x = (int32_t)mp_obj_get_int(mp_args[1]);
-    lv_value_precise_t y = (int32_t)mp_obj_get_int(mp_args[2]);
+    lv_value_precise_t x = (float)mp_obj_get_float(mp_args[1]);
+    lv_value_precise_t y = (float)mp_obj_get_float(mp_args[2]);
     ((void (*)(lv_point_precise_t *, lv_value_precise_t, lv_value_precise_t))lv_func_ptr)(p, x, y);
     return mp_const_none;
 }
@@ -42898,6 +43503,59 @@ static mp_obj_t mp_lv_indev_set_key_remap_cb(size_t mp_n_args, const mp_obj_t *m
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_set_key_remap_cb_mpobj, 2, mp_lv_indev_set_key_remap_cb, lv_indev_set_key_remap_cb);
     
+/* Reusing lv_indev_delete for lv_indev_gesture_init */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_gesture_init_mpobj, 1, mp_lv_indev_delete, lv_indev_gesture_init);
+    
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_pinch_up_threshold(lv_indev_t *indev, float threshold)
+ */
+
+static mp_obj_t mp_lv_indev_set_pinch_up_threshold(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(mp_args[0]);
+    float threshold = (float)mp_obj_get_float(mp_args[1]);
+    ((void (*)(lv_indev_t *, float))lv_func_ptr)(indev, threshold);
+    return mp_const_none;
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_set_pinch_up_threshold_mpobj, 2, mp_lv_indev_set_pinch_up_threshold, lv_indev_set_pinch_up_threshold);
+    
+/* Reusing lv_indev_set_pinch_up_threshold for lv_indev_set_pinch_down_threshold */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_set_pinch_down_threshold_mpobj, 2, mp_lv_indev_set_pinch_up_threshold, lv_indev_set_pinch_down_threshold);
+    
+/* Reusing lv_indev_set_pinch_up_threshold for lv_indev_set_rotation_rad_threshold */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_set_rotation_rad_threshold_mpobj, 2, mp_lv_indev_set_pinch_up_threshold, lv_indev_set_rotation_rad_threshold);
+    
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_gesture_recognizers_update(lv_indev_t *indev, lv_indev_touch_data_t *touches, uint16_t touch_cnt)
+ */
+
+static mp_obj_t mp_lv_indev_gesture_recognizers_update(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_indev_t *indev = mp_write_ptr_lv_indev_t(mp_args[0]);
+    lv_indev_touch_data_t *touches = mp_write_ptr_lv_indev_touch_data_t(mp_args[1]);
+    uint16_t touch_cnt = (uint16_t)mp_obj_get_int(mp_args[2]);
+    ((void (*)(lv_indev_t *, lv_indev_touch_data_t *, uint16_t))lv_func_ptr)(indev, touches, touch_cnt);
+    return mp_const_none;
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_gesture_recognizers_update_mpobj, 3, mp_lv_indev_gesture_recognizers_update, lv_indev_gesture_recognizers_update);
+    
+/* Reusing funcptr_lv_indev_read_cb_t for lv_indev_gesture_recognizers_set_data */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_gesture_recognizers_set_data_mpobj, 2, mp_funcptr_lv_indev_read_cb_t, lv_indev_gesture_recognizers_set_data);
+    
 /* Reusing lv_indev_delete for lv_indev_scroll_handler */
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_scroll_handler_mpobj, 1, mp_lv_indev_delete, lv_indev_scroll_handler);
@@ -42979,6 +43637,12 @@ static const mp_rom_map_elem_t mp_lv_indev_t_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_remove_event_cb_with_user_data), MP_ROM_PTR(&mp_lv_indev_remove_event_cb_with_user_data_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_send_event), MP_ROM_PTR(&mp_lv_indev_send_event_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_set_key_remap_cb), MP_ROM_PTR(&mp_lv_indev_set_key_remap_cb_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_gesture_init), MP_ROM_PTR(&mp_lv_indev_gesture_init_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_set_pinch_up_threshold), MP_ROM_PTR(&mp_lv_indev_set_pinch_up_threshold_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_set_pinch_down_threshold), MP_ROM_PTR(&mp_lv_indev_set_pinch_down_threshold_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_set_rotation_rad_threshold), MP_ROM_PTR(&mp_lv_indev_set_rotation_rad_threshold_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_gesture_recognizers_update), MP_ROM_PTR(&mp_lv_indev_gesture_recognizers_update_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_gesture_recognizers_set_data), MP_ROM_PTR(&mp_lv_indev_gesture_recognizers_set_data_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_scroll_handler), MP_ROM_PTR(&mp_lv_indev_scroll_handler_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_scroll_throw_handler), MP_ROM_PTR(&mp_lv_indev_scroll_throw_handler_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_scroll_throw_predict), MP_ROM_PTR(&mp_lv_indev_scroll_throw_predict_mpobj) },
@@ -42989,8 +43653,28 @@ static const mp_rom_map_elem_t mp_lv_indev_t_locals_dict_table[] = {
 static MP_DEFINE_CONST_DICT(mp_lv_indev_t_locals_dict, mp_lv_indev_t_locals_dict_table);
         
 
+/*
+ * lvgl extension definition for:
+ * void lv_indev_set_gesture_data(lv_indev_data_t *data, lv_indev_gesture_recognizer_t *recognizer, lv_indev_gesture_type_t type)
+ */
+
+static mp_obj_t mp_lv_indev_set_gesture_data(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_indev_data_t *data = mp_write_ptr_lv_indev_data_t(mp_args[0]);
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(mp_args[1]);
+    lv_indev_gesture_type_t type = (int)mp_obj_get_int(mp_args[2]);
+    ((void (*)(lv_indev_data_t *, lv_indev_gesture_recognizer_t *, lv_indev_gesture_type_t))lv_func_ptr)(data, recognizer, type);
+    return mp_const_none;
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_set_gesture_data_mpobj, 3, mp_lv_indev_set_gesture_data, lv_indev_set_gesture_data);
+    
+
 static const mp_rom_map_elem_t mp_lv_indev_data_t_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR___SIZE__), MP_ROM_PTR(MP_ROM_INT(sizeof(lv_indev_data_t))) },
+    { MP_ROM_QSTR(MP_QSTR_set_gesture_data), MP_ROM_PTR(&mp_lv_indev_set_gesture_data_mpobj) },
     
 };
 
@@ -43011,6 +43695,95 @@ static const mp_rom_map_elem_t mp_lv_indev_keypad_t_locals_dict_table[] = {
 };
 
 static MP_DEFINE_CONST_DICT(mp_lv_indev_keypad_t_locals_dict, mp_lv_indev_keypad_t_locals_dict_table);
+        
+/* Reusing funcptr_lv_recognizer_func_t for lv_indev_gesture_detect_pinch */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_gesture_detect_pinch_mpobj, 3, mp_funcptr_lv_recognizer_func_t, lv_indev_gesture_detect_pinch);
+    
+/* Reusing funcptr_lv_recognizer_func_t for lv_indev_gesture_detect_rotation */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_gesture_detect_rotation_mpobj, 3, mp_funcptr_lv_recognizer_func_t, lv_indev_gesture_detect_rotation);
+    
+/* Reusing funcptr_lv_recognizer_func_t for lv_indev_gesture_detect_two_fingers_swipe */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_gesture_detect_two_fingers_swipe_mpobj, 3, mp_funcptr_lv_recognizer_func_t, lv_indev_gesture_detect_two_fingers_swipe);
+    
+
+/*
+ * lvgl extension definition for:
+ * void lv_indev_get_gesture_center_point(lv_indev_gesture_recognizer_t *recognizer, lv_point_t *point)
+ */
+
+static mp_obj_t mp_lv_indev_get_gesture_center_point(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(mp_args[0]);
+    lv_point_t *point = mp_write_ptr_lv_point_t(mp_args[1]);
+    ((void (*)(lv_indev_gesture_recognizer_t *, lv_point_t *))lv_func_ptr)(recognizer, point);
+    return mp_const_none;
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_get_gesture_center_point_mpobj, 2, mp_lv_indev_get_gesture_center_point, lv_indev_get_gesture_center_point);
+    
+/* Reusing lv_indev_get_gesture_center_point for lv_indev_get_gesture_primary_point */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_get_gesture_primary_point_mpobj, 2, mp_lv_indev_get_gesture_center_point, lv_indev_get_gesture_primary_point);
+    
+
+/*
+ * lvgl extension definition for:
+ * bool lv_indev_recognizer_is_active(lv_indev_gesture_recognizer_t *recognizer)
+ */
+
+static mp_obj_t mp_lv_indev_recognizer_is_active(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_func_ptr)
+{
+    lv_indev_gesture_recognizer_t *recognizer = mp_write_ptr_lv_indev_gesture_recognizer_t(mp_args[0]);
+    bool _res = ((bool (*)(lv_indev_gesture_recognizer_t *))lv_func_ptr)(recognizer);
+    return convert_to_bool(_res);
+}
+
+ 
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_VAR(mp_lv_indev_recognizer_is_active_mpobj, 1, mp_lv_indev_recognizer_is_active, lv_indev_recognizer_is_active);
+    
+
+static const mp_rom_map_elem_t mp_lv_indev_gesture_recognizer_t_locals_dict_table[] = {
+    { MP_ROM_QSTR(MP_QSTR___SIZE__), MP_ROM_PTR(MP_ROM_INT(sizeof(lv_indev_gesture_recognizer_t))) },
+    { MP_ROM_QSTR(MP_QSTR_detect_pinch), MP_ROM_PTR(&mp_lv_indev_gesture_detect_pinch_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_detect_rotation), MP_ROM_PTR(&mp_lv_indev_gesture_detect_rotation_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_detect_two_fingers_swipe), MP_ROM_PTR(&mp_lv_indev_gesture_detect_two_fingers_swipe_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_gesture_center_point), MP_ROM_PTR(&mp_lv_indev_get_gesture_center_point_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_get_gesture_primary_point), MP_ROM_PTR(&mp_lv_indev_get_gesture_primary_point_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_recognizer_is_active), MP_ROM_PTR(&mp_lv_indev_recognizer_is_active_mpobj) },
+    
+};
+
+static MP_DEFINE_CONST_DICT(mp_lv_indev_gesture_recognizer_t_locals_dict, mp_lv_indev_gesture_recognizer_t_locals_dict_table);
+        
+
+static const mp_rom_map_elem_t mp_lv_indev_gesture_t_locals_dict_table[] = {
+    
+    
+};
+
+static MP_DEFINE_CONST_DICT(mp_lv_indev_gesture_t_locals_dict, mp_lv_indev_gesture_t_locals_dict_table);
+        
+
+static const mp_rom_map_elem_t mp_lv_indev_gesture_configuration_t_locals_dict_table[] = {
+    
+    
+};
+
+static MP_DEFINE_CONST_DICT(mp_lv_indev_gesture_configuration_t_locals_dict, mp_lv_indev_gesture_configuration_t_locals_dict_table);
+        
+
+static const mp_rom_map_elem_t mp_lv_indev_touch_data_t_locals_dict_table[] = {
+    { MP_ROM_QSTR(MP_QSTR___SIZE__), MP_ROM_PTR(MP_ROM_INT(sizeof(lv_indev_touch_data_t))) },
+    
+};
+
+static MP_DEFINE_CONST_DICT(mp_lv_indev_touch_data_t_locals_dict, mp_lv_indev_touch_data_t_locals_dict_table);
         
 
 /*
@@ -43693,6 +44466,10 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_mp_lv_init_gc_mpobj, 0, mp_lv_ob
 /* Reusing lv_obj_style_init for mp_lv_deinit_gc */
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_mp_lv_deinit_gc_mpobj, 0, mp_lv_obj_style_init, mp_lv_deinit_gc);
+    
+/* Reusing funcptr_lv_cache_alloc_cb_t for mp_lv_get_roots */
+
+static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_mp_lv_get_roots_mpobj, 0, mp_funcptr_lv_cache_alloc_cb_t, mp_lv_get_roots);
     
 /* Reusing lv_obj_style_init for lv_init */
 
@@ -46111,8 +46888,8 @@ static mp_obj_t mp_lv_draw_arc_get_area(size_t mp_n_args, const mp_obj_t *mp_arg
     int32_t x = (int32_t)mp_obj_get_int(mp_args[0]);
     int32_t y = (int32_t)mp_obj_get_int(mp_args[1]);
     uint16_t radius = (uint16_t)mp_obj_get_int(mp_args[2]);
-    lv_value_precise_t start_angle = (int32_t)mp_obj_get_int(mp_args[3]);
-    lv_value_precise_t end_angle = (int32_t)mp_obj_get_int(mp_args[4]);
+    lv_value_precise_t start_angle = (float)mp_obj_get_float(mp_args[3]);
+    lv_value_precise_t end_angle = (float)mp_obj_get_float(mp_args[4]);
     int32_t w = (int32_t)mp_obj_get_int(mp_args[5]);
     bool rounded = mp_obj_is_true(mp_args[6]);
     lv_area_t *area = mp_write_ptr_lv_area_t(mp_args[7]);
@@ -48453,6 +49230,13 @@ GENMPY_UNUSED static lv_key_t lv_indev_t_key_remap_cb_callback(lv_indev_t *arg0,
 
 /*
  * Function NOT generated:
+ * Callback: user_data NOT FOUND! void lv_recognizer_func_t(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t)
+ * void lv_recognizer_func_t(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t)
+ */
+    
+
+/*
+ * Function NOT generated:
  * Callback: user_data NOT FOUND! lv_draw_sw_mask_res_t lv_draw_sw_mask_xcb_t(lv_opa_t *mask_buf, int32_t abs_x, int32_t abs_y, int32_t len, void *p)
  * lv_draw_sw_mask_res_t lv_draw_sw_mask_xcb_t(lv_opa_t *mask_buf, int32_t abs_x, int32_t abs_y, int32_t len, void *p)
  */
@@ -48704,6 +49488,7 @@ static const mp_rom_map_elem_t lvgl_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_COVER_RES), MP_ROM_PTR(&mp_lv_LV_COVER_RES_type_base) },
     { MP_ROM_QSTR(MP_QSTR_OBJ_FLAG), MP_ROM_PTR(&mp_lv_LV_OBJ_FLAG_type_base) },
     { MP_ROM_QSTR(MP_QSTR_SUBJECT_TYPE), MP_ROM_PTR(&mp_lv_LV_SUBJECT_TYPE_type_base) },
+    { MP_ROM_QSTR(MP_QSTR_INDEV_GESTURE_STATE), MP_ROM_PTR(&mp_lv_LV_INDEV_GESTURE_STATE_type_base) },
     { MP_ROM_QSTR(MP_QSTR_FONT_FMT_TXT_CMAP), MP_ROM_PTR(&mp_lv_LV_FONT_FMT_TXT_CMAP_type_base) },
     { MP_ROM_QSTR(MP_QSTR_FONT_FMT_TXT), MP_ROM_PTR(&mp_lv_LV_FONT_FMT_TXT_type_base) },
     { MP_ROM_QSTR(MP_QSTR_ANIM_IMAGE_PART), MP_ROM_PTR(&mp_lv_LV_ANIM_IMAGE_PART_type_base) },
@@ -48815,6 +49600,10 @@ static const mp_rom_map_elem_t lvgl_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_indev_data_t), MP_ROM_PTR(&mp_lv_indev_data_t_type) },
     { MP_ROM_QSTR(MP_QSTR_indev_pointer_t), MP_ROM_PTR(&mp_lv_indev_pointer_t_type) },
     { MP_ROM_QSTR(MP_QSTR_indev_keypad_t), MP_ROM_PTR(&mp_lv_indev_keypad_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_gesture_recognizer_t), MP_ROM_PTR(&mp_lv_indev_gesture_recognizer_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_gesture_t), MP_ROM_PTR(&mp_lv_indev_gesture_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_gesture_configuration_t), MP_ROM_PTR(&mp_lv_indev_gesture_configuration_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_touch_data_t), MP_ROM_PTR(&mp_lv_indev_touch_data_t_type) },
     { MP_ROM_QSTR(MP_QSTR_draw_mask_rect_dsc_t), MP_ROM_PTR(&mp_lv_draw_mask_rect_dsc_t_type) },
     { MP_ROM_QSTR(MP_QSTR_draw_sw_mask_line_param_t), MP_ROM_PTR(&mp_lv_draw_sw_mask_line_param_t_type) },
     { MP_ROM_QSTR(MP_QSTR_draw_sw_mask_common_dsc_t), MP_ROM_PTR(&mp_lv_draw_sw_mask_common_dsc_t_type) },
@@ -48911,6 +49700,7 @@ static const mp_rom_map_elem_t lvgl_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_version_info), MP_ROM_PTR(&mp_lv_version_info_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_mp_lv_init_gc), MP_ROM_PTR(&mp_mp_lv_init_gc_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_mp_lv_deinit_gc), MP_ROM_PTR(&mp_mp_lv_deinit_gc_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_mp_lv_get_roots), MP_ROM_PTR(&mp_mp_lv_get_roots_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&mp_lv_init_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&mp_lv_deinit_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_is_initialized), MP_ROM_PTR(&mp_lv_is_initialized_mpobj) },
@@ -49349,6 +50139,7 @@ const mp_rom_map_elem_t lvgl_module_entries[] = {
     { MP_ROM_QSTR(MP_QSTR_COVER_RES), MP_ROM_PTR(&mp_lv_LV_COVER_RES_type_base) },
     { MP_ROM_QSTR(MP_QSTR_OBJ_FLAG), MP_ROM_PTR(&mp_lv_LV_OBJ_FLAG_type_base) },
     { MP_ROM_QSTR(MP_QSTR_SUBJECT_TYPE), MP_ROM_PTR(&mp_lv_LV_SUBJECT_TYPE_type_base) },
+    { MP_ROM_QSTR(MP_QSTR_INDEV_GESTURE_STATE), MP_ROM_PTR(&mp_lv_LV_INDEV_GESTURE_STATE_type_base) },
     { MP_ROM_QSTR(MP_QSTR_FONT_FMT_TXT_CMAP), MP_ROM_PTR(&mp_lv_LV_FONT_FMT_TXT_CMAP_type_base) },
     { MP_ROM_QSTR(MP_QSTR_FONT_FMT_TXT), MP_ROM_PTR(&mp_lv_LV_FONT_FMT_TXT_type_base) },
     { MP_ROM_QSTR(MP_QSTR_ANIM_IMAGE_PART), MP_ROM_PTR(&mp_lv_LV_ANIM_IMAGE_PART_type_base) },
@@ -49460,6 +50251,10 @@ const mp_rom_map_elem_t lvgl_module_entries[] = {
     { MP_ROM_QSTR(MP_QSTR_indev_data_t), MP_ROM_PTR(&mp_lv_indev_data_t_type) },
     { MP_ROM_QSTR(MP_QSTR_indev_pointer_t), MP_ROM_PTR(&mp_lv_indev_pointer_t_type) },
     { MP_ROM_QSTR(MP_QSTR_indev_keypad_t), MP_ROM_PTR(&mp_lv_indev_keypad_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_gesture_recognizer_t), MP_ROM_PTR(&mp_lv_indev_gesture_recognizer_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_gesture_t), MP_ROM_PTR(&mp_lv_indev_gesture_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_gesture_configuration_t), MP_ROM_PTR(&mp_lv_indev_gesture_configuration_t_type) },
+    { MP_ROM_QSTR(MP_QSTR_indev_touch_data_t), MP_ROM_PTR(&mp_lv_indev_touch_data_t_type) },
     { MP_ROM_QSTR(MP_QSTR_draw_mask_rect_dsc_t), MP_ROM_PTR(&mp_lv_draw_mask_rect_dsc_t_type) },
     { MP_ROM_QSTR(MP_QSTR_draw_sw_mask_line_param_t), MP_ROM_PTR(&mp_lv_draw_sw_mask_line_param_t_type) },
     { MP_ROM_QSTR(MP_QSTR_draw_sw_mask_common_dsc_t), MP_ROM_PTR(&mp_lv_draw_sw_mask_common_dsc_t_type) },
@@ -49556,6 +50351,7 @@ const mp_rom_map_elem_t lvgl_module_entries[] = {
     { MP_ROM_QSTR(MP_QSTR_version_info), MP_ROM_PTR(&mp_lv_version_info_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_mp_lv_init_gc), MP_ROM_PTR(&mp_mp_lv_init_gc_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_mp_lv_deinit_gc), MP_ROM_PTR(&mp_mp_lv_deinit_gc_mpobj) },
+    { MP_ROM_QSTR(MP_QSTR_mp_lv_get_roots), MP_ROM_PTR(&mp_mp_lv_get_roots_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&mp_lv_init_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&mp_lv_deinit_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_is_initialized), MP_ROM_PTR(&mp_lv_is_initialized_mpobj) },

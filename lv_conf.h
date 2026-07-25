@@ -430,8 +430,11 @@ extern void mp_lv_deinit_gc(void);
 /*Prefix all global extern data with this*/
 #define LV_ATTRIBUTE_EXTERN_DATA
 
-/* Use `float` as `lv_value_precise_t` */
-#define LV_USE_FLOAT            0
+/* Use `float` as `lv_value_precise_t` (required for multi-touch gesture recognition) */
+#define LV_USE_FLOAT            1
+
+/* Multi-touch gesture recognition (pinch/rotate/two-finger swipe); requires LV_USE_FLOAT */
+#define LV_USE_GESTURE_RECOGNITION 1
 
 /*==================
  *   FONT USAGE

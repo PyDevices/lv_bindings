@@ -22,11 +22,8 @@
 # 318 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/../../lv_conf.h"
 extern void mp_lv_init_gc(void);
 extern void mp_lv_deinit_gc(void);
-
-
-
-
-    extern void *mp_lv_roots;
+# 328 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/../../lv_conf.h"
+    extern void *mp_lv_get_roots(void);
 # 73 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/lv_conf_internal.h" 2
 # 4835 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/lv_conf_internal.h"
 enum {ENUM_LV_DPI_DEF = 130};
@@ -286,8 +283,8 @@ typedef enum {
 
 typedef uintptr_t lv_uintptr_t;
 typedef intptr_t lv_intptr_t;
-# 91 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/misc/lv_types.h"
-typedef int32_t lv_value_precise_t;
+# 89 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/misc/lv_types.h"
+typedef float lv_value_precise_t;
 # 105 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/misc/lv_types.h"
 typedef struct _lv_obj_t lv_obj_t;
 
@@ -8815,6 +8812,9 @@ void lv_draw_layer(lv_layer_t * layer, const lv_draw_image_dsc_t * dsc, const lv
 lv_image_src_t lv_image_src_get_type(const void * src);
 # 20 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/lv_obj_draw.h" 2
 # 1 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../draw/lv_draw_line.h" 1
+# 25 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../draw/lv_draw_line.h"
+# 1 "/home/brad/gh/pydevices/cmods/lv_bindings/fake_libc_include/float.h" 1
+# 26 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../draw/lv_draw_line.h" 2
 # 35 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../draw/lv_draw_line.h"
 typedef struct {
     lv_draw_dsc_base_t base;
@@ -10103,7 +10103,7 @@ typedef union {
     const void * pointer;
     lv_color_t color;
 
-
+    float float_v;
 
 } lv_subject_value_t;
 
@@ -10170,6 +10170,43 @@ void lv_subject_set_min_value_int(lv_subject_t * subject, int32_t min_value);
 
 
 void lv_subject_set_max_value_int(lv_subject_t * subject, int32_t max_value);
+# 157 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/lv_observer.h"
+void lv_subject_init_float(lv_subject_t * subject, float value);
+
+
+
+
+
+
+void lv_subject_set_float(lv_subject_t * subject, float value);
+
+
+
+
+
+
+float lv_subject_get_float(lv_subject_t * subject);
+
+
+
+
+
+
+float lv_subject_get_previous_float(lv_subject_t * subject);
+
+
+
+
+
+
+void lv_subject_set_min_value_float(lv_subject_t * subject, float min_value);
+
+
+
+
+
+
+void lv_subject_set_max_value_float(lv_subject_t * subject, float max_value);
 # 205 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/lv_observer.h"
 void lv_subject_init_string(lv_subject_t * subject, char * buf, char * prev_buf, size_t size, const char * value);
 
@@ -10326,6 +10363,8 @@ void lv_obj_set_subject_increment_event_rollover(lv_obj_t * obj, lv_subject_incr
 void lv_obj_add_subject_toggle_event(lv_obj_t * obj, lv_subject_t * subject, lv_event_code_t trigger);
 # 454 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/lv_observer.h"
 void lv_obj_add_subject_set_int_event(lv_obj_t * obj, lv_subject_t * subject, lv_event_code_t trigger, int32_t value);
+# 465 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/lv_observer.h"
+void lv_obj_add_subject_set_float_event(lv_obj_t * obj, lv_subject_t * subject, lv_event_code_t trigger, float value);
 # 475 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/lv_observer.h"
 void lv_obj_add_subject_set_string_event(lv_obj_t * obj, lv_subject_t * subject, lv_event_code_t trigger,
                                          const char * value);
@@ -10364,6 +10403,166 @@ lv_observer_t * lv_obj_bind_checked(lv_obj_t * obj, lv_subject_t * subject);
 # 21 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h"
 # 1 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/../core/lv_obj.h" 1
 # 22 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h" 2
+# 38 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h"
+struct lv_indev_gesture;
+struct lv_indev_gesture_configuration;
+
+typedef struct lv_indev_gesture_recognizer lv_indev_gesture_recognizer_t;
+typedef struct lv_indev_touch_data lv_indev_touch_data_t;
+
+typedef struct lv_indev_gesture lv_indev_gesture_t;
+typedef struct lv_indev_gesture_configuration lv_indev_gesture_configuration_t;
+
+typedef void (*lv_recognizer_func_t)(lv_indev_gesture_recognizer_t *, lv_indev_touch_data_t *, uint16_t);
+
+
+typedef enum {
+    LV_INDEV_GESTURE_STATE_NONE = 0,
+    LV_INDEV_GESTURE_STATE_ONGOING,
+    LV_INDEV_GESTURE_STATE_RECOGNIZED,
+    LV_INDEV_GESTURE_STATE_ENDED,
+    LV_INDEV_GESTURE_STATE_CANCELED,
+} lv_indev_gesture_state_t;
+
+
+
+struct lv_indev_touch_data {
+    lv_point_t point;
+    lv_indev_state_t state;
+    uint8_t id;
+    uint32_t timestamp;
+};
+
+
+struct lv_indev_gesture_recognizer {
+    lv_indev_gesture_type_t type;
+    lv_indev_gesture_state_t state;
+    lv_indev_gesture_t * info;
+    float scale;
+    float rotation;
+    float distance;
+    float speed;
+    lv_dir_t two_fingers_swipe_dir;
+
+    lv_indev_gesture_configuration_t * config;
+
+    lv_recognizer_func_t recog_fn;
+};
+# 91 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h"
+void lv_indev_gesture_init(lv_indev_t * indev);
+# 102 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h"
+void lv_indev_gesture_detect_pinch(lv_indev_gesture_recognizer_t * recognizer, lv_indev_touch_data_t * touches,
+                                   uint16_t touch_cnt);
+# 112 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h"
+void lv_indev_gesture_detect_rotation(lv_indev_gesture_recognizer_t * recognizer, lv_indev_touch_data_t * touches,
+                                      uint16_t touch_cnt);
+# 122 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h"
+void lv_indev_gesture_detect_two_fingers_swipe(lv_indev_gesture_recognizer_t * recognizer,
+                                               lv_indev_touch_data_t * touches,
+                                               uint16_t touch_cnt);
+
+
+
+
+
+
+
+void lv_indev_set_pinch_up_threshold(lv_indev_t * indev, float threshold);
+
+
+
+
+
+
+
+void lv_indev_set_pinch_down_threshold(lv_indev_t * indev, float threshold);
+
+
+
+
+
+
+void lv_indev_set_rotation_rad_threshold(lv_indev_t * indev, float threshold);
+
+
+
+
+
+
+float lv_event_get_pinch_scale(lv_event_t * gesture_event);
+
+
+
+
+
+
+float lv_event_get_rotation(lv_event_t * gesture_event);
+
+
+
+
+
+
+float lv_event_get_two_fingers_swipe_distance(lv_event_t * gesture_event);
+
+
+
+
+
+
+lv_dir_t lv_event_get_two_fingers_swipe_dir(lv_event_t * gesture_event);
+
+
+
+
+
+
+
+void lv_indev_set_gesture_data(lv_indev_data_t * data, lv_indev_gesture_recognizer_t * recognizer,
+                               lv_indev_gesture_type_t type);
+
+
+
+
+
+
+void lv_indev_get_gesture_center_point(lv_indev_gesture_recognizer_t * recognizer, lv_point_t * point);
+
+
+
+
+
+
+lv_indev_gesture_state_t lv_event_get_gesture_state(lv_event_t * gesture_event, lv_indev_gesture_type_t type);
+
+
+
+
+
+
+lv_indev_gesture_type_t lv_event_get_gesture_type(lv_event_t * gesture_event);
+
+
+
+
+
+
+void lv_indev_get_gesture_primary_point(lv_indev_gesture_recognizer_t * recognizer, lv_point_t * point);
+
+
+
+
+
+
+bool lv_indev_recognizer_is_active(lv_indev_gesture_recognizer_t * recognizer);
+# 230 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_indev_gesture.h"
+void lv_indev_gesture_recognizers_update(lv_indev_t * indev, lv_indev_touch_data_t * touches, uint16_t touch_cnt);
+
+
+
+
+
+void lv_indev_gesture_recognizers_set_data(lv_indev_t * indev, lv_indev_data_t * data);
 # 50 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/lvgl.h" 2
 # 1 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/indev/lv_gridnav.h" 1
 # 51 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/lvgl.h" 2
@@ -16819,10 +17018,10 @@ struct _lv_indev_t {
     lv_indev_key_remap_cb_t key_remap_cb;
 
 
-
-
-
-
+    lv_indev_gesture_recognizer_t recognizers[LV_INDEV_GESTURE_CNT];
+    lv_indev_gesture_type_t cur_gesture;
+    void * gesture_data[LV_INDEV_GESTURE_CNT];
+    lv_indev_gesture_type_t gesture_type[LV_INDEV_GESTURE_CNT];
 
 };
 # 150 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/../src/indev/lv_indev_private.h"

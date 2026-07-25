@@ -16,6 +16,7 @@ RUNTIME_SKIP_MODULE_FUNCS = {
             "lv_tjpgd_deinit",
             "mp_lv_init_gc",
             "mp_lv_deinit_gc",
+            "mp_lv_get_roots",
         }
     ),
 }
