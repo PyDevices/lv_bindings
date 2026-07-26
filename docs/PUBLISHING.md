@@ -130,7 +130,7 @@ After tagging, consumer repos can pin to a specific lv_bindings release with
 
 ## CPython auto-release (lv_cpython_mod)
 
-When `generated/lvgl_python.c`, `lv_conf.h`, or the `lvgl` submodule pin changes on `main`, the [trigger-lv-cpython-mod-release](.github/workflows/trigger-lv-cpython-mod-release.yml) workflow starts **Sync and release** on [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) (sync → commit → tag → TestPyPI).
+When `generated/lvgl_python.c`, `lv_conf.h`, or the `lvgl` submodule pin changes on `main`, the [trigger-lv-cpython-mod-release](../.github/workflows/trigger-lv-cpython-mod-release.yml) workflow starts **Sync and release** on [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) (sync → commit → tag → TestPyPI).
 
 ### Setup
 

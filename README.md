@@ -57,7 +57,7 @@ to set that for all three targets.
 
 After regen, rebuild the consumer repo(s) (`lv_micropython_cmod`, `lv_circuitpython_mod`, `lv_cpython_mod`) as usual. With the optional [cmods](https://github.com/PyDevices/cmods) workspace, `../build_all.sh` rebuilds and smoke-tests all of them at once.
 
-Release workflow and tagging: [PUBLISHING.md](PUBLISHING.md).
+Release workflow and tagging: [PUBLISHING.md](docs/PUBLISHING.md).
 
 ## Consumers
 
@@ -66,6 +66,6 @@ Release workflow and tagging: [PUBLISHING.md](PUBLISHING.md).
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod)   | `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`                                                                                                          |
 | [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) | `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`                                                                      |
-| [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h` — see [PUBLISHING.md](PUBLISHING.md#cpython-auto-release-lv_cpython_mod) for automated sync on push to `main` |
+| [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h` — see [PUBLISHING.md](docs/PUBLISHING.md#cpython-auto-release-lv_cpython_mod) for automated sync on push to `main` |
 
 
