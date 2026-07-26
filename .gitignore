@@ -1,14 +1,20 @@
+# Shared minimum (PyDevices package / cmod repos)
 .venv/
-
-lextab.py
-yacctab.py
-
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.so
+*.pyd
 
 # Cursor IDE throwaways (do not ignore the whole .cursor/ tree)
 .cursor/debug*
 .cursor/plans/
 
+# Repo-specific
+lextab.py
+yacctab.py
 # Scratch logs from cmods build_all.sh / build_target.sh
 .cursor/build-all*
