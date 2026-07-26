@@ -5,14 +5,14 @@ Run with the target interpreter after building that port, for example:
 
   # MicroPython unix
   ./micropython/ports/unix/build-standard/micropython \\
-    ./lv_bindings/test_lvgl_smoke.py
+    ./lv_bindings/tools/test_lvgl_smoke.py
 
   # CircuitPython unix
   ./circuitpython/ports/unix/build-coverage/micropython \\
-    ./lv_bindings/test_lvgl_smoke.py
+    ./lv_bindings/tools/test_lvgl_smoke.py
 
   # CPython (WSL venv)
-  ./lv_cpython_mod/.venv/bin/python ./lv_bindings/test_lvgl_smoke.py
+  ./lv_cpython_mod/.venv/bin/python ./lv_bindings/tools/test_lvgl_smoke.py
 
 Exercises init/deinit, headless display, widgets, event callbacks, GC visibility,
 and CPython-specific struct/Blob helpers where applicable.
