@@ -10,6 +10,8 @@ lv_bindings/
   lvgl/                 # LVGL submodule (git submodule update --init)
   lv_conf.h             # Shared LVGL config for all targets
   generated/            # Generated bindings (lvgl_*.c, lvgl.pyi — committed)
+  python/               # Hand-written helpers (display_driver.py — committed)
+  packages/             # Optional MIP manifests
   regenerate_lvmp.sh    # MicroPython bindings
   regenerate_lvcp.sh    # CircuitPython bindings
   regenerate_lvpy.sh    # CPython bindings (native PyInit_lvgl)
@@ -59,13 +61,18 @@ After regen, rebuild the consumer repo(s) (`lv_micropython_cmod`, `lv_circuitpyt
 
 Release workflow and tagging: [PUBLISHING.md](docs/PUBLISHING.md).
 
+## Hand-written Python
+
+See [`python/README.md`](python/README.md). Edit `python/display_driver.py` here, then sync
+into each consumer with that repo's `scripts/sync_from_lv_bindings.sh`.
+
 ## Consumers
 
 
 | Repo                                                                      | Sync                                                                                                                                                          |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod)   | `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`                                                                                                          |
-| [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) | `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`                                                                      |
-| [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h` — see [PUBLISHING.md](docs/PUBLISHING.md#cpython-auto-release-lv_cpython_mod) for automated sync on push to `main` |
+| [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod)   | `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                                                      |
+| [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) | `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                  |
+| [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` — see [PUBLISHING.md](docs/PUBLISHING.md#cpython-auto-release-lv_cpython_mod)       |
 
 
