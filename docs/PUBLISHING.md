@@ -100,12 +100,14 @@ Run this before publishing when you change the generator or LVGL config
 ## Downstream consumers
 
 - [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod) — sync
-  `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`
+  `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, and
+  `python/display_driver.py` → `lib/` (`./scripts/sync_from_lv_bindings.sh`)
 - [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) — sync
   `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`,
-  `lv_conf.h`
+  `lv_conf.h`, and `python/display_driver.py` → `lib/`
 - [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) — sync
-  `generated/lvgl_python.c`, `generated/lvgl.pyi`, `lvgl/`, `lv_conf.h`; see
+  `generated/lvgl_python.c`, `generated/lvgl.pyi`, `lvgl/`, `lv_conf.h`, and
+  `python/display_driver.py`; see
   [CPython auto-release](#cpython-auto-release-lv_cpython_mod) below
 
 ## Type stubs (`generated/lvgl.pyi`)
@@ -130,7 +132,7 @@ After tagging, consumer repos can pin to a specific lv_bindings release with
 
 ## CPython auto-release (lv_cpython_mod)
 
-When `generated/lvgl_python.c`, `lv_conf.h`, or the `lvgl` submodule pin changes on `main`, the [trigger-lv-cpython-mod-release](../.github/workflows/trigger-lv-cpython-mod-release.yml) workflow starts **Sync and release** on [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) (sync → commit → tag → TestPyPI).
+When `generated/lvgl_python.c`, `lv_conf.h`, `python/display_driver.py`, or the `lvgl` submodule pin changes on `main`, the [trigger-lv-cpython-mod-release](../.github/workflows/trigger-lv-cpython-mod-release.yml) workflow starts **Sync and release** on [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) (sync → commit → tag → TestPyPI).
 
 ### Setup
 
