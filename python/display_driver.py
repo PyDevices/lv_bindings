@@ -703,15 +703,47 @@ def _encoder_cb(event, indev, data):
         data.state = lv.INDEV_STATE.RELEASED
 
 
+def _lv_key_from_event(event):
+    """Map eventsys/SDL key codes to ``lv.KEY_*`` for the keypad indev.
+
+    LVGL keypad focus moves only on ``NEXT`` / ``PREV`` (see ``lv_indev``), so
+    arrows and Tab are mapped to those. Unmapped keys (including printable
+    characters) pass through unchanged for text widgets.
+    """
+    k = event.key
+    Keys = eventsys.Keys
+    if k in (Keys.K_DOWN, Keys.K_RIGHT):
+        return lv.KEY.NEXT
+    if k in (Keys.K_UP, Keys.K_LEFT):
+        return lv.KEY.PREV
+    if k == Keys.K_TAB:
+        if getattr(event, "mod", 0) & Keys.KMOD_SHIFT:
+            return lv.KEY.PREV
+        return lv.KEY.NEXT
+    if k in (Keys.K_RETURN, Keys.K_KP_ENTER):
+        return lv.KEY.ENTER
+    if k == Keys.K_ESCAPE:
+        return lv.KEY.ESC
+    if k == Keys.K_BACKSPACE:
+        return lv.KEY.BACKSPACE
+    if k == Keys.K_DELETE:
+        return lv.KEY.DEL
+    if k == Keys.K_HOME:
+        return lv.KEY.HOME
+    if k == Keys.K_END:
+        return lv.KEY.END
+    return k
+
+
 def _keypad_cb(event, indev, data):
     if event is None:
         return
     if event.type == events.KEYDOWN:
         data.state = lv.INDEV_STATE.PRESSED
-        data.key = event.key
+        data.key = _lv_key_from_event(event)
     elif event.type == events.KEYUP:
         data.state = lv.INDEV_STATE.RELEASED
-        data.key = event.key
+        data.key = _lv_key_from_event(event)
 
 
 def create_devices(devs, lv_display, virtual_devices=None, window_id=None):
