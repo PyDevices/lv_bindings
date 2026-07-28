@@ -466,10 +466,33 @@ def attach_devices(devs, lv_display=None):
     return create_devices(devs, lv_display)
 
 
-class _TouchState:
-    x = 0
-    y = 0
-    pressed = False
+def _touch_state_for(device):
+    """Per-pointer touch state (must not be module-global — multi-display)."""
+    st = getattr(device, "_lv_touch", None)
+    if st is None:
+        st = {"x": 0, "y": 0, "pressed": False}
+        device._lv_touch = st
+    return st
+
+
+def _make_touch_cb(device):
+    """Build a pointer event_cb that updates only ``device``'s touch state."""
+
+    def _touch_cb(event, indev, data):
+        st = _touch_state_for(device)
+        if event is not None:
+            if event.type == events.MOUSEBUTTONDOWN and event.button == 1:
+                st["x"], st["y"] = event.pos
+                st["pressed"] = True
+            elif event.type == events.MOUSEMOTION and event.buttons[0]:
+                st["x"], st["y"] = event.pos
+            elif event.type == events.MOUSEBUTTONUP and event.button == 1:
+                st["x"], st["y"] = event.pos
+                st["pressed"] = False
+        data.point = lv.point_t({"x": st["x"], "y": st["y"]})
+        data.state = lv.INDEV_STATE.PRESSED if st["pressed"] else lv.INDEV_STATE.RELEASED
+
+    return _touch_cb
 
 
 # CPython: module-level lv.indev_gesture_recognizers_*; MP/CP: indev methods.
@@ -546,13 +569,16 @@ def _gesture_track_slots(dev_key, points, now):
                 assigned_live.add(li)
                 break
 
-    # Hold dropped contacts briefly so LVGL keeps finger_cnt == 2.
-    for s, (x, y, t) in prev.items():
-        if s in new_slots:
-            continue
-        age = (now - t) & 0xFFFFFFFF
-        if age <= _GESTURE_STICKY_MS and len(new_slots) < _MAX_GESTURE_TOUCHES:
-            new_slots[s] = (x, y, t)
+    # Hold dropped contacts briefly only while another contact is still live
+    # (pinch 2→1 flicker). On a full lift, clear immediately so the pointer
+    # RELEASED / SHORT_CLICKED path is not blocked by a sticky PRESSED slot.
+    if live:
+        for s, (x, y, t) in prev.items():
+            if s in new_slots:
+                continue
+            age = (now - t) & 0xFFFFFFFF
+            if age <= _GESTURE_STICKY_MS and len(new_slots) < _MAX_GESTURE_TOUCHES:
+                new_slots[s] = (x, y, t)
 
     released = [s for s in prev if s not in new_slots]
     _gesture_slots[dev_key] = new_slots
@@ -621,7 +647,8 @@ def _gesture_feed(indev, data, device):
 
     points = getattr(device, "points", None)
     if not points:
-        points = ((_TouchState.x, _TouchState.y),) if _TouchState.pressed else ()
+        st = _touch_state_for(device)
+        points = ((st["x"], st["y"]),) if st["pressed"] else ()
 
     dev_key = id(device)
     now = _gesture_tick_ms()
@@ -661,21 +688,8 @@ def _gesture_feed(indev, data, device):
 
     _gesture_recognizers_update(indev, _gesture_touches, idx)
     _gesture_recognizers_set_data(indev, data)
-    data.point = lv.point_t({"x": _TouchState.x, "y": _TouchState.y})
-
-
-def _touch_cb(event, indev, data):
-    if event is not None:
-        if event.type == events.MOUSEBUTTONDOWN and event.button == 1:
-            _TouchState.x, _TouchState.y = event.pos
-            _TouchState.pressed = True
-        elif event.type == events.MOUSEMOTION and event.buttons[0]:
-            _TouchState.x, _TouchState.y = event.pos
-        elif event.type == events.MOUSEBUTTONUP and event.button == 1:
-            _TouchState.x, _TouchState.y = event.pos
-            _TouchState.pressed = False
-    data.point = lv.point_t({"x": _TouchState.x, "y": _TouchState.y})
-    data.state = lv.INDEV_STATE.PRESSED if _TouchState.pressed else lv.INDEV_STATE.RELEASED
+    st = _touch_state_for(device)
+    data.point = lv.point_t({"x": st["x"], "y": st["y"]})
 
 
 def _encoder_cb(event, indev, data):
@@ -721,7 +735,7 @@ def create_devices(devs, lv_display, virtual_devices=None, window_id=None):
             indev.set_display(lv_display)
             device.user_data = indev
             if device.type == eventsys.POINTER:
-                event_cb = _touch_cb
+                event_cb = _make_touch_cb(device)
                 device.subscribe(event_cb)
                 indev.set_type(lv.INDEV_TYPE.POINTER)
                 _configure_gesture_recognizers(indev)
