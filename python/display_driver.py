@@ -59,7 +59,8 @@ except ImportError:
 asyncio_available = asyncio is not None
 
 LVGL_PERIOD_MS = 30
-_driver_ref = None
+_driver_ref = None  # primary DisplayDriver (compat)
+_drivers = []  # all DisplayDriver instances
 _host_pump_sub = None
 
 
@@ -310,13 +311,13 @@ def main():
     Called automatically on ``import display_driver`` when ``board_config``
     provides ``display_drv`` / ``runtime``.
     """
-    global _driver_ref, _host_pump_sub
+    global _driver_ref, _drivers, _host_pump_sub
     gc.collect()
     if not lv.is_initialized():
         lv.init()
-    # board_config.Runtime arms auto-service immediately (even when
-    # needs_refresh is False). Halt every machine.Timer callback before
-    # SPIRAM draw_buf_create; re-arm only after buffers exist.
+    # board_config.Runtime arms machine.Timer immediately. Halt every
+    # machine.Timer callback before SPIRAM draw_buf_create; re-arm only after
+    # buffers exist.
     if runtime is not None:
         runtime.stop_timer()
     loop_inst = event_loop.current_instance()
@@ -332,6 +333,7 @@ def main():
             display_drv,
             devs,
         )
+        _drivers = [_driver_ref]
         # Start event_loop only after draw buffers exist (sync path defers
         # on_tick until enable(); still construct after DisplayDriver so
         # host_pump / service cannot arm the shared timer early).
@@ -340,24 +342,12 @@ def main():
                 runtime.claim_display_refresh()
             # PARTIAL: present after every task_handler (blit already wrote the
             # panel FB). Shared DIRECT: present only from flush_is_last.
-            _share = bool(getattr(_driver_ref, "_share_fb", False))
             loop_inst = event_loop(
                 period_ms=LVGL_PERIOD_MS,
                 asynchronous=runtime.timer_async if runtime is not None else False,
-                refresh_cb=None if _share else display_drv.show,
+                refresh_cb=_present_lvgl_displays,
             )
-        # Keep HOST/SDL draining on the 10 ms Runtime tick while LVGL task_handler
-        # runs only every ~30 ms (claim skips Runtime._service_tick).
-        # stop_timer() may have wiped callbacks while leaving a stale handle.
-        if runtime is not None and (_host_pump_sub is None or runtime._timer is None):
-            _host_pump_sub = None
-            vds = list(_driver_ref.virtual_devices)
-
-            def _host_pump(_t):
-                for vd in vds:
-                    vd.poll_host_device()
-
-            _host_pump_sub = runtime.on_tick(_host_pump, period=10, async_=False)
+        _ensure_host_pump()
         # Restore Runtime auto-service (touch / QUIT) cleared by stop_timer().
         if runtime is not None:
             runtime._arm_service()
@@ -389,6 +379,91 @@ def main():
                 pass
 
         runtime.before_quit = _lvgl_shutdown_before_quit
+
+
+def _ensure_host_pump():
+    """Keep HOST/SDL draining on the 10 ms Runtime tick for all drivers."""
+    global _host_pump_sub
+    if runtime is None:
+        return
+    if _host_pump_sub is not None and runtime._timer is not None:
+        return
+    _host_pump_sub = None
+
+    def _host_pump(_t):
+        for drv in _drivers:
+            for vd in getattr(drv, "virtual_devices", ()):
+                vd.poll_host_device()
+
+    _host_pump_sub = runtime.on_tick(_host_pump, period=10, async_=False)
+
+
+def _present_lvgl_displays():
+    """Present PARTIAL panels after ``lv.task_handler`` (DIRECT shows in flush)."""
+    for drv in _drivers:
+        if getattr(drv, "_share_fb", False):
+            continue
+        panel = getattr(drv, "display_drv", None)
+        if panel is None or not callable(getattr(panel, "show", None)):
+            continue
+        try:
+            panel.show()
+        except Exception:
+            pass
+
+
+def attach(display, devices=None, *, color_format=None, blocking=True):
+    """Attach an additional displaysys panel as an LVGL display.
+
+    Call after ``import display_driver`` (primary already wired) and after
+    ``runtime.add_display(display)``.
+
+    Args:
+        display: Secondary displaysys driver.
+        devices: Optional eventsys devices to bind as indevs on this display.
+            When omitted and ``runtime.host_dev`` exists, that host device is
+            reused (window-filtered) so the secondary panel receives pointer
+            input.
+        color_format: LVGL color format; default RGB565.
+        blocking: Passed to :class:`DisplayDriver`.
+
+    Returns:
+        DisplayDriver: The new bridge instance.
+    """
+    global _drivers
+    if not lv.is_initialized():
+        raise RuntimeError("import display_driver before attach()")
+    if devices is None:
+        devices = []
+        if runtime is not None and getattr(runtime, "host_dev", None) is not None:
+            devices = [runtime.host_dev]
+    kwargs = {"devs": devices, "blocking": blocking}
+    if color_format is not None:
+        kwargs["color_format"] = color_format
+    drv = DisplayDriver(display, **kwargs)
+    _drivers.append(drv)
+    loop_inst = event_loop.current_instance()
+    if loop_inst is not None:
+        loop_inst.refresh_cb = _present_lvgl_displays
+    _ensure_host_pump()
+    return drv
+
+
+def attach_devices(devs, lv_display=None):
+    """Register eventsys devices as LVGL indevs without creating a display.
+
+    Args:
+        devs: Iterable of eventsys devices (encoder, keypad, pointer, …).
+        lv_display: Target ``lv.display``; default is the primary LVGL display.
+
+    Returns:
+        list: Virtual devices accumulated by :func:`create_devices`.
+    """
+    if lv_display is None:
+        if not _drivers:
+            raise RuntimeError("no LVGL display; import display_driver first")
+        lv_display = _drivers[0].lv_display
+    return create_devices(devs, lv_display)
 
 
 class _TouchState:
@@ -625,7 +700,7 @@ def _keypad_cb(event, indev, data):
         data.key = event.key
 
 
-def create_devices(devs, lv_display, virtual_devices=None):
+def create_devices(devs, lv_display, virtual_devices=None, window_id=None):
     """Register eventsys devices as LVGL indevs (pointer / encoder / keypad).
 
     Args:
@@ -633,6 +708,7 @@ def create_devices(devs, lv_display, virtual_devices=None):
         lv_display: LVGL display object to attach indevs to.
         virtual_devices: Optional list mutated when expanding :class:`HostEventsDevice`
             into virtual pointer/keypad devices.
+        window_id: OS window id for host fan-out filtering (multi-display).
 
     Returns:
         list: Accumulated virtual devices (for host expansion).
@@ -670,9 +746,14 @@ def create_devices(devs, lv_display, virtual_devices=None):
             indev.set_group(lv.group_get_default())
             indev.set_read_cb(_read_cb)
         elif device.type == eventsys.HOST:
-            vd = eventsys.VirtualDevices(device)
+            wid = window_id
+            if wid is None:
+                host_disp = getattr(device, "_data", None)
+                if host_disp is not None:
+                    wid = getattr(host_disp, "_window_id", None)
+            vd = eventsys.VirtualDevices(device, window_id=wid)
             virtual_devices.append(vd)
-            create_devices(vd.devices, lv_display, virtual_devices)
+            create_devices(vd.devices, lv_display, virtual_devices, window_id=wid)
     return virtual_devices
 
 
@@ -702,6 +783,7 @@ class DisplayDriver:
         if devs is None:
             devs = []
         gc.collect()
+        self.display_drv = display_drv
         if display_drv.requires_byteswap:
             self._needs_swap = display_drv.disable_auto_byteswap(True)
         else:
@@ -755,11 +837,16 @@ class DisplayDriver:
             self.lv_display.set_draw_buffers(self._draw_buf1, self._draw_buf2)
             self.lv_display.set_render_mode(lv.DISPLAY_RENDER_MODE.PARTIAL)
 
-        self.virtual_devices = create_devices(devs, self.lv_display)
+        self.virtual_devices = create_devices(
+            devs,
+            self.lv_display,
+            window_id=getattr(display_drv, "_window_id", None),
+        )
 
     def _flush_cb_direct(self, disp_drv, area, color_p):
         """DIRECT: LVGL already painted the panel FB; present on last area."""
-        if hasattr(display_drv, "_sdl_active") and not display_drv._sdl_active():
+        panel = self.display_drv
+        if hasattr(panel, "_sdl_active") and not panel._sdl_active():
             self.lv_display.flush_ready()
             return
         try:
@@ -768,14 +855,15 @@ class DisplayDriver:
             last = True
         if last:
             try:
-                display_drv.show()
+                panel.show()
             except Exception:
                 pass
         if self._blocking:
             self.lv_display.flush_ready()
 
     def _flush_cb(self, disp_drv, area, color_p):
-        if hasattr(display_drv, "_sdl_active") and not display_drv._sdl_active():
+        panel = self.display_drv
+        if hasattr(panel, "_sdl_active") and not panel._sdl_active():
             self.lv_display.flush_ready()
             return
         width = area.x2 - area.x1 + 1
@@ -785,7 +873,7 @@ class DisplayDriver:
             lv.draw_sw_rgb565_swap(color_p, width * height)
 
         data = color_p.__dereference__(width * height * self._color_size)
-        display_drv.blit_rect(data, area.x1, area.y1, width, height)
+        panel.blit_rect(data, area.x1, area.y1, width, height)
         if self._blocking:
             self.lv_display.flush_ready()
 
