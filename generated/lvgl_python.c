@@ -46174,6 +46174,252 @@ static py_lv_obj_type_t py_lv_qrcode_mapping = {
     .py_type = &py_lv_qrcode_type,
 };
 
+#define funcptr_lv_tree_constructor_cb_t NULL
+
+static inline PyObject *mp_lv_funcptr_lv_tree_constructor_cb_t(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
+
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' field for callback 'lv_tree_class_t_constructor_cb'
+ * lv_tree_constructor_cb_t constructor_cb
+ */
+    
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' field for callback 'lv_tree_class_t_destructor_cb'
+ * lv_tree_destructor_cb_t destructor_cb
+ */
+    
+
+/*
+ * Struct lv_tree_class_t (CPython)
+ */
+
+extern PyMethodDef py_lv_tree_class_t_methods[];
+
+static PyObject *py_lv_tree_class_t_getattro(PyObject *self, PyObject *name)
+{
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_tree_class_t *data = (lv_tree_class_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return NULL;
+    if (strcmp(attr, "base_class") == 0) return ptr_to_mp((void*)data->base_class);
+    if (strcmp(attr, "instance_size") == 0) return mp_obj_new_int_from_uint(data->instance_size);
+    if (strcmp(attr, "constructor_cb") == 0) return mp_lv_funcptr(NULL, data->constructor_cb, NULL, "lv_tree_class_t_constructor_cb", NULL);
+    if (strcmp(attr, "destructor_cb") == 0) return mp_lv_funcptr(NULL, data->destructor_cb, NULL, "lv_tree_class_t_destructor_cb", NULL);
+    for (PyMethodDef *m = py_lv_tree_class_t_methods; m->ml_name != NULL; m++) {
+        if (strcmp(attr, m->ml_name) == 0)
+            return PyCFunction_NewEx(m, self, NULL);
+    }
+    return PyObject_GenericGetAttr((PyObject *)self, name);
+}
+
+static int py_lv_tree_class_t_setattro(PyObject *self, PyObject *name, PyObject *value)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
+        return -1;
+    }
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_tree_class_t *data = (lv_tree_class_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return -1;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return -1;
+    int result = -1;
+    if (strcmp(attr, "base_class") == 0) { data->base_class = (void*)mp_to_ptr(value); result = 0; }
+    if (strcmp(attr, "instance_size") == 0) { data->instance_size = (uint32_t)mp_obj_get_int(value); result = 0; }
+    if (strcmp(attr, "constructor_cb") == 0) { data->constructor_cb = mp_lv_callback(value, NULL, "lv_tree_class_t_constructor_cb", NULL, NULL, NULL, NULL); result = 0; }
+    if (strcmp(attr, "destructor_cb") == 0) { data->destructor_cb = mp_lv_callback(value, NULL, "lv_tree_class_t_destructor_cb", NULL, NULL, NULL, NULL); result = 0; }
+    if (result < 0) {
+        PyErr_Format(PyExc_AttributeError, "'lv_tree_class_t' object has no attribute '%s'", attr);
+    }
+    return result;
+}
+
+static PyObject *py_lv_tree_class_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    return make_new_lv_struct(type, args, kwds, sizeof(lv_tree_class_t));
+}
+
+static void py_lv_tree_class_t_dealloc(py_lv_struct_t *self)
+{
+    py_lv_struct_dealloc(self);
+}
+
+PyTypeObject py_lv_tree_class_t_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.lv_tree_class_t",
+    .tp_basicsize = sizeof(py_lv_struct_t),
+    .tp_dealloc = (destructor)py_lv_tree_class_t_dealloc,
+    .tp_getattro = (getter)py_lv_tree_class_t_getattro,
+    .tp_setattro = (setter)py_lv_tree_class_t_setattro,
+    .tp_new = py_lv_tree_class_t_new,
+    .tp_base = &py_lv_base_struct_type,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+static inline void* mp_write_ptr_lv_tree_class_t(PyObject *self_in)
+{
+    if (!self_in || self_in == Py_None) return NULL;
+    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
+    return (lv_tree_class_t*)self->data;
+}
+
+#define mp_write_lv_tree_class_t(struct_obj) (*((lv_tree_class_t*)mp_write_ptr_lv_tree_class_t(struct_obj)))
+
+static inline PyObject *mp_read_ptr_lv_tree_class_t(void *field)
+{
+    return lv_to_mp_struct(&py_lv_tree_class_t_type, field);
+}
+
+#define mp_read_lv_tree_class_t(field) lv_to_mp_struct_own(&py_lv_tree_class_t_type, copy_buffer(&field, sizeof(lv_tree_class_t)))
+#define mp_read_byref_lv_tree_class_t(field) mp_read_ptr_lv_tree_class_t(&field)
+
+#define funcptr_create_cb NULL
+
+static inline PyObject *mp_lv_funcptr_create_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
+
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' field for callback 'lv_font_class_t_create_cb'
+ * lv_font_t *(*create_cb)(const lv_font_info_t *info, const void *src)
+ */
+    
+#define funcptr_delete_cb NULL
+
+static inline PyObject *mp_lv_funcptr_delete_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
+
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' field for callback 'lv_font_class_t_delete_cb'
+ * void (*delete_cb)(lv_font_t *font)
+ */
+    
+#define funcptr_dup_src_cb NULL
+
+static inline PyObject *mp_lv_funcptr_dup_src_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
+
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' field for callback 'lv_font_class_t_dup_src_cb'
+ * void *(*dup_src_cb)(const void *src)
+ */
+    
+#define funcptr_free_src_cb NULL
+
+static inline PyObject *mp_lv_funcptr_free_src_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
+
+
+/*
+ * Function NOT generated:
+ * Missing 'user_data' field for callback 'lv_font_class_t_free_src_cb'
+ * void (*free_src_cb)(void *src)
+ */
+    
+
+/*
+ * Struct lv_font_class_t (CPython)
+ */
+
+extern PyMethodDef py_lv_font_class_t_methods[];
+
+static PyObject *py_lv_font_class_t_getattro(PyObject *self, PyObject *name)
+{
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_font_class_t *data = (lv_font_class_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return NULL;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return NULL;
+    if (strcmp(attr, "create_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->create_cb, NULL, "lv_font_class_t_create_cb", NULL);
+    if (strcmp(attr, "delete_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->delete_cb, NULL, "lv_font_class_t_delete_cb", NULL);
+    if (strcmp(attr, "dup_src_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->dup_src_cb, NULL, "lv_font_class_t_dup_src_cb", NULL);
+    if (strcmp(attr, "free_src_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->free_src_cb, NULL, "lv_font_class_t_free_src_cb", NULL);
+    for (PyMethodDef *m = py_lv_font_class_t_methods; m->ml_name != NULL; m++) {
+        if (strcmp(attr, m->ml_name) == 0)
+            return PyCFunction_NewEx(m, self, NULL);
+    }
+    return PyObject_GenericGetAttr((PyObject *)self, name);
+}
+
+static int py_lv_font_class_t_setattro(PyObject *self, PyObject *name, PyObject *value)
+{
+    if (value == NULL) {
+        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
+        return -1;
+    }
+    py_lv_struct_t *inst = (py_lv_struct_t *)self;
+    lv_font_class_t *data = (lv_font_class_t*)inst->data;
+    if (data == NULL) {
+        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
+        return -1;
+    }
+    const char *attr = PyUnicode_AsUTF8(name);
+    if (attr == NULL) return -1;
+    int result = -1;
+    if (strcmp(attr, "create_cb") == 0) { data->create_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_create_cb", NULL, NULL, NULL, NULL); result = 0; }
+    if (strcmp(attr, "delete_cb") == 0) { data->delete_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_delete_cb", NULL, NULL, NULL, NULL); result = 0; }
+    if (strcmp(attr, "dup_src_cb") == 0) { data->dup_src_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_dup_src_cb", NULL, NULL, NULL, NULL); result = 0; }
+    if (strcmp(attr, "free_src_cb") == 0) { data->free_src_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_free_src_cb", NULL, NULL, NULL, NULL); result = 0; }
+    if (result < 0) {
+        PyErr_Format(PyExc_AttributeError, "'lv_font_class_t' object has no attribute '%s'", attr);
+    }
+    return result;
+}
+
+static PyObject *py_lv_font_class_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    return make_new_lv_struct(type, args, kwds, sizeof(lv_font_class_t));
+}
+
+static void py_lv_font_class_t_dealloc(py_lv_struct_t *self)
+{
+    py_lv_struct_dealloc(self);
+}
+
+PyTypeObject py_lv_font_class_t_type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "lvgl.lv_font_class_t",
+    .tp_basicsize = sizeof(py_lv_struct_t),
+    .tp_dealloc = (destructor)py_lv_font_class_t_dealloc,
+    .tp_getattro = (getter)py_lv_font_class_t_getattro,
+    .tp_setattro = (setter)py_lv_font_class_t_setattro,
+    .tp_new = py_lv_font_class_t_new,
+    .tp_base = &py_lv_base_struct_type,
+    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+};
+
+static inline void* mp_write_ptr_lv_font_class_t(PyObject *self_in)
+{
+    if (!self_in || self_in == Py_None) return NULL;
+    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
+    return (lv_font_class_t*)self->data;
+}
+
+#define mp_write_lv_font_class_t(struct_obj) (*((lv_font_class_t*)mp_write_ptr_lv_font_class_t(struct_obj)))
+
+static inline PyObject *mp_read_ptr_lv_font_class_t(void *field)
+{
+    return lv_to_mp_struct(&py_lv_font_class_t_type, field);
+}
+
+#define mp_read_lv_font_class_t(field) lv_to_mp_struct_own(&py_lv_font_class_t_type, copy_buffer(&field, sizeof(lv_font_class_t)))
+#define mp_read_byref_lv_font_class_t(field) mp_read_ptr_lv_font_class_t(&field)
+
 
 /*
  * Struct lv_color16_t (CPython)
@@ -46661,116 +46907,6 @@ static inline PyObject *mp_read_ptr_lv_circle_buf_t(void *field)
 #define mp_read_lv_circle_buf_t(field) lv_to_mp_struct_own(&py_lv_circle_buf_t_type, copy_buffer(&field, sizeof(lv_circle_buf_t)))
 #define mp_read_byref_lv_circle_buf_t(field) mp_read_ptr_lv_circle_buf_t(&field)
 
-#define funcptr_lv_tree_constructor_cb_t NULL
-
-static inline PyObject *mp_lv_funcptr_lv_tree_constructor_cb_t(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
-
-
-/*
- * Function NOT generated:
- * Missing 'user_data' field for callback 'lv_tree_class_t_constructor_cb'
- * lv_tree_constructor_cb_t constructor_cb
- */
-    
-
-/*
- * Function NOT generated:
- * Missing 'user_data' field for callback 'lv_tree_class_t_destructor_cb'
- * lv_tree_destructor_cb_t destructor_cb
- */
-    
-
-/*
- * Struct lv_tree_class_t (CPython)
- */
-
-extern PyMethodDef py_lv_tree_class_t_methods[];
-
-static PyObject *py_lv_tree_class_t_getattro(PyObject *self, PyObject *name)
-{
-    py_lv_struct_t *inst = (py_lv_struct_t *)self;
-    lv_tree_class_t *data = (lv_tree_class_t*)inst->data;
-    if (data == NULL) {
-        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
-        return NULL;
-    }
-    const char *attr = PyUnicode_AsUTF8(name);
-    if (attr == NULL) return NULL;
-    if (strcmp(attr, "base_class") == 0) return ptr_to_mp((void*)data->base_class);
-    if (strcmp(attr, "instance_size") == 0) return mp_obj_new_int_from_uint(data->instance_size);
-    if (strcmp(attr, "constructor_cb") == 0) return mp_lv_funcptr(NULL, data->constructor_cb, NULL, "lv_tree_class_t_constructor_cb", NULL);
-    if (strcmp(attr, "destructor_cb") == 0) return mp_lv_funcptr(NULL, data->destructor_cb, NULL, "lv_tree_class_t_destructor_cb", NULL);
-    for (PyMethodDef *m = py_lv_tree_class_t_methods; m->ml_name != NULL; m++) {
-        if (strcmp(attr, m->ml_name) == 0)
-            return PyCFunction_NewEx(m, self, NULL);
-    }
-    return PyObject_GenericGetAttr((PyObject *)self, name);
-}
-
-static int py_lv_tree_class_t_setattro(PyObject *self, PyObject *name, PyObject *value)
-{
-    if (value == NULL) {
-        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
-        return -1;
-    }
-    py_lv_struct_t *inst = (py_lv_struct_t *)self;
-    lv_tree_class_t *data = (lv_tree_class_t*)inst->data;
-    if (data == NULL) {
-        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
-        return -1;
-    }
-    const char *attr = PyUnicode_AsUTF8(name);
-    if (attr == NULL) return -1;
-    int result = -1;
-    if (strcmp(attr, "base_class") == 0) { data->base_class = (void*)mp_to_ptr(value); result = 0; }
-    if (strcmp(attr, "instance_size") == 0) { data->instance_size = (uint32_t)mp_obj_get_int(value); result = 0; }
-    if (strcmp(attr, "constructor_cb") == 0) { data->constructor_cb = mp_lv_callback(value, NULL, "lv_tree_class_t_constructor_cb", NULL, NULL, NULL, NULL); result = 0; }
-    if (strcmp(attr, "destructor_cb") == 0) { data->destructor_cb = mp_lv_callback(value, NULL, "lv_tree_class_t_destructor_cb", NULL, NULL, NULL, NULL); result = 0; }
-    if (result < 0) {
-        PyErr_Format(PyExc_AttributeError, "'lv_tree_class_t' object has no attribute '%s'", attr);
-    }
-    return result;
-}
-
-static PyObject *py_lv_tree_class_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-    return make_new_lv_struct(type, args, kwds, sizeof(lv_tree_class_t));
-}
-
-static void py_lv_tree_class_t_dealloc(py_lv_struct_t *self)
-{
-    py_lv_struct_dealloc(self);
-}
-
-PyTypeObject py_lv_tree_class_t_type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "lvgl.lv_tree_class_t",
-    .tp_basicsize = sizeof(py_lv_struct_t),
-    .tp_dealloc = (destructor)py_lv_tree_class_t_dealloc,
-    .tp_getattro = (getter)py_lv_tree_class_t_getattro,
-    .tp_setattro = (setter)py_lv_tree_class_t_setattro,
-    .tp_new = py_lv_tree_class_t_new,
-    .tp_base = &py_lv_base_struct_type,
-    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
-};
-
-static inline void* mp_write_ptr_lv_tree_class_t(PyObject *self_in)
-{
-    if (!self_in || self_in == Py_None) return NULL;
-    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
-    return (lv_tree_class_t*)self->data;
-}
-
-#define mp_write_lv_tree_class_t(struct_obj) (*((lv_tree_class_t*)mp_write_ptr_lv_tree_class_t(struct_obj)))
-
-static inline PyObject *mp_read_ptr_lv_tree_class_t(void *field)
-{
-    return lv_to_mp_struct(&py_lv_tree_class_t_type, field);
-}
-
-#define mp_read_lv_tree_class_t(field) lv_to_mp_struct_own(&py_lv_tree_class_t_type, copy_buffer(&field, sizeof(lv_tree_class_t)))
-#define mp_read_byref_lv_tree_class_t(field) mp_read_ptr_lv_tree_class_t(&field)
-
 
 /*
  * Struct lv_tree_node_t (CPython)
@@ -46972,142 +47108,6 @@ static inline PyObject *mp_read_ptr_lv_font_glyph_dsc_t(void *field)
 
 #define mp_read_lv_font_glyph_dsc_t(field) lv_to_mp_struct_own(&py_lv_font_glyph_dsc_t_type, copy_buffer(&field, sizeof(lv_font_glyph_dsc_t)))
 #define mp_read_byref_lv_font_glyph_dsc_t(field) mp_read_ptr_lv_font_glyph_dsc_t(&field)
-
-#define funcptr_create_cb NULL
-
-static inline PyObject *mp_lv_funcptr_create_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
-
-
-/*
- * Function NOT generated:
- * Missing 'user_data' field for callback 'lv_font_class_t_create_cb'
- * lv_font_t *(*create_cb)(const lv_font_info_t *info, const void *src)
- */
-    
-#define funcptr_delete_cb NULL
-
-static inline PyObject *mp_lv_funcptr_delete_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
-
-
-/*
- * Function NOT generated:
- * Missing 'user_data' field for callback 'lv_font_class_t_delete_cb'
- * void (*delete_cb)(lv_font_t *font)
- */
-    
-#define funcptr_dup_src_cb NULL
-
-static inline PyObject *mp_lv_funcptr_dup_src_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
-
-
-/*
- * Function NOT generated:
- * Missing 'user_data' field for callback 'lv_font_class_t_dup_src_cb'
- * void *(*dup_src_cb)(const void *src)
- */
-    
-#define funcptr_free_src_cb NULL
-
-static inline PyObject *mp_lv_funcptr_free_src_cb(void *func){ return mp_lv_funcptr(NULL, func, NULL, "", NULL); }
-
-
-/*
- * Function NOT generated:
- * Missing 'user_data' field for callback 'lv_font_class_t_free_src_cb'
- * void (*free_src_cb)(void *src)
- */
-    
-
-/*
- * Struct lv_font_class_t (CPython)
- */
-
-extern PyMethodDef py_lv_font_class_t_methods[];
-
-static PyObject *py_lv_font_class_t_getattro(PyObject *self, PyObject *name)
-{
-    py_lv_struct_t *inst = (py_lv_struct_t *)self;
-    lv_font_class_t *data = (lv_font_class_t*)inst->data;
-    if (data == NULL) {
-        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
-        return NULL;
-    }
-    const char *attr = PyUnicode_AsUTF8(name);
-    if (attr == NULL) return NULL;
-    if (strcmp(attr, "create_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->create_cb, NULL, "lv_font_class_t_create_cb", NULL);
-    if (strcmp(attr, "delete_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->delete_cb, NULL, "lv_font_class_t_delete_cb", NULL);
-    if (strcmp(attr, "dup_src_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->dup_src_cb, NULL, "lv_font_class_t_dup_src_cb", NULL);
-    if (strcmp(attr, "free_src_cb") == 0) return mp_lv_funcptr(NULL, (void*)data->free_src_cb, NULL, "lv_font_class_t_free_src_cb", NULL);
-    for (PyMethodDef *m = py_lv_font_class_t_methods; m->ml_name != NULL; m++) {
-        if (strcmp(attr, m->ml_name) == 0)
-            return PyCFunction_NewEx(m, self, NULL);
-    }
-    return PyObject_GenericGetAttr((PyObject *)self, name);
-}
-
-static int py_lv_font_class_t_setattro(PyObject *self, PyObject *name, PyObject *value)
-{
-    if (value == NULL) {
-        PyErr_SetString(PyExc_AttributeError, "cannot delete struct fields");
-        return -1;
-    }
-    py_lv_struct_t *inst = (py_lv_struct_t *)self;
-    lv_font_class_t *data = (lv_font_class_t*)inst->data;
-    if (data == NULL) {
-        PyErr_SetString(PyLvReferenceError, "struct data is NULL");
-        return -1;
-    }
-    const char *attr = PyUnicode_AsUTF8(name);
-    if (attr == NULL) return -1;
-    int result = -1;
-    if (strcmp(attr, "create_cb") == 0) { data->create_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_create_cb", NULL, NULL, NULL, NULL); result = 0; }
-    if (strcmp(attr, "delete_cb") == 0) { data->delete_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_delete_cb", NULL, NULL, NULL, NULL); result = 0; }
-    if (strcmp(attr, "dup_src_cb") == 0) { data->dup_src_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_dup_src_cb", NULL, NULL, NULL, NULL); result = 0; }
-    if (strcmp(attr, "free_src_cb") == 0) { data->free_src_cb = (void*)mp_lv_callback(value, NULL, "lv_font_class_t_free_src_cb", NULL, NULL, NULL, NULL); result = 0; }
-    if (result < 0) {
-        PyErr_Format(PyExc_AttributeError, "'lv_font_class_t' object has no attribute '%s'", attr);
-    }
-    return result;
-}
-
-static PyObject *py_lv_font_class_t_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-    return make_new_lv_struct(type, args, kwds, sizeof(lv_font_class_t));
-}
-
-static void py_lv_font_class_t_dealloc(py_lv_struct_t *self)
-{
-    py_lv_struct_dealloc(self);
-}
-
-PyTypeObject py_lv_font_class_t_type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "lvgl.lv_font_class_t",
-    .tp_basicsize = sizeof(py_lv_struct_t),
-    .tp_dealloc = (destructor)py_lv_font_class_t_dealloc,
-    .tp_getattro = (getter)py_lv_font_class_t_getattro,
-    .tp_setattro = (setter)py_lv_font_class_t_setattro,
-    .tp_new = py_lv_font_class_t_new,
-    .tp_base = &py_lv_base_struct_type,
-    .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
-};
-
-static inline void* mp_write_ptr_lv_font_class_t(PyObject *self_in)
-{
-    if (!self_in || self_in == Py_None) return NULL;
-    py_lv_struct_t *self = (py_lv_struct_t *)self_in;
-    return (lv_font_class_t*)self->data;
-}
-
-#define mp_write_lv_font_class_t(struct_obj) (*((lv_font_class_t*)mp_write_ptr_lv_font_class_t(struct_obj)))
-
-static inline PyObject *mp_read_ptr_lv_font_class_t(void *field)
-{
-    return lv_to_mp_struct(&py_lv_font_class_t_type, field);
-}
-
-#define mp_read_lv_font_class_t(field) lv_to_mp_struct_own(&py_lv_font_class_t_type, copy_buffer(&field, sizeof(lv_font_class_t)))
-#define mp_read_byref_lv_font_class_t(field) mp_read_ptr_lv_font_class_t(&field)
 
 
 /*
@@ -102061,6 +102061,43 @@ PyMethodDef py_lv_span_coords_t_methods[] = {{NULL}};
 
 /*
  * lvgl extension definition for:
+ * lv_tree_node_t *lv_tree_node_create(const lv_tree_class_t *class_p, lv_tree_node_t *parent)
+ */
+static PyObject *py_lv_tree_node_create_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
+{
+    PyGILState_STATE gstate = PyGILState_Ensure();
+    (void)py_kwds;
+    PyObject *parent_py;
+    if (!PyArg_ParseTuple(py_args, "O", &parent_py)) { PyGILState_Release(gstate); return NULL; }
+    const lv_tree_class_t *class_p = (lv_tree_class_t *)mp_write_ptr_lv_tree_class_t(self);
+    lv_tree_node_t *parent = mp_write_ptr_lv_tree_node_t(parent_py);
+    
+    lv_tree_node_t * _res;
+    lvpy_lock();
+    _res = ((lv_tree_node_t *(*)(const lv_tree_class_t *, lv_tree_node_t *))lv_tree_node_create)(class_p, parent);
+    lvpy_unlock();
+    
+    PyGILState_Release(gstate);
+    return mp_read_ptr_lv_tree_node_t((void*)_res);
+}
+
+static PyMethodDef py_lv_tree_node_create_struct_method_def = {
+    "lv_tree_node_create",
+    (PyCFunction)py_lv_tree_node_create_struct_method,
+    METH_VARARGS | METH_KEYWORDS,
+    NULL
+};
+
+
+PyMethodDef py_lv_tree_class_t_methods[] = {
+    {"node_create", (PyCFunction)py_lv_tree_node_create_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
+    {NULL}
+};
+
+PyMethodDef py_lv_font_class_t_methods[] = {{NULL}};
+
+/*
+ * lvgl extension definition for:
  * void lv_color16_premultiply(lv_color16_t *c, lv_opa_t a)
  */
 static PyObject *py_lv_color16_premultiply_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
@@ -103018,42 +103055,6 @@ PyMethodDef py_lv_circle_buf_t_methods[] = {
 
 /*
  * lvgl extension definition for:
- * lv_tree_node_t *lv_tree_node_create(const lv_tree_class_t *class_p, lv_tree_node_t *parent)
- */
-static PyObject *py_lv_tree_node_create_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
-{
-    PyGILState_STATE gstate = PyGILState_Ensure();
-    (void)py_kwds;
-    PyObject *parent_py;
-    if (!PyArg_ParseTuple(py_args, "O", &parent_py)) { PyGILState_Release(gstate); return NULL; }
-    const lv_tree_class_t *class_p = (lv_tree_class_t *)mp_write_ptr_lv_tree_class_t(self);
-    lv_tree_node_t *parent = mp_write_ptr_lv_tree_node_t(parent_py);
-    
-    lv_tree_node_t * _res;
-    lvpy_lock();
-    _res = ((lv_tree_node_t *(*)(const lv_tree_class_t *, lv_tree_node_t *))lv_tree_node_create)(class_p, parent);
-    lvpy_unlock();
-    
-    PyGILState_Release(gstate);
-    return mp_read_ptr_lv_tree_node_t((void*)_res);
-}
-
-static PyMethodDef py_lv_tree_node_create_struct_method_def = {
-    "lv_tree_node_create",
-    (PyCFunction)py_lv_tree_node_create_struct_method,
-    METH_VARARGS | METH_KEYWORDS,
-    NULL
-};
-
-
-PyMethodDef py_lv_tree_class_t_methods[] = {
-    {"node_create", (PyCFunction)py_lv_tree_node_create_struct_method, METH_VARARGS | METH_KEYWORDS, NULL},
-    {NULL}
-};
-
-
-/*
- * lvgl extension definition for:
  * void lv_tree_node_delete(lv_tree_node_t *node)
  */
 static PyObject *py_lv_tree_node_delete_struct_method(PyObject *self, PyObject *py_args, PyObject *py_kwds)
@@ -103279,7 +103280,6 @@ PyMethodDef py_lv_font_info_t_methods[] = {
     {NULL}
 };
 
-PyMethodDef py_lv_font_class_t_methods[] = {{NULL}};
 PyMethodDef py_lv_layout_callbacks_t_methods[] = {{NULL}};
 
 /*
@@ -106921,13 +106921,6 @@ static lv_fs_res_t lv_fs_drv_t_dir_close_cb_callback(lv_fs_drv_t *arg0, void *ar
 
 /*
  * Function NOT generated:
- * Callback: user_data NOT FOUND! lv_rb_compare_res_t lv_rb_compare_t(const void *a, const void *b)
- * lv_rb_compare_res_t lv_rb_compare_t(const void *a, const void *b)
- */
-    
-
-/*
- * Function NOT generated:
  * Callback: user_data NOT FOUND! void lv_tree_constructor_cb_t(const lv_tree_class_t *class_p, lv_tree_node_t *node)
  * void lv_tree_constructor_cb_t(const lv_tree_class_t *class_p, lv_tree_node_t *node)
  */
@@ -106984,6 +106977,13 @@ static void lv_font_class_t_delete_cb_callback(lv_font_t *arg0)
  * Function NOT generated:
  * Callback: user_data NOT FOUND! void free_src_cb(void *src)
  * void free_src_cb(void *src)
+ */
+    
+
+/*
+ * Function NOT generated:
+ * Callback: user_data NOT FOUND! lv_rb_compare_res_t lv_rb_compare_t(const void *a, const void *b)
+ * lv_rb_compare_res_t lv_rb_compare_t(const void *a, const void *b)
  */
     
 
@@ -107718,6 +107718,16 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     lv_struct_expose_size(&py_lv_span_coords_t_type);
     Py_INCREF((PyObject *)&py_lv_span_coords_t_type);
     if (PyModule_AddObject(m, "span_coords_t", (PyObject *)&py_lv_span_coords_t_type) < 0) return NULL;
+    if (PyType_Ready(&py_lv_tree_class_t_type) < 0) return NULL;
+    lv_struct_register_size(&py_lv_tree_class_t_type, sizeof(lv_tree_class_t));
+    lv_struct_expose_size(&py_lv_tree_class_t_type);
+    Py_INCREF((PyObject *)&py_lv_tree_class_t_type);
+    if (PyModule_AddObject(m, "tree_class_t", (PyObject *)&py_lv_tree_class_t_type) < 0) return NULL;
+    if (PyType_Ready(&py_lv_font_class_t_type) < 0) return NULL;
+    lv_struct_register_size(&py_lv_font_class_t_type, sizeof(lv_font_class_t));
+    lv_struct_expose_size(&py_lv_font_class_t_type);
+    Py_INCREF((PyObject *)&py_lv_font_class_t_type);
+    if (PyModule_AddObject(m, "font_class_t", (PyObject *)&py_lv_font_class_t_type) < 0) return NULL;
     if (PyType_Ready(&py_lv_color16_t_type) < 0) return NULL;
     lv_struct_register_size(&py_lv_color16_t_type, sizeof(lv_color16_t));
     lv_struct_expose_size(&py_lv_color16_t_type);
@@ -107741,11 +107751,6 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     if (PyType_Ready(&py_lv_circle_buf_t_type) < 0) return NULL;
     Py_INCREF((PyObject *)&py_lv_circle_buf_t_type);
     if (PyModule_AddObject(m, "circle_buf_t", (PyObject *)&py_lv_circle_buf_t_type) < 0) return NULL;
-    if (PyType_Ready(&py_lv_tree_class_t_type) < 0) return NULL;
-    lv_struct_register_size(&py_lv_tree_class_t_type, sizeof(lv_tree_class_t));
-    lv_struct_expose_size(&py_lv_tree_class_t_type);
-    Py_INCREF((PyObject *)&py_lv_tree_class_t_type);
-    if (PyModule_AddObject(m, "tree_class_t", (PyObject *)&py_lv_tree_class_t_type) < 0) return NULL;
     if (PyType_Ready(&py_lv_tree_node_t_type) < 0) return NULL;
     lv_struct_register_size(&py_lv_tree_node_t_type, sizeof(lv_tree_node_t));
     lv_struct_expose_size(&py_lv_tree_node_t_type);
@@ -107761,11 +107766,6 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     lv_struct_expose_size(&py_lv_font_info_t_type);
     Py_INCREF((PyObject *)&py_lv_font_info_t_type);
     if (PyModule_AddObject(m, "font_info_t", (PyObject *)&py_lv_font_info_t_type) < 0) return NULL;
-    if (PyType_Ready(&py_lv_font_class_t_type) < 0) return NULL;
-    lv_struct_register_size(&py_lv_font_class_t_type, sizeof(lv_font_class_t));
-    lv_struct_expose_size(&py_lv_font_class_t_type);
-    Py_INCREF((PyObject *)&py_lv_font_class_t_type);
-    if (PyModule_AddObject(m, "font_class_t", (PyObject *)&py_lv_font_class_t_type) < 0) return NULL;
     if (PyType_Ready(&py_lv_layout_callbacks_t_type) < 0) return NULL;
     lv_struct_register_size(&py_lv_layout_callbacks_t_type, sizeof(lv_layout_callbacks_t));
     lv_struct_expose_size(&py_lv_layout_callbacks_t_type);
@@ -107932,6 +107932,77 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     lv_struct_expose_size(&py_lv_draw_global_info_t_type);
     Py_INCREF((PyObject *)&py_lv_draw_global_info_t_type);
     if (PyModule_AddObject(m, "draw_global_info_t", (PyObject *)&py_lv_draw_global_info_t_type) < 0) return NULL;
+    { PyObject *obj = lv_to_mp_struct(&py_lv_color_filter_dsc_t_type, (void *)&lv_color_filter_shade); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "color_filter_shade", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_tree_class_t_type, (void *)&lv_tree_node_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "tree_node_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_font_t_type, (void *)&lv_font_montserrat_14); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "font_montserrat_14", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_font_t_type, (void *)&lv_font_montserrat_16); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "font_montserrat_16", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_font_t_type, (void *)&lv_font_montserrat_24); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "font_montserrat_24", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_font_t_type, (void *)&lv_font_montserrat_32); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "font_montserrat_32", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_font_t_type, (void *)&lv_font_montserrat_40); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "font_montserrat_40", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_blob_type, (void *)&lv_style_const_prop_id_inv); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "style_const_prop_id_inv", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_obj_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "obj_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_font_class_t_type, (void *)&lv_binfont_font_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "binfont_font_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_font_class_t_type, (void *)&lv_builtin_font_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "builtin_font_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_image_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "image_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_animimg_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "animimg_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_arc_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "arc_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_arclabel_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "arclabel_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_label_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "label_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_bar_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "bar_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_button_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "button_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_buttonmatrix_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "buttonmatrix_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_calendar_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "calendar_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_calendar_header_arrow_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "calendar_header_arrow_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_calendar_header_dropdown_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "calendar_header_dropdown_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_canvas_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "canvas_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_chart_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "chart_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_checkbox_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "checkbox_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_dropdown_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "dropdown_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_dropdownlist_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "dropdownlist_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_gif_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "gif_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_imagebutton_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "imagebutton_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_keyboard_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "keyboard_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_led_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "led_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_line_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "line_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_list_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "list_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_list_text_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "list_text_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_list_button_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "list_button_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_page_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_page_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_cont_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_cont_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_section_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_section_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_separator_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_separator_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_sidebar_cont_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_sidebar_cont_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_main_cont_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_main_cont_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_sidebar_header_cont_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_sidebar_header_cont_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_menu_main_header_cont_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "menu_main_header_cont_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_msgbox_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "msgbox_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_msgbox_header_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "msgbox_header_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_msgbox_content_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "msgbox_content_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_msgbox_footer_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "msgbox_footer_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_msgbox_header_button_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "msgbox_header_button_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_msgbox_footer_button_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "msgbox_footer_button_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_msgbox_backdrop_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "msgbox_backdrop_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_roller_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "roller_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_scale_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "scale_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_slider_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "slider_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_spangroup_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "spangroup_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_textarea_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "textarea_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_spinbox_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "spinbox_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_spinner_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "spinner_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_switch_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "switch_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_table_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "table_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_tabview_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "tabview_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_tileview_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "tileview_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_tileview_tile_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "tileview_tile_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_win_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "win_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_barcode_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "barcode_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_obj_class_t_type, (void *)&lv_qrcode_class); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "qrcode_class", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_cache_class_t_type, (void *)&lv_cache_class_lru_rb_count); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "cache_class_lru_rb_count", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_cache_class_t_type, (void *)&lv_cache_class_lru_rb_size); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "cache_class_lru_rb_size", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_cache_class_t_type, (void *)&lv_cache_class_lru_ll_count); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "cache_class_lru_ll_count", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_cache_class_t_type, (void *)&lv_cache_class_lru_ll_size); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "cache_class_lru_ll_size", obj) < 0) { Py_DECREF(obj); return NULL; } }
+    { PyObject *obj = lv_to_mp_struct(&py_lv_cache_class_t_type, (void *)&lv_cache_class_sc_da); if (obj == NULL) return NULL; if (PyModule_AddObject(m, "cache_class_sc_da", obj) < 0) { Py_DECREF(obj); return NULL; } }
     if (PyType_Ready(&py_lv_obj_type) < 0) return NULL;
     { if (PyType_Ready(&py_lv_LV_OBJ_TREE_WALK_type) < 0) return NULL; PyObject *_enum_ns = (PyObject *)PyType_GenericNew(&py_lv_LV_OBJ_TREE_WALK_type, NULL, NULL); if (_enum_ns == NULL) return NULL; if (((PyTypeObject *)&py_lv_obj_type)->tp_dict && PyDict_SetItemString(((PyTypeObject *)&py_lv_obj_type)->tp_dict, "TREE_WALK", _enum_ns) < 0) { Py_DECREF(_enum_ns); return NULL; } Py_DECREF(_enum_ns); }
     { if (PyType_Ready(&py_lv_LV_OBJ_POINT_TRANSFORM_FLAG_type) < 0) return NULL; PyObject *_enum_ns = (PyObject *)PyType_GenericNew(&py_lv_LV_OBJ_POINT_TRANSFORM_FLAG_type, NULL, NULL); if (_enum_ns == NULL) return NULL; if (((PyTypeObject *)&py_lv_obj_type)->tp_dict && PyDict_SetItemString(((PyTypeObject *)&py_lv_obj_type)->tp_dict, "POINT_TRANSFORM_FLAG", _enum_ns) < 0) { Py_DECREF(_enum_ns); return NULL; } Py_DECREF(_enum_ns); }

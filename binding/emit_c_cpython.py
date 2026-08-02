@@ -2899,6 +2899,19 @@ static MP_DEFINE_CONST_DICT(mp_{sanitized_struct_name}_locals_dict, mp_{sanitize
     def gen_global(global_name, global_type_ast):
         global_type = get_type(global_type_ast, remove_quals=True)
         if _emit_target == "cpython":
+            if global_name == "_nesting":
+                return
+            try_generate_type(global_type_ast)
+            cpython_global_types = runtime.get(
+                "cpython_global_types", collections.OrderedDict()
+            )
+            cpython_global_types[global_name] = (
+                global_type
+                if generated_structs.get(global_type, False)
+                else None
+            )
+            runtime.set_("cpython_global_types", cpython_global_types)
+            generated_globals.append(global_name)
             return
         generated_global = try_generate_type(global_type_ast)
         # print("/* generated_global = %s */" % generated_global)

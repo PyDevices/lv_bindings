@@ -2,6 +2,7 @@
 """Regression check: CP/CPython public exports vs MicroPython reference."""
 from __future__ import print_function
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -98,10 +99,16 @@ def py_obj_enum_attrs(text, obj):
     return attrs
 
 
-def verify(target, text, mp_names):
+def verify(target, text, mp_names, global_names):
     errors = []
     if target == "MicroPython":
         names = mp_module_names(text)
+        missing_globals = global_names - names
+        if missing_globals:
+            errors.append(
+                "module missing global objects: %s"
+                % ", ".join(sorted(missing_globals))
+            )
         for enum_name in WIDGET_SCOPED_MODULE_ENUMS:
             if enum_name in names:
                 errors.append("module exposes widget-scoped enum %s" % enum_name)
@@ -116,6 +123,12 @@ def verify(target, text, mp_names):
         return errors
 
     names = mp_module_names(text) if target == "CircuitPython" else py_module_names(text)
+    missing_globals = global_names - names
+    if missing_globals:
+        errors.append(
+            "module missing global objects: %s"
+            % ", ".join(sorted(missing_globals))
+        )
     for enum_name in WIDGET_SCOPED_MODULE_ENUMS:
         if enum_name in names:
             errors.append("module exposes widget-scoped enum %s" % enum_name)
@@ -167,6 +180,8 @@ def main(argv):
     }
     mp_text = files["MicroPython"].read_text()
     mp_names = mp_module_names(mp_text)
+    metadata = json.loads((generated / "lvgl.json").read_text())
+    global_names = set(metadata.get("blobs", [])) - {"_nesting"}
 
     failed = False
     for target, path in files.items():
@@ -174,7 +189,7 @@ def main(argv):
             print("FAIL: missing %s" % path)
             failed = True
             continue
-        errors = verify(target, path.read_text(), mp_names)
+        errors = verify(target, path.read_text(), mp_names, global_names)
         if errors:
             failed = True
             print("FAIL %s:" % target)

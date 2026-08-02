@@ -121,6 +121,7 @@ def finish_py_module(max_phase):
     """Emit PyInit_lvgl and module-level registration (native CPython API)."""
     int_constants = runtime.get("int_constants", [])
     generated_globals = runtime.get("generated_globals", [])
+    cpython_global_types = runtime.get("cpython_global_types", {})
     enums = runtime.get("enums", {})
     enum_referenced = runtime.get("enum_referenced", collections.OrderedDict())
     generated_structs = runtime.get("generated_structs", {})
@@ -304,6 +305,24 @@ static struct PyModuleDef lvgl_module_def = {
                         name=py_name, san=san
                     )
                 )
+
+        for global_name in cpython_global_types:
+            global_type = cpython_global_types.get(global_name)
+            type_object = (
+                "&py_{san}_type".format(san=sanitize(global_type))
+                if global_type
+                else "&py_blob_type"
+            )
+            py_name = simplify_identifier(global_name)
+            print(
+                '    {{ PyObject *obj = lv_to_mp_struct({type_object}, (void *)&{global_name});'
+                ' if (obj == NULL) return NULL;'
+                ' if (PyModule_AddObject(m, "{py_name}", obj) < 0) {{ Py_DECREF(obj); return NULL; }} }}'.format(
+                    type_object=type_object,
+                    global_name=global_name,
+                    py_name=py_name,
+                )
+            )
 
     if max_phase >= 5 and obj_names:
         enums = runtime.get("enums", {})
