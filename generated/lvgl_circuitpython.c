@@ -27429,6 +27429,26 @@ static const mp_lv_struct_t mp_lv_font_montserrat_24 = {
     (lv_font_t*)&lv_font_montserrat_24
 };
     
+
+/*
+ * lvgl lv_font_montserrat_32 global definitions
+ */
+
+static const mp_lv_struct_t mp_lv_font_montserrat_32 = {
+    { &mp_lv_font_t_type },
+    (lv_font_t*)&lv_font_montserrat_32
+};
+    
+
+/*
+ * lvgl lv_font_montserrat_40 global definitions
+ */
+
+static const mp_lv_struct_t mp_lv_font_montserrat_40 = {
+    { &mp_lv_font_t_type },
+    (lv_font_t*)&lv_font_montserrat_40
+};
+    
 /* Global struct wrapper for int */
 
 typedef struct {
@@ -49370,6 +49390,8 @@ static const mp_rom_map_elem_t lvgl_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_font_montserrat_14), MP_ROM_PTR(&mp_lv_font_montserrat_14) },
     { MP_ROM_QSTR(MP_QSTR_font_montserrat_16), MP_ROM_PTR(&mp_lv_font_montserrat_16) },
     { MP_ROM_QSTR(MP_QSTR_font_montserrat_24), MP_ROM_PTR(&mp_lv_font_montserrat_24) },
+    { MP_ROM_QSTR(MP_QSTR_font_montserrat_32), MP_ROM_PTR(&mp_lv_font_montserrat_32) },
+    { MP_ROM_QSTR(MP_QSTR_font_montserrat_40), MP_ROM_PTR(&mp_lv_font_montserrat_40) },
     { MP_ROM_QSTR(MP_QSTR_style_const_prop_id_inv), MP_ROM_PTR(&mp_lv_style_const_prop_id_inv) },
     { MP_ROM_QSTR(MP_QSTR_obj_class), MP_ROM_PTR(&mp_lv_obj_class) },
     { MP_ROM_QSTR(MP_QSTR_binfont_font_class), MP_ROM_PTR(&mp_lv_binfont_font_class) },
@@ -50021,6 +50043,8 @@ const mp_rom_map_elem_t lvgl_module_entries[] = {
     { MP_ROM_QSTR(MP_QSTR_font_montserrat_14), MP_ROM_PTR(&mp_lv_font_montserrat_14) },
     { MP_ROM_QSTR(MP_QSTR_font_montserrat_16), MP_ROM_PTR(&mp_lv_font_montserrat_16) },
     { MP_ROM_QSTR(MP_QSTR_font_montserrat_24), MP_ROM_PTR(&mp_lv_font_montserrat_24) },
+    { MP_ROM_QSTR(MP_QSTR_font_montserrat_32), MP_ROM_PTR(&mp_lv_font_montserrat_32) },
+    { MP_ROM_QSTR(MP_QSTR_font_montserrat_40), MP_ROM_PTR(&mp_lv_font_montserrat_40) },
     { MP_ROM_QSTR(MP_QSTR_style_const_prop_id_inv), MP_ROM_PTR(&mp_lv_style_const_prop_id_inv) },
     { MP_ROM_QSTR(MP_QSTR_obj_class), MP_ROM_PTR(&mp_lv_obj_class) },
     { MP_ROM_QSTR(MP_QSTR_binfont_font_class), MP_ROM_PTR(&mp_lv_binfont_font_class) },

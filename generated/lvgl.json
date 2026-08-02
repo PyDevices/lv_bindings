@@ -269607,6 +269607,16 @@
             "args": [],
             "return_type": "NoneType"
         },
+        "tjpgd_init": {
+            "type": "function",
+            "args": [],
+            "return_type": "NoneType"
+        },
+        "tjpgd_deinit": {
+            "type": "function",
+            "args": [],
+            "return_type": "NoneType"
+        },
         "draw_sw_i1_to_argb8888": {
             "type": "function",
             "args": [
@@ -281469,6 +281479,8 @@
         "font_montserrat_14",
         "font_montserrat_16",
         "font_montserrat_24",
+        "font_montserrat_32",
+        "font_montserrat_40",
         "style_const_prop_id_inv",
         "obj_class",
         "binfont_font_class",

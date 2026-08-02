@@ -3236,6 +3236,10 @@ bool lv_font_has_static_bitmap(const lv_font_t * font);
  extern const lv_font_t lv_font_montserrat_16;
 # 265 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../misc/../font/lv_font.h"
  extern const lv_font_t lv_font_montserrat_24;
+# 281 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../misc/../font/lv_font.h"
+ extern const lv_font_t lv_font_montserrat_32;
+# 297 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../misc/../font/lv_font.h"
+ extern const lv_font_t lv_font_montserrat_40;
 # 342 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../misc/../font/lv_font.h"
 
 # 17 "/home/brad/gh/pydevices/cmods/lv_bindings/lvgl/src/core/../misc/lv_style.h" 2
