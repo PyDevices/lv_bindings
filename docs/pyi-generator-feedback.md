@@ -47,7 +47,7 @@ Regression coverage lives in `tests/test_pyi_prototypes.py`
 ```bash
 cd pydisplay
 ./tools/link_lvgl_stubs.sh
-.venv/bin/basedpyright src/add_ons/display_driver.py src/examples/lv_test_timer_common.py
+.venv/bin/basedpyright ../lv_bindings/python/display_driver.py src/examples/lv_test_timer_common.py
 ```
 
 Target: **0** errors attributable to `lvgl.pyi` in those files.
