@@ -1084,3 +1084,5 @@ class DisplayDriver:
 
 # Import-time bootstrap (same as before the probe split).
 main()
+
+# org-secret smoke check 2026-08-02T11:08Z
