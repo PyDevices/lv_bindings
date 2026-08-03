@@ -1,5 +1,7 @@
 # After generated/lvgl_python.c, lv_conf.h, python/display_driver.py, or the lvgl
 # pin change on main, trigger lv_cpython_mod → Sync and release (sync, tag, TestPyPI).
+# The other LVGL consumer repos (lv_circuitpython_mod and lv_micropython_cmod) sync
+# from lv_bindings and rebuild, but they do not publish separate packages.
 #
 # Required secret (lv_bindings → Settings → Secrets → Actions):
 #   LVCPYTHON_MOD_DISPATCH_TOKEN — PAT with actions:write on PyDevices/lv_cpython_mod

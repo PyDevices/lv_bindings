@@ -2,6 +2,8 @@
 
 LVGL header-to-C binding generator for MicroPython, CircuitPython, and CPython.
 
+This repo owns the binding tags and generated sources used by the downstream LVGL repos. The release chain is centered on lv_bindings, while only lv_cpython_mod publishes wheels to TestPyPI; lv_circuitpython_mod and lv_micropython_cmod consume the synced bindings and rebuild their own targets.
+
 ## Layout
 
 ```

@@ -3,6 +3,11 @@
 This document describes how to cut a new **lv_bindings** release after moving the
 `lvgl` submodule to a different LVGL version.
 
+lv_bindings releases are the upstream binding tags for the LVGL family. The generated
+artifacts are consumed by the downstream repos, and only **lv_cpython_mod** publishes
+packaged wheels to TestPyPI; **lv_circuitpython_mod** and **lv_micropython_cmod** sync
+from these tags and rebuild their own targets rather than publishing separate packages.
+
 ## Version scheme
 
 lv_bindings tags mirror **LVGL major.minor**. The patch number counts binding
