@@ -63,7 +63,8 @@ to set that for all three targets.
 ./scripts/verify_bindings.sh  # Regenerate all targets + regression checks
 ```
 
-After regen, rebuild the consumer repo(s) (`lv_micropython_cmod`, `lv_circuitpython_mod`, `lv_cpython_mod`) as usual. With the optional [cmods](https://github.com/PyDevices/cmods) workspace, `../build_all.sh` rebuilds and smoke-tests all of them at once.
+After regen, rebuild the consumer repo(s) (`lv_micropython_cmod`,
+`lv_circuitpython_mod`, `lv_cpython_mod`) as usual.
 
 Release workflow and tagging: [PUBLISHING.md](docs/PUBLISHING.md).
 
