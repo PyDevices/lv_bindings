@@ -1,0 +1,39 @@
+# Diagnostic: verify LVCPYTHON_MOD_DISPATCH_TOKEN can dispatch lv_cpython_mod workflows.
+# Run manually from Actions → Check dispatch token → Run workflow.
+
+name: Check dispatch token
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    if: github.repository == 'PyDevices/lv_bindings'
+    steps:
+      - name: Verify dispatch token
+        env:
+          GH_TOKEN: ${{ secrets.LVCPYTHON_MOD_DISPATCH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${GH_TOKEN}" ]]; then
+            echo "::error::LVCPYTHON_MOD_DISPATCH_TOKEN is not available to this repository"
+            exit 1
+          fi
+          echo "LVCPYTHON_MOD_DISPATCH_TOKEN: available (${#GH_TOKEN} chars)"
+          if login="$(gh api user --jq .login 2>&1)"; then
+            echo "Token auth OK (user: ${login})"
+          else
+            echo "::error::Token auth failed: ${login}"
+            exit 1
+          fi
+          if gh workflow list --repo PyDevices/lv_cpython_mod --limit 1 >/dev/null 2>&1; then
+            echo "Can read workflows on PyDevices/lv_cpython_mod"
+          else
+            echo "::error::Cannot read workflows on PyDevices/lv_cpython_mod (check PAT repo scope)"
+            exit 1
+          fi
+          echo "Dispatch token looks valid."
