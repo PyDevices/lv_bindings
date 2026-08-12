@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Compute the next lv_bindings release version.
+# Compute the next lvgl-bindings release version.
 #
-# lv_bindings versions mirror the LVGL major.minor of the lvgl submodule, with
-# an lv_bindings patch counter. The patch resets to 0 when the LVGL major or
+# lvgl-bindings versions mirror the LVGL major.minor of the lvgl submodule, with
+# an lvgl-bindings patch counter. The patch resets to 0 when the LVGL major or
 # minor changes.
 #   e.g. LVGL 9.5.x with last tag v9.5.5 -> 9.5.6 ; a new LVGL 9.6.x line -> 9.6.0
 #

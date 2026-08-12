@@ -5,14 +5,14 @@ Run with the target interpreter after building that port, for example:
 
   # MicroPython unix
   ./micropython/ports/unix/build-standard/micropython \\
-    ./lv_bindings/tools/test_lvgl_smoke.py
+    ./lvgl-bindings/tools/test_lvgl_smoke.py
 
   # CircuitPython unix
   ./circuitpython/ports/unix/build-coverage/micropython \\
-    ./lv_bindings/tools/test_lvgl_smoke.py
+    ./lvgl-bindings/tools/test_lvgl_smoke.py
 
   # CPython (WSL venv)
-  ./lv_cpython_mod/.venv/bin/python ./lv_bindings/tools/test_lvgl_smoke.py
+  ./lvgl-python/.venv/bin/python ./lvgl-bindings/tools/test_lvgl_smoke.py
 
 Exercises init/deinit, headless display, widgets, event callbacks, GC visibility,
 and CPython-specific struct/Blob helpers where applicable.
@@ -90,7 +90,7 @@ def _is_cpython():
 
 
 def _prepare_import_path():
-    """Avoid lv_bindings/lvgl submodule shadowing the compiled CPython extension."""
+    """Avoid lvgl-bindings/lvgl submodule shadowing the compiled CPython extension."""
     if not _is_cpython():
         return
     import os.path as ospath
@@ -100,7 +100,7 @@ def _prepare_import_path():
     if ospath.isdir(lvgl_sub):
         norm = ospath.normpath
         sys.path[:] = [p for p in sys.path if norm(p) != norm(here)]
-    cpy_mod = ospath.join(ospath.dirname(here), "lv_cpython_mod")
+    cpy_mod = ospath.join(ospath.dirname(here), "lvgl-python")
     if ospath.isdir(cpy_mod) and cpy_mod not in sys.path:
         sys.path.insert(0, cpy_mod)
 

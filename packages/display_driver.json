@@ -2,7 +2,7 @@
   "urls": [
     [
       "display_driver.py",
-      "github:PyDevices/lv_bindings/python/display_driver.py"
+      "github:PyDevices/lvgl-bindings/python/display_driver.py"
     ]
   ],
   "version": "0.0.1"

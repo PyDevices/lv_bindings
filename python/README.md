@@ -11,17 +11,17 @@ generator output — edit them here, then sync into consumer repos.
 
 | Repo | Destination | How it ships |
 |------|-------------|--------------|
-| [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod) | `lib/display_driver.py` | Frozen via `manifest.py` |
-| [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) | `lib/display_driver.py` | Frozen via `manifest.py` (unix builds) |
-| [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) | `display_driver.py` | `py_modules` in the `lvgl-cpython` wheel |
+| [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython) | `lib/display_driver.py` | Frozen via `manifest.py` |
+| [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | `lib/display_driver.py` | Frozen via `manifest.py` (unix builds) |
+| [lvgl-python](https://github.com/PyDevices/lvgl-python) | `display_driver.py` | `py_modules` in the `pydevices-lvgl` wheel |
 
-Each consumer has `scripts/sync_from_lv_bindings.sh` (or extends the CPython
-one) that copies this file from **PyDevices/lv_bindings on GitHub**.
+Each consumer has `scripts/sync_from_lvgl_bindings.sh` (or extends the CPython
+one) that copies this file from **PyDevices/lvgl-bindings on GitHub**.
 
 ## MIP (optional)
 
 ```text
-mip.install("github:PyDevices/lv_bindings/packages/display_driver.json")
+mip.install("github:PyDevices/lvgl-bindings/packages/display_driver.json")
 ```
 
 Requires pydisplay (`board_config`, `eventsys`, `multimer`) and an `lvgl`

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerate all binding targets, commit, and tag lv_bindings for the current
+# Regenerate all binding targets, commit, and tag lvgl-bindings for the current
 # LVGL submodule checkout.
 #
 # Typical workflow:
@@ -8,7 +8,7 @@
 #   ./regenerate_all.sh
 #   git push origin HEAD --tags
 #
-# Tags follow LVGL major.minor with an lv_bindings patch counter, e.g. v9.5.0,
+# Tags follow LVGL major.minor with an lvgl-bindings patch counter, e.g. v9.5.0,
 # v9.5.1, … for successive binding releases on the LVGL 9.5 line.
 set -euo pipefail
 
@@ -89,7 +89,7 @@ BINDINGS_TAG="v$("$LV_BINDINGS_DIR/scripts/next_release_version.sh")"
 
 planned_commit_message() {
     cat <<EOF
-Regenerate bindings for LVGL ${LVGL_LABEL} (lv_bindings ${BINDINGS_TAG}).
+Regenerate bindings for LVGL ${LVGL_LABEL} (lvgl-bindings ${BINDINGS_TAG}).
 
 LVGL API version: ${LVGL_VERSION}
 EOF
@@ -97,7 +97,7 @@ EOF
 
 planned_tag_message() {
     cat <<EOF
-lv_bindings ${BINDINGS_TAG} — bindings for LVGL ${LVGL_MAJOR}.${LVGL_MINOR}.x
+lvgl-bindings ${BINDINGS_TAG} — bindings for LVGL ${LVGL_MAJOR}.${LVGL_MINOR}.x
 
 LVGL checkout: ${LVGL_LABEL}
 LVGL API version: ${LVGL_VERSION}
@@ -115,7 +115,7 @@ show_release_plan() {
     local would_commit=0
 
     echo "==> LVGL submodule: ${LVGL_LABEL} (API ${LVGL_VERSION})"
-    echo "==> lv_bindings tag: ${BINDINGS_TAG}"
+    echo "==> lvgl-bindings tag: ${BINDINGS_TAG}"
     echo
     echo "==> Paths staged on commit:"
     printf '    %s\n' "${paths[@]}"
@@ -156,7 +156,7 @@ if [[ "$DRY_RUN" -eq 1 ]]; then
 fi
 
 echo "==> LVGL submodule: ${LVGL_LABEL} (API ${LVGL_VERSION})"
-echo "==> lv_bindings tag: ${BINDINGS_TAG}"
+echo "==> lvgl-bindings tag: ${BINDINGS_TAG}"
 echo
 
 echo "==> Regenerate all binding targets"

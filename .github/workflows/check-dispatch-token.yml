@@ -1,4 +1,4 @@
-# Diagnostic: verify LVCPYTHON_MOD_DISPATCH_TOKEN can dispatch lv_cpython_mod workflows.
+# Diagnostic: verify LVCPYTHON_MOD_DISPATCH_TOKEN can dispatch lvgl-python workflows.
 # Run manually from Actions → Check dispatch token → Run workflow.
 
 name: Check dispatch token
@@ -12,7 +12,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    if: github.repository == 'PyDevices/lv_bindings'
+    if: github.repository == 'PyDevices/lvgl-bindings'
     steps:
       - name: Verify dispatch token
         env:
@@ -30,10 +30,10 @@ jobs:
             echo "::error::Token auth failed: ${login}"
             exit 1
           fi
-          if gh workflow list --repo PyDevices/lv_cpython_mod --limit 1 >/dev/null 2>&1; then
-            echo "Can read workflows on PyDevices/lv_cpython_mod"
+          if gh workflow list --repo PyDevices/lvgl-python --limit 1 >/dev/null 2>&1; then
+            echo "Can read workflows on PyDevices/lvgl-python"
           else
-            echo "::error::Cannot read workflows on PyDevices/lv_cpython_mod (check PAT repo scope)"
+            echo "::error::Cannot read workflows on PyDevices/lvgl-python (check PAT repo scope)"
             exit 1
           fi
           echo "Dispatch token looks valid."

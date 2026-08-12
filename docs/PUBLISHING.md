@@ -1,28 +1,28 @@
-# Publishing lv_bindings
+# Publishing lvgl-bindings
 
-This document describes how to cut a new **lv_bindings** release after moving the
+This document describes how to cut a new **lvgl-bindings** release after moving the
 `lvgl` submodule to a different LVGL version.
 
-lv_bindings releases are the upstream binding tags for the LVGL family. The generated
-artifacts are consumed by the downstream repos, and only **lv_cpython_mod** publishes
-packaged wheels to TestPyPI; **lv_circuitpython_mod** and **lv_micropython_cmod** sync
+lvgl-bindings releases are the upstream binding tags for the LVGL family. The generated
+artifacts are consumed by the downstream repos, and only **lvgl-python** publishes
+packaged wheels to TestPyPI; **lvgl-circuitpython** and **lvgl-micropython** sync
 from these tags and rebuild their own targets rather than publishing separate packages.
 
 ## Version scheme
 
-lv_bindings tags mirror **LVGL major.minor**. The patch number counts binding
+lvgl-bindings tags mirror **LVGL major.minor**. The patch number counts binding
 releases on that LVGL line:
 
 
 | Tag      | Meaning                                                 |
 | -------- | ------------------------------------------------------- |
-| `v9.5.0` | First lv_bindings release for LVGL 9.5.x                |
-| `v9.5.1` | Second lv_bindings release still on LVGL 9.5.x          |
-| `v9.4.0` | First lv_bindings release after switching to LVGL 9.4.x |
+| `v9.5.0` | First lvgl-bindings release for LVGL 9.5.x                |
+| `v9.5.1` | Second lvgl-bindings release still on LVGL 9.5.x          |
+| `v9.4.0` | First lvgl-bindings release after switching to LVGL 9.4.x |
 
 
 The tag does **not** copy LVGL's patch version. LVGL `v9.5.0` and `v9.5.2` both
-map to the **9.5** lv_bindings line; the lv_bindings patch increments only when
+map to the **9.5** lvgl-bindings line; the lvgl-bindings patch increments only when
 you publish a new binding release on that line.
 
 ## Prerequisites
@@ -54,7 +54,7 @@ Confirm with `git -C lvgl describe --tags` and `grep LVGL_VERSION lvgl/lvgl.h`.
 ./regenerate_all.sh --dry-run
 ```
 
-Shows the planned lv_bindings tag, commit message, and whether `lvgl` /
+Shows the planned lvgl-bindings tag, commit message, and whether `lvgl` /
 `generated/` already differ from the index — without regenerating, committing,
 or tagging.
 
@@ -104,22 +104,22 @@ Run this before publishing when you change the generator or LVGL config
 
 ## Downstream consumers
 
-- [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod) — sync
+- [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython) — sync
   `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, and
-  `python/display_driver.py` → `lib/` (`./scripts/sync_from_lv_bindings.sh`)
-- [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) — sync
+  `python/display_driver.py` → `lib/` (`./scripts/sync_from_lvgl_bindings.sh`)
+- [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) — sync
   `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`,
   `lv_conf.h`, and `python/display_driver.py` → `lib/`
-- [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) — sync
+- [lvgl-python](https://github.com/PyDevices/lvgl-python) — sync
   `generated/lvgl_python.c`, `generated/lvgl.pyi`, `lvgl/`, `lv_conf.h`, and
   `python/display_driver.py`; see
-  [CPython auto-release](#cpython-auto-release-lv_cpython_mod) below
+  [CPython auto-release](#cpython-auto-release-lvgl-python) below
 
 ## Type stubs (`generated/lvgl.pyi`)
 
 Regenerated with every binding release. Used by Pylance, basedpyright, and mypy.
 
-**CPython (`lvgl-cpython`):** `pip install -e .` copies `generated/lvgl.pyi` beside
+**CPython (`pydevices-lvgl`):** `pip install -e .` copies `generated/lvgl.pyi` beside
 the built `lvgl*.so` / `.pyd`. Wheels from this repo include the same file next to
 the extension after install.
 
@@ -132,25 +132,25 @@ the extension after install.
 MicroPython / CircuitPython: copy or symlink `generated/lvgl.pyi` into your project
 or editor stub path (no `.so` packaging).
 
-After tagging, consumer repos can pin to a specific lv_bindings release with
+After tagging, consumer repos can pin to a specific lvgl-bindings release with
 `git checkout v9.5.0` (or sync scripts that reference that tag).
 
-## CPython auto-release (lv_cpython_mod)
+## CPython auto-release (lvgl-python)
 
-When `generated/lvgl_python.c`, `lv_conf.h`, `python/display_driver.py`, or the `lvgl` submodule pin changes on `main`, the [trigger-lv-cpython-mod-release](../.github/workflows/trigger-lv-cpython-mod-release.yml) workflow starts **Sync and release** on [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod) (sync → commit → tag → TestPyPI).
+When `generated/lvgl_python.c`, `lv_conf.h`, `python/display_driver.py`, or the `lvgl` submodule pin changes on `main`, the [trigger-lvgl-python-release](../.github/workflows/trigger-lvgl-python-release.yml) workflow starts **Sync and release** on [lvgl-python](https://github.com/PyDevices/lvgl-python) (sync → commit → tag → TestPyPI).
 
 ### Setup
 
 Add repository secret **`LVCPYTHON_MOD_DISPATCH_TOKEN`** (Settings → Secrets → Actions):
-a PAT with **`actions:write`** on `PyDevices/lv_cpython_mod` (fine-grained or classic
+a PAT with **`actions:write`** on `PyDevices/lvgl-python` (fine-grained or classic
 `repo` scope).
 
 ### Manual sync
 
-Without pushing to `main`, or for local testing, run in `lv_cpython_mod`:
+Without pushing to `main`, or for local testing, run in `lvgl-python`:
 
 ```bash
-./scripts/sync_from_lv_bindings.sh
+./scripts/sync_from_lvgl_bindings.sh
 ```
 
 ## Example session
@@ -160,7 +160,7 @@ cd lvgl && git fetch --tags origin && git checkout v9.5.0 && cd ..
 
 ./regenerate_all.sh --dry-run
 # LVGL submodule: v9.5.0 (API 9.5.0)
-# lv_bindings tag: v9.5.0
+# lvgl-bindings tag: v9.5.0
 # ...
 
 ./regenerate_all.sh
@@ -176,5 +176,5 @@ git push origin main --tags
 ```
 
 You do not need to recheck out `lvgl` unless you are moving to a different LVGL
-release. `regenerate_all.sh` bumps only the lv_bindings patch tag for the current
+release. `regenerate_all.sh` bumps only the lvgl-bindings patch tag for the current
 LVGL major.minor line.

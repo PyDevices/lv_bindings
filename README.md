@@ -1,13 +1,13 @@
-# lv_bindings
+# lvgl-bindings
 
 LVGL header-to-C binding generator for MicroPython, CircuitPython, and CPython.
 
-This repo owns the binding tags and generated sources used by the downstream LVGL repos. The release chain is centered on lv_bindings, while only lv_cpython_mod publishes wheels to TestPyPI; lv_circuitpython_mod and lv_micropython_cmod consume the synced bindings and rebuild their own targets.
+This repo owns the binding tags and generated sources used by the downstream LVGL repos. The release chain is centered on lvgl-bindings, while only lvgl-python publishes wheels to TestPyPI; lvgl-circuitpython and lvgl-micropython consume the synced bindings and rebuild their own targets.
 
 ## Layout
 
 ```
-lv_bindings/
+lvgl-bindings/
   binding/              # Modular Python generator
   lvgl/                 # LVGL submodule (git submodule update --init)
   lv_conf.h             # Shared LVGL config for all targets
@@ -23,12 +23,12 @@ lv_bindings/
 ## Clone
 
 ```bash
-git clone https://github.com/PyDevices/lv_bindings.git lv_bindings
-cd lv_bindings
+git clone https://github.com/PyDevices/lvgl-bindings.git lvgl-bindings
+cd lvgl-bindings
 git submodule update --init lvgl
 ```
 
-Place `lv_bindings/` as a sibling of `lv_micropython_cmod/`, `lv_circuitpython_mod/`, and/or `lv_cpython_mod/` in your workspace. ([cmods](https://github.com/PyDevices/cmods) is an optional convenience workspace — not required.)
+Place `lvgl-bindings/` as a sibling of `lvgl-micropython/`, `lvgl-circuitpython/`, and/or `lvgl-python/` in your workspace. ([cmods](https://github.com/PyDevices/cmods) is an optional convenience workspace — not required.)
 
 ## 🚀 Setup
 
@@ -63,23 +63,23 @@ to set that for all three targets.
 ./scripts/verify_bindings.sh  # Regenerate all targets + regression checks
 ```
 
-After regen, rebuild the consumer repo(s) (`lv_micropython_cmod`,
-`lv_circuitpython_mod`, `lv_cpython_mod`) as usual.
+After regen, rebuild the consumer repo(s) (`lvgl-micropython`,
+`lvgl-circuitpython`, `lvgl-python`) as usual.
 
 Release workflow and tagging: [PUBLISHING.md](docs/PUBLISHING.md).
 
 ## Hand-written Python
 
 See [`python/README.md`](python/README.md). Edit `python/display_driver.py` here, then sync
-into each consumer with that repo's `scripts/sync_from_lv_bindings.sh`.
+into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
 
 ## Consumers
 
 
 | Repo                                                                      | Sync                                                                                                                                                          |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [lv_micropython_cmod](https://github.com/PyDevices/lv_micropython_cmod)   | `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                                                      |
-| [lv_circuitpython_mod](https://github.com/PyDevices/lv_circuitpython_mod) | `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                  |
-| [lv_cpython_mod](https://github.com/PyDevices/lv_cpython_mod)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` — see [PUBLISHING.md](docs/PUBLISHING.md#cpython-auto-release-lv_cpython_mod)       |
+| [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython)   | `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                                                      |
+| [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                  |
+| [lvgl-python](https://github.com/PyDevices/lvgl-python)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` — see [PUBLISHING.md](docs/PUBLISHING.md#cpython-auto-release-lvgl-python)       |
 
 

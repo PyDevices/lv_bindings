@@ -3,7 +3,7 @@
 #
 # Version is the optional VERSION argument, else auto-computed by
 # next_release_version.sh (highest vX.Y.Z tag + 1 patch). Pushing the tag
-# is the upstream release trigger for lv_bindings; lv_cpython_mod then syncs
+# is the upstream release trigger for lvgl-bindings; lvgl-python then syncs
 # from that tag and publishes the packaged wheel to TestPyPI.
 #
 # Usage:
