@@ -66,7 +66,7 @@ to set that for all three targets.
 After regen, rebuild the consumer repo(s) (`lvgl-micropython`,
 `lvgl-circuitpython`, `lvgl-python`) as usual.
 
-Release workflow and tagging: [PUBLISHING.md](docs/PUBLISHING.md).
+Release workflow and tagging: [publishing.md](docs/publishing.md).
 
 ## Hand-written Python
 
@@ -80,6 +80,6 @@ into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython)   | `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                                                      |
 | [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                  |
-| [lvgl-python](https://github.com/PyDevices/lvgl-python)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` — see [PUBLISHING.md](docs/PUBLISHING.md#cpython-auto-release-lvgl-python)       |
+| [lvgl-python](https://github.com/PyDevices/lvgl-python)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` — see [publishing.md](docs/publishing.md#cpython-auto-release-lvgl-python)       |
 
 

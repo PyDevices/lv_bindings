@@ -318,7 +318,7 @@ def test_callback_gc_with_widget_ref(lv):
     else:
         _warn(
             "callback was collected after del handler (widget still referenced); "
-            "see docs/lvgl/gc_callback_audit.md"
+            "see docs/gc-callback-audit.md"
         )
 
 
@@ -361,7 +361,7 @@ def test_callback_gc_without_widget_ref(lv):
     else:
         _warn(
             "callback lost after del widget + gc.collect(); "
-            "LVGL user_data may not keep callbacks rooted — see docs/lvgl/gc_callback_audit.md"
+            "LVGL user_data may not keep callbacks rooted — see docs/gc-callback-audit.md"
         )
 
 
