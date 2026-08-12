@@ -5,7 +5,7 @@ generator output — edit them here, then sync into consumer repos.
 
 | File | Import | Notes |
 |------|--------|-------|
-| `display_driver.py` | `import display_driver` | LVGL flush/input/`event_loop` glue for **pydisplay** (`board_config`, `eventsys`, `multimer`) |
+| `display_driver.py` | `import display_driver` | LVGL-owned display/input/`event_loop` glue for PyDevices (`board_config`, `events`, `keys`, `multimer`); independent of optional `eventsys` |
 
 ## Sync into consumers
 
@@ -24,5 +24,5 @@ one) that copies this file from **PyDevices/lvgl-bindings on GitHub**.
 mip.install("github:PyDevices/lvgl-bindings/packages/display_driver.json")
 ```
 
-Requires pydisplay (`board_config`, `eventsys`, `multimer`) and an `lvgl`
-binding already available.
+Requires a PyDevices `board_config` (from a hardware board package or
+`pydevices-desktop`), `events`, `keys`, `multimer`, and an `lvgl` binding.
