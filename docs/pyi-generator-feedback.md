@@ -42,10 +42,10 @@ obj.remove_style(None, part)  # style=NULL clears styles in selector
 Regression coverage lives in `tests/test_pyi_prototypes.py`
 (`test_emit_pyi_golden_driver_signatures` and related).
 
-## Validate (pydisplay)
+## Validate (pydevices-examples)
 
 ```bash
-cd pydisplay
+cd pydevices-examples
 ./tools/link_lvgl_stubs.sh
 .venv/bin/basedpyright ../lvgl-bindings/python/display_driver.py src/examples/lv_test_timer_common.py
 ```

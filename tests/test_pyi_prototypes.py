@@ -1043,7 +1043,7 @@ def test_emit_pyi_driver_callback_signatures():
 
 
 def test_emit_pyi_golden_driver_signatures():
-    """Golden signatures from docs/pyi-generator-feedback.md (pydisplay)."""
+    """Golden signatures from docs/pyi-generator-feedback.md (pydevices-examples)."""
     from binding.emit_pyi import PyiEmitter
 
     metadata = {
