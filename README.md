@@ -68,18 +68,24 @@ After regen, rebuild the consumer repo(s) (`lvgl-micropython`,
 
 Release workflow and tagging: [publishing.md](docs/publishing.md).
 
-## Hand-written Python
+## `display_driver.py` & Timer Integration
+
+`display_driver.py` is the canonical PyDevices LVGL coordinator:
+- It connects the LVGL event loop to `displaydev` and `multimer` without requiring `eventsys`.
+- **Automatic Timer Startup**: Simply importing `display_driver` initializes the display, registers input devices, and starts the background hardware interrupt/signal timer.
+- **Interactive REPL**: On MicroPython (`machine.Timer`), Linux desktop (`librt`), and Windows (`uwin32`), you can construct LVGL widgets and drop out to the interactive `>>>` prompt without any loop—the UI and animations keep running live in the background.
+- **Standalone Desktop Applications**: Standalone scripts include `runtime.run_forever()` to keep the desktop process alive.
 
 See [`python/README.md`](python/README.md). Edit `python/display_driver.py` here, then sync
 into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
 
 ## Consumers
 
+| Repo | Role & Sync |
+|---|---|
+| [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython) | MicroPython C module: `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
+| [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | CircuitPython tree patches: `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
+| [lvgl-python](https://github.com/PyDevices/lvgl-python) | CPython extension & TestPyPI wheel publisher: `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` (see [publishing.md](docs/publishing.md#cpython-auto-release-lvgl-python)) |
 
-| Repo                                                                      | Sync                                                                                                                                                          |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython)   | `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                                                      |
-| [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/`                                  |
-| [lvgl-python](https://github.com/PyDevices/lvgl-python)             | `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` — see [publishing.md](docs/publishing.md#cpython-auto-release-lvgl-python)       |
 
 
