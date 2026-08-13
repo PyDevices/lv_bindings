@@ -141,9 +141,8 @@ When `generated/lvgl_python.c`, `lv_conf.h`, `python/display_driver.py`, or the 
 
 ### Setup
 
-Add repository secret **`LVCPYTHON_MOD_DISPATCH_TOKEN`** (Settings → Secrets → Actions):
-a PAT with **`actions:write`** on `PyDevices/lvgl-python` (fine-grained or classic
-`repo` scope).
+Add repository secret for repository dispatch (Settings → Secrets → Actions):
+a PAT with **`actions:write`** on `PyDevices/lvgl-python`.
 
 ### Manual sync
 
