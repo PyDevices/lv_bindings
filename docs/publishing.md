@@ -137,7 +137,7 @@ After tagging, consumer repos can pin to a specific lvgl-bindings release with
 
 ## CPython auto-release (lvgl-python)
 
-When `generated/lvgl_python.c`, `lv_conf.h`, `python/display_driver.py`, or the `lvgl` submodule pin changes on `main`, the [trigger-lvgl-python-release](../.github/workflows/trigger-lvgl-python-release.yml) workflow starts **Sync and release** on [lvgl-python](https://github.com/PyDevices/lvgl-python) (sync → commit → tag → TestPyPI).
+When `generated/lvgl_python.c`, `lv_conf.h`, `python/display_driver.py`, or the `lvgl` submodule pin changes on `main`, the [trigger-lvgl-python-release](../.github/workflows/trigger-lvgl-python-release.yml) workflow starts **Sync and release** on [lvgl-python](https://github.com/PyDevices/lvgl-python) (sync → versioned commit → published GitHub Release → shared TestPyPI build).
 
 ### Setup
 
