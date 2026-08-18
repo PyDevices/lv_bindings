@@ -2,7 +2,22 @@
 
 LVGL header-to-C binding generator for MicroPython, CircuitPython, and CPython.
 
-This repo owns the binding tags and generated sources used by the downstream LVGL repos. The release chain is centered on lvgl-bindings, while only lvgl-python publishes wheels to TestPyPI; lvgl-circuitpython and lvgl-micropython consume the synced bindings and rebuild their own targets.
+## The LVGL family
+
+This repo owns the binding tags and generated sources used by the downstream LVGL repos, and is
+the canonical description of how the family fits together:
+
+- **lvgl-bindings** (this repo) — generates the C bindings (`generated/lvgl_*.c`, `lvgl.pyi`) from
+  the LVGL headers for all three targets, and owns the release chain.
+- **[lvgl-python](https://github.com/PyDevices/lvgl-python)** — the publishing endpoint. Turns
+  synced bindings into versioned `pydevices-lvgl` wheels on TestPyPI. It is the only repo in the
+  family that publishes a package.
+- **[lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython)** and
+  **[lvgl-micropython](https://github.com/PyDevices/lvgl-micropython)** — consumer/build repos.
+  They consume the generated bindings and rebuild their own CircuitPython / MicroPython targets,
+  but do not publish their own packages to TestPyPI.
+
+Every other repo in the family links back to this section rather than repeating it.
 
 ## Documentation
 
@@ -72,7 +87,7 @@ to set that for all three targets.
 After regen, rebuild the consumer repo(s) (`lvgl-micropython`,
 `lvgl-circuitpython`, `lvgl-python`) as usual.
 
-Release workflow and tagging: [publishing.md](docs/publishing.md).
+Release workflow and tagging: [releasing-bindings.md](docs/releasing-bindings.md).
 
 ## `display_driver.py` & Timer Integration
 
@@ -91,7 +106,7 @@ into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
 |---|---|
 | [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython) | MicroPython C module: `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
 | [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | CircuitPython tree patches: `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
-| [lvgl-python](https://github.com/PyDevices/lvgl-python) | CPython extension & TestPyPI wheel publisher: `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` (see [publishing.md](docs/publishing.md#cpython-auto-release-lvgl-python)) |
+| [lvgl-python](https://github.com/PyDevices/lvgl-python) | CPython extension & TestPyPI wheel publisher: `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` (see [releasing-bindings.md](docs/releasing-bindings.md#cpython-auto-release-lvgl-python)) |
 
 
 

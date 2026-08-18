@@ -3,8 +3,10 @@
 - [Using LVGL with PyDevices](using-lvgl-with-pydevices.md) — the sister
   projects, wiring `board_config` to LVGL, what `display_driver` does, and the
   sync/async timer contract.
-- [publishing.md](publishing.md) — the binding release chain.
-- [gc-callback-audit.md](gc-callback-audit.md) — GC/callback audit notes.
-- [pyi-generator-feedback.md](pyi-generator-feedback.md) — `.pyi` generator notes.
+- [releasing-bindings.md](releasing-bindings.md) — the binding release chain
+  (renamed from `publishing.md` — it documents cutting a binding release, not
+  package publishing).
 
-See the [root README](../README.md) for the generator itself.
+See the [root README](../README.md) for the generator itself, and its
+["The LVGL family"](../README.md#the-lvgl-family) section for how the four
+LVGL repos fit together.
