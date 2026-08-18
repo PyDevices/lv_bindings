@@ -5,7 +5,7 @@ generator output — edit them here, then sync into consumer repos.
 
 | File | Import | Notes |
 |------|--------|-------|
-| `display_driver.py` | `import display_driver` | LVGL-owned display/input/`event_loop` glue for PyDevices (`board_config`, `events`, `keys`, `multimer`); independent of optional `eventsys` |
+| `display_driver.py` | `import display_driver` | LVGL-owned display/input/`event_loop` glue for PyDevices (`board_config`, `events`, `keys`, `multimer`); independent of optional `appdev` |
 
 ## Sync into consumers
 

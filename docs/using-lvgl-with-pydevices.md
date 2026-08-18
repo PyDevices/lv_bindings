@@ -29,7 +29,7 @@ of the sister projects.
 import mip
 INDEX = "https://PyDevices.github.io/mip"
 mip.install("displaydev", index=INDEX)
-mip.install("eventsys", index=INDEX)
+mip.install("appdev", index=INDEX)
 mip.install("github:PyDevices/pydevices/board_configs/<your_board>")
 ```
 
@@ -67,12 +67,12 @@ for you.
 It ships with all three sister projects (frozen into the MicroPython and
 CircuitPython firmwares, bundled with `pydevices-lvgl`). It requires a PyDevices
 `board_config`, `events`, `keys`, and `multimer`, and is **independent of the
-optional `eventsys` package**.
+optional `appdev` package**.
 
 With `display_driver`, LVGL input is wired automatically through its own
 `LVGLRuntime` and virtual touch / encoder / keypad devices.
 
-> **Do not instantiate or poll `eventsys` in an LVGL app.** `lv.task_handler()`,
+> **Do not instantiate or poll `appdev` in an LVGL app.** `lv.task_handler()`,
 > driven by `display_driver.event_loop` plus `multimer`, already drains input.
 > Window-close (`QUIT`) is handled by the bridge's `HostInput` path.
 
@@ -127,4 +127,4 @@ runtime in both modes, use the harnesses documented in
 - [Architecture](https://github.com/PyDevices/pydevices/blob/main/docs/architecture.md)
 - [displaydev](https://github.com/PyDevices/pydevices/blob/main/docs/displaydev.md)
 - [multimer](https://github.com/PyDevices/pydevices/blob/main/docs/multimer.md)
-- [eventsys](https://github.com/PyDevices/pydevices/blob/main/docs/eventsys.md)
+- [appdev](https://github.com/PyDevices/pydevices/blob/main/docs/appdev.md)
