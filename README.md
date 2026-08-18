@@ -4,6 +4,12 @@ LVGL header-to-C binding generator for MicroPython, CircuitPython, and CPython.
 
 This repo owns the binding tags and generated sources used by the downstream LVGL repos. The release chain is centered on lvgl-bindings, while only lvgl-python publishes wheels to TestPyPI; lvgl-circuitpython and lvgl-micropython consume the synced bindings and rebuild their own targets.
 
+## Documentation
+
+- [Using LVGL with PyDevices](docs/using-lvgl-with-pydevices.md) — how the three
+  sister projects fit together, and what `python/display_driver.py` does.
+- [docs/](docs/) — the full index.
+
 ## Layout
 
 ```
