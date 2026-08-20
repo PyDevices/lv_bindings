@@ -10,6 +10,11 @@ Canonical copy lives in PyDevices/lvgl-bindings (``python/display_driver.py``).
 Consumer repos (lvgl-micropython, lvgl-circuitpython, lvgl-python)
 vendor a synced copy; do not edit those copies directly.
 
+Note that a change here is a release trigger: this path is watched by
+``.github/workflows/trigger-lvgl-python-release.yml``, which dispatches
+lvgl-python's sync, and that publishes a new version when the sync produces a
+diff. Even a comment-only edit ships a release.
+
 Requires a valid ``board_config.py`` on the path. Importing this module creates
 an ``appdev.App`` coordinator, starts ``event_loop``, and registers display flush
 and input devices.
