@@ -28,8 +28,7 @@ of the sister projects.
 ```python
 import mip
 INDEX = "https://PyDevices.github.io/mip"
-mip.install("displaydev", index=INDEX)
-mip.install("appdev", index=INDEX)
+mip.install("pydevices", index=INDEX)  # displaydev, appdev, and the rest of lib/
 mip.install("github:PyDevices/pydevices/board_configs/<your_board>")
 ```
 
