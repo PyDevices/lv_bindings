@@ -23,7 +23,7 @@ def build_arg_parser():
         "--target",
         choices=["micropython", "circuitpython", "cpython"],
         default="micropython",
-        help="Binding target runtime (default: micropython)",
+        help="Binding target interpreter (default: micropython)",
     )
     parser.add_argument(
         "-I",

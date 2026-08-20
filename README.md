@@ -95,7 +95,7 @@ Release workflow and tagging: [releasing-bindings.md](docs/releasing-bindings.md
 - It connects the LVGL event loop to `displaydev` and `multimer` without requiring `appdev`.
 - **Automatic Timer Startup**: Simply importing `display_driver` initializes the display, registers input devices, and starts the background hardware interrupt/signal timer.
 - **Interactive REPL**: On MicroPython (`machine.Timer`), Linux desktop (`librt`), and Windows (`uwin32`), you can construct LVGL widgets and drop out to the interactive `>>>` prompt without any loop—the UI and animations keep running live in the background.
-- **Standalone Desktop Applications**: Standalone scripts include `runtime.run_forever()` to keep the desktop process alive.
+- **Standalone Desktop Applications**: Standalone scripts include `app.run()` to keep the desktop process alive.
 
 See [`python/README.md`](python/README.md). Edit `python/display_driver.py` here, then sync
 into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
