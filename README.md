@@ -23,6 +23,8 @@ Every other repo in the family links back to this section rather than repeating 
 
 - [Using LVGL with PyDevices](docs/using-lvgl-with-pydevices.md) — how the three
   sister projects fit together, and what `python/display_driver.py` does.
+- [Loading fonts at runtime](docs/fonts.md) — `fonts/*.bin` and
+  `python/fs_driver.py`: any built-in font without a firmware rebuild.
 - [docs/](docs/) — the full index.
 
 ## Layout

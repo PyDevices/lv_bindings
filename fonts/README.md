@@ -42,6 +42,9 @@ font = lv.binfont_create_from_buffer(data, len(data))
 
 `lv.binfont_destroy(font)` frees a font you no longer need.
 
+Full guide — drive letters, RAM trade-offs, converting your own fonts:
+[docs/fonts.md](../docs/fonts.md).
+
 ## Regenerating
 
 ```bash
