@@ -105,6 +105,11 @@ display_driver.set_wheel_mapping(adjust_axis="h", adjust_sign=-1, navigate=True)
   focus between controls (`lv.group_t.focus_next`/`focus_prev` on the
   default group) — wheel-only browse-and-tweak, with no keyboard or extra
   indev required.
+- `navigate_sign`: `1` (default) or `-1` to flip which way focus travels.
+  Separate from `adjust_sign` because the two axes come from different
+  sources with their own conventions — SDL and Win32 disagree about the
+  sign of vertical scroll, so "swipe down goes to the next control" is a
+  claim about that axis on that platform, not about the mapping as a whole.
 
 A wheel event's legacy integer delta and its float "precise" delta
 disagree about which one is real depending on the platform's `usdl2`
