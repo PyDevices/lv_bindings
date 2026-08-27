@@ -77,6 +77,43 @@ With `display_driver`, LVGL input is wired automatically through its own
 
 Build the UI, then hand control over with `app.run()`.
 
+### Wheel and swipe input
+
+A mouse wheel or two-finger trackpad swipe drives the virtual encoder
+device, so it adjusts whichever control the LVGL group has focused —
+provided that control entered edit mode, which only happens once a click
+lands on it (an LVGL core behavior: changing focus always drops edit mode,
+so a handler that sets it back on must run on the `FOCUSED` event, not
+`PRESSED`, which fires too early).
+
+By default the encoder reads a single axis and never touches focus, matching
+prior versions. Call `display_driver.set_wheel_mapping()` to change that:
+
+```python
+import display_driver
+
+# Horizontal sliders read best adjusted along their own axis, with the
+# perpendicular swipe stepping between them:
+display_driver.set_wheel_mapping(adjust_axis="h", adjust_sign=-1, navigate=True)
+```
+
+- `adjust_axis`: `"v"` (default) or `"h"` — which axis adjusts the focused
+  control's value. Match it to the control's orientation: horizontal
+  sliders read best with `"h"`; vertical sliders and knobs, `"v"`.
+- `adjust_sign`: `1` (default) or `-1` to flip the adjust direction.
+- `navigate`: `False` (default) or `True` to let the other axis move group
+  focus between controls (`lv.group_t.focus_next`/`focus_prev` on the
+  default group) — wheel-only browse-and-tweak, with no keyboard or extra
+  indev required.
+
+A wheel event's legacy integer delta and its float "precise" delta
+disagree about which one is real depending on the platform's `usdl2`
+build — confirmed empirically to differ between a desktop MicroPython
+build and a CPython one on the same machine. `display_driver` resolves
+this per event already; if you ever read wheel deltas directly instead of
+through `display_driver`, don't assume either field is the trustworthy one
+without checking on your own target.
+
 ## Sync versus async timers
 
 `display_driver` includes the LVGL `event_loop`, which requires `multimer`.
