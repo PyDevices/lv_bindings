@@ -221,7 +221,7 @@ Enum ownership is now explicit in the model: module-level exports, nested
 widget exports, duplex aliases such as ``OBJ_FLAG``/``obj.FLAG``, and normalized
 members are recorded independently of the C emitters. The current generated
 API hash after this increment is
-``78110522b6ed489d18f30b5b89e42125aac3a107b7780badadad5632c74d19c4``.
+``7b40051b4b443ef62cbb91893a6cb971bfc5181cb05be81a7a26e4c16c0dc73d``.
 
 ### Gate
 
@@ -246,24 +246,26 @@ API hash after this increment is
 - [x] Keep legacy names only.
 - [x] Accurately represent concrete widgets, structs, enums, callbacks,
   inheritance, and optional constructor parent pointers.
-- [ ] Accurately represent arrays and overloads.
+- [x] Accurately represent fixed C arrays as nested ``Sequence[...]`` views.
+- [ ] Represent overloads where the runtime exposes distinct callable forms.
 - [ ] Use private underscored types for generic blob/struct internals.
 - [x] Exclude explicitly unavailable symbols.
 - [x] Replace regex-only namespace checks with manifest-based qualified export
   verification.
-- [x] Verify module exports, type/member exports, enum ownership, and target
-  filtering against the canonical manifest.
-- [ ] Verify enum values, signatures, target exceptions, and private helper
-  leakage in the pyi/runtime contract.
+- [x] Verify module exports, type/member exports, enum ownership, target
+  filtering, and signatures against the canonical manifest.
+- [ ] Verify enum values, target exceptions, and private helper leakage in the
+  pyi/runtime contract.
 
 Progress note: ``binding/emit_pyi_canonical.py`` renders the shared stub from
 ``generated/api.json`` and validates the model before pyi-only generation.
 Common-target emission filters target-only declarations; nested enum classes
 are emitted once, struct field/method collisions follow the generated runtime
-attribute precedence, string symbols use ``str`` members, and explicit private
-implementation types do not appear as undefined annotations. The generated
-stub parses cleanly and has regression coverage for signatures, target
-filtering, duplicate declarations, and annotation references. A static type
+attribute precedence, string symbols use ``str`` members, explicit private
+implementation types do not appear as undefined annotations, and fixed C
+arrays are represented as nested ``Sequence[...]`` views. The generated stub
+parses cleanly and has regression coverage for signatures, target filtering,
+duplicate declarations, arrays, and annotation references. A static type
 checker and runtime probes remain future gates.
 
 ### Gate
@@ -276,9 +278,9 @@ checker and runtime probes remain future gates.
 
 ### Handoff
 
-- Commit SHA: `7c397c8`
+- Commit SHA: `bf4f1e0`
 - Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `./scripts/verify_bindings.sh`
-- Notes: `The shared lvgl.pyi is now emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, and variables; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. The dead legacy pyi emitter and its tests were removed; pyi_prototypes remains only for legacy C-generator metadata enrichment. binding.verify_pyi now checks top-level and qualified member names from the manifest and runs in verify_bindings.sh. Generated C and CircuitPython header files were unchanged. Static type checking, enum-value/signature comparison, private-helper audit, and runtime stub probes remain open.`
+- Notes: `The shared lvgl.pyi is emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, variables, and fixed arrays; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. The dead legacy pyi emitter and its tests were removed; pyi_prototypes remains only for legacy C-generator metadata enrichment. binding.verify_pyi checks top-level and qualified member names, field/variable/enum annotations, constructors, receivers, static methods, variadics, defaults, and return types from the manifest; it runs in verify_bindings.sh. Generated C and CircuitPython header files were unchanged. Static type checking, enum-value comparison, private-helper audit, overload handling, and runtime stub probes remain open.`
 
 ## Checkpoint 5 — Unified target backends
 
