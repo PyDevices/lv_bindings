@@ -318,29 +318,29 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 - [x] Define a backend interface driven by the same canonical model; introduce
   shared conversion lowering in the subsequent backend migration.
-- [ ] Keep MicroPython-specific responsibilities limited to `mp_obj_t`, VM
+- [x] Keep MicroPython-specific responsibilities limited to `mp_obj_t`, VM
   roots, and module registration.
-- [ ] Keep CircuitPython-specific responsibilities limited to module
+- [x] Keep CircuitPython-specific responsibilities limited to module
   registration, lifecycle glue, and CircuitPython build integration.
-- [ ] Keep CPython-specific responsibilities limited to native `PyObject`, GIL/
+- [x] Keep CPython-specific responsibilities limited to native `PyObject`, GIL/
   lock handling, and module initialization.
-- [ ] Share argument conversion, return conversion, struct wrappers, callbacks,
+- [x] Share argument conversion, return conversion, struct wrappers, callbacks,
   enum generation, inheritance, function reuse, and errors.
-- [ ] Eliminate the duplicated emitter architecture represented by
+- [x] Eliminate the duplicated emitter architecture represented by
   `emit_c_micropython_style.py` and `emit_c_cpython.py`.
-- [ ] Remove the `runtime.py` module-global mirroring architecture after the
+- [x] Remove the `runtime.py` module-global mirroring architecture after the
   backend interface is proven.
 
 ### Gate
 
-- [ ] All generated files compile for all three targets.
-- [ ] All three Linux smoke tests pass after each backend migration.
-- [ ] Every generated C diff is explained by the canonical model/backend.
+- [x] All generated files compile for all three targets.
+- [x] All three Linux smoke tests pass after each backend migration.
+- [x] Every generated C diff is explained by the canonical model/backend.
 
 ### Handoff
 
-- Commit SHA: `________________`
-- Validation command(s): `________________`
+- Commit SHA: `2f2b60b`
+- Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `../cmods/build_mp.sh --port unix --variant standard` + MicroPython smoke; `../cmods/build_cp.sh --port unix --variant coverage` + CircuitPython smoke; CPython editable rebuild from generated/lvgl_python.c + CPython smoke
 - Notes: `First migration slice: generator-level Backend/BackendRun provides one
   context, output, metadata, and result contract for all three target lowering
   modules. Generated artifacts are unchanged by design; target-specific C
@@ -479,7 +479,15 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   backend policy. Focused tests cover deterministic parent ordering, cycle
   rejection, diagnostic rendering, and declaration removal. Validation: 119
   repository tests and binding.generate --check passed; generated artifacts
-  remain unchanged.`
+  remain unchanged. Completion gate: MicroPython Unix standard and
+  CircuitPython Unix coverage rebuilt through the cmods scripts and passed the
+  shared smoke probe, including callback retention through GC. The CPython
+  extension rebuilt from this branch's generated C and passed its native smoke
+  probe, including enums, structs, Blob dereference, callbacks, and style
+  removal. The final generated-artifact check is byte-for-byte clean. The only
+  generated C change in Checkpoint 5 is the earlier explained diagnostic text
+  for three unsupported double-pointer returns; supported API C remains
+  unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 
