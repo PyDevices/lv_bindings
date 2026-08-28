@@ -33,6 +33,7 @@ from .parse import (
     remove_explicit_struct,
     remove_quals,
 )
+from .ir import DeclarationIndex, parse_ast
 from .util import memoize
 
 
@@ -85,6 +86,9 @@ def get_first_arg(func):
 
 @memoize
 def get_first_arg_type(func):
+    declaration_index = runtime.get("declaration_index", None)
+    if declaration_index is not None and func.name in declaration_index.functions_by_name:
+        return declaration_index.first_argument_type_name(func.name)
     first_arg = get_first_arg(func)
     if not first_arg:
         return None
@@ -102,6 +106,12 @@ def get_base_struct_name(struct_name):
 @memoize
 def get_struct_functions(struct_name):
     funcs = runtime.get("funcs")
+    declaration_index = runtime.get("declaration_index", None)
+    if declaration_index is not None:
+        function_names = {
+            function.name for function in declaration_index.struct_functions(struct_name)
+        }
+        return [func for func in funcs if func.name in function_names]
     struct_aliases = runtime.get("struct_aliases", {})
     structs = runtime.get("structs", {})
     if not struct_name:
@@ -191,6 +201,7 @@ def analyze():
     global func_defs, func_decls, all_funcs, funcs, obj_ctors, obj_names
     global parent_obj_names, enum_defs, func_typedefs, blobs, int_constants
     global mp_to_lv, lv_to_mp, lv_mp_type, lv_to_mp_byref, lv_to_mp_funcptr
+    global declaration_ir, declaration_index
 
     obj_metadata = collections.OrderedDict()
     func_metadata = collections.OrderedDict()
@@ -262,6 +273,15 @@ def analyze():
                 forward_struct_decls[item.type.type.name].append(item)
 
     # ********************************************************************
+
+    declaration_ir = runtime.get("declaration_ir", None)
+    if declaration_ir is None:
+        declaration_ir = parse_ast(ast)
+    declaration_index = DeclarationIndex.from_ir(
+        declaration_ir, module_prefix=runtime.get("module_prefix", "lv")
+    )
+    runtime.set_("declaration_ir", declaration_ir)
+    runtime.set_("declaration_index", declaration_index)
 
 
     # Types and structs

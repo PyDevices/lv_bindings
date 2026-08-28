@@ -142,6 +142,10 @@ surface. The next structural step is to migrate those decisions to the
 declaration IR; the current shared snapshot prevents a target from reparsing
 or reanalyzing the translation unit while preserving the C output gate.
 
+- [x] Add a read-only declaration index for alias resolution, first-argument
+  relationships, and struct-function classification. The index is used by
+  legacy-facing queries with an AST fallback for synthetic helper declarations.
+
 ### Gate
 
 - [ ] All targets consume the same parsed IR.

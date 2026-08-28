@@ -167,6 +167,138 @@ class DeclarationIR:
         }
 
 
+@dataclass(frozen=True)
+class DeclarationIndex:
+    """Read-only indexes and relationship queries over :class:`DeclarationIR`."""
+
+    ir: DeclarationIR
+    functions_by_name: Mapping[str, CFunction]
+    structs_by_name: Mapping[str, CStruct]
+    enums_by_name: Mapping[str, CEnum]
+    typedefs_by_name: Mapping[str, CTypedef]
+    struct_aliases: Mapping[str, str]
+    struct_tag_aliases: Mapping[str, str]
+    module_prefix: str = "lv"
+
+    @classmethod
+    def from_ir(cls, ir: DeclarationIR, module_prefix: str = "lv") -> "DeclarationIndex":
+        structs = {}
+        aliases = {}
+        tag_aliases = {}
+        for struct in ir.structs:
+            if struct.name:
+                structs[struct.name] = struct
+            for alias in struct.typedef_names:
+                structs[alias] = struct
+                if struct.name:
+                    aliases[alias] = struct.name
+                    tag_aliases.setdefault(struct.name, alias)
+        enums = {}
+        for enum in ir.enums:
+            if enum.name:
+                enums[enum.name] = enum
+            for alias in enum.typedef_names:
+                enums[alias] = enum
+        return cls(
+            ir=ir,
+            functions_by_name={function.name: function for function in ir.functions},
+            structs_by_name=structs,
+            enums_by_name=enums,
+            typedefs_by_name={typedef.name: typedef for typedef in ir.typedefs},
+            struct_aliases=aliases,
+            struct_tag_aliases=tag_aliases,
+            module_prefix=module_prefix,
+        )
+
+    @staticmethod
+    def _without_qualifiers(type_: CType) -> str:
+        if type_.kind in {"identifier", "primitive", "struct", "union", "enum"}:
+            return type_.name or type_.canonical()
+        if type_.kind == "pointer":
+            target = (
+                DeclarationIndex._without_qualifiers(type_.target)
+                if type_.target is not None
+                else "void"
+            )
+            return target + " *"
+        if type_.kind == "array":
+            element = (
+                DeclarationIndex._without_qualifiers(type_.element)
+                if type_.element is not None
+                else "<unknown>"
+            )
+            return element + "".join("[" + dim + "]" for dim in type_.dimensions)
+        return type_.canonical()
+
+    @classmethod
+    def _first_argument_type_name(cls, type_: CType) -> Optional[str]:
+        # This mirrors the legacy query: inspect one pointer/array layer, but
+        # retain a second pointer layer (T ** is not a T struct receiver).
+        if type_.kind in {"pointer", "array"}:
+            type_ = type_.target or type_.element
+        if type_ is None:
+            return None
+        return cls._without_qualifiers(type_)
+
+    def first_argument_type_name(self, function_name: str) -> Optional[str]:
+        function = self.functions_by_name.get(function_name)
+        if function is None or not function.parameters:
+            return None
+        name = self._first_argument_type_name(function.parameters[0].type)
+        return self.struct_tag_aliases.get(name, name)
+
+    def _struct_identity(self, name: Optional[str]) -> Optional[str]:
+        if not name:
+            return None
+        struct = self.structs_by_name.get(name)
+        if struct is not None and struct.name:
+            return struct.name
+        return self.struct_aliases.get(name, name)
+
+    @staticmethod
+    def _struct_stems(name: Optional[str]) -> Tuple[str, ...]:
+        if not name:
+            return ()
+        names = {name}
+        if name.endswith("_t"):
+            names.add(name[:-2])
+        return tuple(names)
+
+    def is_struct_function(self, function_name: str, struct_name: str) -> bool:
+        if struct_name not in self.structs_by_name:
+            return False
+        first_type = self.first_argument_type_name(function_name)
+        if self._struct_identity(first_type) != self._struct_identity(struct_name):
+            return False
+        # Match the legacy relationship rule exactly: a common identifier
+        # prefix is enough, even when the first argument's struct tag has a
+        # longer suffix (for example lv_obj_class_t/lv_obj_event_base).
+        function_name = self._simplify(function_name)
+        struct_name = self._simplify(struct_name)
+        common_length = 0
+        for left, right in zip(function_name, struct_name):
+            if left != right:
+                break
+            common_length += 1
+        if common_length == 0:
+            return False
+        index = common_length - 1
+        while index > 0 and function_name[index] != "_":
+            index -= 1
+        return function_name[index + 1 :] != function_name
+
+    def _simplify(self, name: str) -> str:
+        prefix = self.module_prefix + "_"
+        return name[len(prefix) :] if name.startswith(prefix) else name
+
+    def struct_functions(self, struct_name: str) -> Tuple[CFunction, ...]:
+        return tuple(
+            function
+            for function in self.ir.functions
+            if self.is_struct_function(function.name, struct_name)
+        )
+
+
 class _Converter:
     def __init__(self) -> None:
         self.generator = c_generator.CGenerator()

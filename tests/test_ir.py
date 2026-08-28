@@ -1,4 +1,4 @@
-from binding.ir import parse_source
+from binding.ir import DeclarationIndex, parse_source
 
 
 def test_parse_source_captures_target_neutral_declarations():
@@ -43,3 +43,20 @@ def test_parse_source_preserves_arrays_and_variadic_functions():
     function = ir.functions_by_name["format"]
     assert function.variadic
     assert function.parameters[0].type.canonical() == "const char *"
+
+
+def test_declaration_index_resolves_aliases_and_struct_methods():
+    ir = parse_source(
+        "typedef struct widget { int value; } widget_t; "
+        "int widget_set_value(widget_t *widget, int value); "
+        "int helper(widget_t *widget);",
+        filename="index.h",
+    )
+
+    index = DeclarationIndex.from_ir(ir)
+
+    assert index.first_argument_type_name("widget_set_value") == "widget_t"
+    assert [function.name for function in index.struct_functions("widget_t")] == [
+        "widget_set_value"
+    ]
+    assert index.structs_by_name["widget_t"].name == "widget"

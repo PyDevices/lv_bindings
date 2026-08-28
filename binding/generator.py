@@ -19,6 +19,7 @@ _ANALYSIS_STATE_NAMES = (
     "parsed_ast",
     "ast",
     "declaration_ir",
+    "declaration_index",
     "lvgl_json",
     "forward_struct_decls",
     "typedefs",
@@ -53,7 +54,6 @@ def prepare_analysis(args, source, pp_cmd, cmd_line, emit_print):
 
     from . import runtime
     from .analyze import analyze
-    from .ir import parse_ast
 
     runtime.reset()
     ctx = BindingContext(args, source, pp_cmd, cmd_line, emit_print)
@@ -65,8 +65,7 @@ def prepare_analysis(args, source, pp_cmd, cmd_line, emit_print):
     analyze()
     runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
     runtime.sync_to_ctx(ctx)
-    ctx.declaration_ir = parse_ast(ctx.ast)
-    runtime.set_("declaration_ir", ctx.declaration_ir)
+    ctx.declaration_ir = runtime.get("declaration_ir")
     runtime.publish(__import__("sys").modules)
     runtime.sync_to_ctx(ctx)
     return ctx
