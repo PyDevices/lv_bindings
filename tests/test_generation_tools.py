@@ -17,6 +17,7 @@ from binding.generator import (
 )
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
+from binding.emit_backend import prepare_target_lowering
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -174,3 +175,21 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
 def test_backends_have_one_common_run_contract():
     assert tuple(BACKENDS) == ("micropython", "circuitpython", "cpython")
     assert {backend.name for backend in BACKENDS.values()} == set(BACKENDS)
+
+
+def test_target_lowering_setup_uses_common_defaults():
+    from binding import runtime
+
+    runtime.reset()
+    ctx = SimpleNamespace(args=SimpleNamespace(input=["fixture.h"]), headers=None)
+    prepare_target_lowering(
+        ctx,
+        target="cpython",
+        max_phase=7,
+    )
+
+    assert runtime.get("emit_options") == {"target": "cpython", "max_phase": 7}
+    assert runtime.get("headers") == ["fixture.h"]
+    assert runtime.get("generated_globals") == []
+    assert runtime.get("module_funcs") == []
+    assert runtime.get("generated_funcs") == {}

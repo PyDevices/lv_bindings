@@ -2,33 +2,10 @@
 
 from __future__ import print_function
 
-import collections
-
 from . import emit_c_micropython_style as emit_c_mod
 from . import runtime
 from .analyze import analyze, get_ctor, get_methods, has_ctor
-
-
-def _init_emit_defaults(ctx):
-    defaults = {
-        "generated_struct_functions": collections.OrderedDict(),
-        "struct_aliases": collections.OrderedDict(),
-        "callbacks_used_on_structs": collections.OrderedDict(),
-        "generated_callbacks": collections.OrderedDict(),
-        "generated_funcs": collections.OrderedDict(),
-        "enum_referenced": collections.OrderedDict(),
-        "generated_obj_names": collections.OrderedDict(),
-        "generated_globals": [],
-        "module_funcs": [],
-        "functions_not_generated": collections.OrderedDict(),
-        "cpython_struct_sizes": collections.OrderedDict(),
-    }
-    for name, value in defaults.items():
-        if name not in runtime.export_names():
-            continue
-        runtime.set_(name, value)
-    if not hasattr(ctx, "headers") or ctx.headers is None:
-        runtime.set_("headers", list(ctx.args.input))
+from .emit_backend import prepare_target_lowering
 
 
 def _finalize_cpython_metadata(ctx):
@@ -56,13 +33,9 @@ def _finalize_cpython_metadata(ctx):
 
 
 def emit_cpython(ctx):
-    runtime.set_(
-        "emit_options",
-        {"target": "cpython", "max_phase": 7},
-    )
+    prepare_target_lowering(ctx, target="cpython", max_phase=7)
     if not getattr(ctx, "_analysis_ready", False):
         analyze()
-    _init_emit_defaults(ctx)
     runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
     runtime.publish(__import__("sys").modules)
     emit_c_mod.emit_c()
