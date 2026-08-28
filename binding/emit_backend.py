@@ -44,9 +44,29 @@ class CallbackReturnLowering:
     return_value: str
 
 
+@dataclass(frozen=True)
+class TargetLoweringProfile:
+    """The small, explicit set of VM constraints visible to shared lowering."""
+
+    target: str
+    supports_dynamic_function_pointer: bool
+
+
+_TARGET_PROFILES = {
+    "micropython": TargetLoweringProfile("micropython", True),
+    "circuitpython": TargetLoweringProfile("circuitpython", True),
+    "cpython": TargetLoweringProfile("cpython", False),
+}
+
+
 def prepare_target_lowering(ctx, *, target, max_phase):
     """Set common emitter state without imposing a VM-specific C contract."""
+    try:
+        profile = _TARGET_PROFILES[target]
+    except KeyError:
+        raise ValueError("unsupported target lowering profile: %s" % target)
     runtime.set_("emit_options", {"target": target, "max_phase": max_phase})
+    runtime.set_("target_lowering_profile", profile)
     for name in _EMIT_DEFAULTS:
         if name not in runtime.export_names():
             continue
@@ -172,6 +192,26 @@ def conversion_available(*, conversions, type_name, generate_type):
         return True
     generate_type()
     return bool(conversions.get(type_name))
+
+
+def function_reuse_allowed(
+    *,
+    function_name,
+    original_name,
+    original_generated,
+    supports_dynamic_function_pointer,
+):
+    """Return whether two equivalent exported functions may share a wrapper.
+
+    A dynamic-function-pointer wrapper can safely stand in for any equivalent
+    LVGL declaration. A direct-symbol wrapper, used by the native CPython
+    backend, may only reuse itself: reusing it for another symbol would call
+    the wrong LVGL function. This is an implementation constraint, not a
+    public-API exception.
+    """
+    if not original_generated:
+        return False
+    return supports_dynamic_function_pointer or function_name == original_name
 
 
 def struct_pointer_helpers_source(

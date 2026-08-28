@@ -55,6 +55,7 @@ from .emit_backend import (
     callback_return_conversion_available,
     callback_return_lowering,
     conversion_available,
+    function_reuse_allowed,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     resolve_emitter_headers,
@@ -2268,7 +2269,14 @@ static {builtin_macro}(mp_{func_obj_name}_mpobj, {param_count}, mp_{func_name}, 
                 prototype_str = gen.visit(function_prototype(func))
                 if prototype_str in func_prototypes:
                     original_func = func_prototypes[prototype_str]
-                    if generated_funcs[original_func.name] == True:
+                    if function_reuse_allowed(
+                        function_name=func.name,
+                        original_name=original_func.name,
+                        original_generated=generated_funcs[original_func.name] is True,
+                        supports_dynamic_function_pointer=runtime.get(
+                            "target_lowering_profile"
+                        ).supports_dynamic_function_pointer,
+                    ):
                         print("/* Reusing %s for %s */" % (original_func.name, func.name))
                         emit_func_obj(
                             func.name,

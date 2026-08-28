@@ -21,6 +21,7 @@ from binding.emit_backend import (
     callback_return_conversion_available,
     callback_return_lowering,
     conversion_available,
+    function_reuse_allowed,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
@@ -209,6 +210,8 @@ def test_target_lowering_setup_uses_common_defaults():
     assert runtime.get("generated_globals") == []
     assert runtime.get("module_funcs") == []
     assert runtime.get("generated_funcs") == {}
+    assert runtime.get("target_lowering_profile").target == "cpython"
+    assert not runtime.get("target_lowering_profile").supports_dynamic_function_pointer
 
 
 def test_target_lowering_header_and_banner_policy_is_shared():
@@ -324,6 +327,27 @@ def test_conversion_available_retries_a_missing_mapping_once():
         generate_type=generate_resolved,
     )
     assert generated == ["missing", "resolved"]
+
+
+def test_function_reuse_policy_requires_dynamic_wrapper_for_distinct_symbols():
+    assert function_reuse_allowed(
+        function_name="lv_label_create",
+        original_name="lv_button_create",
+        original_generated=True,
+        supports_dynamic_function_pointer=True,
+    )
+    assert not function_reuse_allowed(
+        function_name="lv_obj_get_x",
+        original_name="lv_obj_get_y",
+        original_generated=True,
+        supports_dynamic_function_pointer=False,
+    )
+    assert not function_reuse_allowed(
+        function_name="lv_obj_get_x",
+        original_name="lv_obj_get_y",
+        original_generated=False,
+        supports_dynamic_function_pointer=True,
+    )
 
 
 def test_struct_pointer_helpers_preserve_target_null_and_warning_policy():

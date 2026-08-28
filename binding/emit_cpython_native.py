@@ -8,7 +8,11 @@ import copy
 from pycparser import c_ast
 
 from . import runtime
-from .emit_backend import callback_return_conversion_available, conversion_available
+from .emit_backend import (
+    callback_return_conversion_available,
+    conversion_available,
+    function_reuse_allowed,
+)
 from .helpers import (
     is_global_callback,
     is_method_of,
@@ -899,17 +903,16 @@ def gen_py_func(func, obj_name):
     if not struct_method:
         if prototype_str in func_prototypes:
             original = func_prototypes[prototype_str]
-            if generated_funcs.get(original.name) is True:
-                allow_alias = func.name == original.name
-                if (
-                    func.name.endswith("_create")
-                    and original.name.endswith("_create")
-                    and func.name != original.name
-                ):
-                    allow_alias = False
-                if allow_alias:
-                    generated_funcs[func.name] = original.name
-                    return
+            if function_reuse_allowed(
+                function_name=func.name,
+                original_name=original.name,
+                original_generated=generated_funcs.get(original.name) is True,
+                supports_dynamic_function_pointer=runtime.get(
+                    "target_lowering_profile"
+                ).supports_dynamic_function_pointer,
+            ):
+                generated_funcs[func.name] = original.name
+                return
         func_prototypes[prototype_str] = func
 
     return_type = get_type_fn(func.type.type, remove_quals=False)

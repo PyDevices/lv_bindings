@@ -390,7 +390,16 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   passed; CPython and CircuitPython Unix builds passed their shared smoke
   probe. The MicroPython Unix artifact is unchanged, but its full cmods build
   is currently blocked before LVGL by unrelated audioif SplitterTap.c errors
-  (audioroute_splitter_obj_t has no base/mono members).`
+  (audioroute_splitter_obj_t has no base/mono members). Tenth migration slice:
+  all three entries now initialize the same target-lowering state and select a
+  small explicit VM capability profile. Function reuse is shared policy: the
+  MP-compatible dynamic function-pointer backends can reuse equivalent
+  wrappers, while CPython's direct-symbol wrapper can only reuse itself so it
+  never calls another LVGL symbol accidentally. MicroPython's unbounded full
+  phase remains an explicit lifecycle requirement (a finite phase omits
+  LV_OBJ_TREE_WALK enum metadata), not an implicit default. Validation: 106
+  repository tests and binding.generate --check passed; generated artifacts
+  remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 
