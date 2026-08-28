@@ -132,8 +132,9 @@ Release workflow and tagging: [releasing-bindings.md](docs/releasing-bindings.md
 - **Interactive REPL**: On MicroPython (`machine.Timer`), Linux desktop (`librt`), and Windows (`uwin32`), you can construct LVGL widgets and drop out to the interactive `>>>` prompt without any loop—the UI and animations keep running live in the background.
 - **Standalone Desktop Applications**: Standalone scripts include `app.run()` to keep the desktop process alive.
 
-See [`python/README.md`](python/README.md). Edit `python/display_driver.py` here, then sync
-into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
+See [`python/README.md`](python/README.md). Edit `python/display_driver.py` here,
+commit the complete regenerated source, then sync that exact 40-character commit
+or release tag into each consumer.
 
 ## Consumers
 
@@ -141,4 +142,8 @@ into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
 |---|---|
 | [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython) | MicroPython C module: `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
 | [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | CircuitPython tree patches: `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
-| [lvgl-python](https://github.com/PyDevices/lvgl-python) | CPython extension & TestPyPI wheel publisher: `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` (see [releasing-bindings.md](docs/releasing-bindings.md#cpython-auto-release-lvgl-python)) |
+| [lvgl-python](https://github.com/PyDevices/lvgl-python) | CPython extension & TestPyPI wheel publisher: exact-commit `generated/lvgl_python.c`, `generated/lvgl.pyi`, `lvgl/`, `lv_conf.h`, and helpers (see [releasing-bindings.md](docs/releasing-bindings.md)) |
+
+Each consumer records the resolved source SHA in `LVGL_BINDINGS_COMMIT`.
+Consumer sync scripts reject branch names so downstream builds cannot silently
+move to a different generator or artifact set.

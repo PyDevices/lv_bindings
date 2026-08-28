@@ -1,0 +1,143 @@
+name: Linux integration
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+    inputs:
+      bindings-ref:
+        description: Exact bindings commit/tag to validate
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  embedded-unix:
+    name: ${{ matrix.runtime }} Unix build and smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime: [micropython, circuitpython]
+    steps:
+      - name: Check out bindings under test
+        uses: actions/checkout@v4
+        with:
+          path: lvgl-bindings
+          ref: ${{ inputs['bindings-ref'] || github.sha }}
+          submodules: recursive
+
+      - name: Check out cmods build orchestration
+        uses: actions/checkout@v4
+        with:
+          repository: PyDevices/cmods
+          ref: f2a7521427fee10c37657ed8858e8c34ade21649
+          path: integration
+
+      - name: Check out MicroPython consumer
+        if: matrix.runtime == 'micropython'
+        uses: actions/checkout@v4
+        with:
+          repository: PyDevices/lvgl-micropython
+          ref: 276195a09e01c09791a59b33081cd3d366365224
+          path: integration/lvgl-micropython
+
+      - name: Check out MicroPython v1.28.0
+        if: matrix.runtime == 'micropython'
+        uses: actions/checkout@v4
+        with:
+          repository: micropython/micropython
+          ref: v1.28.0
+          path: integration/micropython
+
+      - name: Check out CircuitPython consumer
+        if: matrix.runtime == 'circuitpython'
+        uses: actions/checkout@v4
+        with:
+          repository: PyDevices/lvgl-circuitpython
+          ref: a1acd7b2b33de31d60f191c0b35cfdfd22a2f888
+          path: integration/lvgl-circuitpython
+
+      - name: Check out CircuitPython 10.2.1
+        if: matrix.runtime == 'circuitpython'
+        uses: actions/checkout@v4
+        with:
+          repository: adafruit/circuitpython
+          ref: 10.2.1
+          path: integration/circuitpython
+
+      - name: Install native build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev libssl-dev pkg-config
+
+      - name: Link exact bindings checkout into cmods
+        run: |
+          bindings_sha=$(git -C lvgl-bindings rev-parse HEAD)
+          ln -s ../lvgl-bindings integration/lvgl-bindings
+          if [[ "${{ matrix.runtime }}" == micropython ]]; then
+            printf '%s\n' "$bindings_sha" > integration/lvgl-micropython/LVGL_BINDINGS_COMMIT
+          else
+            printf '%s\n' "$bindings_sha" > integration/lvgl-circuitpython/LVGL_BINDINGS_COMMIT
+          fi
+
+      - name: Build MicroPython Unix
+        if: matrix.runtime == 'micropython'
+        working-directory: integration
+        run: ./build_mp.sh --port unix --variant standard
+
+      - name: Smoke MicroPython Unix
+        if: matrix.runtime == 'micropython'
+        working-directory: integration
+        run: ./micropython/ports/unix/build-standard/micropython ./lvgl-bindings/tools/test_lvgl_smoke.py
+
+      - name: Build CircuitPython Unix
+        if: matrix.runtime == 'circuitpython'
+        working-directory: integration
+        run: ./build_cp.sh --port unix --variant coverage
+
+      - name: Smoke CircuitPython Unix
+        if: matrix.runtime == 'circuitpython'
+        working-directory: integration
+        run: ./circuitpython/ports/unix/build-coverage/micropython ./lvgl-bindings/tools/test_lvgl_smoke.py
+
+  cpython:
+    name: CPython extension build and smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out bindings under test
+        uses: actions/checkout@v4
+        with:
+          path: lvgl-bindings
+          ref: ${{ inputs.bindings-ref || github.sha }}
+          submodules: recursive
+
+      - name: Check out CPython consumer
+        uses: actions/checkout@v4
+        with:
+          repository: PyDevices/lvgl-python
+          ref: 68b577fc5d0e74a7345c06a6531ab4bc3009ef46
+          path: lvgl-python
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sync the exact bindings commit under test
+        working-directory: lvgl-python
+        env:
+          LV_BINDINGS_REPO: ${{ github.workspace }}/lvgl-bindings
+        run: ./scripts/sync_from_lvgl_bindings.sh --ref "${{ inputs['bindings-ref'] || github.sha }}"
+
+      - name: Build and test extension
+        working-directory: lvgl-python
+        run: |
+          python -m pip install -e .
+          python -m unittest discover -s tests -v
+          python ../lvgl-bindings/tools/test_lvgl_smoke.py
