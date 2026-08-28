@@ -280,7 +280,7 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 ### Handoff
 
-- Commit SHA: `bf4f1e0`
+- Commit SHA: `7500a7a`
 - Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `./scripts/verify_bindings.sh`
 - Notes: `The shared lvgl.pyi is emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, variables, and fixed arrays; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. Struct fields that shadow type names use private class-local TypeAlias declarations, and incompatible inherited widget signatures are marked with targeted mypy override notes. The dead legacy pyi emitter and its tests were removed; pyi_prototypes remains only for legacy C-generator metadata enrichment. binding.verify_pyi checks top-level and qualified member names, field/variable/enum annotations, constructors, receivers, static methods, variadics, defaults, aliases, and return types from the manifest; it runs in verify_bindings.sh. requirements-dev.txt pins mypy==2.3.1, and static checking passes. Generated C and CircuitPython header files were unchanged. Enum-value comparison, generic private-helper audit, overload handling, and runtime stub probes remain open.`
 
