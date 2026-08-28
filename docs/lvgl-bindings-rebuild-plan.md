@@ -456,7 +456,13 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   publishes or absorbs analysis globals. The active run is ContextVar-scoped,
   and a regression test verifies that analyzed functions and conversions do
   not leak onto the analyze module. Validation: 114 repository tests and
-  binding.generate --check passed; generated artifacts remain unchanged.`
+  binding.generate --check passed; generated artifacts remain unchanged.
+  Twenty-first migration slice: identifier and AST helpers now read the active
+  BindingContext directly, so helper regexes, parser state, and generator state
+  are no longer mirrored onto helper modules. Legacy export naming invokes the
+  context-backed helpers instead of treating mirrored attributes as readiness
+  flags. Validation: 114 repository tests and binding.generate --check passed;
+  generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

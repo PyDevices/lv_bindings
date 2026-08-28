@@ -67,11 +67,7 @@ from .util import memoize
 def _emit():
     from . import runtime
 
-    if "gen" in runtime.__dict__:
-        return runtime
-    import sys
-
-    return sys.modules["binding.analyze"]
+    return runtime.current_context()
 
 
 @memoize
@@ -153,4 +149,3 @@ def function_prototype(func):
     func_proto = c_ast.Typename(name=None, quals=[], align=[], type=ptr_decl)
 
     return func_proto
-

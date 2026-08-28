@@ -37,14 +37,16 @@ def _legacy_base(name: str, kind: str) -> str:
     from .helpers import get_enum_name, sanitize
 
     def _simplify(name: str) -> str:
-        if getattr(helpers, "lv_func_pattern", None) is None:
+        try:
+            return helpers.simplify_identifier(name)
+        except RuntimeError:
             return name
-        return helpers.simplify_identifier(name)
 
     def _enum_name(name: str) -> str:
-        if getattr(helpers, "lv_enum_name_pattern", None) is None:
+        try:
+            return sanitize(get_enum_name(name))
+        except RuntimeError:
             return sanitize(name)
-        return sanitize(get_enum_name(name))
 
     if kind == "object":
         return sanitize(name)

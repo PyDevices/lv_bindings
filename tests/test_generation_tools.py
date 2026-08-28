@@ -190,6 +190,7 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
 
 def test_analysis_state_lives_on_context_not_analyze_module():
     from binding import analyze as analyze_module
+    from binding import helpers, parse
 
     source = "typedef struct fixture { int value; } fixture_t; void lv_init(void);"
     args = SimpleNamespace(
@@ -200,6 +201,9 @@ def test_analysis_state_lives_on_context_not_analyze_module():
     assert prepared.funcs
     assert "funcs" not in analyze_module.__dict__
     assert "mp_to_lv" not in analyze_module.__dict__
+    assert "lv_func_pattern" not in helpers.__dict__
+    assert "lv_enum_name_pattern" not in helpers.__dict__
+    assert "gen" not in parse.__dict__
 
 
 def test_backends_have_one_common_run_contract():

@@ -20,8 +20,6 @@ def current_context():
 _CONSUMER_MODULES = (
     "binding.emit_c_micropython_style",
     "binding.emit_c_cpython",
-    "binding.helpers",
-    "binding.parse",
 )
 
 
