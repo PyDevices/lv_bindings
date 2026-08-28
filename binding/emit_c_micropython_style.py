@@ -51,7 +51,11 @@ from .parse import (
     remove_quals,
 )
 from . import runtime
-from .emit_backend import resolve_emitter_headers, target_banner
+from .emit_backend import (
+    mp_obj_get_ull_to_bytes_source,
+    resolve_emitter_headers,
+    target_banner,
+)
 from .runtime_exports import filter_module_funcs_for_target
 from .util import eprint, memoize
 
@@ -147,22 +151,7 @@ MP_DEFINE_EXCEPTION(LvReferenceError, Exception)
     # Emit Mpy helper functions
     #
 
-    # Dual-version: v1.28.0 / CircuitPython expose mp_obj_int_to_bytes_impl;
-    # MicroPython master (1.29+) replaced it with mp_obj_int_to_bytes(...).
-    # Prefer CIRCUITPY / VERSION_MAJOR+MINOR over MICROPY_MAKE_VERSION(...):
-    # CircuitPython's multi-file -DNO_QSTR preprocess can leave MAKE_VERSION in a
-    # state where function-like use in #if fails to parse.
-    _mp_obj_get_ull_to_bytes = (
-        "#if defined(CIRCUITPY)\n"
-        "    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);\n"
-        "#elif defined(MICROPY_VERSION_MAJOR) && defined(MICROPY_VERSION_MINOR) && \\\n"
-        "    ((MICROPY_VERSION_MAJOR > 1) || "
-        "(MICROPY_VERSION_MAJOR == 1 && MICROPY_VERSION_MINOR > 28))\n"
-        "    mp_obj_int_to_bytes(obj, sizeof(val), (byte*)&val, big_endian, false, false);\n"
-        "#else\n"
-        "    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);\n"
-        "#endif"
-    )
+    _mp_obj_get_ull_to_bytes = mp_obj_get_ull_to_bytes_source()
 
     print(
         """

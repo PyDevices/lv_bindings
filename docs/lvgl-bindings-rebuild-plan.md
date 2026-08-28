@@ -357,7 +357,13 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   passed; binding.generate --check passed. Third migration slice: CPython now
   invokes its native emitter directly; the obsolete MicroPython-style dispatch
   path was removed. This is a clean-break backend boundary, not a compatibility
-  wrapper, and preserves generated artifacts.`
+  wrapper, and preserves generated artifacts. Fourth migration slice: the
+  MicroPython/CircuitPython-safe 64-bit integer conversion lowering is now one
+  tested backend primitive used by both native emitters. It preserves the
+  CircuitPython and pre-1.29 compatibility helper while selecting
+  MicroPython 1.29+'s renamed API at compile time. Validation: 100 repository
+  tests passed; binding.generate --check passed; generated artifacts remain
+  unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

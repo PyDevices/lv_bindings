@@ -51,7 +51,11 @@ from .parse import (
     remove_quals,
 )
 from . import runtime
-from .emit_backend import resolve_emitter_headers, target_banner
+from .emit_backend import (
+    mp_obj_get_ull_to_bytes_source,
+    resolve_emitter_headers,
+    target_banner,
+)
 from .runtime_exports import filter_module_funcs_for_target
 from .util import eprint, memoize
 
@@ -68,6 +72,8 @@ def emit_c():
     _emit_target = emit_options.get("target", "micropython")
     _emit_max_phase = emit_options.get("max_phase")
     _target_banner = target_banner(_emit_target, include=_emit_target == "cpython")
+
+    _mp_obj_get_ull_to_bytes = mp_obj_get_ull_to_bytes_source()
 
     print(
         """
@@ -947,7 +953,7 @@ static unsigned long long mp_obj_get_ull(mp_obj_t obj)
 
     unsigned long long val = 0;
     bool big_endian = !(__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__);
-    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);
+    __MP_OBJ_GET_ULL_TO_BYTES__
     return val;
 }
 
@@ -1104,7 +1110,7 @@ MP_ARRAY_CONVERTOR(i32ptr, 4, true)
 MP_ARRAY_CONVERTOR(u64ptr, 8, false)
 MP_ARRAY_CONVERTOR(i64ptr, 8, true)
 
-"""
+""".replace("__MP_OBJ_GET_ULL_TO_BYTES__", _mp_obj_get_ull_to_bytes)
     )
 
     #

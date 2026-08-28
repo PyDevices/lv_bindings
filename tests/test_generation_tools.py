@@ -18,6 +18,7 @@ from binding.generator import (
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
 from binding.emit_backend import (
+    mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
     resolve_emitter_headers,
     target_banner,
@@ -215,3 +216,12 @@ def test_target_lowering_header_and_banner_policy_is_shared():
     assert resolve_emitter_headers(["lvgl.h"]) == ["lvgl.h", "src/lvgl_private.h"]
     assert target_banner("cpython", include=True) == " *\n * Target: cpython\n"
     assert target_banner("micropython", include=False) == ""
+
+
+def test_mp_64_bit_integer_lowering_is_shared_and_version_safe():
+    source = mp_obj_get_ull_to_bytes_source()
+
+    assert "#if defined(CIRCUITPY)" in source
+    assert "MICROPY_VERSION_MAJOR" in source
+    assert "mp_obj_int_to_bytes(obj, sizeof(val)" in source
+    assert source.count("mp_obj_int_to_bytes_impl") == 2
