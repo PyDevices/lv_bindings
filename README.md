@@ -73,6 +73,7 @@ Regenerate after changing `lvgl/`, `lv_conf.h`, or `binding/`, then commit the u
 ./regenerate_lvcp.sh          # CircuitPython → lvgl_circuitpython.c + lvgl_circuitpython.h + …
 ./regenerate_lvpy.sh          # CPython → lvgl_python.c + lvgl.pp/json/pyi
 ./regenerate_all.sh           # All three targets (release workflow)
+./regenerate_all.sh --pyi-only # Shared lvgl.pyi only; leaves C and IR untouched
 ```
 
 Each regenerate script is self-contained: it preprocesses LVGL headers and writes
@@ -81,6 +82,10 @@ Each regenerate script is self-contained: it preprocesses LVGL headers and write
 Per-target scripts read `LV_NAMING_STYLE` from the environment (`pythonic` for PEP 8-style
 export names; default is legacy / MP-shaped). Pass `--pythonic` to `regenerate_all.sh`
 to set that for all three targets.
+
+The shared stub is generated from the existing `generated/lvgl.json` and
+`generated/lvgl.pp`. Use `--pyi-only` when changing typing enrichment so the C
+bindings and their IR inputs are not regenerated.
 
 ```bash
 ./scripts/verify_bindings.sh  # Regenerate all targets + regression checks
@@ -109,6 +114,5 @@ into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
 | [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython) | MicroPython C module: `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
 | [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | CircuitPython tree patches: `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
 | [lvgl-python](https://github.com/PyDevices/lvgl-python) | CPython extension & TestPyPI wheel publisher: `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` (see [releasing-bindings.md](docs/releasing-bindings.md#cpython-auto-release-lvgl-python)) |
-
 
 

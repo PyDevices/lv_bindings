@@ -67,8 +67,8 @@ _OBJ_POINTER_TYPES = frozenset({"lv_obj_t*", "obj*"})
 _HELPER_STRUCT_STUBS = frozenset({"C_Pointer"})
 
 # Composite typedefs: bitmask unions of module enums (no dedicated enum type).
-_COMPOSITE_TYPEDEF_TYPES: Dict[str, str] = {
-    "style_selector_t": "int | PART | STATE",
+_COMPOSITE_TYPEDEF_ENUMS: Dict[str, tuple[str, ...]] = {
+    "style_selector_t": ("PART", "STATE"),
 }
 
 # C typedefs aliased to module-level enums (members copied from widget nested enums).
@@ -146,6 +146,7 @@ class PyiEmitter:
         self.callback_typedefs: Mapping[str, Dict[str, Any]] = metadata.get(
             "callback_typedefs", _CALLBACK_TYPEDEFS
         )
+        self.type_aliases: Mapping[str, str] = metadata.get("type_aliases", {})
 
     def emit(self, out: TextIO) -> None:
         self.lines = []
@@ -171,8 +172,6 @@ class PyiEmitter:
         self._add("# LVGL {}".format(self.lvgl_version))
         self._add("# Naming style: {}".format(self.naming_style))
         self._add('"""Type stubs for LVGL Python bindings (auto-generated)."""')
-        self._add("from __future__ import annotations")
-        self._add()
         self._add("from collections.abc import Callable")
         self._add("from typing import Any, ClassVar")
         self._add()
@@ -228,8 +227,12 @@ class PyiEmitter:
                 self._add(f"class {safe}(Struct): ...")
                 continue
             self._add(f"class {safe}(Struct):")
+            emitted_fields: Set[str] = set()
             for field in fields:
                 field_name = sanitize(field.get("name") or "field")
+                if field_name in emitted_fields:
+                    continue
+                emitted_fields.add(field_name)
                 field_type = self._map_type(str(field.get("type", "Any")))
                 self._add(f"    {field_name}: {field_type}")
             for method_name, info in methods:
@@ -400,13 +403,13 @@ class PyiEmitter:
         receiver_struct: Optional[str] = None,
     ) -> str:
         args = list(info.get("args", []))
-        if instance_method:
+        if instance_method and not info.get("receiver_stripped"):
             args = strip_receiver_args(
                 args,
                 receiver_obj=receiver_obj,
                 receiver_struct=receiver_struct,
             )
-        params = self._format_params(args)
+        params = self._format_params(args, reserved={"self"} if instance_method else None)
         if instance_method:
             params = f"self{', ' + params if params else ''}"
         return_type = self._format_return_type(
@@ -419,13 +422,24 @@ class PyiEmitter:
             return f"{safe_name}({params}) -> {return_type}: ..."
         return f"{safe_name}() -> {return_type}: ..."
 
-    def _format_params(self, args: Sequence[Mapping[str, Any]]) -> str:
+    def _format_params(
+        self,
+        args: Sequence[Mapping[str, Any]],
+        *,
+        reserved: Optional[Set[str]] = None,
+    ) -> str:
         parts: List[str] = []
+        used = set(reserved or ())
         for arg in args:
-            arg_name = sanitize(arg.get("name") or "arg")
-            if arg_name in _PY_KEYWORDS:
-                arg_name = f"_{arg_name}"
-            parts.append(f"{arg_name}: {self._format_arg_type(arg)}")
+            base_name = sanitize(arg.get("name") or "arg")
+            arg_name = base_name
+            suffix = 2
+            while arg_name in used:
+                arg_name = f"{base_name}{suffix}"
+                suffix += 1
+            used.add(arg_name)
+            prefix = "*" if arg.get("type") == "..." else ""
+            parts.append(f"{prefix}{arg_name}: {self._format_arg_type(arg)}")
         return ", ".join(parts)
 
     def _format_callback_type(self, func_info: Mapping[str, Any]) -> str:
@@ -498,14 +512,19 @@ class PyiEmitter:
             return export_name(c_type, "struct")
         if c_type in self.known_objects:
             return export_name(c_type, "object")
-        if c_type.endswith(("_cb_t", "_xcb_t")):
-            typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
-            if typedef and isinstance(typedef.get("function"), Mapping):
-                return self._format_callback_type(typedef["function"])
+        typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
+        if typedef and isinstance(typedef.get("function"), Mapping):
+            return self._format_callback_type(typedef["function"])
         return self._map_type(c_type)
 
     def _resolve_enum_typedef(self, c_type: str) -> Optional[str]:
         enum_name = self.enum_typedefs.get(c_type) or _LEGACY_ENUM_TYPEDEFS.get(c_type)
+        if enum_name and "." in enum_name:
+            obj_name, nested_enum = enum_name.split(".", 1)
+            return "{}.{}".format(
+                export_name(obj_name, "object"),
+                export_name(nested_enum, "enum"),
+            )
         if enum_name and enum_name in self.enum_names:
             return export_name(enum_name, "enum")
         alias_enum = _MODULE_ALIAS_ENUM_TYPEDEFS.get(c_type)
@@ -531,7 +550,7 @@ class PyiEmitter:
 
     def _map_type(self, c_type: str) -> str:
         c_type = self._normalize_struct_typedef(c_type)
-        if c_type in {"int", "bool", "float", "str"}:
+        if c_type in {"Any", "None", "int", "bool", "float", "str"}:
             return c_type
         if c_type in {
             "int8_t",
@@ -549,9 +568,10 @@ class PyiEmitter:
             return "int"
         if c_type in _OBJ_POINTER_TYPES or c_type == "obj_t":
             return export_name("obj", "object")
-        composite = _COMPOSITE_TYPEDEF_TYPES.get(c_type)
-        if composite is not None:
-            return composite
+        composite_enums = _COMPOSITE_TYPEDEF_ENUMS.get(c_type)
+        if composite_enums is not None:
+            exported = [export_name(name, "enum") for name in composite_enums]
+            return " | ".join(["int", *exported])
         resolved_enum = self._resolve_enum_typedef(c_type)
         if resolved_enum is not None:
             return self._enum_type_with_int(resolved_enum)
@@ -566,10 +586,12 @@ class PyiEmitter:
             if typedef and isinstance(typedef.get("function"), Mapping):
                 return self._format_callback_type(typedef["function"])
             return "Callable[..., Any]"
-        if c_type.endswith(("_cb_t", "_xcb_t")):
-            typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
-            if typedef and isinstance(typedef.get("function"), Mapping):
-                return self._format_callback_type(typedef["function"])
+        typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
+        if typedef and isinstance(typedef.get("function"), Mapping):
+            return self._format_callback_type(typedef["function"])
+        alias = self.type_aliases.get(c_type)
+        if alias is not None and alias != c_type:
+            return self._map_type(alias)
         if c_type in self.known_structs:
             return export_name(c_type, "struct")
         if c_type in self.known_objects:

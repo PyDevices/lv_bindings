@@ -18,11 +18,12 @@ LVGL_H="$LVGL_DIR/lvgl.h"
 
 usage() {
     cat <<'EOF'
-Usage: ./regenerate_all.sh [--dry-run] [--no-commit] [--no-tag] [--pythonic]
+Usage: ./regenerate_all.sh [--dry-run] [--no-commit] [--no-tag] [--pyi-only] [--pythonic]
 
   --dry-run     Show planned tag and commit; do not regenerate, commit, or tag.
   --no-commit   Regenerate only; do not create a git commit.
   --no-tag      Regenerate (and commit unless --no-commit); do not create a tag.
+  --pyi-only    Regenerate generated/lvgl.pyi only; do not generate C, commit, or tag.
   --pythonic    PEP 8-style Python export names (default: legacy / MP-shaped)
 EOF
 }
@@ -30,12 +31,14 @@ EOF
 DRY_RUN=0
 NO_COMMIT=0
 NO_TAG=0
+PYI_ONLY=0
 PYTHONIC=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dry-run) DRY_RUN=1; shift ;;
         --no-commit) NO_COMMIT=1; shift ;;
         --no-tag) NO_TAG=1; shift ;;
+        --pyi-only) PYI_ONLY=1; shift ;;
         --pythonic) PYTHONIC=1; shift ;;
         -h|--help) usage; exit 0 ;;
         *) echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
@@ -47,9 +50,37 @@ if [[ "$DRY_RUN" -eq 1 && ( "$NO_COMMIT" -eq 1 || "$NO_TAG" -eq 1 ) ]]; then
     exit 1
 fi
 
+if [[ "$PYI_ONLY" -eq 1 && ( "$DRY_RUN" -eq 1 || "$NO_COMMIT" -eq 1 || "$NO_TAG" -eq 1 ) ]]; then
+    echo "Error: --pyi-only cannot be combined with release-control flags" >&2
+    exit 1
+fi
+
 if [[ ! -f "$LVGL_H" ]]; then
     echo "Error: $LVGL_H not found. Run: git submodule update --init lvgl" >&2
     exit 1
+fi
+
+if [[ "$PYI_ONLY" -eq 1 ]]; then
+    if [[ -x "$LV_BINDINGS_DIR/.venv/bin/python3" ]]; then
+        PYTHON="$LV_BINDINGS_DIR/.venv/bin/python3"
+    else
+        PYTHON=python3
+    fi
+    NAMING_ARGS=()
+    if [[ "$PYTHONIC" -eq 1 ]]; then
+        NAMING_ARGS=(--naming-style pythonic)
+    else
+        unset LV_NAMING_STYLE
+    fi
+    echo "==> Regenerate generated/lvgl.pyi only"
+    (
+        cd "$LV_BINDINGS_DIR"
+        "$PYTHON" -m binding.emit_pyi \
+            --generated-dir "$LV_BINDINGS_DIR/generated" \
+            "${NAMING_ARGS[@]}"
+    )
+    echo "Done. No C, IR, commit, or tag was generated."
+    exit 0
 fi
 
 read_lvgl_version() {

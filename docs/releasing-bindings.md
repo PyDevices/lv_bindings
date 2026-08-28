@@ -118,6 +118,8 @@ Run this before publishing when you change the generator or LVGL config
 ## Type stubs (`generated/lvgl.pyi`)
 
 Regenerated with every binding release. Used by Pylance, basedpyright, and mypy.
+For typing-generator work, run `./regenerate_all.sh --pyi-only`; this reads the
+existing shared IR and preprocessed header and does not regenerate C, commit, or tag.
 
 **CPython (`pydevices-lvgl`):** `pip install -e .` copies `generated/lvgl.pyi` beside
 the built `lvgl*.so` / `.pyd`. Wheels from this repo include the same file next to

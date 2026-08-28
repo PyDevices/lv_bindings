@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from binding.pyi_prototypes import (
     enrich_function_info,
     enrich_ir_metadata,

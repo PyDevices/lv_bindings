@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
+
+from pycparser import c_ast, c_generator, c_parser
+from pycparser.c_parser import ParseError
 
 _FUNC_PROTO_RE = re.compile(
     r"^(?:static\s+inline\s+)?"
@@ -80,6 +84,84 @@ _OBJ_PARAM_NAMES = frozenset(
         "relative_to",
     }
 )
+
+_C_GENERATOR = c_generator.CGenerator()
+
+# Widget enum typedefs whose exported nested-enum name does not follow the
+# usual ``lv_<widget>_<nested enum>_t`` spelling.
+_WIDGET_ENUM_TYPEDEF_OVERRIDES: Dict[str, str] = {
+    "barcode_encoding_t": "barcode.ENCODING_CODE128",
+    "menu_mode_header_t": "menu.HEADER",
+    "menu_mode_root_back_button_t": "menu.ROOT_BACK_BUTTON",
+    "obj_tree_walk_res_t": "obj.TREE_WALK",
+}
+
+# Module enum typedefs whose C and Python namespace spellings differ.
+_MODULE_ENUM_TYPEDEF_OVERRIDES: Dict[str, str] = {
+    "animimg_part_t": "ANIM_IMAGE_PART",
+    "cache_reserve_cond_res_t": "CACHE_RESERVE_COND",
+    "indev_gesture_type_t": "INDEV_GESTURE",
+}
+
+
+@lru_cache(maxsize=8)
+def _parse_pp_ast_cached(path: str, mtime_ns: int, size: int) -> Any:
+    del mtime_ns, size
+    text = Path(path).read_text(encoding="utf-8", errors="replace")
+    return c_parser.CParser().parse(text, filename=path)
+
+
+def _parse_pp_ast(pp_path: Path) -> Optional[Any]:
+    """Parse a complete preprocessed header, or return None for C fragments.
+
+    The committed ``generated/lvgl.pp`` is self-contained and parses as a C
+    translation unit. Returning None keeps the regex fallback available for
+    callers that intentionally pass incomplete snippets with undeclared types.
+    """
+    resolved = pp_path.resolve()
+    stat = resolved.stat()
+    try:
+        return _parse_pp_ast_cached(str(resolved), stat.st_mtime_ns, stat.st_size)
+    except ParseError:
+        return None
+
+
+def _iter_function_decls(ast: Any):
+    for node in ast.ext:
+        decl = node.decl if isinstance(node, c_ast.FuncDef) else node
+        if isinstance(decl, c_ast.Decl) and isinstance(decl.type, c_ast.FuncDecl):
+            yield decl
+
+
+def _normalize_ast_type(type_node: Any) -> str:
+    if isinstance(type_node, c_ast.ArrayDecl):
+        return "Any"
+    if isinstance(type_node, c_ast.PtrDecl) and isinstance(type_node.type, c_ast.FuncDecl):
+        return "callback"
+    if isinstance(type_node, c_ast.TypeDecl) and isinstance(
+        type_node.type, (c_ast.Struct, c_ast.Union)
+    ):
+        return "Any"
+    return _normalize_c_type(_C_GENERATOR.visit(type_node))
+
+
+def _function_signature_from_ast(func_decl: Any) -> Dict[str, Any]:
+    args: List[Dict[str, Any]] = []
+    params = func_decl.args.params if func_decl.args is not None else []
+    for param in params:
+        if isinstance(param, c_ast.EllipsisParam):
+            args.append({"type": "...", "name": "args"})
+            continue
+        param_type = _normalize_ast_type(param.type)
+        param_name = getattr(param, "name", None)
+        if param_type == "NoneType" and not param_name:
+            continue
+        args.append({"type": param_type, "name": param_name or "arg"})
+    return {
+        "type": "function",
+        "args": args,
+        "return_type": normalize_return_type(_C_GENERATOR.visit(func_decl.type)),
+    }
 
 
 def split_params(params: str) -> List[str]:
@@ -183,6 +265,14 @@ def normalize_return_type(type_str: str) -> str:
 
 
 def parse_pp_prototypes(pp_path: Path) -> Dict[str, Dict[str, Any]]:
+    ast = _parse_pp_ast(pp_path)
+    if ast is not None:
+        return {
+            decl.name: _function_signature_from_ast(decl.type)
+            for decl in _iter_function_decls(ast)
+            if decl.name and decl.name.startswith("lv_")
+        }
+
     text = pp_path.read_text(encoding="utf-8", errors="replace")
     index: Dict[str, Dict[str, Any]] = {}
     for match in _FUNC_PROTO_RE.finditer(text):
@@ -252,6 +342,32 @@ def _refine_callback_signature(
 
 
 def parse_pp_callback_typedefs(pp_path: Path) -> Dict[str, Dict[str, Any]]:
+    ast = _parse_pp_ast(pp_path)
+    if ast is not None:
+        typedefs: Dict[str, Dict[str, Any]] = {}
+        for node in ast.ext:
+            if not isinstance(node, c_ast.Typedef) or not node.name.startswith("lv_"):
+                continue
+            if not isinstance(node.type, c_ast.PtrDecl) or not isinstance(
+                node.type.type, c_ast.FuncDecl
+            ):
+                continue
+            export = _typedef_export_name(node.name)
+            parsed = _function_signature_from_ast(node.type.type)
+            signature = _refine_callback_signature(
+                export,
+                {
+                    "type": "callback",
+                    "function": {
+                        "args": parsed["args"],
+                        "return_type": parsed["return_type"],
+                    },
+                },
+            )
+            typedefs[node.name] = signature
+            typedefs[export] = signature
+        return typedefs
+
     text = pp_path.read_text(encoding="utf-8", errors="replace")
     typedefs: Dict[str, Dict[str, Any]] = {}
     for match in _TYPEDEF_CB_RE.finditer(text):
@@ -267,6 +383,17 @@ def parse_pp_callback_typedefs(pp_path: Path) -> Dict[str, Dict[str, Any]]:
 
 
 def parse_pp_enum_typedef_names(pp_path: Path) -> List[str]:
+    ast = _parse_pp_ast(pp_path)
+    if ast is not None:
+        return [
+            _typedef_export_name(node.name)
+            for node in ast.ext
+            if isinstance(node, c_ast.Typedef)
+            and node.name.startswith("lv_")
+            and isinstance(node.type, c_ast.TypeDecl)
+            and isinstance(node.type.type, c_ast.Enum)
+        ]
+
     text = pp_path.read_text(encoding="utf-8", errors="replace")
     names: List[str] = []
     for match in _ENUM_TYPEDEF_RE.finditer(text):
@@ -290,13 +417,25 @@ def build_enum_typedef_map(
     enum_names: Sequence[str],
     pp_path: Optional[Path] = None,
     *,
+    objects: Optional[Mapping[str, Any]] = None,
     extra: Optional[Mapping[str, str]] = None,
 ) -> Dict[str, str]:
     """Map exported C enum typedef names (e.g. screen_load_anim_t) to IR enum keys."""
     enum_set = set(enum_names)
     mapping: Dict[str, str] = dict(_LEGACY_ENUM_TYPEDEFS)
+    mapping.update(_MODULE_ENUM_TYPEDEF_OVERRIDES)
+    mapping.update(_WIDGET_ENUM_TYPEDEF_OVERRIDES)
     if extra:
         mapping.update(extra)
+    if objects:
+        for obj_name, obj_data in objects.items():
+            for member_name, member_info in obj_data.get("members", {}).items():
+                if member_info.get("type") != "enum_type":
+                    continue
+                typedef_name = f"{obj_name}_{member_name.lower()}_t"
+                # obj_flag_t intentionally uses the module-level OBJ_FLAG alias.
+                if typedef_name != "obj_flag_t":
+                    mapping.setdefault(typedef_name, f"{obj_name}.{member_name}")
     if pp_path is not None and pp_path.is_file():
         for typedef_name in parse_pp_enum_typedef_names(pp_path):
             if typedef_name in mapping:
@@ -308,7 +447,63 @@ def build_enum_typedef_map(
     return mapping
 
 
+def parse_pp_type_aliases(pp_path: Path) -> Dict[str, str]:
+    """Return primitive/opaque aliases that otherwise become phantom classes."""
+    ast = _parse_pp_ast(pp_path)
+    if ast is None:
+        return {}
+    aliases: Dict[str, str] = {}
+    for node in ast.ext:
+        if not isinstance(node, c_ast.Typedef) or not node.name.startswith("lv_"):
+            continue
+        export = _typedef_export_name(node.name)
+        if isinstance(node.type, c_ast.TypeDecl):
+            if isinstance(node.type.type, c_ast.IdentifierType):
+                mapped = _normalize_ast_type(node.type)
+                aliases[export] = "None" if mapped == "NoneType" else mapped
+            elif isinstance(node.type.type, c_ast.Enum):
+                aliases[export] = "int"
+        elif isinstance(node.type, c_ast.ArrayDecl):
+            aliases[export] = "Any"
+        elif isinstance(node.type, c_ast.PtrDecl) and not isinstance(
+            node.type.type, c_ast.FuncDecl
+        ):
+            mapped = _normalize_ast_type(node.type)
+            aliases[export] = "Any" if mapped == "void*" else mapped
+    return aliases
+
+
 def parse_pp_struct_fields(pp_path: Path) -> Dict[str, List[Dict[str, str]]]:
+    ast = _parse_pp_ast(pp_path)
+    if ast is not None:
+        fields_by_struct: Dict[str, List[Dict[str, str]]] = {}
+        for node in ast.ext:
+            if not isinstance(node, c_ast.Typedef) or not node.name.startswith("lv_"):
+                continue
+            if not isinstance(node.type, c_ast.TypeDecl) or not isinstance(
+                node.type.type, c_ast.Struct
+            ):
+                continue
+            declarations = node.type.type.decls or []
+            fields: List[Dict[str, str]] = []
+            seen: set[str] = set()
+            for field in declarations:
+                if not field.name or field.name in seen:
+                    continue
+                if isinstance(field.type, c_ast.TypeDecl) and isinstance(
+                    field.type.type, (c_ast.Struct, c_ast.Union)
+                ):
+                    # Compound fields are not exported by the Python bindings;
+                    # in particular, anonymous-union members must not be flattened.
+                    continue
+                seen.add(field.name)
+                fields.append(
+                    {"name": field.name, "type": _normalize_ast_type(field.type)}
+                )
+            if fields:
+                fields_by_struct[_typedef_export_name(node.name)] = fields
+        return fields_by_struct
+
     text = pp_path.read_text(encoding="utf-8", errors="replace")
     fields_by_struct: Dict[str, List[Dict[str, str]]] = {}
     for match in _STRUCT_TYPEDEF_RE.finditer(text):
@@ -399,6 +594,9 @@ def is_static_struct_method(
     pp_static_inline: Optional[frozenset[str]] = None,
 ) -> bool:
     """True when the binding exposes a struct member as an explicit-arg fun (no self)."""
+    del pp_static_inline
+    if info.get("static"):
+        return True
     args = list(info.get("args", []))
     if method_name.startswith("from_") and args:
         return True
@@ -407,8 +605,6 @@ def is_static_struct_method(
         if first.get("type", "") in _struct_receiver_types(struct_name):
             return True
     c_name = struct_method_c_name(struct_name, method_name, module_prefix=module_prefix)
-    if pp_static_inline is not None and c_name in pp_static_inline:
-        return True
     mod_name = module_c_name(method_name, module_prefix=module_prefix)
     if mod_name in pp_index and c_name not in pp_index:
         return True
@@ -499,8 +695,6 @@ def _ir_callback_signature_is_stale(
     if not isinstance(ir_func, Mapping):
         return False
     pp_type = str(pp_arg.get("type", ""))
-    if not pp_type.endswith(("_cb_t", "_xcb_t")):
-        return False
     typedef_map = callback_typedefs if callback_typedefs is not None else _CALLBACK_TYPEDEFS
     typedef = typedef_map.get(pp_type)
     if typedef is None:
@@ -547,7 +741,12 @@ def merge_pp_arg(
     if ir_arg is not None:
         if ir_arg.get("type") in ("callback", "function pointer"):
             pp_type = str(pp_arg.get("type", ""))
-            if pp_type.endswith(("_cb_t", "_xcb_t")):
+            typedef_map = (
+                callback_typedefs
+                if callback_typedefs is not None
+                else _CALLBACK_TYPEDEFS
+            )
+            if pp_type in typedef_map:
                 return normalize_callback_arg(pp_arg, callback_typedefs=callback_typedefs)
             if _ir_callback_signature_is_stale(
                 ir_arg,
@@ -570,7 +769,12 @@ def merge_pp_arg(
         pp_type = pp_arg.get("type")
         if pp_type and ir_arg.get("type") != "callback":
             merged["type"] = pp_type
-        if merged.get("type", "").endswith(("_cb_t", "_xcb_t")):
+        typedef_map = (
+            callback_typedefs
+            if callback_typedefs is not None
+            else _CALLBACK_TYPEDEFS
+        )
+        if merged.get("type", "") in typedef_map:
             return normalize_callback_arg(merged, callback_typedefs=callback_typedefs)
         return merged
     return normalize_callback_arg(pp_arg, callback_typedefs=callback_typedefs)
@@ -653,6 +857,8 @@ def enrich_function_info(
             receiver_obj=obj_name,
             callback_typedefs=callback_typedefs,
         )
+        if obj_name is not None:
+            merged["receiver_stripped"] = True
         merged["args"] = [
             normalize_callback_arg(arg, callback_typedefs=callback_typedefs)
             for arg in merged["args"]
@@ -676,6 +882,14 @@ def enrich_struct_function_info(
     pp_static_inline: Optional[frozenset[str]] = None,
 ) -> Dict[str, Any]:
     merged = dict(info)
+    static_method = is_static_struct_method(
+        struct_name,
+        export_name,
+        merged,
+        pp_index,
+        module_prefix=module_prefix,
+        pp_static_inline=pp_static_inline,
+    )
     proto = lookup_pp_proto(
         pp_index,
         export_name,
@@ -693,10 +907,17 @@ def enrich_struct_function_info(
             candidate = pp_index.get(c_name)
             if candidate is not None:
                 proto = candidate
-                merged["args"] = strip_receiver_args(
-                    list(candidate["args"]),
-                    receiver_struct=struct_name,
+                candidate_args = list(candidate["args"])
+                merged["args"] = (
+                    candidate_args
+                    if static_method
+                    else strip_receiver_args(
+                        candidate_args,
+                        receiver_struct=struct_name,
+                    )
                 )
+                if not static_method:
+                    merged["receiver_stripped"] = True
                 merged["return_type"] = enrich_return_type_from_pp(
                     merged.get("return_type"),
                     candidate.get("return_type"),
@@ -724,9 +945,11 @@ def enrich_struct_function_info(
         merged["args"] = align_args_to_pp(
             merged["args"],
             proto["args"],
-            receiver_struct=struct_name,
+            receiver_struct=None if static_method else struct_name,
             callback_typedefs=callback_typedefs,
         )
+        if not static_method:
+            merged["receiver_stripped"] = True
         merged["args"] = [
             normalize_callback_arg(arg, callback_typedefs=callback_typedefs)
             for arg in merged["args"]
@@ -810,9 +1033,11 @@ def enrich_ir_metadata(
     metadata["enum_typedefs"] = build_enum_typedef_map(
         list(metadata.get("enums", {})),
         pp_path,
+        objects=metadata.get("objects", {}),
     )
     if pp_path is not None and pp_path.is_file():
         metadata["struct_fields"] = parse_pp_struct_fields(pp_path)
+        metadata["type_aliases"] = parse_pp_type_aliases(pp_path)
 
     for name, info in list(metadata.get("functions", {}).items()):
         if info.get("type") == "function":
