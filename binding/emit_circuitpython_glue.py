@@ -4,6 +4,11 @@ from __future__ import print_function
 import collections
 
 from . import runtime
+
+
+# This module owns no mirrored emitter globals; generated output is routed
+# through the active run context explicitly.
+print = runtime.emit
 from .analyze import get_enum_members, get_enum_member_name, get_enum_value
 from .helpers import (
     export_name,

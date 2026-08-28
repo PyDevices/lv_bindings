@@ -25,6 +25,11 @@ from .helpers import (
 from .parse import add_default_declname, convert_array_to_ptr, function_prototype, get_name, get_type
 
 
+# This module owns no mirrored emitter globals; generated output is routed
+# through the active run context explicitly.
+print = runtime.emit
+
+
 def bind_emit_helpers(local_ns):
     """Store nested emit_c_micropython_style helpers for native generators."""
     from . import analyze as analyze_mod

@@ -222,6 +222,30 @@ def test_target_lowering_header_and_banner_policy_is_shared():
     ]
     assert resolve_emitter_headers(["lvgl.h"]) == ["lvgl.h", "src/lvgl_private.h"]
     assert target_banner("cpython", include=True) == " *\n * Target: cpython\n"
+
+
+def test_native_glue_uses_explicit_runtime_output_not_global_mirroring():
+    from binding import emit_circuitpython_glue, emit_cpython_glue, emit_cpython_native
+    from binding import runtime
+
+    emitted = []
+    runtime.reset()
+    try:
+        runtime.set_("print", lambda *args, **kwargs: emitted.append(args))
+        for module in (
+            emit_cpython_native,
+            emit_cpython_glue,
+            emit_circuitpython_glue,
+        ):
+            module.print(module.__name__)
+    finally:
+        runtime.reset()
+
+    assert emitted == [
+        ("binding.emit_cpython_native",),
+        ("binding.emit_cpython_glue",),
+        ("binding.emit_circuitpython_glue",),
+    ]
     assert target_banner("micropython", include=False) == ""
 
 

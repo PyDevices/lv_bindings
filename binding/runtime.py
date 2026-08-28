@@ -8,9 +8,6 @@ _CONSUMER_MODULES = (
     "binding.analyze",
     "binding.emit_c_micropython_style",
     "binding.emit_c_cpython",
-    "binding.emit_cpython_native",
-    "binding.emit_circuitpython_glue",
-    "binding.emit_cpython_glue",
     "binding.helpers",
     "binding.parse",
 )
@@ -107,6 +104,11 @@ def get(name, default=_MISSING):
     if default is not _MISSING:
         return default
     raise NameError(name)
+
+
+def emit(*args, **kwargs):
+    """Write generated output through the active binding context explicitly."""
+    return get("print")(*args, **kwargs)
 
 
 class _Namespace(object):

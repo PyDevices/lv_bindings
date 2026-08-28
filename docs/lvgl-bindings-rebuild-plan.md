@@ -399,7 +399,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   phase remains an explicit lifecycle requirement (a finite phase omits
   LV_OBJ_TREE_WALK enum metadata), not an implicit default. Validation: 106
   repository tests and binding.generate --check passed; generated artifacts
-  remain unchanged.`
+  remain unchanged. Eleventh migration slice: CPython native lowering, CPython
+  module glue, and CircuitPython module glue no longer receive the runtime
+  module-global mirror. Their output now goes through an explicit runtime emit
+  function, leaving only legacy AST-facing modules in the mirror architecture.
+  Validation: 107 repository tests and binding.generate --check passed;
+  generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 
