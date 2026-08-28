@@ -116,9 +116,9 @@ and machine-checked without changing the shared canonical API contract.
 
 ### Handoff
 
-- Commit SHA: `________________`
-- Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Commit SHA: `e64be1b`
+- Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `./scripts/verify_bindings.sh`; target C-body equivalence check; artifact-manifest check
+- Notes: `Pinned pycparser 3.0 and refreshed matching fake-libc headers. The unified command now owns deterministic preprocessing, all-target generation, pyi-only generation, read-only checks, and artifact hashing. Regenerated metadata/stubs include the current analyzer's richer enrichment fields while public API counts remain stable; target C bodies remain equivalent aside from stable command banners. The full repository pytest suite still includes LVGL Doxygen tests and requires doxygen, so CI scopes generator tests to tests/.`
 
 ## Checkpoint 2 — Target-neutral C declaration IR
 
