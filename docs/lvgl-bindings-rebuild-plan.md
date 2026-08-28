@@ -76,7 +76,7 @@ and machine-checked without changing the shared canonical API contract.
 - [x] Produce a normalized upstream API manifest and comparison report for all
   three current targets.
 - [x] Record known differences: `OBJ_FLAG`, private `global_t`, CPython
-  struct aliases, lifecycle dunders, TJPGD, and GC helpers.
+  struct aliases, TJPGD, and GC helpers.
 - [ ] Record lifecycle dunders separately from the metadata baseline; they are
   runtime exports rather than metadata entries.
 - [ ] Plan removal of the large duplicated historical baseline artifacts after
@@ -90,9 +90,9 @@ and machine-checked without changing the shared canonical API contract.
 
 ### Handoff
 
-- Commit SHA: `________________`
-- Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Commit SHA: `cc7b814`
+- Validation command(s): `scratch/upstream_baseline/run.sh docs/baseline`; `PYTHONPATH=. .venv/bin/pytest -q -s tests/test_pyi_generation.py tests/test_pyi_prototypes.py`; all three Unix smoke tests
+- Notes: `Name/location coverage: MP 100.00%, CircuitPython 99.99%, CPython 99.90%. Generated binding artifacts unchanged. Upstream widget-method and struct-helper signature metadata remain explicit baseline limitations; lifecycle dunders remain a pending runtime-export audit.`
 
 ## Checkpoint 1 — Toolchain and test foundation
 
