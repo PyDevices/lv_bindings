@@ -89,9 +89,9 @@ def prepare_analysis(args, source, pp_cmd, cmd_line, emit_print):
     ctx.parser = c_parser.CParser()
     ctx.gen = c_generator.CGenerator()
     ctx.parsed_ast = ctx.parser.parse(source, filename="<none>")
-    runtime.sync_from_ctx(ctx)
+    runtime.activate(ctx)
     analyze(ctx)
-    runtime.sync_from_ctx(ctx)
+    runtime.activate(ctx)
     policy = ApiPolicy.default(module_prefix=ctx.module_prefix)
     ctx.api_model = build_api_model(
         ctx.declaration_ir,
@@ -100,8 +100,6 @@ def prepare_analysis(args, source, pp_cmd, cmd_line, emit_print):
         policy=policy,
     )
     runtime.set_("api_model", ctx.api_model)
-    runtime.publish(__import__("sys").modules)
-    runtime.sync_to_ctx(ctx)
     return ctx
 
 

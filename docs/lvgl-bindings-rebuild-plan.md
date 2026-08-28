@@ -462,6 +462,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   are no longer mirrored onto helper modules. Legacy export naming invokes the
   context-backed helpers instead of treating mirrored attributes as readiness
   flags. Validation: 114 repository tests and binding.generate --check passed;
+  generated artifacts remain unchanged. Twenty-second migration slice: removed
+  runtime.py's module-global consumer, publish, absorb, and namespace-sync
+  architecture. Runtime state now lives on one active BindingContext; the two C
+  orchestrators explicitly load and store backend state only at their entry
+  boundaries. A two-context regression test prevents state leakage between
+  runs. Validation: 115 repository tests and binding.generate --check passed;
   generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections

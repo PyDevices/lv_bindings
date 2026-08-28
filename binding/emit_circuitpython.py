@@ -13,16 +13,14 @@ def emit_circuitpython(ctx):
     prepare_target_lowering(ctx, target="circuitpython", max_phase=7)
     if not getattr(ctx, "_analysis_ready", False):
         analyze(ctx)
-    runtime.sync_from_ctx(ctx)
-    runtime.publish(__import__("sys").modules)
-    emit_c_mod.emit_c()
+    runtime.activate(ctx)
+    emit_c_mod.emit_c(ctx)
 
 
 def run(ctx):
     ctx.init_patterns()
-    runtime.sync_from_ctx(ctx)
+    runtime.activate(ctx)
     try:
         emit_circuitpython(ctx)
     finally:
-        runtime.absorb_from(emit_c_mod)
-        runtime.sync_to_ctx(ctx)
+        emit_c_mod.store_context(ctx)

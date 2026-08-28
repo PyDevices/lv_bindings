@@ -247,6 +247,26 @@ def test_target_lowering_setup_uses_common_defaults():
     assert not runtime.get("target_lowering_profile").supports_dynamic_function_pointer
 
 
+def test_runtime_state_is_isolated_between_active_contexts():
+    from binding import runtime
+    from binding.context import BindingContext
+
+    args = SimpleNamespace(module_name="lvgl", module_prefix="lv", input=[])
+    first = BindingContext(args, "", "pp", "cmd", lambda *a, **k: None)
+    second = BindingContext(args, "", "pp", "cmd", lambda *a, **k: None)
+
+    runtime.reset()
+    runtime.activate(first)
+    runtime.set_("generated_funcs", {"lv_init": True})
+    runtime.activate(second)
+
+    assert first.generated_funcs == {"lv_init": True}
+    assert not hasattr(second, "generated_funcs")
+    assert runtime.get("generated_funcs", None) is None
+    assert not hasattr(runtime, "publish")
+    assert not hasattr(runtime, "absorb_from")
+
+
 def test_target_lowering_contract_rejects_a_cross_target_native_emitter():
     from binding import runtime
 

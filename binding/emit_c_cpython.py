@@ -64,7 +64,23 @@ from .runtime_exports import filter_module_funcs_for_target
 from .util import eprint, memoize
 
 
-def emit_c():
+def load_context(ctx):
+    """Bind one backend run explicitly to the CPython orchestration module."""
+    for name in ctx.export_names():
+        if hasattr(ctx, name):
+            globals()[name] = getattr(ctx, name)
+    globals()["print"] = ctx.emit_print
+
+
+def store_context(ctx):
+    """Return orchestration results to the backend run context."""
+    for name in ctx.export_names():
+        if name in globals():
+            setattr(ctx, name, globals()[name])
+
+
+def emit_c(ctx):
+    load_context(ctx)
     global headers, generated_structs, generated_struct_functions, struct_aliases
     global callbacks_used_on_structs, generated_callbacks, generated_funcs
     global enum_referenced, generated_obj_names, generated_globals

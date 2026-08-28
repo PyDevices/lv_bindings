@@ -11,9 +11,6 @@ from .model import GenerationResult
 def _struct_functions_metadata(namespace):
     from .analyze import get_struct_functions, noncommon_part
 
-    from . import runtime
-
-    runtime.sync_from_namespace(namespace)
     metadata = collections.OrderedDict()
     for struct_name, generated in namespace["generated_structs"].items():
         if not generated:
