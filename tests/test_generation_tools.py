@@ -249,6 +249,21 @@ def test_native_glue_uses_explicit_runtime_output_not_global_mirroring():
     assert target_banner("micropython", include=False) == ""
 
 
+def test_cpython_native_helper_binding_does_not_use_shared_runtime_state():
+    from binding import emit_cpython_native, runtime
+
+    runtime.reset()
+    try:
+        emit_cpython_native.bind_emit_helpers({"generated_funcs": {"lv_init": True}})
+        assert emit_cpython_native.bound_helper("generated_funcs") == {"lv_init": True}
+        assert "_py_helpers" not in runtime.__dict__
+    finally:
+        emit_cpython_native.reset_emit_helpers()
+        runtime.reset()
+
+    assert emit_cpython_native.bound_helper("generated_funcs") is None
+
+
 def test_mp_64_bit_integer_lowering_is_shared_and_version_safe():
     source = mp_obj_get_ull_to_bytes_source()
 

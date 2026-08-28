@@ -2684,8 +2684,9 @@ GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_{obj}_type = {{
                     generated_obj_names[obj_name] = True
 
             if _emit_target == "cpython":
-                _helpers = runtime.get("_py_helpers", {})
-                _gf = _helpers.get("generated_funcs")
+                from .emit_cpython_native import bound_helper
+
+                _gf = bound_helper("generated_funcs")
                 if _gf is not None:
                     generated_funcs = _gf
                 runtime.set_("generated_funcs", generated_funcs)
@@ -2956,10 +2957,9 @@ static const mp_lv_struct_t mp_{global_name} = {{
 
     if _emit_max_phase is None or _emit_max_phase >= 4:
         if _emit_target == "cpython":
-            from .emit_cpython_native import bind_emit_helpers
+            from .emit_cpython_native import bind_emit_helpers, bound_helper
 
-            _helpers = runtime.get("_py_helpers", {})
-            _gf = _helpers.get("generated_funcs")
+            _gf = bound_helper("generated_funcs")
             if _gf is not None:
                 generated_funcs = _gf
             bind_emit_helpers(locals())
@@ -2993,10 +2993,12 @@ static const mp_lv_struct_t mp_{global_name} = {{
 
         # eprint("/* Generating global module functions /*")
         if _emit_target == "cpython":
+            from .emit_cpython_native import bound_helper
+
             _candidates = [
                 generated_funcs,
                 runtime.get("generated_funcs", {}),
-                runtime.get("_py_helpers", {}).get("generated_funcs", {}),
+                bound_helper("generated_funcs", {}),
             ]
             generated_funcs = max(_candidates, key=len)
         module_funcs = [func for func in funcs if func.name not in generated_funcs]

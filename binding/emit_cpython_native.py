@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import collections
 import copy
+from contextvars import ContextVar
 
 from pycparser import c_ast
 
@@ -30,8 +31,11 @@ from .parse import add_default_declname, convert_array_to_ptr, function_prototyp
 print = runtime.emit
 
 
+_EMIT_HELPERS = ContextVar("lvgl_cpython_emit_helpers", default=None)
+
+
 def bind_emit_helpers(local_ns):
-    """Store nested emit_c_micropython_style helpers for native generators."""
+    """Bind legacy emitter helpers to the active CPython backend run."""
     from . import analyze as analyze_mod
 
     analyze_fns = (
@@ -101,8 +105,11 @@ def bind_emit_helpers(local_ns):
         if k in local_ns:
             bound[k] = local_ns[k]
         elif k in _STATE_KEYS:
-            bound[k] = runtime.get(k)
-    runtime.set_("_py_helpers", bound)
+            value = runtime.get(k, None)
+            if value is not None:
+                bound[k] = value
+    _EMIT_HELPERS.set(bound)
+    return bound
 
 
 _STATE_KEYS = (
@@ -125,7 +132,9 @@ _STATE_KEYS = (
 
 
 def _h(name):
-    helpers = runtime.get("_py_helpers", {})
+    helpers = _EMIT_HELPERS.get()
+    if helpers is None:
+        raise RuntimeError("CPython native emitter helpers are not bound")
     if name in helpers:
         return helpers[name]
     if name in _STATE_KEYS:
@@ -134,6 +143,19 @@ def _h(name):
         return runtime.get(name)
     except NameError:
         raise KeyError("Missing emit helper: %s" % name)
+
+
+def bound_helper(name, default=None):
+    """Return a value from the active CPython native emitter binding."""
+    helpers = _EMIT_HELPERS.get()
+    if helpers is None:
+        return default
+    return helpers.get(name, default)
+
+
+def reset_emit_helpers():
+    """Release CPython-native run state after an emitter invocation."""
+    _EMIT_HELPERS.set(None)
 
 
 def _emit_max_phase():

@@ -407,7 +407,13 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   generated artifacts remain unchanged. Follow-up validation: the previously
   failing MicroPython Unix standard build was retried successfully and passed
   the complete shared LVGL smoke probe. CPython, CircuitPython Unix coverage,
-  and MicroPython Unix standard now all have current successful smoke evidence.`
+  and MicroPython Unix standard now all have current successful smoke evidence.
+  Twelfth migration slice: the CPython-native emitter's captured legacy helper
+  binding is now private, per-run `ContextVar` state rather than a
+  `runtime.py`-mirrored `_py_helpers` dictionary. The legacy CPython emitter
+  reads that binding through a narrow native-backend query, and the backend
+  clears it after every run. Validation: 108 repository tests and
+  binding.generate --check passed; generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

@@ -42,6 +42,8 @@ def emit_cpython(ctx):
 
 
 def run(ctx):
+    from .emit_cpython_native import reset_emit_helpers
+
     ctx.init_patterns()
     runtime.sync_from_ctx(ctx)
     try:
@@ -51,3 +53,4 @@ def run(ctx):
         runtime.absorb_from(emit_c_mod)
         runtime.sync_to_ctx(ctx)
         _finalize_cpython_metadata(ctx)
+        reset_emit_helpers()
