@@ -254,7 +254,7 @@ API hash after this increment is
   verification.
 - [x] Verify module exports, type/member exports, enum ownership, target
   filtering, and signatures against the canonical manifest.
-- [ ] Verify enum values, target exceptions, and private helper leakage in the
+- [x] Verify enum values, target exceptions, and private helper leakage in the
   pyi/runtime contract.
 
 Progress note: ``binding/emit_pyi_canonical.py`` renders the shared stub from
@@ -275,6 +275,11 @@ private top-level declaration is rejected. Both dereference helpers return a
 ``memoryview | None`` to represent the common all-target contract when a size
 cannot be derived. The CPython smoke probe exercises both ``Blob.__cast__``
 forms from a valid display flush callback.
+Enum expressions and implicit C enum increments are preserved in the canonical
+model; stubs expose the correct member type instead of invalid Python literal
+expressions. The real exception policy is rendered and manifest-validated for
+the common view and each target view, with every TJPGD exception checked
+against its exact public stub surface.
 Incompatible LVGL widget overrides carry narrowly targeted mypy override
 notes. The generated stub parses cleanly and has regression coverage for
 signatures, target filtering, duplicate declarations, arrays, aliases, and

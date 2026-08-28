@@ -97,6 +97,32 @@ def test_api_model_records_module_and_widget_enum_ownership():
     assert enums["lv_obj_flag_t"].owners == (("obj", "FLAG"),)
 
 
+def test_api_model_preserves_explicit_and_implicit_enum_values():
+    declarations = parse_source(
+        "typedef enum { "
+        "LV_ALIGN_DEFAULT = 0, "
+        "LV_ALIGN_TOP_LEFT, "
+        "LV_ALIGN_CUSTOM = (1 << 7), "
+        "LV_ALIGN_NEXT "
+        "} lv_align_t;",
+        filename="enum-values.h",
+    )
+
+    model = build_api_model(declarations)
+    enum = next(item for item in model.enums if item.typedef_names == ("lv_align_t",))
+
+    # The declaration model retains the C expression when it exists and uses
+    # None for C's implicit "previous value plus one" entries.  The stub
+    # emitter intentionally exposes member types, not potentially non-Python
+    # C expressions as literal values.
+    assert enum.members == (
+        ("DEFAULT", "0"),
+        ("TOP_LEFT", None),
+        ("CUSTOM", "1 << 7"),
+        ("NEXT", None),
+    )
+
+
 def test_api_model_uses_typedef_and_member_stems_for_singleton_enums():
     declarations = parse_source(
         "typedef enum { LV_ANIMIMG_PART_MAIN } lv_animimg_part_t;",

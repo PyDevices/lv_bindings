@@ -71,25 +71,25 @@
       "name": "lv_tjpgd_deinit",
       "target": "circuitpython",
       "reason": "CircuitPython's configured LVGL build excludes the TJPGD subsystem.",
-      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+      "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     },
     {
       "name": "lv_tjpgd_deinit",
       "target": "cpython",
       "reason": "CPython's configured LVGL build excludes the TJPGD subsystem.",
-      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+      "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     },
     {
       "name": "lv_tjpgd_init",
       "target": "circuitpython",
       "reason": "CircuitPython's configured LVGL build excludes the TJPGD subsystem.",
-      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+      "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     },
     {
       "name": "lv_tjpgd_init",
       "target": "cpython",
       "reason": "CPython's configured LVGL build excludes the TJPGD subsystem.",
-      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+      "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     }
   ]
 }
