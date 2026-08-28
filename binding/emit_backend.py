@@ -10,6 +10,8 @@ import collections
 import os
 from dataclasses import dataclass
 
+from pycparser import c_ast
+
 from . import runtime
 
 
@@ -78,6 +80,163 @@ class ModuleRegistrationPlan:
     struct_alias_names: tuple[str, ...]
     object_names: tuple[str, ...]
     module_functions: tuple[object, ...]
+
+
+@dataclass
+class TypeDiscovery:
+    """Shared recursive discovery of C-to-Python conversion requirements.
+
+    Backends provide only native C emission hooks for arrays, structs, and
+    function pointers. Typedef traversal, aliases, pointer fallbacks, enum
+    conversion, and conversion-map updates are common policy.
+    """
+
+    get_name: object
+    get_type: object
+    structs: dict
+    typedefs: list
+    struct_aliases: dict
+    mp_to_lv: dict
+    lv_to_mp: dict
+    lv_mp_type: dict
+    lv_to_mp_byref: dict
+    lv_to_mp_funcptr: dict
+    generated_funcptr_helpers: dict
+    try_generate_struct: object
+    try_generate_array: object
+    emit_function_pointer: object
+    missing_conversion: type
+    report_error: object
+
+    def typedef_name(self, node):
+        if isinstance(node, (c_ast.PtrDecl, c_ast.FuncDecl)):
+            return self.typedef_name(node.type)
+        if hasattr(node, "declname"):
+            return node.declname
+        if hasattr(node, "name"):
+            return node.name
+        return "unnamed_arg"
+
+    def generate(self, type_ast):
+        if isinstance(type_ast, str):
+            raise SyntaxError("Internal error! try_generate_type argument is a string.")
+        if isinstance(type_ast, c_ast.TypeDecl):
+            return self.generate(type_ast.type)
+
+        type_name = self.get_name(type_ast)
+        if isinstance(type_ast, c_ast.Enum):
+            self.mp_to_lv[type_name] = self.mp_to_lv["int"]
+            self.mp_to_lv["%s *" % type_name] = self.mp_to_lv["int *"]
+            self.lv_to_mp[type_name] = self.lv_to_mp["int"]
+            self.lv_to_mp["%s *" % type_name] = self.lv_to_mp["int *"]
+            self.lv_mp_type[type_name] = self.lv_mp_type["int"]
+            self.lv_mp_type["%s *" % type_name] = self.lv_mp_type["int *"]
+            return self.mp_to_lv[type_name]
+        if type_name in self.mp_to_lv:
+            return self.mp_to_lv[type_name]
+        if isinstance(type_ast, c_ast.ArrayDecl) and self.try_generate_array(type_ast):
+            return self.mp_to_lv[type_name]
+
+        if isinstance(type_ast, (c_ast.PtrDecl, c_ast.ArrayDecl)):
+            pointee_name = self.get_name(type_ast.type.type)
+            ptr_type = self.get_type(type_ast, remove_quals=True)
+            if pointee_name in self.structs:
+                self.try_generate_struct(pointee_name, self.structs[pointee_name])
+            if (
+                isinstance(type_ast.type, c_ast.TypeDecl)
+                and isinstance(type_ast.type.type, c_ast.Struct)
+                and type_ast.type.type.name in self.structs
+            ):
+                self.try_generate_struct(
+                    pointee_name, self.structs[type_ast.type.type.name]
+                )
+            if isinstance(type_ast.type, c_ast.FuncDecl):
+                self._generate_function_pointer(type_ast, ptr_type, pointee_name)
+            self.mp_to_lv.setdefault(ptr_type, self.mp_to_lv["void *"])
+            self.lv_to_mp.setdefault(ptr_type, self.lv_to_mp["void *"])
+            self.lv_mp_type.setdefault(ptr_type, "void*")
+            return self.mp_to_lv[ptr_type]
+
+        if type_name in self.structs:
+            if self.try_generate_struct(type_name, self.structs[type_name]):
+                return self.mp_to_lv[type_name]
+        for new_type_ast in [
+            item for item in self.typedefs if self.typedef_name(item) == type_name
+        ]:
+            new_type = self.get_type(new_type_ast, remove_quals=True)
+            if (
+                isinstance(new_type_ast, c_ast.TypeDecl)
+                and isinstance(new_type_ast.type, c_ast.Struct)
+                and not new_type_ast.type.decls
+            ):
+                explicit_name = new_type_ast.type.name
+            else:
+                explicit_name = new_type
+            if type_name == explicit_name:
+                continue
+            if explicit_name in self.structs:
+                if self.try_generate_struct(new_type, self.structs[explicit_name]):
+                    if explicit_name == new_type:
+                        self.struct_aliases[new_type] = type_name
+            if type_name != new_type and self.generate(new_type_ast):
+                self._copy_typedef_conversions(type_name, new_type)
+                return self.mp_to_lv[type_name]
+        return None
+
+    def _generate_function_pointer(self, type_ast, ptr_type, pointee_name):
+        if ptr_type in self.lv_to_mp_funcptr:
+            existing = self.lv_to_mp_funcptr[ptr_type]
+            self.lv_to_mp.setdefault(ptr_type, "mp_lv_%s" % existing)
+            self.mp_to_lv.setdefault(ptr_type, self.mp_to_lv["void *"])
+            self.lv_mp_type.setdefault(ptr_type, "function pointer")
+            return
+        if isinstance(type_ast.type.type.type, c_ast.TypeDecl):
+            pointee_name = type_ast.type.type.type.declname
+        helper_name = "funcptr_%s" % pointee_name
+        suffix = 1
+        while helper_name in self.generated_funcptr_helpers:
+            helper_name = "funcptr_%s_%d" % (pointee_name, suffix)
+            suffix += 1
+        self.generated_funcptr_helpers[helper_name] = True
+        func = c_ast.Decl(
+            name=helper_name,
+            quals=[],
+            align=[],
+            storage=[],
+            funcspec=[],
+            type=type_ast.type,
+            init=None,
+            bitsize=None,
+        )
+        try:
+            generated = self.emit_function_pointer(helper_name, func)
+            if generated:
+                self.lv_to_mp_funcptr[ptr_type] = helper_name
+                self.lv_to_mp[ptr_type] = "mp_lv_%s" % helper_name
+                self.lv_mp_type[ptr_type] = "function pointer"
+            else:
+                self.lv_to_mp[ptr_type] = self.lv_to_mp["void *"]
+                self.lv_mp_type[ptr_type] = "void*"
+        except self.missing_conversion as exp:
+            self.report_error(func, exp)
+
+    def _copy_typedef_conversions(self, type_name, new_type):
+        self.mp_to_lv[type_name] = self.mp_to_lv[new_type]
+        type_ptr = "%s *" % type_name
+        new_type_ptr = "%s *" % new_type
+        if new_type_ptr in self.mp_to_lv:
+            self.mp_to_lv[type_ptr] = self.mp_to_lv[new_type_ptr]
+        if new_type in self.lv_to_mp:
+            self.lv_to_mp[type_name] = self.lv_to_mp[new_type]
+            self.lv_mp_type[type_name] = self.lv_mp_type[new_type]
+            if new_type in self.lv_to_mp_funcptr:
+                self.lv_to_mp_funcptr[type_name] = self.lv_to_mp_funcptr[new_type]
+            if new_type in self.lv_to_mp_byref:
+                self.lv_to_mp_byref[type_name] = self.lv_to_mp_byref[new_type]
+            if new_type_ptr in self.lv_to_mp:
+                self.lv_to_mp[type_ptr] = self.lv_to_mp[new_type_ptr]
+            if new_type_ptr in self.lv_mp_type:
+                self.lv_mp_type[type_ptr] = self.lv_mp_type[new_type_ptr]
 
 
 _TARGET_PROFILES = {

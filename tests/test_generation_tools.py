@@ -20,6 +20,7 @@ from binding.generator import (
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
 from binding.emit_backend import (
+    TypeDiscovery,
     callback_return_conversion_available,
     callback_return_lowering,
     conversion_available,
@@ -225,6 +226,46 @@ def test_cpython_emitter_contains_no_cross_target_lowering_branches():
     assert "mp_obj_t" not in source
     assert "MP_REGISTER_MODULE" not in source
     assert "emit_circuitpython_glue" not in source
+
+
+def test_both_native_orchestrators_use_shared_type_discovery():
+    root = Path(__file__).parents[1] / "binding"
+    for filename in ("emit_c_micropython_style.py", "emit_c_cpython.py"):
+        source = (root / filename).read_text()
+        assert "type_discovery = TypeDiscovery(" in source
+        assert "def try_generate_type(type_ast):" in source
+        assert "return type_discovery.generate(type_ast)" in source
+
+
+def test_type_discovery_shares_enum_conversion_policy():
+    from pycparser import c_ast
+
+    mp_to_lv = {"int": "to_int", "int *": "to_int_ptr", "void *": "to_ptr"}
+    lv_to_mp = {"int": "from_int", "int *": "from_int_ptr", "void *": "from_ptr"}
+    lv_mp_type = {"int": "int", "int *": "int*"}
+    discovery = TypeDiscovery(
+        get_name=lambda node: node.name,
+        get_type=lambda node, **kwargs: node.name,
+        structs={},
+        typedefs=[],
+        struct_aliases={},
+        mp_to_lv=mp_to_lv,
+        lv_to_mp=lv_to_mp,
+        lv_mp_type=lv_mp_type,
+        lv_to_mp_byref={},
+        lv_to_mp_funcptr={},
+        generated_funcptr_helpers={},
+        try_generate_struct=lambda *args: None,
+        try_generate_array=lambda node: None,
+        emit_function_pointer=lambda name, func: True,
+        missing_conversion=ValueError,
+        report_error=lambda func, error: None,
+    )
+
+    assert discovery.generate(c_ast.Enum("lv_test_t", None)) == "to_int"
+    assert mp_to_lv["lv_test_t *"] == "to_int_ptr"
+    assert lv_to_mp["lv_test_t *"] == "from_int_ptr"
+    assert lv_mp_type["lv_test_t *"] == "int*"
 
 
 def test_target_lowering_setup_uses_common_defaults():

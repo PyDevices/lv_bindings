@@ -468,7 +468,13 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   orchestrators explicitly load and store backend state only at their entry
   boundaries. A two-context regression test prevents state leakage between
   runs. Validation: 115 repository tests and binding.generate --check passed;
-  generated artifacts remain unchanged.`
+  generated artifacts remain unchanged. Twenty-third migration slice: typedef,
+  enum, pointer, struct-alias, and recursive conversion discovery now use one
+  TypeDiscovery engine. MP-compatible and CPython backends supply only their
+  native array and function-pointer C emission hooks. Focused tests enforce use
+  by both orchestrators and the common enum conversion-map policy. Validation:
+  117 repository tests and binding.generate --check passed; generated artifacts
+  remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

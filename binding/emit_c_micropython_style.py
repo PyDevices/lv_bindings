@@ -52,6 +52,7 @@ from .parse import (
 )
 from . import runtime
 from .emit_backend import (
+    TypeDiscovery,
     callback_return_conversion_available,
     callback_return_lowering,
     conversion_available,
@@ -1785,153 +1786,44 @@ GENMPY_UNUSED static mp_obj_t {arr_to_mp_convertor_name}({qualified_type} *arr)
 
     generated_funcptr_helpers = collections.OrderedDict()
 
-    def get_arg_name(arg):
-        if isinstance(arg, c_ast.PtrDecl) or isinstance(arg, c_ast.FuncDecl):
-            return get_arg_name(arg.type)
-        if hasattr(arg, "declname"):
-            return arg.declname
-        if hasattr(arg, "name"):
-            return arg.name
-        return "unnamed_arg"
+
+    def emit_function_pointer(helper_name, func):
+        print("#define %s NULL\n" % helper_name)
+        if _emit_max_phase is not None and _emit_max_phase < 4:
+            return False
+        gen_mp_func(func, None)
+        print(
+            "GENMPY_UNUSED static inline mp_obj_t mp_lv_{f}(void *func){{ "
+            "return mp_lv_funcptr(&mp_{f}_mpobj, func, NULL, MP_QSTR_, NULL); }}\n".format(
+                f=helper_name
+            )
+        )
+        return True
 
 
-    # print("// Typedefs: " + ", ".join(get_arg_name(t) for t in typedefs))
+    type_discovery = TypeDiscovery(
+        get_name=get_name,
+        get_type=get_type,
+        structs=structs,
+        typedefs=typedefs,
+        struct_aliases=struct_aliases,
+        mp_to_lv=mp_to_lv,
+        lv_to_mp=lv_to_mp,
+        lv_mp_type=lv_mp_type,
+        lv_to_mp_byref=lv_to_mp_byref,
+        lv_to_mp_funcptr=lv_to_mp_funcptr,
+        generated_funcptr_helpers=generated_funcptr_helpers,
+        try_generate_struct=try_generate_struct,
+        try_generate_array=try_generate_array_type,
+        emit_function_pointer=emit_function_pointer,
+        missing_conversion=MissingConversionException,
+        report_error=lambda func, exp: gen_func_error(func, exp),
+    )
+    get_arg_name = type_discovery.typedef_name
 
 
     def try_generate_type(type_ast):
-        # eprint(' --> try_generate_type %s : %s' % (get_name(type_ast), gen.visit(type_ast)))
-        # print('/* --> try_generate_type %s: %s */' % (get_name(type_ast), type_ast))
-        if isinstance(type_ast, str):
-            raise SyntaxError("Internal error! try_generate_type argument is a string.")
-        # Handle the case of a pointer
-        if isinstance(type_ast, c_ast.TypeDecl):
-            return try_generate_type(type_ast.type)
-        type = get_name(type_ast)
-        if isinstance(type_ast, c_ast.Enum):
-            mp_to_lv[type] = mp_to_lv["int"]
-            mp_to_lv["%s *" % type] = mp_to_lv["int *"]
-            lv_to_mp[type] = lv_to_mp["int"]
-            lv_to_mp["%s *" % type] = lv_to_mp["int *"]
-            lv_mp_type[type] = lv_mp_type["int"]
-            lv_mp_type["%s *" % type] = lv_mp_type["int *"]
-            return mp_to_lv[type]
-        if type in mp_to_lv:
-            return mp_to_lv[type]
-        if isinstance(type_ast, c_ast.ArrayDecl) and try_generate_array_type(type_ast):
-            return mp_to_lv[type]
-        if isinstance(type_ast, (c_ast.PtrDecl, c_ast.ArrayDecl)):
-            type = get_name(type_ast.type.type)
-            ptr_type = get_type(type_ast, remove_quals=True)
-            # print('/* --> try_generate_type IS PtrDecl!! %s: %s */' % (type, type_ast))
-            if type in structs:
-                try_generate_struct(type, structs[type]) if type in structs else None
-            if (
-                isinstance(type_ast.type, c_ast.TypeDecl)
-                and isinstance(type_ast.type.type, c_ast.Struct)
-                and (type_ast.type.type.name in structs)
-            ):
-                try_generate_struct(type, structs[type_ast.type.type.name])
-            if isinstance(type_ast.type, c_ast.FuncDecl):
-                if isinstance(type_ast.type.type.type, c_ast.TypeDecl):
-                    type = type_ast.type.type.type.declname
-                if ptr_type in lv_to_mp_funcptr:
-                    existing = lv_to_mp_funcptr[ptr_type]
-                    if ptr_type not in lv_to_mp:
-                        lv_to_mp[ptr_type] = "mp_lv_%s" % existing
-                    if ptr_type not in mp_to_lv:
-                        mp_to_lv[ptr_type] = mp_to_lv["void *"]
-                    if ptr_type not in lv_mp_type:
-                        lv_mp_type[ptr_type] = "function pointer"
-                    return mp_to_lv[ptr_type]
-                func_ptr_name = "funcptr_%s" % type
-
-                i = 1
-                while func_ptr_name in generated_funcptr_helpers:
-                    func_ptr_name = "funcptr_%s_%d" % (type, i)
-                    i += 1
-                generated_funcptr_helpers[func_ptr_name] = True
-
-                func = c_ast.Decl(
-                    name=func_ptr_name,
-                    quals=[],
-                    align=[],
-                    storage=[],
-                    funcspec=[],
-                    type=type_ast.type,
-                    init=None,
-                    bitsize=None,
-                )
-                try:
-                    print("#define %s NULL\n" % func_ptr_name)
-                    if _emit_max_phase is None or _emit_max_phase >= 4:
-                        gen_mp_func(func, None)
-                        print(
-                            "GENMPY_UNUSED static inline mp_obj_t mp_lv_{f}(void *func){{ return mp_lv_funcptr(&mp_{f}_mpobj, func, NULL, MP_QSTR_, NULL); }}\n".format(
-                                f=func_ptr_name
-                            )
-                        )
-                        lv_to_mp_funcptr[ptr_type] = func_ptr_name
-                        # eprint("/* --> lv_to_mp_funcptr[%s] = %s */" % (ptr_type, func_ptr_name))
-                        lv_to_mp[ptr_type] = "mp_lv_%s" % func_ptr_name
-                        lv_mp_type[ptr_type] = "function pointer"
-                    else:
-                        lv_to_mp[ptr_type] = lv_to_mp["void *"]
-                        lv_mp_type[ptr_type] = "void*"
-                except MissingConversionException as exp:
-                    gen_func_error(func, exp)
-            # print('/* --> PTR %s */' % ptr_type)
-            if ptr_type not in mp_to_lv:
-                mp_to_lv[ptr_type] = mp_to_lv["void *"]
-            if ptr_type not in lv_to_mp:
-                lv_to_mp[ptr_type] = lv_to_mp["void *"]
-            if ptr_type not in lv_mp_type:
-                lv_mp_type[ptr_type] = "void*"
-            return mp_to_lv[ptr_type]
-        if type in structs:
-            if try_generate_struct(type, structs[type]):
-                return mp_to_lv[type]
-        for new_type_ast in [x for x in typedefs if get_arg_name(x) == type]:
-            new_type = get_type(new_type_ast, remove_quals=True)
-            if (
-                isinstance(new_type_ast, c_ast.TypeDecl)
-                and isinstance(new_type_ast.type, c_ast.Struct)
-                and not new_type_ast.type.decls
-            ):
-                explicit_struct_name = (
-                    new_type_ast.type.name
-                    if hasattr(new_type_ast.type, "name")
-                    else new_type_ast.type.names[0]
-                )
-            else:
-                explicit_struct_name = new_type
-            if type == explicit_struct_name:
-                continue
-            # eprint('/* --> typedef: %s --> %s (%s) */' % (type, new_type, new_type_ast))
-            if explicit_struct_name in structs:
-                if try_generate_struct(new_type, structs[explicit_struct_name]):
-                    if explicit_struct_name == new_type:
-                        struct_aliases[new_type] = type
-            if type != new_type and try_generate_type(new_type_ast):
-                # eprint('/* --> try_generate_type TYPEDEF!! %s: %s */' % (type, mp_to_lv[new_type]))
-                mp_to_lv[type] = mp_to_lv[new_type]
-                type_ptr = "%s *" % type
-                new_type_ptr = "%s *" % new_type
-                if new_type_ptr in mp_to_lv:
-                    mp_to_lv[type_ptr] = mp_to_lv[new_type_ptr]
-                if new_type in lv_to_mp:
-                    lv_to_mp[type] = lv_to_mp[new_type]
-                    lv_mp_type[type] = lv_mp_type[new_type]
-                    if new_type in lv_to_mp_funcptr:
-                        lv_to_mp_funcptr[type] = lv_to_mp_funcptr[new_type]
-                    if new_type in lv_to_mp_byref:
-                        lv_to_mp_byref[type] = lv_to_mp_byref[new_type]
-                    if new_type_ptr in lv_to_mp:
-                        lv_to_mp[type_ptr] = lv_to_mp[new_type_ptr]
-                    if new_type_ptr in lv_mp_type:
-                        lv_mp_type[type_ptr] = lv_mp_type[new_type_ptr]
-                # eprint('/* --> %s = (%s) */' % (type, new_type))
-                return mp_to_lv[type]
-        return None
+        return type_discovery.generate(type_ast)
 
 
     #
