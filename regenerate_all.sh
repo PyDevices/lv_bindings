@@ -1,247 +1,65 @@
 #!/usr/bin/env bash
-# Regenerate all binding targets, commit, and tag lvgl-bindings for the current
-# LVGL submodule checkout.
-#
-# Typical workflow:
-#   cd lvgl && git fetch --tags origin && git checkout v9.5.0 && cd ..
-#   ./regenerate_all.sh --dry-run
-#   ./regenerate_all.sh
-#   git push origin HEAD --tags
-#
-# Tags follow LVGL major.minor with an lvgl-bindings patch counter, e.g. v9.5.0,
-# v9.5.1, … for successive binding releases on the LVGL 9.5 line.
+# Generate LVGL binding artifacts. This command never commits, tags, pushes, or
+# dispatches a release; release mutation lives in scripts/publish_release_tag.sh
+# and the explicitly dispatched release workflow.
+
 set -euo pipefail
 
 LV_BINDINGS_DIR=$(cd "$(dirname "$0")" && pwd)
-LVGL_DIR="$LV_BINDINGS_DIR/lvgl"
-LVGL_H="$LVGL_DIR/lvgl.h"
+if [[ -x "$LV_BINDINGS_DIR/.venv/bin/python3" ]]; then
+    PYTHON="$LV_BINDINGS_DIR/.venv/bin/python3"
+else
+    PYTHON=python3
+fi
+
+TARGET=all
+CHECK=0
+HASH=0
+PYI_ONLY=0
+NAMING_STYLE=legacy
 
 usage() {
     cat <<'EOF'
-Usage: ./regenerate_all.sh [--dry-run] [--no-commit] [--no-tag] [--pyi-only] [--pythonic]
+Usage: ./regenerate_all.sh [OPTIONS]
 
-  --dry-run     Show planned tag and commit; do not regenerate, commit, or tag.
-  --no-commit   Regenerate only; do not create a git commit.
-  --no-tag      Regenerate (and commit unless --no-commit); do not create a tag.
-  --pyi-only    Regenerate generated/lvgl.pyi only; do not generate C, commit, or tag.
-  --pythonic    PEP 8-style Python export names (default: legacy / MP-shaped)
+Generate binding artifacts without changing git history or release state.
+
+  --target TARGET  Generate all, micropython, circuitpython, or cpython
+  --pyi-only       Regenerate only generated/lvgl.pyi; preserve every C/IR file
+  --check          Generate in a temporary directory and compare (read-only)
+  --hash           Print the generated artifact manifest
+  --pythonic       Use the alternate pythonic naming profile
+
+Release tags are created separately with scripts/publish_release_tag.sh.
 EOF
 }
 
-DRY_RUN=0
-NO_COMMIT=0
-NO_TAG=0
-PYI_ONLY=0
-PYTHONIC=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --dry-run) DRY_RUN=1; shift ;;
-        --no-commit) NO_COMMIT=1; shift ;;
-        --no-tag) NO_TAG=1; shift ;;
+        --target) TARGET=$2; shift 2 ;;
         --pyi-only) PYI_ONLY=1; shift ;;
-        --pythonic) PYTHONIC=1; shift ;;
-        -h|--help) usage; exit 0 ;;
+        --check) CHECK=1; shift ;;
+        --hash) HASH=1; shift ;;
+        --pythonic) NAMING_STYLE=pythonic; shift ;;
+        --help|-h) usage; exit 0 ;;
         *) echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
     esac
 done
 
-if [[ "$DRY_RUN" -eq 1 && ( "$NO_COMMIT" -eq 1 || "$NO_TAG" -eq 1 ) ]]; then
-    echo "Error: --dry-run cannot be combined with --no-commit or --no-tag" >&2
+case "$TARGET" in
+    all|micropython|circuitpython|cpython) ;;
+    *) echo "Error: invalid target: $TARGET" >&2; exit 1 ;;
+esac
+
+if [[ "$PYI_ONLY" -eq 1 && "$TARGET" != all ]]; then
+    echo "Error: --pyi-only cannot be combined with --target" >&2
     exit 1
 fi
 
-if [[ "$PYI_ONLY" -eq 1 && ( "$DRY_RUN" -eq 1 || "$NO_COMMIT" -eq 1 || "$NO_TAG" -eq 1 ) ]]; then
-    echo "Error: --pyi-only cannot be combined with release-control flags" >&2
-    exit 1
-fi
-
-if [[ ! -f "$LVGL_H" ]]; then
-    echo "Error: $LVGL_H not found. Run: git submodule update --init lvgl" >&2
-    exit 1
-fi
-
-if [[ "$PYI_ONLY" -eq 1 ]]; then
-    if [[ -x "$LV_BINDINGS_DIR/.venv/bin/python3" ]]; then
-        PYTHON="$LV_BINDINGS_DIR/.venv/bin/python3"
-    else
-        PYTHON=python3
-    fi
-    NAMING_ARGS=()
-    if [[ "$PYTHONIC" -eq 1 ]]; then
-        NAMING_ARGS=(--naming-style pythonic)
-    else
-        unset LV_NAMING_STYLE
-    fi
-    echo "==> Regenerate generated/lvgl.pyi only"
-    (
-        cd "$LV_BINDINGS_DIR"
-        "$PYTHON" -m binding.emit_pyi \
-            --generated-dir "$LV_BINDINGS_DIR/generated" \
-            "${NAMING_ARGS[@]}"
-    )
-    echo "Done. No C, IR, commit, or tag was generated."
-    exit 0
-fi
-
-read_lvgl_version() {
-    local major minor patch version_file
-    for version_file in "$LVGL_DIR/lv_version.h" "$LVGL_H"; do
-        if [[ ! -f "$version_file" ]]; then
-            continue
-        fi
-        major=$(grep -E '^#define LVGL_VERSION_MAJOR' "$version_file" | awk '{print $3}')
-        minor=$(grep -E '^#define LVGL_VERSION_MINOR' "$version_file" | awk '{print $3}')
-        patch=$(grep -E '^#define LVGL_VERSION_PATCH' "$version_file" | awk '{print $3}')
-        if [[ -n "$major" && -n "$minor" && -n "$patch" ]]; then
-            LVGL_MAJOR=$major
-            LVGL_MINOR=$minor
-            LVGL_PATCH=$patch
-            LVGL_VERSION="${major}.${minor}.${patch}"
-            return
-        fi
-    done
-    echo "Error: could not read LVGL version from lv_version.h or lvgl.h" >&2
-    exit 1
-}
-
-lvgl_git_label() {
-    if git -C "$LVGL_DIR" describe --tags --exact-match >/dev/null 2>&1; then
-        git -C "$LVGL_DIR" describe --tags --exact-match
-    else
-        git -C "$LVGL_DIR" describe --tags --always
-    fi
-}
-
-read_lvgl_version
-LVGL_LABEL=$(lvgl_git_label)
-# Version is calculated by the shared-name script (LVGL major.minor + next patch,
-# resetting to 0 on a new LVGL line); regenerate_all.sh drives regeneration.
-BINDINGS_TAG="v$("$LV_BINDINGS_DIR/scripts/next_release_version.sh")"
-
-planned_commit_message() {
-    cat <<EOF
-Regenerate bindings for LVGL ${LVGL_LABEL} (lvgl-bindings ${BINDINGS_TAG}).
-
-LVGL API version: ${LVGL_VERSION}
-EOF
-}
-
-planned_tag_message() {
-    cat <<EOF
-lvgl-bindings ${BINDINGS_TAG} — bindings for LVGL ${LVGL_MAJOR}.${LVGL_MINOR}.x
-
-LVGL checkout: ${LVGL_LABEL}
-LVGL API version: ${LVGL_VERSION}
-EOF
-}
-
-show_release_plan() {
-    local paths=(
-        lvgl
-        generated/lvgl_micropython.c
-        generated/lvgl_circuitpython.c
-        generated/lvgl_python.c
-        generated/lvgl.pyi
-    )
-    local would_commit=0
-
-    echo "==> LVGL submodule: ${LVGL_LABEL} (API ${LVGL_VERSION})"
-    echo "==> lvgl-bindings tag: ${BINDINGS_TAG}"
-    echo
-    echo "==> Paths staged on commit:"
-    printf '    %s\n' "${paths[@]}"
-    echo
-    echo "==> Current changes (before regeneration):"
-    if git -C "$LV_BINDINGS_DIR" diff --quiet -- "${paths[@]}" && \
-       git -C "$LV_BINDINGS_DIR" diff --cached --quiet -- "${paths[@]}"; then
-        echo "    (none — submodule pin and generated files match the index)"
-    else
-        git -C "$LV_BINDINGS_DIR" status --short -- "${paths[@]}" | sed 's/^/    /'
-        would_commit=1
-    fi
-    echo
-    echo "==> Planned commit message:"
-    planned_commit_message | sed 's/^/    /'
-    echo
-    if git -C "$LV_BINDINGS_DIR" rev-parse "$BINDINGS_TAG" >/dev/null 2>&1; then
-        echo "==> Tag: would fail — ${BINDINGS_TAG} already exists"
-    else
-        echo "==> Planned tag: ${BINDINGS_TAG}"
-        echo "==> Planned tag message:"
-        planned_tag_message | sed 's/^/    /'
-    fi
-    echo
-    echo "Dry run: no files regenerated, no commit, no tag created."
-    if [[ "$would_commit" -eq 0 ]]; then
-        echo "Note: regeneration may still produce changes not visible until you run without --dry-run."
-    fi
-    echo
-    echo "Run without --dry-run to publish:"
-    echo "  ./regenerate_all.sh"
-    echo "  git push origin HEAD --tags"
-}
-
-if [[ "$DRY_RUN" -eq 1 ]]; then
-    show_release_plan
-    exit 0
-fi
-
-echo "==> LVGL submodule: ${LVGL_LABEL} (API ${LVGL_VERSION})"
-echo "==> lvgl-bindings tag: ${BINDINGS_TAG}"
-echo
-
-echo "==> Regenerate all binding targets"
-if [[ "$PYTHONIC" -eq 1 ]]; then
-    export LV_NAMING_STYLE=pythonic
-else
-    unset LV_NAMING_STYLE
-fi
-"$LV_BINDINGS_DIR/regenerate_lvmp.sh"
-"$LV_BINDINGS_DIR/regenerate_lvcp.sh"
-"$LV_BINDINGS_DIR/regenerate_lvpy.sh"
-echo
+ARGS=(--target "$TARGET" --naming-style "$NAMING_STYLE")
+[[ "$PYI_ONLY" -eq 1 ]] && ARGS+=(--pyi-only)
+[[ "$CHECK" -eq 1 ]] && ARGS+=(--check)
+[[ "$HASH" -eq 1 ]] && ARGS+=(--hash)
 
 cd "$LV_BINDINGS_DIR"
-
-COMMITTED=0
-if [[ "$NO_COMMIT" -eq 0 ]]; then
-    git add lvgl \
-        generated/lvgl_micropython.c generated/lvgl_circuitpython.c generated/lvgl_python.c \
-        generated/lvgl.pyi
-    if git diff --cached --quiet; then
-        echo "==> No changes to commit (bindings already match LVGL ${LVGL_VERSION})"
-    else
-        git commit -m "$(planned_commit_message)"
-        COMMITTED=1
-        echo "==> Committed binding updates"
-    fi
-else
-    echo "==> Skipping commit (--no-commit)"
-fi
-
-TAG_CREATED=0
-if [[ "$NO_TAG" -eq 0 ]]; then
-    if [[ "$NO_COMMIT" -eq 0 && "$COMMITTED" -eq 0 ]]; then
-        echo "==> Skipping tag (no new commit)"
-    else
-        if git rev-parse "$BINDINGS_TAG" >/dev/null 2>&1; then
-            echo "Error: tag ${BINDINGS_TAG} already exists" >&2
-            exit 1
-        fi
-        git tag -a "$BINDINGS_TAG" -m "$(planned_tag_message)"
-        TAG_CREATED=1
-        echo "==> Created tag ${BINDINGS_TAG}"
-    fi
-else
-    echo "==> Skipping tag (--no-tag)"
-fi
-
-echo
-echo "Done."
-if [[ "$TAG_CREATED" -eq 1 ]]; then
-    echo "Push with:"
-    echo "  git push origin HEAD --tags"
-elif [[ "$COMMITTED" -eq 1 ]]; then
-    echo "Push with:"
-    echo "  git push origin HEAD"
-fi
+PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m binding.generate "${ARGS[@]}"

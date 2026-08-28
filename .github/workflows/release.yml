@@ -1,0 +1,71 @@
+name: Release bindings
+
+on:
+  workflow_dispatch:
+    inputs:
+      bindings-ref:
+        description: Exact lvgl-bindings commit SHA or v9.5.N tag
+        required: true
+        type: string
+      publish:
+        description: Dispatch the pinned commit to lvgl-python for publication
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.ref.outputs.sha }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.bindings-ref }}
+          submodules: recursive
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install -r requirements-dev.txt
+
+      - name: Resolve exact source commit
+        id: ref
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Run non-mutating release gate
+        run: ./scripts/release_dry_run.sh
+
+      - name: Compute expected version
+        id: version
+        run: echo "version=$(./scripts/next_release_version.sh)" >> "$GITHUB_OUTPUT"
+
+  dispatch:
+    if: inputs.publish == true
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mint a repository-scoped installation token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.PYDEVICES_APP_ID }}
+          private-key: ${{ secrets.PYDEVICES_APP_PRIVATE_KEY }}
+          owner: PyDevices
+          repositories: lvgl-python
+
+      - name: Dispatch exact bindings commit
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          BINDINGS_SHA: ${{ needs.validate.outputs.sha }}
+        run: |
+          gh workflow run sync-and-release.yml \
+            --repo PyDevices/lvgl-python \
+            -f "lvgl_bindings_ref=${BINDINGS_SHA}" \
+            -f "publish=true"
