@@ -6,6 +6,8 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 from binding.artifacts import compare_manifests, manifest_for_directory
 from binding.cli import _stable_command_line
 from binding.generate import _extract_circuitpython_header, _normalized_for_check, generate
@@ -27,6 +29,7 @@ from binding.emit_backend import (
     module_registration_plan,
     mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
+    require_target_lowering,
     resolve_emitter_headers,
     target_banner,
 )
@@ -214,6 +217,19 @@ def test_target_lowering_setup_uses_common_defaults():
     assert runtime.get("generated_funcs") == {}
     assert runtime.get("target_lowering_profile").target == "cpython"
     assert not runtime.get("target_lowering_profile").supports_dynamic_function_pointer
+
+
+def test_target_lowering_contract_rejects_a_cross_target_native_emitter():
+    from binding import runtime
+
+    runtime.reset()
+    runtime.set_("emit_options", {"target": "micropython", "max_phase": None})
+
+    with pytest.raises(
+        RuntimeError,
+        match="cpython emitter requires target='cpython'; got 'micropython'",
+    ):
+        require_target_lowering("cpython")
 
 
 def test_target_lowering_header_and_banner_policy_is_shared():

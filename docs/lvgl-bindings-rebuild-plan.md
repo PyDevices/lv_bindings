@@ -425,7 +425,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   its native C registration mechanism and lifecycle-only exports, while the
   shared plan prevents selection-policy drift. Validation: 110 repository
   tests and binding.generate --check passed; generated artifacts remain
-  unchanged.`
+  unchanged. Fifteenth migration slice: each native emitter can now require
+  the target selected by the common lowering entry point. CPython explicitly
+  rejects a cross-target invocation instead of retaining its historical
+  MicroPython fallback default, making its backend ownership safe to narrow
+  further. Validation: 111 repository tests and binding.generate --check
+  passed; generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

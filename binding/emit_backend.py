@@ -106,6 +106,26 @@ def prepare_target_lowering(ctx, *, target, max_phase):
         runtime.set_("headers", list(ctx.args.input))
 
 
+def require_target_lowering(target):
+    """Return the configured phase after verifying an emitter's target.
+
+    A backend entry point selects the target before handing control to its
+    native emitter.  Native emitters must not retain fallback paths for other
+    backends: those paths conceal ownership mistakes and make a future
+    refactor unsafe.  Keep the check next to the common lowering setup so all
+    emitters can adopt the same boundary.
+    """
+    emit_options = runtime.get("emit_options", {})
+    actual_target = emit_options.get("target")
+    if actual_target != target:
+        raise RuntimeError(
+            "{target} emitter requires target={target!r}; got {actual!r}".format(
+                target=target, actual=actual_target
+            )
+        )
+    return emit_options.get("max_phase")
+
+
 def resolve_emitter_headers(inputs):
     """Return the public headers plus LVGL's private declarations.
 
