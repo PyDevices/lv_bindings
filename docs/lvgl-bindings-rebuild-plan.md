@@ -77,7 +77,7 @@ and machine-checked without changing the shared canonical API contract.
   three current targets.
 - [x] Record known differences: `OBJ_FLAG`, private `global_t`, CPython
   struct aliases, TJPGD, and GC helpers.
-- [ ] Record lifecycle dunders separately from the metadata baseline; they are
+- [x] Record lifecycle dunders separately from the metadata baseline; they are
   runtime exports rather than metadata entries.
 - [ ] Plan removal of the large duplicated historical baseline artifacts after
   the new oracle is stable.
@@ -92,7 +92,7 @@ and machine-checked without changing the shared canonical API contract.
 
 - Commit SHA: `cc7b814`
 - Validation command(s): `scratch/upstream_baseline/run.sh docs/baseline`; `PYTHONPATH=. .venv/bin/pytest -q -s tests/test_pyi_generation.py tests/test_pyi_prototypes.py`; all three Unix smoke tests
-- Notes: `Name/location coverage: MP 100.00%, CircuitPython 99.99%, CPython 99.90%. Generated binding artifacts unchanged. Upstream widget-method and struct-helper signature metadata remain explicit baseline limitations; lifecycle dunders remain a pending runtime-export audit.`
+- Notes: `Name/location coverage: MP 100.00%, CircuitPython 99.99%, CPython 99.90%. Generated binding artifacts unchanged. Upstream widget-method and struct-helper signature metadata remain explicit baseline limitations. Lifecycle dunders are documented separately: MicroPython uses loader hooks, while CircuitPython and CPython keep lifecycle outside the shared public API.`
 
 ## Checkpoint 1 — Toolchain and test foundation
 

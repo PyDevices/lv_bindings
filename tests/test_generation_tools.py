@@ -11,6 +11,7 @@ from binding.cli import _stable_command_line
 from binding.generate import _extract_circuitpython_header, _normalized_for_check, generate
 from binding.generator import analysis_snapshot, prepare_analysis, run_micropython
 from binding.preprocess import _preprocessor_command
+from binding.verify_namespace import mp_module_names, py_module_names
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -105,6 +106,27 @@ def test_unified_generator_help():
     assert result.returncode == 0
     assert "--pyi-only" in result.stdout
     assert "--check" in result.stdout
+
+
+def test_lifecycle_dunders_are_not_part_of_the_shared_public_namespace():
+    micropython = (REPO_ROOT / "generated" / "lvgl_micropython.c").read_text(
+        encoding="utf-8"
+    )
+    circuitpython = (REPO_ROOT / "generated" / "lvgl_circuitpython.c").read_text(
+        encoding="utf-8"
+    )
+    cpython = (REPO_ROOT / "generated" / "lvgl_python.c").read_text(
+        encoding="utf-8"
+    )
+
+    # MicroPython's user-module loader uses these hooks.  CircuitPython's
+    # generated source excludes them when LV_CIRCUITPYTHON_BUILD is defined,
+    # and CPython owns module lifecycle through the extension loader.  They
+    # are therefore runtime integration details, never shared API exports.
+    assert {"__init__", "__del__"} <= mp_module_names(micropython)
+    assert "#ifndef LV_CIRCUITPYTHON_BUILD" in circuitpython
+    assert {"__init__", "__del__"}.isdisjoint(mp_module_names(circuitpython))
+    assert {"__init__", "__del__"}.isdisjoint(py_module_names(cpython))
 
 
 def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypatch):

@@ -15,6 +15,22 @@ C text is intentionally not used as the compatibility metric.
 - Parser: `pycparser 2.21`
 - Preprocessor: `/usr/bin/gcc -E -DPYCPARSER -I fake_libc_include`
 
+## Runtime lifecycle exports (outside the metadata score)
+
+The normalized upstream metadata does not model module-loader lifecycle hooks,
+so they are deliberately excluded from the compatibility counts above. Their
+current target behavior is:
+
+| Target | Runtime lifecycle behavior | Shared public API consequence |
+| --- | --- | --- |
+| MicroPython | The user C module registers `__init__` and `__del__` hooks that invoke `lv_init()` and `lv_deinit()` once per module lifecycle. | Integration-only; not part of `api.json` or `lvgl.pyi`. |
+| CircuitPython | The generated hook code is compiled out under `LV_CIRCUITPYTHON_BUILD`; hand-written module glue exposes `init` and `deinit` and calls shared lifecycle functions. | No generated `__init__` or `__del__` module export. |
+| CPython | The extension loader owns module creation and teardown; the live module dictionary contains `init`, `deinit`, and `is_initialized`, but no binding-defined lifecycle dunders. | No generated lifecycle-dunder export. |
+
+The generator regression test verifies this boundary from the current generated
+artifacts. Any future lifecycle redesign must keep it out of the target-neutral
+declaration and typings contract.
+
 ## Normalized baseline counts
 
 | Section | Count |
