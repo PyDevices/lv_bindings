@@ -274,9 +274,9 @@ checker and runtime probes remain future gates.
 
 ### Handoff
 
-- Commit SHA: `________________`
-- Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Commit SHA: `cc36f26`
+- Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `./scripts/verify_bindings.sh`
+- Notes: `The shared lvgl.pyi is now emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, and variables; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. Generated C and CircuitPython header files were unchanged. Static type checking and runtime stub probes remain open.`
 
 ## Checkpoint 5 — Unified target backends
 
