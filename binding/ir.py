@@ -451,7 +451,12 @@ class _Converter:
             enumerators = node.values.enumerators or ()
             members = tuple(enumerator.name for enumerator in enumerators)
             values = tuple(
-                (enumerator.name, self.expression(enumerator.value))
+                (
+                    enumerator.name,
+                    self.expression(enumerator.value)
+                    if enumerator.value is not None
+                    else None,
+                )
                 for enumerator in enumerators
             )
         return CEnum(
