@@ -183,10 +183,8 @@ class CanonicalPyiEmitter:
         )
         self._add("@classmethod", 1)
         self._add("def __cast__(cls, obj: Any) -> Any: ...", 1)
-        self._add("@classmethod", 1)
-        self._add("def __cast_instance__(cls, obj: Any) -> Any: ...", 1)
-        self._add("@classmethod", 1)
-        self._add("def __dereference__(cls, obj: Any) -> Any: ...", 1)
+        self._add("def __cast_instance__(self, obj: Any) -> Any: ...", 1)
+        self._add("def __dereference__(self, size: int | None = ...) -> Any: ...", 1)
         self._add()
         self._add("class C_Pointer(Struct):")
         self._add("__SIZE__: ClassVar[int]", 1)
@@ -196,7 +194,7 @@ class CanonicalPyiEmitter:
         self._add("uint_val: int", 1)
         self._add()
         self._add("class Blob:")
-        self._add("def __dereference__(self) -> Any: ...", 1)
+        self._add("def __dereference__(self, size: int | None = ...) -> Any: ...", 1)
         self._add(
             "def __cast__(self, target_type: type[Any] | None = ...) -> Any: ...",
             1,

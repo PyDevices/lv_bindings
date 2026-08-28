@@ -162,6 +162,17 @@ def test_canonical_emitter_describes_runtime_helper_types():
         "__dereference__",
         "__cast__",
     }
+    struct = classes["Struct"]
+    methods = {
+        child.name: child
+        for child in struct.body
+        if isinstance(child, ast.FunctionDef)
+    }
+    assert [d.id for d in methods["__cast__"].decorator_list] == ["classmethod"]
+    assert methods["__cast_instance__"].decorator_list == []
+    assert methods["__dereference__"].decorator_list == []
+    assert len(methods["__dereference__"].args.args) == 2
+    assert len(methods["__dereference__"].args.defaults) == 1
 
 
 def test_canonical_emitter_can_emit_target_specific_exceptions():
