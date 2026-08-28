@@ -440,7 +440,13 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   preamble from the CPython-native emitter now that its target contract is
   enforced. The CPython object declaration is unconditional within its phase;
   generated artifacts remain unchanged. Validation: 112 repository tests and
-  binding.generate --check passed.`
+  binding.generate --check passed. Eighteenth migration slice: removed more
+  than two thousand lines of unreachable MicroPython helper, struct, array,
+  callback, function, and object lowering from the CPython emitter. Its live
+  functions now delegate directly to the CPython-native lowering module, while
+  retaining the target-neutral type-discovery helper and existing phase order.
+  Validation: 112 repository tests and binding.generate --check passed;
+  generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 
