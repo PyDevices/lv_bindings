@@ -63,7 +63,7 @@ from .emit_backend import (
     struct_pointer_helpers_source,
     target_banner,
 )
-from .runtime_exports import filter_module_funcs_for_target
+from .runtime_exports import filter_module_funcs_for_target, filter_registration_module_funcs
 from .util import eprint, memoize
 
 
@@ -488,6 +488,8 @@ def emit_c(ctx):
                     render_method=lambda value: (
                         gen.visit(value) if isinstance(value, c_ast.Node) else value
                     ),
+                    api_model=runtime.get("api_model"),
+                    target=_emit_target,
                 )
                 print(diagnostic)
                 runtime.set_("funcs", funcs)
@@ -580,6 +582,8 @@ def emit_c(ctx):
             render_method=lambda value: (
                 gen.visit(value) if isinstance(value, c_ast.Node) else value
             ),
+            api_model=runtime.get("api_model"),
+            target=_emit_target,
         )
         print(diagnostic)
         runtime.set_("funcs", funcs)
@@ -686,7 +690,9 @@ def emit_c(ctx):
         ]
         generated_funcs = max(_candidates, key=len)
         module_funcs = [func for func in funcs if func.name not in generated_funcs]
-        module_funcs = filter_module_funcs_for_target(module_funcs, _emit_target)
+        module_funcs = filter_module_funcs_for_target(
+            module_funcs, _emit_target, runtime.get("api_model")
+        )
         runtime.set_("_cpython_module_exports", list(module_funcs))
         for module_func in module_funcs[
             :
@@ -708,6 +714,7 @@ def emit_c(ctx):
                 module_funcs.remove(module_func)
 
         _emit_cpython_struct_methods()
+        module_funcs = filter_registration_module_funcs(module_funcs)
 
         functions_not_generated = [
             func.name for func in funcs if func.name not in generated_funcs
@@ -736,6 +743,20 @@ def emit_c(ctx):
                 gen_callback_func(func, func_name="%s_%s" % (struct_name, func_name))
             except MissingConversionException as exp:
                 gen_func_error(func, exp)
+
+        # Callback lowering can discover additional concrete structs after
+        # phase 6.  Every generated CPython struct type references a method
+        # table, including structs with no methods, so close that discovery
+        # set before module initialization is emitted.
+        while True:
+            pending_struct_methods = [
+                name
+                for name, generated in generated_structs.items()
+                if generated and not generated_struct_functions.get(name)
+            ]
+            if not pending_struct_methods:
+                break
+            _emit_cpython_struct_methods(pending_struct_methods)
 
     # Emit the CPython module definition.
         from .emit_cpython_glue import finish_py_module

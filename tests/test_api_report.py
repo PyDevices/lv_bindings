@@ -3,7 +3,13 @@ from pathlib import Path
 import pytest
 
 from binding.api_model import build_api_model
-from binding.api_report import build_report, load_json, public_export_sets
+from binding.api_report import (
+    TARGET_ARTIFACTS,
+    build_report,
+    load_json,
+    public_export_sets,
+    target_artifact_hashes,
+)
 from binding.ir import parse_source
 from tools.baseline_report import _load_json, _write_json
 
@@ -67,6 +73,7 @@ def test_report_records_target_exceptions_and_is_deterministic():
     report = build_report(data)
     assert report == build_report(data)
     assert report["target_parity"]["all_targets_equal"] is False
+    assert report["target_parity"]["common_coverage"] < 1.0
     assert "module.function.target_only" in report["target_parity"]["availability_exceptions"]
     assert report["target_exports"]["micropython"]["count"] > report["target_exports"]["cpython"]["count"]
 
@@ -106,6 +113,18 @@ def test_compact_baseline_json_is_deterministic_and_readable(tmp_path):
     assert first.read_bytes() == second.read_bytes()
     assert _load_json(first) == baseline
     assert load_json(first) == baseline
+
+
+def test_report_hashes_each_generated_target_artifact(tmp_path):
+    for index, filename in enumerate(TARGET_ARTIFACTS.values()):
+        (tmp_path / filename).write_bytes(("target-%d" % index).encode())
+
+    hashes = target_artifact_hashes(tmp_path)
+
+    assert set(hashes) == set(TARGET_ARTIFACTS)
+    assert all(len(item["sha256"]) == 64 for item in hashes.values())
+    report = build_report(_model_data(), target_artifacts=hashes)
+    assert report["target_artifacts"] == hashes
 
 
 def test_current_baseline_differences_have_a_complete_classification():

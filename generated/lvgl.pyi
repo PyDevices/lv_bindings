@@ -5,12 +5,12 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from typing import Any, ClassVar, TypeAlias, TypeVar, overload
 
-_StructT = TypeVar("_StructT", bound="Struct")
+_StructT = TypeVar("_StructT", bound="_Struct")
 _BlobT = TypeVar("_BlobT")
 
 class LvReferenceError(Exception): ...
 
-class Struct:
+class _Struct:
     __SIZE__: ClassVar[int]
     def __init__(self, fields: dict[str, Any] | None = None, /, **kwargs: Any) -> None: ...
     @classmethod
@@ -18,22 +18,19 @@ class Struct:
     def __cast_instance__(self: _StructT, pointer: Any, /) -> _StructT: ...
     def __dereference__(self, size: int | None = ..., /) -> memoryview | None: ...
 
-class C_Pointer(Struct):
+class C_Pointer(_Struct):
     __SIZE__: ClassVar[int]
     ptr_val: Any
     str_val: str | None
     int_val: int
     uint_val: int
 
-class Blob:
+class _Blob:
     def __dereference__(self, size: int | None = ..., /) -> memoryview | None: ...
     @overload
     def __cast__(self, /) -> Any: ...
     @overload
     def __cast__(self, target_type: type[_BlobT], /) -> _BlobT: ...
-
-class _Nesting:
-    value: int
 
 class ALIGN:
     DEFAULT: int
@@ -307,12 +304,12 @@ class FLEX_FLOW:
     COLUMN_REVERSE: int
     COLUMN_WRAP_REVERSE: int
 
-class FONT_FMT_TXT_BITMAP_FORMAT:
+class FONT_FMT_TXT:
     PLAIN: int
     COMPRESSED: int
     COMPRESSED_NO_PREFILTER: int
 
-class FONT_FMT_TXT_CMAP_TYPE:
+class FONT_FMT_TXT_CMAP:
     FORMAT0_FULL: int
     SPARSE_FULL: int
     FORMAT0_TINY: int
@@ -360,7 +357,7 @@ class FS_RES:
     DRIVE_LETTER_ALREADY_USED: int
     UNKNOWN: int
 
-class FS_WHENCE:
+class FS_SEEK:
     SET: int
     CUR: int
     END: int
@@ -491,6 +488,21 @@ class OBJ_FLAG:
     USER_3: int
     USER_4: int
 
+class OPA:
+    TRANSP: int
+    _0: int
+    _10: int
+    _20: int
+    _30: int
+    _40: int
+    _50: int
+    _60: int
+    _70: int
+    _80: int
+    _90: int
+    _100: int
+    COVER: int
+
 class PALETTE:
     RED: int
     PINK: int
@@ -590,6 +602,141 @@ class STATE:
     USER_3: int
     USER_4: int
     ANY: int
+
+class STYLE:
+    PROP_INV: int
+    WIDTH: int
+    HEIGHT: int
+    LENGTH: int
+    TRANSFORM_WIDTH: int
+    TRANSFORM_HEIGHT: int
+    MIN_WIDTH: int
+    MAX_WIDTH: int
+    MIN_HEIGHT: int
+    MAX_HEIGHT: int
+    TRANSLATE_X: int
+    TRANSLATE_Y: int
+    RADIAL_OFFSET: int
+    X: int
+    Y: int
+    ALIGN: int
+    PAD_TOP: int
+    PAD_BOTTOM: int
+    PAD_LEFT: int
+    PAD_RIGHT: int
+    PAD_RADIAL: int
+    PAD_ROW: int
+    PAD_COLUMN: int
+    MARGIN_TOP: int
+    MARGIN_BOTTOM: int
+    MARGIN_LEFT: int
+    MARGIN_RIGHT: int
+    BG_GRAD: int
+    BG_GRAD_DIR: int
+    BG_MAIN_OPA: int
+    BG_GRAD_OPA: int
+    BG_GRAD_COLOR: int
+    BG_MAIN_STOP: int
+    BG_GRAD_STOP: int
+    BG_IMAGE_SRC: int
+    BG_IMAGE_OPA: int
+    BG_IMAGE_RECOLOR_OPA: int
+    BG_IMAGE_TILED: int
+    BG_IMAGE_RECOLOR: int
+    BORDER_WIDTH: int
+    BORDER_COLOR: int
+    BORDER_OPA: int
+    BORDER_POST: int
+    BORDER_SIDE: int
+    OUTLINE_WIDTH: int
+    OUTLINE_COLOR: int
+    OUTLINE_OPA: int
+    OUTLINE_PAD: int
+    BG_OPA: int
+    BG_COLOR: int
+    SHADOW_WIDTH: int
+    LINE_WIDTH: int
+    ARC_WIDTH: int
+    TEXT_FONT: int
+    IMAGE_RECOLOR_OPA: int
+    IMAGE_OPA: int
+    SHADOW_OPA: int
+    LINE_OPA: int
+    ARC_OPA: int
+    TEXT_OPA: int
+    SHADOW_COLOR: int
+    IMAGE_RECOLOR: int
+    LINE_COLOR: int
+    ARC_COLOR: int
+    TEXT_COLOR: int
+    ARC_IMAGE_SRC: int
+    SHADOW_OFFSET_X: int
+    SHADOW_OFFSET_Y: int
+    SHADOW_SPREAD: int
+    LINE_DASH_WIDTH: int
+    TEXT_ALIGN: int
+    TEXT_LETTER_SPACE: int
+    TEXT_LINE_SPACE: int
+    LINE_DASH_GAP: int
+    LINE_ROUNDED: int
+    IMAGE_COLORKEY: int
+    TEXT_OUTLINE_STROKE_WIDTH: int
+    TEXT_OUTLINE_STROKE_OPA: int
+    TEXT_OUTLINE_STROKE_COLOR: int
+    TEXT_DECOR: int
+    ARC_ROUNDED: int
+    OPA: int
+    OPA_LAYERED: int
+    COLOR_FILTER_DSC: int
+    COLOR_FILTER_OPA: int
+    ANIM: int
+    ANIM_DURATION: int
+    TRANSITION: int
+    RADIUS: int
+    BITMAP_MASK_SRC: int
+    BLEND_MODE: int
+    ROTARY_SENSITIVITY: int
+    TRANSLATE_RADIAL: int
+    CLIP_CORNER: int
+    BASE_DIR: int
+    RECOLOR: int
+    RECOLOR_OPA: int
+    LAYOUT: int
+    BLUR_RADIUS: int
+    BLUR_BACKDROP: int
+    BLUR_QUALITY: int
+    DROP_SHADOW_RADIUS: int
+    DROP_SHADOW_OFFSET_X: int
+    DROP_SHADOW_OFFSET_Y: int
+    DROP_SHADOW_COLOR: int
+    DROP_SHADOW_OPA: int
+    DROP_SHADOW_QUALITY: int
+    TRANSFORM_SCALE_X: int
+    TRANSFORM_SCALE_Y: int
+    TRANSFORM_PIVOT_X: int
+    TRANSFORM_PIVOT_Y: int
+    TRANSFORM_ROTATION: int
+    TRANSFORM_SKEW_X: int
+    TRANSFORM_SKEW_Y: int
+    FLEX_FLOW: int
+    FLEX_MAIN_PLACE: int
+    FLEX_CROSS_PLACE: int
+    FLEX_TRACK_PLACE: int
+    FLEX_GROW: int
+    GRID_COLUMN_DSC_ARRAY: int
+    GRID_ROW_DSC_ARRAY: int
+    GRID_COLUMN_ALIGN: int
+    GRID_ROW_ALIGN: int
+    GRID_CELL_COLUMN_POS: int
+    GRID_CELL_COLUMN_SPAN: int
+    GRID_CELL_X_ALIGN: int
+    GRID_CELL_ROW_POS: int
+    GRID_CELL_ROW_SPAN: int
+    GRID_CELL_Y_ALIGN: int
+    LAST_BUILT_IN_PROP: int
+    NUM_BUILT_IN_PROPS: int
+    PROP_ANY: int
+    PROP_CONST: int
 
 class STYLE_RES:
     NOT_FOUND: int
@@ -705,23 +852,11 @@ class THREAD_PRIO:
     HIGH: int
     HIGHEST: int
 
-class _3dtexture_t(Struct):
-    ...
+class TREE_WALK:
+    PRE_ORDER: int
+    POST_ORDER: int
 
-class anim_bezier3_para_t(Struct):
-    x1: int
-    y1: int
-    x2: int
-    y2: int
-
-class anim_state_t(Struct):
-    anim_list_changed: int
-    anim_run_round: int
-    anim_vsync_registered: int
-    timer: timer_t
-    anim_ll: ll_t
-
-class anim_t(Struct):
+class anim_t(_Struct):
     var: Any
     exec_cb: Callable[[Any, int], None]
     custom_exec_cb: Callable[[anim_t, int], None]
@@ -789,13 +924,13 @@ class anim_t(Struct):
     def set_var(self, var: Any) -> None: ...
     def start(self) -> anim_t: ...
 
-class anim_timeline_dsc_t(Struct):
+class anim_timeline_dsc_t(_Struct):
     anim: anim_t
     start_time: int
     is_started: int
     is_completed: int
 
-class anim_timeline_t(Struct):
+class anim_timeline_t(_Struct):
     anim_dsc: anim_timeline_dsc_t
     anim_dsc_cnt: int
     act_time: int
@@ -823,36 +958,7 @@ class anim_timeline_t(Struct):
     def set_user_data(self, user_data: Any) -> None: ...
     def start(self) -> int: ...
 
-class animimg_t(Struct):
-    img: image
-    anim: anim_t
-    dsc: Any
-    pic_count: int
-
-class arc_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    rotation: int
-    indic_angle_start: float
-    indic_angle_end: float
-    bg_angle_start: float
-    bg_angle_end: float
-    value: int
-    min_value: int
-    max_value: int
-    dragging: int
-    _type: int
-    min_close: int
-    in_out: int
-    chg_rate: int
-    last_tick: int
-    last_angle: float
-    knob_offset: int
-
-class arclabel_t(Struct):
-    ...
-
-class area_t(Struct):
+class area_t(_Struct):
     x1: int
     y1: int
     x2: int
@@ -877,7 +983,7 @@ class area_t(Struct):
     def set_pos(self, x: int, y: int) -> None: ...
     def set_width(self, w: int) -> None: ...
 
-class array_t(Struct):
+class array_t(_Struct):
     data: Any
     size: int
     capacity: int
@@ -902,63 +1008,7 @@ class array_t(Struct):
     def resize(self, new_capacity: int) -> int: ...
     def shrink(self) -> None: ...
 
-class bar_anim_t(Struct):
-    bar: obj
-    anim_start: int
-    anim_end: int
-    anim_state: int
-
-class bar_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    cur_value: int
-    min_value: int
-    max_value: int
-    start_value: int
-    indic_area: area_t
-    val_reversed: int
-    cur_value_anim: bar_anim_t
-    start_value_anim: bar_anim_t
-    mode: bar.MODE | int
-    orientation: bar.ORIENTATION | int
-
-class barcode_t(Struct):
-    __lv_type_canvas: TypeAlias = "canvas"
-    canvas: __lv_type_canvas
-    dark_color: color_t
-    light_color: color_t
-    scale: int
-    direction: DIR | int
-    tiled: int
-    encoding: barcode.ENCODING_CODE128 | int
-
-class binfont_font_src_t(Struct):
-    font_size: int
-    path: str
-    buffer: Any
-    buffer_size: int
-
-class builtin_font_src_t(Struct):
-    font_p: font_t
-    size: int
-
-class button_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-
-class buttonmatrix_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    map_p: Any
-    button_areas: area_t
-    ctrl_bits: buttonmatrix.CTRL | int
-    btn_cnt: int
-    row_cnt: int
-    btn_id_sel: int
-    one_check: int
-    auto_free_map: int
-
-class cache_class_t(Struct):
+class cache_class_t(_Struct):
     alloc_cb: Callable[[], Any]
     init_cb: Callable[[cache_t], int]
     destroy_cb: Callable[[cache_t, Any], None]
@@ -972,7 +1022,7 @@ class cache_class_t(Struct):
     iter_create_cb: Callable[[cache_t], iter_t]
     def cache_create(self, node_size: int, max_size: int, ops: cache_ops_t) -> cache_t: ...
 
-class cache_entry_t(Struct):
+class cache_entry_t(_Struct):
     cache: cache_t
     ref_cnt: int
     node_size: int
@@ -995,15 +1045,15 @@ class cache_entry_t(Struct):
     def set_flag(self, flags: int) -> None: ...
     def set_node_size(self, node_size: int) -> None: ...
 
-class cache_ops_t(Struct):
+class cache_ops_t(_Struct):
     compare_cb: Callable[[Any, Any], int]
     create_cb: Callable[[Any, Any], int]
     free_cb: Callable[[Any, Any], None]
 
-class cache_slot_size_t(Struct):
+class cache_slot_size_t(_Struct):
     size: int
 
-class cache_t(Struct):
+class cache_t(_Struct):
     clz: cache_class_t
     node_size: int
     max_size: int
@@ -1032,29 +1082,12 @@ class cache_t(Struct):
     def set_max_size(self, max_size: int, user_data: Any) -> None: ...
     def set_name(self, name: str) -> None: ...
 
-class calendar_date_t(Struct):
+class calendar_date_t(_Struct):
     year: int
     month: int
     day: int
 
-class calendar_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    btnm: __lv_type_obj
-    today: calendar_date_t
-    showed_date: calendar_date_t
-    highlighted_dates: calendar_date_t
-    highlighted_dates_num: int
-    map: Sequence[str]
-    use_chinese_calendar: int
-    nums: Sequence[Sequence[int]]
-
-class canvas_t(Struct):
-    img: image
-    draw_buf: draw_buf_t
-    static_buf: draw_buf_t
-
-class chart_cursor_t(Struct):
+class chart_cursor_t(_Struct):
     pos: point_t
     point_id: int
     color: color_t
@@ -1062,7 +1095,7 @@ class chart_cursor_t(Struct):
     dir: DIR | int
     pos_set: int
 
-class chart_series_t(Struct):
+class chart_series_t(_Struct):
     x_points: Any
     y_points: Any
     color: color_t
@@ -1073,29 +1106,7 @@ class chart_series_t(Struct):
     x_axis_sec: int
     y_axis_sec: int
 
-class chart_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    series_ll: ll_t
-    cursor_ll: ll_t
-    ymin: Sequence[int]
-    ymax: Sequence[int]
-    xmin: Sequence[int]
-    xmax: Sequence[int]
-    pressed_point_id: int
-    hdiv_cnt: int
-    vdiv_cnt: int
-    point_cnt: int
-    _type: chart.TYPE | int
-    update_mode: chart.UPDATE_MODE | int
-
-class checkbox_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    txt: str
-    static_txt: int
-
-class circle_buf_t(Struct):
+class circle_buf_t(_Struct):
     def capacity(self) -> int: ...
     def destroy(self) -> None: ...
     def fill(self, count: int, fill_cb: Callable[[Any, int, int, Any], int], user_data: Any) -> int: ...
@@ -1113,7 +1124,7 @@ class circle_buf_t(Struct):
     def tail(self) -> Any: ...
     def write(self, data: Any) -> RESULT | int: ...
 
-class color16_t(Struct):
+class color16_t(_Struct):
     blue: int
     green: int
     red: int
@@ -1121,11 +1132,7 @@ class color16_t(Struct):
     def premultiply(self, a: int) -> None: ...
     def to_color(self) -> color_t: ...
 
-class color16a_t(Struct):
-    lumi: int
-    alpha: int
-
-class color32_t(Struct):
+class color32_t(_Struct):
     blue: int
     green: int
     red: int
@@ -1137,17 +1144,17 @@ class color32_t(Struct):
     def eq(self, c2: color32_t) -> int: ...
     def luminance(self) -> int: ...
 
-class color_filter_dsc_t(Struct):
+class color_filter_dsc_t(_Struct):
     filter_cb: Callable[[color_filter_dsc_t, color_t, int], color_t]
     user_data: Any
     def init(self, cb: Callable[[color_filter_dsc_t, color_t, int], color_t]) -> None: ...
 
-class color_hsv_t(Struct):
+class color_hsv_t(_Struct):
     h: int
     s: int
     v: int
 
-class color_t(Struct):
+class color_t(_Struct):
     blue: int
     green: int
     red: int
@@ -1164,11 +1171,7 @@ class color_t(Struct):
     def to_u16(self) -> int: ...
     def to_u32(self) -> int: ...
 
-class cover_check_info_t(Struct):
-    res: COVER_RES | int
-    area: area_t
-
-class display_t(Struct):
+class display_t(_Struct):
     hor_res: int
     ver_res: int
     physical_hor_res: int
@@ -1294,7 +1297,7 @@ class display_t(Struct):
     def trigger_activity(self) -> None: ...
     def unregister_vsync_event(self, event_cb: Callable[[event_t], None], user_data: Any) -> int: ...
 
-class draw_arc_dsc_t(Struct):
+class draw_arc_dsc_t(_Struct):
     base: draw_dsc_base_t
     color: color_t
     width: int
@@ -1307,14 +1310,14 @@ class draw_arc_dsc_t(Struct):
     rounded: int
     def init(self) -> None: ...
 
-class draw_blur_dsc_t(Struct):
+class draw_blur_dsc_t(_Struct):
     base: draw_dsc_base_t
     blur_radius: int
     corner_radius: int
     quality: BLUR_QUALITY | int
     def init(self) -> None: ...
 
-class draw_border_dsc_t(Struct):
+class draw_border_dsc_t(_Struct):
     base: draw_dsc_base_t
     radius: int
     color: color_t
@@ -1323,7 +1326,7 @@ class draw_border_dsc_t(Struct):
     side: BORDER_SIDE | int
     def init(self) -> None: ...
 
-class draw_box_shadow_dsc_t(Struct):
+class draw_box_shadow_dsc_t(_Struct):
     base: draw_dsc_base_t
     radius: int
     color: color_t
@@ -1335,7 +1338,7 @@ class draw_box_shadow_dsc_t(Struct):
     bg_cover: int
     def init(self) -> None: ...
 
-class draw_buf_handlers_t(Struct):
+class draw_buf_handlers_t(_Struct):
     buf_malloc_cb: Callable[[int, COLOR_FORMAT | int], Any]
     buf_free_cb: Callable[[Any], None]
     buf_copy_cb: Callable[[draw_buf_t, area_t, draw_buf_t, area_t], None]
@@ -1350,7 +1353,7 @@ class draw_buf_handlers_t(Struct):
     def draw_buf_width_to_stride_ex(self, w: int, color_format: COLOR_FORMAT | int) -> int: ...
     def init(self, buf_malloc_cb: Callable[[int, COLOR_FORMAT | int], Any], buf_free_cb: Callable[[Any], None], buf_copy_cb: Callable[[draw_buf_t, area_t, draw_buf_t, area_t], None], align_pointer_cb: Callable[[Any, COLOR_FORMAT | int], Any], invalidate_cache_cb: Callable[[draw_buf_t, area_t], None], flush_cache_cb: Callable[[draw_buf_t, area_t], None], width_to_stride_cb: Callable[[int, COLOR_FORMAT | int], int]) -> None: ...
 
-class draw_buf_t(Struct):
+class draw_buf_t(_Struct):
     header: image_header_t
     data_size: int
     data: Any
@@ -1375,7 +1378,7 @@ class draw_buf_t(Struct):
     def set_palette(self, index: int, color: color32_t) -> None: ...
     def to_image(self, img: image_dsc_t) -> None: ...
 
-class draw_dsc_base_t(Struct):
+class draw_dsc_base_t(_Struct):
     __lv_type_obj: TypeAlias = "obj"
     obj: __lv_type_obj
     part: int
@@ -1391,7 +1394,7 @@ class draw_dsc_base_t(Struct):
     dsc_size: int
     user_data: Any
 
-class draw_fill_dsc_t(Struct):
+class draw_fill_dsc_t(_Struct):
     base: draw_dsc_base_t
     radius: int
     opa: int
@@ -1399,15 +1402,7 @@ class draw_fill_dsc_t(Struct):
     grad: grad_dsc_t
     def init(self) -> None: ...
 
-class draw_global_info_t(Struct):
-    unit_head: draw_unit_t
-    unit_cnt: int
-    used_memory_for_layers: int
-    dispatch_req: int
-    circle_cache_mutex: int
-    task_running: int
-
-class draw_glyph_dsc_t(Struct):
+class draw_glyph_dsc_t(_Struct):
     glyph_data: Any
     format: FONT_GLYPH_FORMAT | int
     letter_coords: area_t
@@ -1423,7 +1418,7 @@ class draw_glyph_dsc_t(Struct):
     _draw_buf: draw_buf_t
     def init(self) -> None: ...
 
-class draw_image_dsc_t(Struct):
+class draw_image_dsc_t(_Struct):
     base: draw_dsc_base_t
     src: Any
     header: image_header_t
@@ -1446,12 +1441,12 @@ class draw_image_dsc_t(Struct):
     bitmap_mask_src: image_dsc_t
     def init(self) -> None: ...
 
-class draw_image_sup_t(Struct):
+class draw_image_sup_t(_Struct):
     alpha_color: color_t
     palette: color32_t
     palette_size: int
 
-class draw_label_dsc_t(Struct):
+class draw_label_dsc_t(_Struct):
     base: draw_dsc_base_t
     text: str
     text_size: point_t
@@ -1481,12 +1476,12 @@ class draw_label_dsc_t(Struct):
     outline_stroke_width: int
     def init(self) -> None: ...
 
-class draw_label_hint_t(Struct):
+class draw_label_hint_t(_Struct):
     line_start: int
     y: int
     coord_y: int
 
-class draw_letter_dsc_t(Struct):
+class draw_letter_dsc_t(_Struct):
     base: draw_dsc_base_t
     unicode: int
     font: font_t
@@ -1505,7 +1500,7 @@ class draw_letter_dsc_t(Struct):
     outline_stroke_color: color_t
     def init(self) -> None: ...
 
-class draw_line_dsc_t(Struct):
+class draw_line_dsc_t(_Struct):
     base: draw_dsc_base_t
     p1: point_precise_t
     p2: point_precise_t
@@ -1521,17 +1516,14 @@ class draw_line_dsc_t(Struct):
     raw_end: int
     def init(self) -> None: ...
 
-class draw_mask_rect_dsc_t(Struct):
+class draw_mask_rect_dsc_t(_Struct):
     base: draw_dsc_base_t
     area: area_t
     radius: int
     keep_outside: int
     def init(self) -> None: ...
 
-class draw_mask_t(Struct):
-    user_data: Any
-
-class draw_rect_dsc_t(Struct):
+class draw_rect_dsc_t(_Struct):
     base: draw_dsc_base_t
     radius: int
     bg_image_src: Any
@@ -1561,7 +1553,7 @@ class draw_rect_dsc_t(Struct):
     shadow_spread: int
     def init(self) -> None: ...
 
-class draw_sw_blend_dsc_t(Struct):
+class draw_sw_blend_dsc_t(_Struct):
     blend_area: area_t
     src_buf: Any
     src_stride: int
@@ -1575,38 +1567,12 @@ class draw_sw_blend_dsc_t(Struct):
     mask_stride: int
     blend_mode: BLEND_MODE | int
 
-class draw_sw_blend_fill_dsc_t(Struct):
-    dest_buf: Any
-    dest_w: int
-    dest_h: int
-    dest_stride: int
-    mask_buf: Any
-    mask_stride: int
-    color: color_t
-    opa: int
-    relative_area: area_t
-
-class draw_sw_blend_image_dsc_t(Struct):
-    dest_buf: Any
-    dest_w: int
-    dest_h: int
-    dest_stride: int
-    mask_buf: Any
-    mask_stride: int
-    src_buf: Any
-    src_stride: int
-    src_color_format: COLOR_FORMAT | int
-    opa: int
-    blend_mode: BLEND_MODE | int
-    relative_area: area_t
-    src_area: area_t
-
-class draw_sw_custom_blend_handler_t(Struct):
+class draw_sw_custom_blend_handler_t(_Struct):
     dest_cf: COLOR_FORMAT | int
     handler: Callable[[draw_task_t, draw_sw_blend_dsc_t], None]
     def draw_sw_register_blend_handler(self) -> int: ...
 
-class draw_sw_mask_angle_param_t(Struct):
+class draw_sw_mask_angle_param_t(_Struct):
     dsc: draw_sw_mask_common_dsc_t
     cfg: Any
     start_line: draw_sw_mask_line_param_t
@@ -1614,16 +1580,16 @@ class draw_sw_mask_angle_param_t(Struct):
     delta_deg: int
     def draw_sw_mask_angle_init(self, vertex_x: int, vertex_y: int, start_angle: int, end_angle: int) -> None: ...
 
-class draw_sw_mask_common_dsc_t(Struct):
+class draw_sw_mask_common_dsc_t(_Struct):
     cb: Callable[[Any, int, int, int, Any], DRAW_SW_MASK_RES | int]
     _type: DRAW_SW_MASK_TYPE | int
 
-class draw_sw_mask_fade_param_t(Struct):
+class draw_sw_mask_fade_param_t(_Struct):
     dsc: draw_sw_mask_common_dsc_t
     cfg: Any
     def draw_sw_mask_fade_init(self, coords: area_t, opa_top: int, y_top: int, opa_bottom: int, y_bottom: int) -> None: ...
 
-class draw_sw_mask_line_param_t(Struct):
+class draw_sw_mask_line_param_t(_Struct):
     dsc: draw_sw_mask_common_dsc_t
     cfg: Any
     origo: point_t
@@ -1636,12 +1602,12 @@ class draw_sw_mask_line_param_t(Struct):
     def draw_sw_mask_line_angle_init(self, px: int, py: int, angle: int, side: DRAW_SW_MASK_LINE_SIDE | int) -> None: ...
     def draw_sw_mask_line_points_init(self, p1x: int, p1y: int, p2x: int, p2y: int, side: DRAW_SW_MASK_LINE_SIDE | int) -> None: ...
 
-class draw_sw_mask_map_param_t(Struct):
+class draw_sw_mask_map_param_t(_Struct):
     dsc: draw_sw_mask_common_dsc_t
     cfg: Any
     def draw_sw_mask_map_init(self, coords: area_t, map: Any) -> None: ...
 
-class draw_sw_mask_radius_circle_dsc_t(Struct):
+class draw_sw_mask_radius_circle_dsc_t(_Struct):
     buf: Any
     cir_opa: Any
     x_start_on_y: Any
@@ -1650,26 +1616,13 @@ class draw_sw_mask_radius_circle_dsc_t(Struct):
     used_cnt: int
     radius: int
 
-class draw_sw_mask_radius_param_t(Struct):
+class draw_sw_mask_radius_param_t(_Struct):
     dsc: draw_sw_mask_common_dsc_t
     cfg: Any
     circle: draw_sw_mask_radius_circle_dsc_t
     def draw_sw_mask_radius_init(self, rect: area_t, radius: int, inv: int) -> None: ...
 
-class draw_sw_thread_dsc_t(Struct):
-    task_act: draw_task_t
-    thread: int
-    sync: int
-    draw_unit: draw_unit_t
-    idx: int
-    inited: int
-    exit_status: int
-
-class draw_sw_unit_t(Struct):
-    base_unit: draw_unit_t
-    task_act: draw_task_t
-
-class draw_task_t(Struct):
+class draw_task_t(_Struct):
     next: draw_task_t
     _type: DRAW_TASK_TYPE | int
     area: area_t
@@ -1716,7 +1669,7 @@ class draw_task_t(Struct):
     def get_triangle_dsc(self) -> draw_triangle_dsc_t: ...
     def get_type(self) -> DRAW_TASK_TYPE | int: ...
 
-class draw_triangle_dsc_t(Struct):
+class draw_triangle_dsc_t(_Struct):
     base: draw_dsc_base_t
     p: Sequence[point_precise_t]
     color: color_t
@@ -1724,7 +1677,7 @@ class draw_triangle_dsc_t(Struct):
     grad: grad_dsc_t
     def init(self) -> None: ...
 
-class draw_unit_t(Struct):
+class draw_unit_t(_Struct):
     next: draw_unit_t
     name: str
     idx: int
@@ -1734,38 +1687,14 @@ class draw_unit_t(Struct):
     delete_cb: Callable[[draw_unit_t], int]
     event_cb: Callable[[event_t], None]
 
-class draw_vector_dsc_t(Struct):
-    ...
-
-class dropdown_list_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    dropdown: __lv_type_obj
-
-class dropdown_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    list: __lv_type_obj
-    text: str
-    symbol: Any
-    options: str
-    option_cnt: int
-    sel_opt_id: int
-    sel_opt_id_orig: int
-    pr_opt_id: int
-    dir: int
-    static_options: int
-    selected_highlight: int
-    static_text: int
-
-class event_dsc_t(Struct):
+class event_dsc_t(_Struct):
     cb: Callable[[event_t], None]
     user_data: Any
     filter: int
     def get_cb(self) -> Callable[[event_t], None]: ...
     def get_user_data(self) -> Any: ...
 
-class event_list_t(Struct):
+class event_list_t(_Struct):
     array: array_t
     is_traversing: int
     has_marked_deleting: int
@@ -1778,7 +1707,7 @@ class event_list_t(Struct):
     def event_remove_dsc(self, dsc: event_dsc_t) -> int: ...
     def event_send(self, e: event_t, preprocess: int) -> RESULT | int: ...
 
-class event_t(Struct):
+class event_t(_Struct):
     current_target: Any
     original_target: Any
     code: EVENT | int
@@ -1820,61 +1749,13 @@ class event_t(Struct):
     def set_cover_res(self, res: COVER_RES | int) -> None: ...
     def set_ext_draw_size(self, size: int) -> None: ...
 
-class ffmpeg_player_t(Struct):
-    ...
-
-class file_explorer_t(Struct):
-    ...
-
-class font_class_t(Struct):
+class font_class_t(_Struct):
     create_cb: Callable[[font_info_t, Any], font_t]
     delete_cb: Callable[[font_t], None]
     dup_src_cb: Callable[[Any], Any]
     free_src_cb: Callable[[Any], None]
 
-class font_fmt_txt_cmap_t(Struct):
-    range_start: int
-    range_length: int
-    glyph_id_start: int
-    unicode_list: Any
-    glyph_id_ofs_list: Any
-    list_length: int
-    _type: FONT_FMT_TXT_CMAP_TYPE | int
-
-class font_fmt_txt_dsc_t(Struct):
-    glyph_bitmap: Any
-    glyph_dsc: font_fmt_txt_glyph_dsc_t
-    cmaps: font_fmt_txt_cmap_t
-    kern_dsc: Any
-    kern_scale: int
-    cmap_num: int
-    bpp: int
-    kern_classes: int
-    bitmap_format: int
-    stride: int
-
-class font_fmt_txt_glyph_dsc_t(Struct):
-    bitmap_index: int
-    adv_w: int
-    box_w: int
-    box_h: int
-    ofs_x: int
-    ofs_y: int
-
-class font_fmt_txt_kern_classes_t(Struct):
-    class_pair_values: Any
-    left_class_mapping: Any
-    right_class_mapping: Any
-    left_class_cnt: int
-    right_class_cnt: int
-
-class font_fmt_txt_kern_pair_t(Struct):
-    glyph_ids: Any
-    values: Any
-    pair_cnt: int
-    glyph_ids_size: int
-
-class font_glyph_dsc_t(Struct):
+class font_glyph_dsc_t(_Struct):
     resolved_font: font_t
     adv_w: int
     box_w: int
@@ -1893,7 +1774,7 @@ class font_glyph_dsc_t(Struct):
     def font_get_glyph_static_bitmap(self) -> Any: ...
     def font_glyph_release_draw_data(self) -> None: ...
 
-class font_info_t(Struct):
+class font_info_t(_Struct):
     name: str
     class_p: font_class_t
     size: int
@@ -1902,10 +1783,7 @@ class font_info_t(Struct):
     kerning: FONT_KERNING | int
     def is_equal(self, ft_info_2: font_info_t) -> int: ...
 
-class font_manager_t(Struct):
-    ...
-
-class font_t(Struct):
+class font_t(_Struct):
     get_glyph_dsc: Callable[[font_t, font_glyph_dsc_t, int, int], int]
     get_glyph_bitmap: Callable[[font_glyph_dsc_t, draw_buf_t], Any]
     release_glyph: Callable[[font_t, font_glyph_dsc_t], None]
@@ -1925,32 +1803,14 @@ class font_t(Struct):
     def has_static_bitmap(self) -> int: ...
     def set_kerning(self, kerning: FONT_KERNING | int) -> None: ...
 
-class fpoint_t(Struct):
-    ...
-
-class fragment_class_t(Struct):
-    ...
-
-class fragment_managed_states_t(Struct):
-    ...
-
-class fragment_t(Struct):
-    ...
-
-class freetype_outline_event_param_t(Struct):
-    ...
-
-class freetype_outline_vector_t(Struct):
-    ...
-
-class fs_dir_t(Struct):
+class fs_dir_t(_Struct):
     dir_d: Any
     drv: fs_drv_t
     def close(self) -> FS_RES | int: ...
     def open(self, path: str) -> FS_RES | int: ...
     def read(self, fn: str, fn_len: int) -> FS_RES | int: ...
 
-class fs_drv_t(Struct):
+class fs_drv_t(_Struct):
     letter: int
     cache_size: int
     ready_cb: Callable[[fs_drv_t], int]
@@ -1959,7 +1819,7 @@ class fs_drv_t(Struct):
     close_cb: Callable[[fs_drv_t, Any], FS_RES | int]
     read_cb: Callable[[fs_drv_t, Any, Any, int, Any], FS_RES | int]
     write_cb: Callable[[fs_drv_t, Any, Any, int, Any], FS_RES | int]
-    seek_cb: Callable[[fs_drv_t, Any, int, FS_WHENCE | int], FS_RES | int]
+    seek_cb: Callable[[fs_drv_t, Any, int, FS_SEEK | int], FS_RES | int]
     tell_cb: Callable[[fs_drv_t, Any, Any], FS_RES | int]
     dir_open_cb: Callable[[fs_drv_t, str], Any]
     dir_read_cb: Callable[[fs_drv_t, Any, str, int], FS_RES | int]
@@ -1968,13 +1828,13 @@ class fs_drv_t(Struct):
     def init(self) -> None: ...
     def register(self) -> None: ...
 
-class fs_file_cache_t(Struct):
+class fs_file_cache_t(_Struct):
     start: int
     end: int
     file_position: int
     buffer: Any
 
-class fs_file_t(Struct):
+class fs_file_t(_Struct):
     file_d: Any
     drv: fs_drv_t
     cache: fs_file_cache_t
@@ -1982,31 +1842,16 @@ class fs_file_t(Struct):
     def fs_get_size(self, size_res: Any) -> FS_RES | int: ...
     def fs_open(self, path: str, mode: FS_MODE | int) -> FS_RES | int: ...
     def fs_read(self, buf: Any, btr: int, br: Any) -> FS_RES | int: ...
-    def fs_seek(self, pos: int, whence: FS_WHENCE | int) -> FS_RES | int: ...
+    def fs_seek(self, pos: int, whence: FS_SEEK | int) -> FS_RES | int: ...
     def fs_tell(self, pos: Any) -> FS_RES | int: ...
     def fs_write(self, buf: Any, btw: int, bw: Any) -> FS_RES | int: ...
 
-class fs_path_ex_t(Struct):
+class fs_path_ex_t(_Struct):
     path: Sequence[int]
     def fs_get_buffer_from_path(self, buffer: Any, size: Any) -> RESULT | int: ...
     def fs_make_path_from_buffer(self, letter: int, buf: Any, size: int, ext: str) -> None: ...
 
-class gltf_environment_t(Struct):
-    ...
-
-class gltf_ibl_sampler_t(Struct):
-    ...
-
-class gltf_model_node_t(Struct):
-    ...
-
-class gltf_model_t(Struct):
-    ...
-
-class gltf_t(Struct):
-    ...
-
-class grad_dsc_t(Struct):
+class grad_dsc_t(_Struct):
     stops: Sequence[grad_stop_t]
     stops_count: int
     dir: GRAD_DIR | int
@@ -2015,18 +1860,18 @@ class grad_dsc_t(Struct):
     state: Any
     def grad_conical_init(self, center_x: int, center_y: int, start_angle: int, end_angle: int, extend: GRAD_EXTEND | int) -> None: ...
     def grad_horizontal_init(self) -> None: ...
-    def grad_init_stops(self, colors: Sequence[color_t], opa: Sequence[int], fracs: Sequence[int], num_stops: int) -> None: ...
+    def grad_init_stops(self, colors: color_t, opa: Sequence[int], fracs: Sequence[int], num_stops: int) -> None: ...
     def grad_linear_init(self, from_x: int, from_y: int, to_x: int, to_y: int, extend: GRAD_EXTEND | int) -> None: ...
     def grad_radial_init(self, center_x: int, center_y: int, to_x: int, to_y: int, extend: GRAD_EXTEND | int) -> None: ...
     def grad_radial_set_focal(self, center_x: int, center_y: int, radius: int) -> None: ...
     def grad_vertical_init(self) -> None: ...
 
-class grad_stop_t(Struct):
+class grad_stop_t(_Struct):
     color: color_t
     opa: int
     frac: int
 
-class group_t(Struct):
+class group_t(_Struct):
     obj_ll: ll_t
     obj_focus: Any
     focus_cb: Callable[[group_t], None]
@@ -2059,11 +1904,11 @@ class group_t(Struct):
     def set_user_data(self, user_data: Any) -> None: ...
     def set_wrap(self, en: int) -> None: ...
 
-class hit_test_info_t(Struct):
+class hit_test_info_t(_Struct):
     point: point_t
     res: int
 
-class image_cache_data_t(Struct):
+class image_cache_data_t(_Struct):
     slot: cache_slot_size_t
     src: Any
     src_type: image.SRC | int
@@ -2071,18 +1916,18 @@ class image_cache_data_t(Struct):
     decoder: image_decoder_t
     user_data: Any
 
-class image_colorkey_t(Struct):
+class image_colorkey_t(_Struct):
     low: color_t
     high: color_t
 
-class image_decoder_args_t(Struct):
+class image_decoder_args_t(_Struct):
     stride_align: int
     premultiply: int
     no_cache: int
     use_indexed: int
     flush_cache: int
 
-class image_decoder_dsc_t(Struct):
+class image_decoder_dsc_t(_Struct):
     decoder: image_decoder_t
     args: image_decoder_args_t
     src: Any
@@ -2098,7 +1943,7 @@ class image_decoder_dsc_t(Struct):
     cache_entry: cache_entry_t
     user_data: Any
 
-class image_decoder_t(Struct):
+class image_decoder_t(_Struct):
     info_cb: Callable[[image_decoder_t, image_decoder_dsc_t, image_header_t], RESULT | int]
     open_cb: Callable[[image_decoder_t, image_decoder_dsc_t], RESULT | int]
     get_area_cb: Callable[[image_decoder_t, image_decoder_dsc_t, area_t, area_t], RESULT | int]
@@ -2107,20 +1952,14 @@ class image_decoder_t(Struct):
     name: str
     user_data: Any
 
-class image_dsc_t(Struct):
+class image_dsc_t(_Struct):
     header: image_header_t
     data_size: int
     data: Any
     reserved: Any
     reserved_2: Any
 
-class image_header_cache_data_t(Struct):
-    src: Any
-    src_type: image.SRC | int
-    header: image_header_t
-    decoder: image_decoder_t
-
-class image_header_t(Struct):
+class image_header_t(_Struct):
     magic: int
     cf: int
     flags: int
@@ -2129,39 +1968,7 @@ class image_header_t(Struct):
     stride: int
     reserved_2: int
 
-class image_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    src: Any
-    bitmap_mask_src: image_dsc_t
-    offset: point_t
-    w: int
-    h: int
-    rotation: int
-    scale_x: int
-    scale_y: int
-    pivot: point_t
-    src_type: int
-    cf: int
-    antialias: int
-    align: int
-    blend_mode: int
-
-class imagebutton_src_info_t(Struct):
-    img_src: Any
-    header: image_header_t
-
-class imagebutton_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    src_mid: Sequence[imagebutton_src_info_t]
-    src_left: Sequence[imagebutton_src_info_t]
-    src_right: Sequence[imagebutton_src_info_t]
-
-class ime_pinyin_t(Struct):
-    ...
-
-class indev_data_t(Struct):
+class indev_data_t(_Struct):
     gesture_type: Sequence[INDEV_GESTURE | int]
     gesture_data: Sequence[Any]
     state: INDEV_STATE | int
@@ -2173,10 +1980,10 @@ class indev_data_t(Struct):
     continue_reading: int
     def indev_set_gesture_data(self, recognizer: indev_gesture_recognizer_t, _type: INDEV_GESTURE | int) -> None: ...
 
-class indev_gesture_configuration_t(Struct):
+class indev_gesture_configuration_t(_Struct):
     ...
 
-class indev_gesture_recognizer_t(Struct):
+class indev_gesture_recognizer_t(_Struct):
     _type: INDEV_GESTURE | int
     state: INDEV_GESTURE_STATE | int
     info: indev_gesture_t
@@ -2194,10 +2001,10 @@ class indev_gesture_recognizer_t(Struct):
     def indev_get_gesture_primary_point(self, point: point_t) -> None: ...
     def indev_recognizer_is_active(self) -> int: ...
 
-class indev_gesture_t(Struct):
+class indev_gesture_t(_Struct):
     ...
 
-class indev_t(Struct):
+class indev_t(_Struct):
     _type: INDEV_TYPE | int
     read_cb: Callable[[indev_t, indev_data_t], None]
     state: INDEV_STATE | int
@@ -2271,7 +2078,7 @@ class indev_t(Struct):
     def scroll_throw_handler(self) -> None: ...
     def scroll_throw_predict(self, dir: DIR | int) -> int: ...
     def send_event(self, code: EVENT | int, param: Any) -> RESULT | int: ...
-    def set_button_points(self, points: Sequence[point_t]) -> None: ...
+    def set_button_points(self, points: point_t) -> None: ...
     def set_cursor(self, cur_obj: obj) -> None: ...
     def set_display(self, disp: display_t) -> None: ...
     def set_driver_data(self, driver_data: Any) -> None: ...
@@ -2293,13 +2100,13 @@ class indev_t(Struct):
     def stop_processing(self) -> None: ...
     def wait_release(self) -> None: ...
 
-class indev_touch_data_t(Struct):
+class indev_touch_data_t(_Struct):
     point: point_t
     state: INDEV_STATE | int
     id: int
     timestamp: int
 
-class iter_t(Struct):
+class iter_t(_Struct):
     def destroy(self) -> None: ...
     def get_context(self) -> Any: ...
     def inspect(self, inspect_cb: Callable[[Any], None]) -> None: ...
@@ -2309,32 +2116,7 @@ class iter_t(Struct):
     def peek_advance(self) -> RESULT | int: ...
     def peek_reset(self) -> RESULT | int: ...
 
-class keyboard_t(Struct):
-    btnm: buttonmatrix
-    ta: obj
-    mode: keyboard.MODE | int
-    popovers: int
-
-class label_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    text: str
-    dot: Sequence[int]
-    dot_begin: int
-    hint: draw_label_hint_t
-    sel_start: int
-    sel_end: int
-    size_cache: point_t
-    offset: point_t
-    long_mode: label.LONG_MODE | int
-    static_txt: int
-    recolor: int
-    expand: int
-    invalid_size_cache: int
-    need_refr_text: int
-    text_size: point_t
-
-class layer_t(Struct):
+class layer_t(_Struct):
     draw_buf: draw_buf_t
     draw_task_head: draw_task_t
     parent: layer_t
@@ -2351,40 +2133,12 @@ class layer_t(Struct):
     def init(self) -> None: ...
     def reset(self) -> None: ...
 
-class layout_callbacks_t(Struct):
+class layout_callbacks_t(_Struct):
     layout_update_cb: Callable[[obj, Any], None]
     get_min_size_cb: Callable[[obj, Any, int, Any], int]
     def layout_create(self, user_data: Any) -> int: ...
 
-class layout_dsc_t(Struct):
-    callbacks: layout_callbacks_t
-    user_data: Any
-
-class led_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    color: color_t
-    bright: int
-
-class libinput_event_t(Struct):
-    ...
-
-class libinput_t(Struct):
-    ...
-
-class line_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    point_array: Any
-    point_num: int
-    y_inv: int
-    point_array_is_mutable: int
-
-class linux_proc_stat_t(Struct):
-    fields: Any
-    buffer: Sequence[int]
-
-class ll_t(Struct):
+class ll_t(_Struct):
     n_size: int
     head: Any
     tail: Any
@@ -2404,10 +2158,10 @@ class ll_t(Struct):
     def move_before(self, n_act: Any, n_after: Any) -> None: ...
     def remove(self, node_p: Any) -> None: ...
 
-class matrix_t(Struct):
+class matrix_t(_Struct):
     ...
 
-class mem_monitor_t(Struct):
+class mem_monitor_t(_Struct):
     total_size: int
     free_cnt: int
     free_size: int
@@ -2419,53 +2173,7 @@ class mem_monitor_t(Struct):
     def core(self) -> None: ...
     def mem_monitor(self) -> None: ...
 
-class menu_history_t(Struct):
-    page: obj
-
-class menu_load_page_event_data_t(Struct):
-    menu: obj
-    page: obj
-
-class menu_page_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    title: str
-    static_title: int
-
-class menu_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    storage: __lv_type_obj
-    main: __lv_type_obj
-    main_page: __lv_type_obj
-    main_header: __lv_type_obj
-    main_header_back_btn: __lv_type_obj
-    main_header_title: __lv_type_obj
-    sidebar: __lv_type_obj
-    sidebar_page: __lv_type_obj
-    sidebar_header: __lv_type_obj
-    sidebar_header_back_btn: __lv_type_obj
-    sidebar_header_title: __lv_type_obj
-    selected_tab: __lv_type_obj
-    history_ll: ll_t
-    cur_depth: int
-    prev_depth: int
-    sidebar_generated: int
-    mode_header: menu.HEADER | int
-    mode_root_back_btn: menu.ROOT_BACK_BUTTON | int
-
-class monkey_config_t(Struct):
-    ...
-
-class msgbox_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    header: __lv_type_obj
-    content: __lv_type_obj
-    footer: __lv_type_obj
-    title: __lv_type_obj
-
-class obj_class_t(Struct):
+class obj_class_t(_Struct):
     base_class: obj_class_t
     constructor_cb: Callable[[obj_class_t, obj], None]
     destructor_cb: Callable[[obj_class_t, obj], None]
@@ -2479,30 +2187,7 @@ class obj_class_t(Struct):
     instance_size: int
     theme_inheritable: int
 
-class obj_spec_attr_t(Struct):
-    children: Any
-    group_p: group_t
-    event_list: event_list_t
-    scroll: point_t
-    ext_click_pad: int
-    ext_draw_size: int
-    child_cnt: int
-    scrollbar_mode: int
-    scroll_snap_x: int
-    scroll_snap_y: int
-    scroll_dir: int
-    layer_type: int
-    name_static: int
-
-class obj_style_t(Struct):
-    style: style_t
-    selector: int
-    is_local: int
-    is_trans: int
-    is_disabled: int
-    is_theme: int
-
-class obj_style_transition_dsc_t(Struct):
+class obj_style_transition_dsc_t(_Struct):
     time: int
     delay: int
     selector: int
@@ -2510,31 +2195,7 @@ class obj_style_transition_dsc_t(Struct):
     path_cb: Callable[[anim_t], int]
     user_data: Any
 
-class obj_t(Struct):
-    class_p: obj_class_t
-    parent: obj
-    spec_attr: obj_spec_attr_t
-    styles: obj_style_t
-    style_main_prop_is_set: int
-    style_other_prop_is_set: int
-    user_data: Any
-    coords: area_t
-    flags: OBJ_FLAG | int
-    state: int
-    layout_inv: int
-    readjust_scroll_after_layout: int
-    scr_layout_inv: int
-    skip_trans: int
-    style_cnt: int
-    h_layout: int
-    w_layout: int
-    h_ignore_size: int
-    w_ignore_size: int
-    is_deleting: int
-    radio_button: int
-    rendered: int
-
-class observer_t(Struct):
+class observer_t(_Struct):
     subject: subject_t
     cb: Callable[[observer_t, subject_t], None]
     target: Any
@@ -2547,20 +2208,14 @@ class observer_t(Struct):
     def get_user_data(self) -> Any: ...
     def remove(self) -> None: ...
 
-class opengles_window_t(Struct):
-    ...
-
-class opengles_window_texture_t(Struct):
-    ...
-
-class point_precise_t(Struct):
+class point_precise_t(_Struct):
     x: float
     y: float
     def point_from_precise(self) -> point_t: ...
     def set(self, x: float, y: float) -> None: ...
     def swap(self, p2: point_precise_t) -> None: ...
 
-class point_t(Struct):
+class point_t(_Struct):
     x: int
     y: int
     def array_transform(self, count: int, angle: int, scale_x: int, scale_y: int, pivot: point_t, zoom_first: int) -> None: ...
@@ -2569,17 +2224,7 @@ class point_t(Struct):
     def to_precise(self) -> point_precise_t: ...
     def transform(self, angle: int, scale_x: int, scale_y: int, pivot: point_t, zoom_first: int) -> None: ...
 
-class profiler_builtin_config_t(Struct):
-    ...
-
-class qrcode_t(Struct):
-    __lv_type_canvas: TypeAlias = "canvas"
-    canvas: __lv_type_canvas
-    dark_color: color_t
-    light_color: color_t
-    quiet_zone: int
-
-class rb_node_t(Struct):
+class rb_node_t(_Struct):
     parent: rb_node_t
     left: rb_node_t
     right: rb_node_t
@@ -2588,7 +2233,7 @@ class rb_node_t(Struct):
     def rb_maximum_from(self) -> rb_node_t: ...
     def rb_minimum_from(self) -> rb_node_t: ...
 
-class rb_t(Struct):
+class rb_t(_Struct):
     root: rb_node_t
     compare: Callable[[Any, Any], int]
     size: int
@@ -2603,26 +2248,7 @@ class rb_t(Struct):
     def remove(self, key: Any) -> Any: ...
     def remove_node(self, node: rb_node_t) -> Any: ...
 
-class rlottie_t(Struct):
-    ...
-
-class roller_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    option_cnt: int
-    sel_opt_id: int
-    sel_opt_id_ori: int
-    inf_page_cnt: int
-    mode: roller.MODE | int
-    moved: int
-
-class scale_needle_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    value: int
-    length: int
-
-class scale_section_t(Struct):
+class scale_section_t(_Struct):
     main_style: style_t
     indicator_style: style_t
     items_style: style_t
@@ -2637,42 +2263,12 @@ class scale_section_t(Struct):
     first_tick_idx_is_major: int
     last_tick_idx_is_major: int
 
-class scale_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    section_ll: ll_t
-    txt_src: Any
-    mode: scale.MODE | int
-    range_min: int
-    range_max: int
-    total_tick_count: int
-    major_tick_every: int
-    label_enabled: int
-    post_draw: int
-    draw_ticks_on_top: int
-    angle_range: int
-    rotation: int
-    custom_label_cnt: int
-    last_tick_width: int
-    first_tick_width: int
-    needles: array_t
-
-class slider_t(Struct):
-    __lv_type_bar: TypeAlias = "bar"
-    bar: __lv_type_bar
-    left_knob_area: area_t
-    right_knob_area: area_t
-    pressed_point: point_t
-    value_to_set: Any
-    dragging: int
-    left_knob_focus: int
-
-class span_coords_t(Struct):
+class span_coords_t(_Struct):
     heading: area_t
     middle: area_t
     trailing: area_t
 
-class span_t(Struct):
+class span_t(_Struct):
     txt: str
     style: style_t
     static_flag: int
@@ -2681,43 +2277,13 @@ class span_t(Struct):
     def get_style(self) -> style_t: ...
     def get_text(self) -> str: ...
     def set_text(self, text: str) -> None: ...
-    def set_text_fmt(self, fmt: str, *args: Any) -> None: ...
     def set_text_static(self, text: str) -> None: ...
 
-class spangroup_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    lines: int
-    indent: int
-    cache_w: int
-    cache_h: int
-    child_ll: ll_t
-    overflow: int
-    refresh: int
-
-class spinbox_t(Struct):
-    ta: textarea
-    value: int
-    range_max: int
-    range_min: int
-    step: int
-    digit_count: int
-    dec_point_pos: int
-    rollover: int
-    digit_step_dir: int
-
-class spinner_t(Struct):
-    ...
-
-class sqrt_res_t(Struct):
+class sqrt_res_t(_Struct):
     i: int
     f: int
 
-class style_const_prop_t(Struct):
-    prop: int
-    value: style_value_t
-
-class style_t(Struct):
+class style_t(_Struct):
     values_and_props: Any
     has_group: int
     prop_cnt: int
@@ -2869,7 +2435,7 @@ class style_t(Struct):
     def set_x(self, value: int) -> None: ...
     def set_y(self, value: int) -> None: ...
 
-class style_transition_dsc_t(Struct):
+class style_transition_dsc_t(_Struct):
     props: Any
     user_data: Any
     path_xcb: Callable[[anim_t], int]
@@ -2877,19 +2443,19 @@ class style_transition_dsc_t(Struct):
     delay: int
     def init(self, props: Sequence[int], path_cb: Callable[[anim_t], int], time: int, delay: int, user_data: Any) -> None: ...
 
-class style_value_t(Struct):
+class style_value_t(_Struct):
     num: int
     ptr: Any
     color: color_t
 
-class subject_increment_dsc_t(Struct):
+class subject_increment_dsc_t(_Struct):
     subject: subject_t
     step: int
     rollover: int
     min_value: int
     max_value: int
 
-class subject_t(Struct):
+class subject_t(_Struct):
     subs_ll: ll_t
     value: subject_value_t
     prev_value: subject_value_t
@@ -2930,70 +2496,21 @@ class subject_t(Struct):
     def set_min_value_float(self, min_value: float) -> None: ...
     def set_min_value_int(self, min_value: int) -> None: ...
     def set_pointer(self, ptr: Any) -> None: ...
-    def snprintf(self, format: str, *args: Any) -> None: ...
 
-class subject_value_t(Struct):
+class subject_value_t(_Struct):
     num: int
     pointer: Any
     color: color_t
     float_v: float
 
-class switch_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    anim_state: int
-    orientation: switch.ORIENTATION | int
-
-class table_cell_t(Struct):
-    ctrl: table.CELL_CTRL | int
-    user_data: Any
-    txt: Sequence[int]
-
-class table_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    col_cnt: int
-    row_cnt: int
-    cell_data: Any
-    row_h: Any
-    col_w: Any
-    col_act: int
-    row_act: int
-
-class tabview_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    tab_cur: int
-    tab_pos: DIR | int
-    tab_bar_size: int
-
-class text_attributes_t(Struct):
+class text_attributes_t(_Struct):
     letter_space: int
     line_space: int
     max_width: int
     text_flags: TEXT_FLAG | int
     def init(self) -> None: ...
 
-class textarea_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    label: __lv_type_obj
-    placeholder_txt: str
-    pwd_tmp: str
-    pwd_bullet: str
-    accepted_chars: str
-    max_length: int
-    pwd_show_time: int
-    cursor: Any
-    sel_start: int
-    sel_end: int
-    text_sel_in_prog: int
-    text_sel_en: int
-    pwd_mode: int
-    one_line: int
-    static_accepted_chars: int
-
-class theme_t(Struct):
+class theme_t(_Struct):
     apply_cb: Callable[[theme_t, obj], None]
     parent: theme_t
     user_data: Any
@@ -3009,38 +2526,7 @@ class theme_t(Struct):
     def set_apply_cb(self, apply_cb: Callable[[theme_t, obj], None]) -> None: ...
     def set_parent(self, parent: theme_t) -> None: ...
 
-class tick_state_t(Struct):
-    sys_time: int
-    sys_irq_flag: int
-    tick_get_cb: Callable[[], int]
-    delay_cb: Callable[[int], None]
-
-class tileview_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    tile_act: __lv_type_obj
-
-class tileview_tile_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-    dir: DIR | int
-
-class timer_state_t(Struct):
-    timer_ll: ll_t
-    lv_timer_run: int
-    idle_last: int
-    timer_deleted: int
-    timer_created: int
-    timer_time_until_next: int
-    already_running: int
-    periodic_last_tick: int
-    busy_time: int
-    idle_period_start: int
-    run_cnt: int
-    resume_cb: Callable[[Any], None]
-    resume_data: Any
-
-class timer_t(Struct):
+class timer_t(_Struct):
     period: int
     last_run: int
     timer_cb: Callable[[timer_t], None]
@@ -3062,14 +2548,14 @@ class timer_t(Struct):
     def set_repeat_count(self, repeat_count: int) -> None: ...
     def set_user_data(self, user_data: Any) -> None: ...
 
-class tree_class_t(Struct):
+class tree_class_t(_Struct):
     base_class: tree_class_t
     instance_size: int
     constructor_cb: Callable[[tree_class_t, tree_node_t], None]
     destructor_cb: Callable[[tree_class_t, tree_node_t], None]
     def tree_node_create(self, parent: tree_node_t) -> tree_node_t: ...
 
-class tree_node_t(Struct):
+class tree_node_t(_Struct):
     parent: tree_node_t
     children: Any
     child_cnt: int
@@ -3078,44 +2564,12 @@ class tree_node_t(Struct):
     def delete(self) -> None: ...
     def tree_walk(self, mode: int, cb: Callable[[tree_node_t, Any], int], bcb: Callable[[tree_node_t, Any], int], acb: Callable[[tree_node_t, Any], None], user_data: Any) -> int: ...
 
-class vector_fill_dsc_t(Struct):
-    ...
-
-class vector_gradient_t(Struct):
-    ...
-
-class vector_path_ctx_t(Struct):
-    ...
-
-class vector_path_t(Struct):
-    ...
-
-class vector_stroke_dsc_t(Struct):
-    ...
-
-class win_t(Struct):
-    __lv_type_obj: TypeAlias = "obj"
-    obj: __lv_type_obj
-
-class xkb_t(Struct):
-    ...
-
-class yuv_buf_t(Struct):
-    yuv: yuv_plane_t
-    planar: Any
-    semi_planar: Any
-
-class yuv_plane_t(Struct):
-    buf: Any
-    stride: int
-
 class animimg(obj):
     def __init__(self, parent: obj | None = ...) -> None: ...
     def delete(self) -> int: ...  # type: ignore[override]
     def get_anim(self) -> anim_t: ...
     def get_duration(self) -> int: ...
     def get_repeat_count(self) -> int: ...
-    def get_src(self) -> Any: ...
     def get_src_count(self) -> int: ...
     def set_completed_cb(self, completed_cb: Callable[[anim_t], None]) -> None: ...
     def set_duration(self, duration: int) -> None: ...
@@ -3199,7 +2653,6 @@ class arclabel(obj):
     def set_radius(self, radius: int) -> None: ...
     def set_recolor(self, en: int) -> None: ...
     def set_text(self, text: str) -> None: ...
-    def set_text_fmt(self, fmt: str, *args: Any) -> None: ...
     def set_text_horizontal_align(self, align: arclabel.TEXT_ALIGN | int) -> None: ...
     def set_text_static(self, text: str) -> None: ...
     def set_text_vertical_align(self, align: arclabel.TEXT_ALIGN | int) -> None: ...
@@ -3284,7 +2737,6 @@ class buttonmatrix(obj):
     def clear_button_ctrl(self, btn_id: int, ctrl: buttonmatrix.CTRL | int) -> None: ...
     def clear_button_ctrl_all(self, ctrl: buttonmatrix.CTRL | int) -> None: ...
     def get_button_text(self, btn_id: int) -> str: ...
-    def get_map(self) -> Any: ...
     def get_one_checked(self) -> int: ...
     def get_selected_button(self) -> int: ...
     def has_button_ctrl(self, btn_id: int, ctrl: buttonmatrix.CTRL | int) -> int: ...
@@ -3308,7 +2760,7 @@ class calendar(obj):
     def get_today_date(self) -> calendar_date_t: ...
     def header_dropdown_set_year_list(self, years_list: str) -> None: ...
     def set_day_names(self, day_names: Any) -> None: ...
-    def set_highlighted_dates(self, highlighted: Sequence[calendar_date_t], date_num: int) -> None: ...
+    def set_highlighted_dates(self, highlighted: calendar_date_t, date_num: int) -> None: ...
     def set_month_shown(self, year: int, month: int) -> None: ...
     def set_shown_month(self, month: int) -> None: ...
     def set_shown_year(self, year: int) -> None: ...
@@ -3614,7 +3066,6 @@ class keyboard(obj):
     @staticmethod
     def def_event_cb(e: event_t) -> None: ...
     def get_button_text(self, btn_id: int) -> str: ...
-    def get_map_array(self) -> Any: ...
     def get_mode(self) -> keyboard.MODE | int: ...
     def get_popovers(self) -> int: ...
     def get_selected_button(self) -> int: ...
@@ -3646,11 +3097,9 @@ class label(obj):
     def set_long_mode(self, long_mode: label.LONG_MODE | int) -> None: ...
     def set_recolor(self, en: int) -> None: ...
     def set_text(self, text: str) -> None: ...
-    def set_text_fmt(self, fmt: str, *args: Any) -> None: ...
     def set_text_selection_end(self, index: int) -> None: ...
     def set_text_selection_start(self, index: int) -> None: ...
     def set_text_static(self, text: str) -> None: ...
-    def set_text_vfmt(self, fmt: str, args: int) -> None: ...
 
 class led(obj):
     def __init__(self, parent: obj | None = ...) -> None: ...
@@ -3669,8 +3118,8 @@ class line(obj):
     def get_points_mutable(self) -> point_precise_t: ...
     def get_y_invert(self) -> int: ...
     def is_point_array_mutable(self) -> int: ...
-    def set_points(self, points: Sequence[point_precise_t], point_num: int) -> None: ...
-    def set_points_mutable(self, points: Sequence[point_precise_t], point_num: int) -> None: ...
+    def set_points(self, points: point_precise_t, point_num: int) -> None: ...
+    def set_points_mutable(self, points: point_precise_t, point_num: int) -> None: ...
     def set_y_invert(self, en: int) -> None: ...
 
 class list(obj):
@@ -3725,7 +3174,6 @@ class msgbox(obj):
     def add_footer_button(self, text: str) -> obj: ...
     def add_header_button(self, icon: Any) -> obj: ...
     def add_text(self, text: str) -> obj: ...
-    def add_text_fmt(self, fmt: str, *args: Any) -> obj: ...
     def add_title(self, title: str) -> obj: ...
     def close(self) -> None: ...
     def close_async(self) -> None: ...
@@ -3734,7 +3182,7 @@ class msgbox(obj):
     def get_header(self) -> obj: ...
     def get_title(self) -> obj: ...
 
-class obj(Struct):
+class obj(_Struct):
     class CLASS_EDITABLE:
         INHERIT: int
         TRUE: int
@@ -4297,7 +3745,7 @@ class obj(Struct):
     def style_state_compare(self, state1: STATE | int, state2: STATE | int) -> STYLE_STATE_CMP | int: ...
     def swap(self, obj2: obj) -> None: ...
     def transform_point(self, p: point_t, flags: obj.POINT_TRANSFORM_FLAG | int) -> None: ...
-    def transform_point_array(self, points: Sequence[point_t], count: int, flags: obj.POINT_TRANSFORM_FLAG | int) -> None: ...
+    def transform_point_array(self, points: point_t, count: int, flags: obj.POINT_TRANSFORM_FLAG | int) -> None: ...
     def tree_walk(self, cb: Callable[[obj, Any], obj.TREE_WALK | int], user_data: Any) -> None: ...
     def update_layer_type(self) -> None: ...
     def update_layout(self) -> None: ...
@@ -4426,7 +3874,6 @@ class spangroup(obj):
     def set_overflow(self, overflow: SPAN_OVERFLOW | int) -> None: ...
     def set_span_style(self, span: span_t, style: style_t) -> None: ...
     def set_span_text(self, span: span_t, text: str) -> None: ...
-    def set_span_text_fmt(self, span: span_t, fmt: str, *args: Any) -> None: ...
     def set_span_text_static(self, span: span_t, text: str) -> None: ...
 
 class spinbox(obj):
@@ -4494,7 +3941,6 @@ class table(obj):
     def set_cell_ctrl(self, row: int, col: int, ctrl: table.CELL_CTRL | int) -> None: ...
     def set_cell_user_data(self, row: int, col: int, user_data: Any) -> None: ...
     def set_cell_value(self, row: int, col: int, txt: str) -> None: ...
-    def set_cell_value_fmt(self, row: int, col: int, fmt: str, *args: Any) -> None: ...
     def set_column_count(self, col_cnt: int) -> None: ...
     def set_column_width(self, col_id: int, w: int) -> None: ...
     def set_row_count(self, row_cnt: int) -> None: ...
@@ -4639,7 +4085,6 @@ tileview_class: obj_class_t
 tileview_tile_class: obj_class_t
 tree_node_class: tree_class_t
 win_class: obj_class_t
-_nesting: _Nesting
 
 def anim_core_deinit() -> None: ...
 def anim_core_init() -> None: ...
@@ -4776,7 +4221,6 @@ def fs_path_get_size(path: str, size_res: Any) -> FS_RES | int: ...
 def fs_path_join(buf: str, buf_sz: int, base: str, end: str) -> int: ...
 def fs_remove_drive(letter: int) -> None: ...
 def fs_up(path: str) -> str: ...
-def global_default() -> Any: ...
 def grid_fr(x: int) -> int: ...
 def grid_init() -> None: ...
 def group_by_index(index: int) -> group_t: ...
@@ -4861,7 +4305,6 @@ def snapshot_reshape_draw_buf(obj: obj, draw_buf: draw_buf_t) -> RESULT | int: .
 def snapshot_take(obj: obj, cf: COLOR_FORMAT | int) -> draw_buf_t: ...
 def snapshot_take_to_buf(obj: obj, cf: COLOR_FORMAT | int, dsc: image_dsc_t, buf: Any, buf_size: int) -> RESULT | int: ...
 def snapshot_take_to_draw_buf(obj: obj, cf: COLOR_FORMAT | int, draw_buf: draw_buf_t) -> RESULT | int: ...
-def snprintf(buffer: str, count: int, format: str, *args: Any) -> int: ...
 def span_stack_deinit() -> None: ...
 def span_stack_init() -> None: ...
 def sqr(x: int) -> int: ...
@@ -4900,7 +4343,6 @@ def text_is_a_word(letter: int) -> int: ...
 def text_is_break_char(letter: int) -> int: ...
 def text_is_cmd(state: TEXT_CMD_STATE | int, c: int) -> int: ...
 def text_is_marker(letter: int) -> int: ...
-def text_set_text_vfmt(fmt: str, ap: int) -> str: ...
 def theme_apply(obj: obj) -> None: ...
 def theme_create() -> theme_t: ...
 def theme_default_deinit() -> None: ...
@@ -4945,7 +4387,6 @@ def version_info() -> str: ...
 def version_major() -> int: ...
 def version_minor() -> int: ...
 def version_patch() -> int: ...
-def vsnprintf(buffer: str, count: int, format: str, va: int) -> int: ...
 def zalloc(size: int) -> Any: ...
 
 ANIM_PLAYTIME_INFINITE: int

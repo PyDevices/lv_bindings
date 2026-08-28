@@ -437,8 +437,6 @@ def analyze(ctx=None):
         and not decl.name.startswith("_")
     )
 
-    blobs["_nesting"] = parser.parse("extern int _nesting;").ext[0].type.type
-
     int_constants = []
     # Type convertors
     #

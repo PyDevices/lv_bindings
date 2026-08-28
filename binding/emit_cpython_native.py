@@ -428,6 +428,10 @@ PyTypeObject py_{san}_type = {{
 static inline void* mp_write_ptr_{san}(PyObject *self_in)
 {{
     if (!self_in || self_in == Py_None) return NULL;
+    if (!PyObject_TypeCheck(self_in, &py_{san}_type)) {{
+        PyErr_Format(PyExc_TypeError, "Expected lvgl.{san}, got '%s'", Py_TYPE(self_in)->tp_name);
+        return NULL;
+    }}
     py_lv_struct_t *self = (py_lv_struct_t *)self_in;
     return ({struct_tag}{struct_name}*)self->data;
 }}
@@ -951,11 +955,6 @@ def gen_py_func(func, obj_name):
         c_call = "(({func_ptr}){c_func})({send_args});"
         build_return = "Py_RETURN_NONE;"
         allow_threads = func.name in ("lv_task_handler", "lv_tick_inc")
-    elif return_type == "lv_event_dsc_t *":
-        result_decl = ""
-        c_call = "(({func_ptr}){c_func})({send_args});"
-        build_return = "Py_RETURN_NONE;"
-        allow_threads = False
     else:
         if not conversion_available(
             conversions=lv_to_mp,
@@ -1155,6 +1154,7 @@ static PyObject *py_{func}(PyObject *self, PyObject *py_args, PyObject *py_kwds)
 {void_self}    (void)py_kwds;
 {parse}
     {body}
+    if (PyErr_Occurred()) {{ PyGILState_Release(gstate); return NULL; }}
     {pre_lv_call}
 {lv_call_block}
     {post_lv_call}

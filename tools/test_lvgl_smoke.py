@@ -84,9 +84,26 @@ def _widget_attr(obj, name):
     return getattr(obj, name)
 
 
+def _module_defines(module, name):
+    namespace = getattr(module, "__dict__", None)
+    if namespace is not None:
+        return name in namespace
+    return name in dir(module)
+
+
 def _is_cpython():
     impl = getattr(sys, "implementation", None)
     return impl is not None and impl.name == "cpython"
+
+
+def _runtime_target():
+    impl = getattr(sys, "implementation", None)
+    name = getattr(impl, "name", "")
+    if name == "cpython":
+        return "cpython"
+    if name == "circuitpython":
+        return "circuitpython"
+    return "micropython"
 
 
 def _prepare_import_path():
@@ -182,8 +199,6 @@ def test_string_constants(lv):
 
 
 def test_enums(lv):
-    if not _is_cpython():
-        return
     event = _lv_export(lv, "EVENT")
     clicked = event.CLICKED
     if not isinstance(clicked, int) or clicked <= 0:
@@ -208,17 +223,20 @@ def test_enums(lv):
 
 
 def test_module_types(lv):
-    if not _is_cpython():
-        return
-    for name in ("C_Pointer", "Blob", "Struct", "LvReferenceError"):
+    for name in ("C_Pointer", "LvReferenceError"):
         if not hasattr(lv, name):
             _fail("missing module export lv.{}".format(name))
-    print("OK: module types (C_Pointer, Blob, Struct, LvReferenceError)")
+    for name in ("Blob", "Struct", "_nesting", "mp_lv_init_gc", "mp_lv_deinit_gc", "mp_lv_get_roots"):
+        if hasattr(lv, name):
+            _fail("private implementation export leaked as lv.{}".format(name))
+    if hasattr(lv, "area_get_width"):
+        _fail("struct method leaked as module-level lv.area_get_width")
+    if _module_defines(lv, "__init__") or _module_defines(lv, "__del__"):
+        _fail("generated lifecycle dunder leaked from module")
+    print("OK: common module helpers and private-export policy")
 
 
 def test_struct_helpers(lv):
-    if not _is_cpython():
-        return
     color_t = _lv_export(lv, "color_t")
     size = color_t.__SIZE__
     if not isinstance(size, int) or size <= 0:
@@ -313,12 +331,9 @@ def test_callback_gc_with_widget_ref(lv):
     del handler
     gc.collect()
     scr.send_event(_lv_export(lv, "EVENT").CLICKED, None)
-    if fired:
-        print("OK: callback survived gc.collect() while widget referenced")
-    else:
-        _warn(
-            "callback was collected after del handler (widget still referenced)"
-        )
+    if not fired:
+        _fail("callback was collected while its widget remained referenced")
+    print("OK: callback survived gc.collect() while widget referenced")
 
 
 def test_button_callback(lv):
@@ -355,18 +370,12 @@ def test_callback_gc_without_widget_ref(lv):
 
     child = scr.get_child(btn_idx)
     child.send_event(_lv_export(lv, "EVENT").CLICKED, None)
-    if fired:
-        print("OK: callback survived gc with no Python ref to widget (reached via get_child)")
-    else:
-        _warn(
-            "callback lost after del widget + gc.collect(); "
-            "LVGL user_data may not keep callbacks rooted"
-        )
+    if not fired:
+        _fail("callback was collected while its LVGL widget remained reachable")
+    print("OK: callback survived gc with widget reached through get_child")
 
 
 def test_multi_callbacks(lv):
-    if not _is_cpython():
-        return
     scr = lv.screen_active()
     btn = _widget_type(lv, "button")(scr)
     btn.set_size(80, 40)
@@ -400,9 +409,7 @@ def test_multi_callbacks(lv):
     print("OK: multiple filtered callbacks on one object")
 
 
-def test_blob_dereference(lv, main_disp=None):
-    if not _is_cpython() or not hasattr(lv, "Blob"):
-        return
+def test_pointer_buffer_dereference(lv, main_disp=None):
     disp = lv.display_create(16, 16)
     own_buf = lv.draw_buf_create(16, 4, _lv_export(lv, "COLOR_FORMAT").RGB565, 0)
     if hasattr(lv, "display_set_draw_buffers"):
@@ -438,12 +445,12 @@ def test_blob_dereference(lv, main_disp=None):
         disp.delete()
     elif hasattr(lv, "display_delete"):
         lv.display_delete(disp)
-    print("OK: Blob.__dereference__ in flush callback")
+    print("OK: opaque pointer dereference and typed cast in flush callback")
 
 
 def test_remove_style_none(lv):
     part = _lv_export(lv, "PART")
-    if not _is_cpython() or part is None:
+    if part is None:
         return
     scr = lv.screen_active()
     arc = _widget_type(lv, "arc")(scr)
@@ -452,29 +459,87 @@ def test_remove_style_none(lv):
     print("OK: arc.remove_style(None, PART.KNOB)")
 
 
-def test_nesting(lv):
-    if not hasattr(lv, "_nesting"):
-        return
-    if not hasattr(lv._nesting, "value"):
-        _warn("lv._nesting missing value attribute")
-    print("OK: lv._nesting present")
+def test_struct_fields_and_arrays(lv):
+    area = _lv_export(lv, "area_t")()
+    area.x1 = 3
+    area.y1 = 5
+    area.x2 = 13
+    area.y2 = 17
+    if (area.x1, area.y1, area.x2, area.y2) != (3, 5, 13, 17):
+        _fail("struct field read/write mismatch")
+    if area.get_width() != 11 or area.get_height() != 13:
+        _fail("struct method did not observe updated fields")
+
+    scr = lv.screen_active()
+    line = _widget_type(lv, "line")(scr)
+    point_type = _lv_export(lv, "point_precise_t")
+    points = point_type(2)
+    first = point_type()
+    second = point_type()
+    first.x, first.y = 1, 2
+    second.x, second.y = 8, 9
+    points[0] = first
+    points[1] = second
+    line.set_points(points, 2)
+    print("OK: struct fields, struct methods, and typed array conversion")
+
+
+def test_callback_deletion(lv):
+    btn = _widget_type(lv, "button")(lv.screen_active())
+    fired = []
+
+    def callback(event):
+        fired.append(1)
+
+    descriptor = btn.add_event_cb(callback, _lv_export(lv, "EVENT").CLICKED, None)
+    if not btn.remove_event_dsc(descriptor):
+        _fail("remove_event_dsc did not report a removed callback")
+    btn.send_event(_lv_export(lv, "EVENT").CLICKED, None)
+    if fired:
+        _fail("deleted callback was invoked")
+    print("OK: callback deletion")
+
+
+def test_object_lifetime_and_pointer_validation(lv):
+    btn = _widget_type(lv, "button")(lv.screen_active())
+    btn.delete()
+    try:
+        btn.get_width()
+    except lv.LvReferenceError:
+        pass
+    else:
+        _fail("deleted object did not raise LvReferenceError")
+
+    try:
+        _widget_type(lv, "label")("not an LVGL parent")
+    except (TypeError, ValueError, SyntaxError):
+        pass
+    else:
+        _fail("invalid object pointer was accepted")
+    print("OK: deleted-object and pointer validation")
+
+
+def test_target_exceptions(lv):
+    has_tjpgd = hasattr(lv, "tjpgd_init") or hasattr(lv, "tjpgd_deinit")
+    if _runtime_target() == "micropython":
+        if not has_tjpgd:
+            _fail("MicroPython is missing its enabled TJPGD API")
+    elif has_tjpgd:
+        _fail("TJPGD API leaked into a target that excludes the subsystem")
+    print("OK: reviewed target exception policy")
 
 
 def main():
     lv = _import_lv()
 
-    if _is_cpython():
-        test_import_and_constants(lv)
-        test_string_constants(lv)
-        test_enums(lv)
-        test_module_types(lv)
-        test_struct_helpers(lv)
-        test_widget_types(lv)
-        test_module_functions(lv)
-        test_nesting(lv)
-    else:
-        test_widget_types(lv)
-        test_module_functions(lv)
+    test_import_and_constants(lv)
+    test_string_constants(lv)
+    test_enums(lv)
+    test_module_types(lv)
+    test_struct_helpers(lv)
+    test_widget_types(lv)
+    test_module_functions(lv)
+    test_target_exceptions(lv)
 
     if _is_initialized(lv):
         lv.deinit()
@@ -484,15 +549,17 @@ def main():
     try:
         if _is_cpython():
             test_refr_now(lv, disp)
-            test_blob_dereference(lv, disp)
+            test_pointer_buffer_dereference(lv, disp)
         test_widget(lv)
+        test_struct_fields_and_arrays(lv)
         test_event_callback(lv)
         test_callback_gc_with_widget_ref(lv)
         test_callback_gc_without_widget_ref(lv)
         test_button_callback(lv)
-        if _is_cpython():
-            test_remove_style_none(lv)
-            test_multi_callbacks(lv)
+        test_callback_deletion(lv)
+        test_object_lifetime_and_pointer_validation(lv)
+        test_remove_style_none(lv)
+        test_multi_callbacks(lv)
     finally:
         _teardown_display(buf)
         disp = None

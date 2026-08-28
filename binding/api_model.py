@@ -50,6 +50,9 @@ _MODULE_ENUM_NAME_OVERRIDES = {
     "dir_t": "DIR",
     "result_t": "RESULT",
     "log_level_t": "LOG_LEVEL",
+    "font_fmt_txt_bitmap_format_t": "FONT_FMT_TXT",
+    "font_fmt_txt_cmap_type_t": "FONT_FMT_TXT_CMAP",
+    "fs_whence_t": "FS_SEEK",
 }
 _WIDGET_ENUM_NAME_OVERRIDES = {
     "barcode_encoding_t": ("barcode", "ENCODING_CODE128"),
@@ -731,12 +734,6 @@ def _build_type_view_resolver(
     }
     struct_by_c = {}
     for item in structs:
-        if is_hidden_implementation(item):
-            continue
-        if item.c_name:
-            struct_by_c[item.c_name] = item.python_name
-        for alias in item.typedef_names:
-            struct_by_c[alias] = item.python_name
         object_name = next(
             (
                 object_.python_name
@@ -751,6 +748,13 @@ def _build_type_view_resolver(
             for alias in (item.c_name,) + item.typedef_names:
                 if alias:
                     object_by_c[alias] = object_name
+            continue
+        if is_hidden_implementation(item):
+            continue
+        if item.c_name:
+            struct_by_c[item.c_name] = item.python_name
+        for alias in item.typedef_names:
+            struct_by_c[alias] = item.python_name
     enum_by_c = {}
     for item in enums:
         if is_hidden_implementation(item):
@@ -1005,9 +1009,74 @@ def build_api_model(
         for name in sorted(constructors)
     )
 
+    # A C record is a public Python struct only when a public declaration can
+    # actually produce or consume it.  Prefix-based visibility alone exposed
+    # object backing records and configuration-only implementation records in
+    # the stub even though no backend registered them.  Compute this closure
+    # once from the target-neutral declarations instead of learning it from a
+    # generated target artifact.
+    struct_by_c_name = {}
+    for struct in declarations.structs:
+        for name in (struct.name,) + tuple(struct.typedef_names):
+            if name:
+                struct_by_c_name[name] = struct
+
+    def referenced_type_names(type_):
+        names = set()
+        if type_ is None:
+            return names
+        if type_.kind in {"identifier", "struct", "union"} and type_.name:
+            names.add(type_.name)
+        names.update(referenced_type_names(type_.target))
+        names.update(referenced_type_names(type_.element))
+        names.update(referenced_type_names(type_.return_type))
+        for parameter in type_.parameters:
+            names.update(referenced_type_names(parameter.type))
+        return names
+
+    object_c_types = {item.c_type for item in objects}
+    pending_struct_names = set()
+    for declaration, api_function in zip(declarations.functions, functions):
+        if api_function.visibility != "public":
+            continue
+        pending_struct_names.update(referenced_type_names(declaration.return_type))
+        for parameter in declaration.parameters:
+            pending_struct_names.update(referenced_type_names(parameter.type))
+    for variable in declarations.variables:
+        if policy.variable(variable.name).visibility == "public":
+            pending_struct_names.update(referenced_type_names(variable.type))
+    pending_struct_names.difference_update(object_c_types)
+
+    reachable_structs = set()
+    while pending_struct_names:
+        type_name = pending_struct_names.pop()
+        struct = struct_by_c_name.get(type_name)
+        if struct is None or id(struct) in reachable_structs:
+            continue
+        reachable_structs.add(id(struct))
+        for field in struct.fields:
+            field_names = referenced_type_names(field.type)
+            field_names.difference_update(object_c_types)
+            pending_struct_names.update(field_names)
+
     function_by_name = {function.c_name: function for function in functions}
-    structs = tuple(
-        ApiStruct(
+    structs = []
+    for struct in sorted(
+        declarations.structs,
+        key=lambda item: (_public_struct_name(item), item.name or ""),
+    ):
+        decision = policy.struct((struct.name,) + tuple(struct.typedef_names))
+        record_names = {name for name in (struct.name,) + tuple(struct.typedef_names) if name}
+        if decision.visibility == "public" and record_names & object_c_types:
+            visibility = "private"
+            policy_reason = "represented by an LVGL object wrapper"
+        elif decision.visibility == "public" and id(struct) not in reachable_structs:
+            visibility = "private"
+            policy_reason = "not reachable from a public binding boundary"
+        else:
+            visibility = decision.visibility
+            policy_reason = decision.reason
+        structs.append(ApiStruct(
             c_name=struct.name,
             python_name=struct_python_names[id(struct)],
             kind=struct.kind,
@@ -1021,17 +1090,11 @@ def build_api_model(
                     if function.name in function_by_name
                 )
             ),
-            visibility=(decision := policy.struct(
-                (struct.name,) + tuple(struct.typedef_names)
-            )).visibility,
-            policy_reason=decision.reason,
+            visibility=visibility,
+            policy_reason=policy_reason,
             location=struct.location,
-        )
-        for struct in sorted(
-            declarations.structs,
-            key=lambda item: (_public_struct_name(item), item.name or ""),
-        )
-    )
+        ))
+    structs = tuple(structs)
     enums = []
     symbol_members = None
     object_names = tuple(constructors)
@@ -1173,11 +1236,31 @@ def build_api_model(
     type_view = _build_type_view_resolver(
         objects, structs, enum_tuple, typedefs
     )
+
+    def parameter_type_view(type_):
+        resolved = type_view(type_)
+        if type_.kind == "array" and type_.element is not None:
+            element = type_view(type_.element)
+            if element.category == "struct":
+                # Native runtimes consume one contiguous Struct allocation,
+                # constructed as ``point_t(count)`` and indexed in Python.
+                # A list of independently allocated wrappers is not a valid C
+                # array and must not be advertised as Sequence[point_t].
+                return ApiTypeView(
+                    element.python_type,
+                    "struct_array",
+                    "struct_pointer",
+                    nullable=resolved.nullable,
+                    lifetime=resolved.lifetime,
+                )
+        return resolved
+
     functions = tuple(
         replace(
             function,
             parameter_views=tuple(
-                type_view(parameter.type) for parameter in function.parameters
+                parameter_type_view(parameter.type)
+                for parameter in function.parameters
             ),
             return_view=type_view(function.return_type),
         )

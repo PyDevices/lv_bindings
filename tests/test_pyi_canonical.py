@@ -149,7 +149,7 @@ def test_canonical_emitter_describes_runtime_helper_types():
 
     pointer = classes["C_Pointer"]
     assert isinstance(pointer.bases[0], ast.Name)
-    assert pointer.bases[0].id == "Struct"
+    assert pointer.bases[0].id == "_Struct"
     pointer_members = {
         child.target.id
         for child in pointer.body
@@ -157,12 +157,12 @@ def test_canonical_emitter_describes_runtime_helper_types():
     }
     assert pointer_members == {"__SIZE__", "ptr_val", "str_val", "int_val", "uint_val"}
 
-    blob = classes["Blob"]
+    blob = classes["_Blob"]
     assert {child.name for child in blob.body if isinstance(child, ast.FunctionDef)} == {
         "__dereference__",
         "__cast__",
     }
-    struct = classes["Struct"]
+    struct = classes["_Struct"]
     methods = {
         child.name: child
         for child in struct.body

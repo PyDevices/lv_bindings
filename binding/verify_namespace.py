@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression check: CP/CPython public exports vs MicroPython reference."""
+"""Verify every native module namespace against the canonical API model."""
 from __future__ import print_function
 
 import json
@@ -55,7 +55,12 @@ def mp_module_names(text):
     )
     if not m:
         return set()
-    return set(re.findall(r"MP_ROM_QSTR\(MP_QSTR_(\w+)\)", m.group(1)))
+    names = set()
+    for line in m.group(1).splitlines():
+        match = re.search(r"MP_ROM_QSTR\(MP_QSTR_(\w+)\)", line)
+        if match:
+            names.add(match.group(1))
+    return names
 
 
 def py_module_names(text):
@@ -65,6 +70,9 @@ def py_module_names(text):
             text,
         )
     )
+    methods = re.search(r"static PyMethodDef lvgl_methods\[\] = \{(.*?)\n\};", text, re.S)
+    if methods:
+        names.update(re.findall(r'\{"([^"]+)"\s*,', methods.group(1)))
     return names
 
 
@@ -99,59 +107,45 @@ def py_obj_enum_attrs(text, obj):
     return attrs
 
 
-def verify(target, text, mp_names, global_names):
+def canonical_module_names(data, target):
+    names = {"C_Pointer", "LvReferenceError"}
+    names.update(
+        item["python_name"]
+        for item in data.get("functions", ())
+        if item.get("visibility") == "public"
+        and item.get("role") == "module"
+        and target in item.get("available_on", ())
+    )
+    for section in ("objects", "structs", "variables", "constants"):
+        names.update(
+            item.get("python_name") or item.get("name")
+            for item in data.get(section, ())
+            if item.get("visibility") == "public"
+            and target in item.get("available_on", ())
+            and item.get("c_name") != "_nesting"
+        )
+    names.update(
+        item["module_name"]
+        for item in data.get("enums", ())
+        if item.get("visibility") == "public"
+        and target in item.get("available_on", ())
+        and item.get("module_name")
+    )
+    return names
+
+
+def verify(target, text, expected_names):
     errors = []
+    names = mp_module_names(text) if target == "CircuitPython" else py_module_names(text)
     if target == "MicroPython":
         names = mp_module_names(text)
-        missing_globals = global_names - names
-        if missing_globals:
-            errors.append(
-                "module missing global objects: %s"
-                % ", ".join(sorted(missing_globals))
-            )
-        for enum_name in WIDGET_SCOPED_MODULE_ENUMS:
-            if enum_name in names:
-                errors.append("module exposes widget-scoped enum %s" % enum_name)
-        for enum_name in MODULE_LEVEL_DUPLEX_ENUMS:
-            if enum_name not in names:
-                errors.append("module missing duplex enum %s" % enum_name)
-        for obj, expected in WIDGET_ENUM_ATTRS.items():
-            attrs = mp_obj_enum_attrs(text, obj)
-            for attr in expected:
-                if attr not in attrs:
-                    errors.append("%s missing enum attr %s" % (obj, attr))
-        return errors
-
-    names = mp_module_names(text) if target == "CircuitPython" else py_module_names(text)
-    missing_globals = global_names - names
-    if missing_globals:
-        errors.append(
-            "module missing global objects: %s"
-            % ", ".join(sorted(missing_globals))
-        )
-    for enum_name in WIDGET_SCOPED_MODULE_ENUMS:
-        if enum_name in names:
-            errors.append("module exposes widget-scoped enum %s" % enum_name)
-    for enum_name in MODULE_LEVEL_DUPLEX_ENUMS:
-        if enum_name not in names:
-            errors.append("module missing duplex enum %s" % enum_name)
-
-    if target == "CPython":
-        symbol_strings = [n for n in names if n.startswith("SYMBOL_")]
-        if symbol_strings:
-            errors.append(
-                "module exposes SYMBOL_* string constants (%d found)" % len(symbol_strings)
-            )
-        required = {"C_Pointer", "LvReferenceError", "Blob", "Struct"}
-        missing = required - names
-        if missing:
-            errors.append("module missing exports: %s" % ", ".join(sorted(missing)))
-        if "SYMBOL" not in names:
-            errors.append("module missing SYMBOL enum namespace")
-
-    if target == "CircuitPython":
-        if "LvReferenceError" not in names:
-            errors.append("module missing LvReferenceError export")
+    integration_names = {"__name__", "__version__"}
+    missing = expected_names - names
+    unexpected = names - expected_names - integration_names
+    if missing:
+        errors.append("module missing exports: %s" % ", ".join(sorted(missing)))
+    if unexpected:
+        errors.append("module has unexpected exports: %s" % ", ".join(sorted(unexpected)))
 
     obj_enum_fn = mp_obj_enum_attrs if target != "CPython" else py_obj_enum_attrs
     for obj, expected in WIDGET_ENUM_ATTRS.items():
@@ -159,14 +153,6 @@ def verify(target, text, mp_names, global_names):
         for attr in expected:
             if attr not in attrs:
                 errors.append("%s missing enum attr %s" % (obj, attr))
-
-    extra_module_enums = [
-        n
-        for n in names
-        if n in WIDGET_SCOPED_MODULE_ENUMS and n not in mp_names
-    ]
-    if extra_module_enums and target != "MicroPython":
-        pass  # covered above
 
     return errors
 
@@ -178,10 +164,7 @@ def main(argv):
         "CircuitPython": generated / "lvgl_circuitpython.c",
         "CPython": generated / "lvgl_python.c",
     }
-    mp_text = files["MicroPython"].read_text()
-    mp_names = mp_module_names(mp_text)
-    metadata = json.loads((generated / "lvgl.json").read_text())
-    global_names = set(metadata.get("blobs", [])) - {"_nesting"}
+    api = json.loads((generated / "api.json").read_text())
 
     failed = False
     for target, path in files.items():
@@ -189,7 +172,12 @@ def main(argv):
             print("FAIL: missing %s" % path)
             failed = True
             continue
-        errors = verify(target, path.read_text(), mp_names, global_names)
+        canonical_target = target.lower()
+        errors = verify(
+            target,
+            path.read_text(),
+            canonical_module_names(api, canonical_target),
+        )
         if errors:
             failed = True
             print("FAIL %s:" % target)

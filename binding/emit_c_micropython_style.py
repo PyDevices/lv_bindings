@@ -61,12 +61,14 @@ from .emit_backend import (
     failed_generation,
     mp_obj_get_ull_to_bytes_source,
     object_generation_order,
+    public_struct_c_names,
+    public_enum_module_names,
     require_one_of_target_lowerings,
     resolve_emitter_headers,
     struct_pointer_helpers_source,
     target_banner,
 )
-from .runtime_exports import filter_module_funcs_for_target
+from .runtime_exports import filter_module_funcs_for_target, filter_registration_module_funcs
 from .util import eprint, memoize
 
 
@@ -331,8 +333,14 @@ static inline LV_OBJ_T *mp_to_lv(mp_obj_t mp_obj)
 {
     if (mp_obj == NULL || mp_obj == mp_const_none) return NULL;
     mp_obj_t native_obj = get_native_obj(mp_obj);
-    if (MP_OBJ_TYPE_GET_SLOT_OR_NULL(mp_obj_get_type(native_obj), buffer) != mp_lv_obj_get_buffer)
-        return NULL;
+    if (native_obj == MP_OBJ_NULL ||
+        MP_OBJ_TYPE_GET_SLOT_OR_NULL(mp_obj_get_type(native_obj), buffer) != mp_lv_obj_get_buffer) {
+        nlr_raise(
+            mp_obj_new_exception_msg_varg(
+                &mp_type_SyntaxError,
+                MP_ERROR_TEXT("Can't convert %s to an LVGL object!"),
+                mp_obj_get_type_str(mp_obj)));
+    }
     mp_lv_obj_t *mp_lv_obj = MP_OBJ_TO_PTR(native_obj);
     if (mp_lv_obj->lv_obj == NULL) {
         nlr_raise(
@@ -512,25 +520,24 @@ void mp_lv_deinit_gc(void)
 }
 
 #ifndef LV_CIRCUITPYTHON_BUILD
-static mp_obj_t lvgl_mod___init__(void) {
-    if (!MP_STATE_VM(lvgl_mod_initialized)) {
-        // __init__ for builtins is called each time the module is imported,
-        //   so ensure that initialisation only happens once.
-        MP_STATE_VM(lvgl_mod_initialized) = true;
+static mp_obj_t lvgl_mod_init(void) {
+    mp_lv_init_gc();
+    if (!lv_is_initialized()) {
         lv_init();
     }
     return mp_const_none;
 }
-static MP_DEFINE_CONST_FUN_OBJ_0(lvgl_mod___init___obj, lvgl_mod___init__);
+static MP_DEFINE_CONST_FUN_OBJ_0(lvgl_mod_init_obj, lvgl_mod_init);
 
 
-static mp_obj_t lvgl_mod___del__(void) {
-    if (MP_STATE_VM(lvgl_mod_initialized)) {
+static mp_obj_t lvgl_mod_deinit(void) {
+    if (lv_is_initialized()) {
         lv_deinit();
     }
+    mp_lv_deinit_gc();
     return mp_const_none;
 }
-static MP_DEFINE_CONST_FUN_OBJ_0(lvgl_mod___del___obj, lvgl_mod___del__);
+static MP_DEFINE_CONST_FUN_OBJ_0(lvgl_mod_deinit_obj, lvgl_mod_deinit);
 #endif /* !LV_CIRCUITPYTHON_BUILD */
 
 #else // LV_OBJ_T
@@ -2334,6 +2341,8 @@ static mp_obj_t mp_{func}(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_fu
                     render_method=lambda value: (
                         gen.visit(value) if isinstance(value, c_ast.Node) else value
                     ),
+                    api_model=runtime.get("api_model"),
+                    target=_emit_target,
                 )
                 print(diagnostic)
                 runtime.set_("funcs", funcs)
@@ -2571,6 +2580,8 @@ GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_{obj}_type = {{
             render_method=lambda value: (
                 gen.visit(value) if isinstance(value, c_ast.Node) else value
             ),
+            api_model=runtime.get("api_model"),
+            target=_emit_target,
         )
         print(diagnostic)
         runtime.set_("funcs", funcs)
@@ -2751,7 +2762,10 @@ static const mp_lv_struct_t mp_{global_name} = {{
 
         # eprint("/* Generating global module functions /*")
         module_funcs = [func for func in funcs if func.name not in generated_funcs]
-        module_funcs = filter_module_funcs_for_target(module_funcs, _emit_target)
+        module_funcs = filter_module_funcs_for_target(
+            module_funcs, _emit_target, runtime.get("api_model")
+        )
+        module_funcs = filter_registration_module_funcs(module_funcs)
         for module_func in module_funcs[
             :
         ]:  # clone list because we are changing it in the loop.
@@ -2835,6 +2849,12 @@ static const mp_lv_obj_type_t *mp_lv_obj_types[] = {{
         return
 
     # eprint("/* Generating module definition */")
+    public_struct_names = public_struct_c_names(
+        runtime.get("api_model"), _emit_target
+    )
+    public_enum_names = public_enum_module_names(
+        runtime.get("api_model"), _emit_target
+    )
     print(
         """
 
@@ -2844,8 +2864,8 @@ static const mp_lv_obj_type_t *mp_lv_obj_types[] = {{
 
 static const mp_rom_map_elem_t {module_name}_globals_table[] = {{
     {{ MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_{module_name}) }},
-    {{ MP_ROM_QSTR(MP_QSTR___init__), MP_ROM_PTR(&lvgl_mod___init___obj) }},
-    {{ MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&lvgl_mod___del___obj) }},
+    {{ MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&lvgl_mod_init_obj) }},
+    {{ MP_ROM_QSTR(MP_QSTR_deinit), MP_ROM_PTR(&lvgl_mod_deinit_obj) }},
     {objects}
     {functions}
     {enums}
@@ -2883,6 +2903,10 @@ static const mp_rom_map_elem_t {module_name}_globals_table[] = {{
                     )
                     for enum_name in enums.keys()
                     if enum_name not in enum_referenced
+                    and (
+                        public_enum_names is None
+                        or export_name(enum_name, "enum") in public_enum_names
+                    )
                 ]
             ),
             structs="".join(
@@ -2893,6 +2917,10 @@ static const mp_rom_map_elem_t {module_name}_globals_table[] = {{
                     )
                     for struct_name in generated_structs
                     if generated_structs[struct_name]
+                    and (
+                        public_struct_names is None
+                        or struct_name in public_struct_names
+                    )
                 ]
             ),
             struct_aliases="".join(
@@ -2904,6 +2932,8 @@ static const mp_rom_map_elem_t {module_name}_globals_table[] = {{
                         ),
                     )
                     for struct_name in struct_aliases.keys()
+                    if public_struct_names is None
+                    or struct_aliases[struct_name] in public_struct_names
                 ]
             ),
             blobs="".join(
@@ -2913,6 +2943,7 @@ static const mp_rom_map_elem_t {module_name}_globals_table[] = {{
                         global_name=global_name,
                     )
                     for global_name in generated_globals
+                    if global_name != "_nesting"
                 ]
             ),
             int_constants="".join(

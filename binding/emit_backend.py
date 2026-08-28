@@ -261,8 +261,28 @@ def object_generation_order(obj_names, parent_obj_names):
     return tuple(ordered)
 
 
-def failed_generation(*, method, problem, funcs, render_method):
+def failed_generation(
+    *, method, problem, funcs, render_method, api_model=None, target=None
+):
     """Build the common diagnostic and remove one failed declaration."""
+    name = getattr(method, "name", None)
+    function = next(
+        (
+            item
+            for item in getattr(api_model, "functions", ())
+            if item.c_name == name
+        ),
+        None,
+    )
+    if (
+        function is not None
+        and function.visibility == "public"
+        and target in function.available_on
+    ):
+        raise RuntimeError(
+            "unsupported public function for %s: %s: %s"
+            % (target, name, problem)
+        )
     remaining = list(funcs)
     try:
         remaining.remove(method)
@@ -410,6 +430,8 @@ def module_registration_plan(
     struct_aliases,
     obj_names,
     module_funcs,
+    public_struct_names=None,
+    public_enum_names=None,
 ):
     """Select the shared public module surface for a completed phase.
 
@@ -419,20 +441,76 @@ def module_registration_plan(
     """
     return ModuleRegistrationPlan(
         int_constants=tuple(int_constants) if max_phase >= 1 else (),
-        generated_globals=tuple(generated_globals) if max_phase >= 1 else (),
+        generated_globals=(
+            tuple(name for name in generated_globals if name != "_nesting")
+            if max_phase >= 1
+            else ()
+        ),
         enum_names=(
-            tuple(name for name in enums if name not in enum_referenced)
+            tuple(
+                name
+                for name in enums
+                if name not in enum_referenced
+                and (
+                    public_enum_names is None
+                    or name in public_enum_names
+                )
+            )
             if max_phase >= 2
             else ()
         ),
         struct_names=(
-            tuple(name for name, generated in generated_structs.items() if generated)
+            tuple(
+                name
+                for name, generated in generated_structs.items()
+                if generated
+                and (
+                    public_struct_names is None
+                    or name in public_struct_names
+                )
+            )
             if max_phase >= 3
             else ()
         ),
-        struct_alias_names=(tuple(struct_aliases) if max_phase >= 3 else ()),
+        struct_alias_names=(
+            tuple(
+                name
+                for name, alias in struct_aliases.items()
+                if public_struct_names is None
+                or alias in public_struct_names
+            )
+            if max_phase >= 3
+            else ()
+        ),
         object_names=tuple(obj_names) if max_phase >= 5 else (),
         module_functions=tuple(module_funcs) if max_phase >= 6 else (),
+    )
+
+
+def public_struct_c_names(api_model, target):
+    """Return canonical C spellings of public structs for one target."""
+    if api_model is None:
+        return None
+    names = {"C_Pointer"}
+    for struct in api_model.structs:
+        if struct.visibility != "public" or target not in struct.available_on:
+            continue
+        if struct.c_name:
+            names.add(struct.c_name)
+        names.update(struct.typedef_names)
+    return frozenset(names)
+
+
+def public_enum_module_names(api_model, target):
+    """Return canonical module-level enum names for one target."""
+    if api_model is None:
+        return None
+    return frozenset(
+        enum.module_name
+        for enum in api_model.enums
+        if enum.visibility == "public"
+        and target in enum.available_on
+        and enum.module_name is not None
     )
 
 

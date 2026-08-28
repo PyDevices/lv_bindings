@@ -226,16 +226,23 @@ def test_api_model_does_not_reference_private_structs_in_public_views():
 def test_api_model_describes_arrays_as_nested_sequences():
     declarations = parse_source(
         "typedef struct packet { int values[2][3]; } lv_packet_t; "
-        "void lv_use_values(const int values[3]);",
+        "typedef struct point { int x; int y; } lv_point_t; "
+        "typedef struct holder { lv_point_t points[2]; } lv_holder_t; "
+        "void lv_use_values(const int values[3]); "
+        "void lv_use_points(const lv_point_t points[2]); "
+        "void lv_use_holder(lv_holder_t *holder);",
         filename="array-views.h",
     )
 
     model = build_api_model(declarations)
-    function = next(item for item in model.functions if item.c_name == "lv_use_values")
-    packet = next(item for item in model.structs if item.python_name == "packet_t")
+    functions = {item.c_name: item for item in model.functions}
+    structs = {item.python_name: item for item in model.structs}
 
-    assert function.parameter_views[0].python_type == "Sequence[int]"
-    assert packet.field_views[0].python_type == "Sequence[Sequence[int]]"
+    assert functions["lv_use_values"].parameter_views[0].python_type == "Sequence[int]"
+    assert structs["packet_t"].field_views[0].python_type == "Sequence[Sequence[int]]"
+    assert functions["lv_use_points"].parameter_views[0].python_type == "point_t"
+    assert functions["lv_use_points"].parameter_views[0].category == "struct_array"
+    assert structs["holder_t"].field_views[0].python_type == "Sequence[point_t]"
 
 
 def test_api_model_detects_duplicate_exports():

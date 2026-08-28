@@ -28,13 +28,6 @@
       "patterns": ["struct.*"],
       "classification": "deliberate_fix",
       "reason": "The canonical declaration model retains public LVGL structs and struct methods that the upstream metadata did not represent."
-    },
-    {
-      "id": "upstream-metadata-omissions",
-      "side": "extra",
-      "patterns": ["module.function.*", "object.*"],
-      "classification": "deliberate_fix",
-      "reason": "The canonical model retains public functions and widget methods omitted by the upstream metadata projection."
     }
   ]
 }

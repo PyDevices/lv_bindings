@@ -263515,31 +263515,6 @@
             "args": [],
             "return_type": "char*"
         },
-        "mp_lv_init_gc": {
-            "type": "function",
-            "args": [],
-            "return_type": "NoneType"
-        },
-        "mp_lv_deinit_gc": {
-            "type": "function",
-            "args": [],
-            "return_type": "NoneType"
-        },
-        "mp_lv_get_roots": {
-            "type": "function",
-            "args": [],
-            "return_type": "void*"
-        },
-        "init": {
-            "type": "function",
-            "args": [],
-            "return_type": "NoneType"
-        },
-        "deinit": {
-            "type": "function",
-            "args": [],
-            "return_type": "NoneType"
-        },
         "is_initialized": {
             "type": "function",
             "args": [],
@@ -269640,12 +269615,7 @@
         "text_attributes_t",
         "color_hsv_t",
         "hit_test_info_t",
-        "sqrt_res_t",
-        "layout_dsc_t",
-        "timer_state_t",
-        "anim_state_t",
-        "tick_state_t",
-        "draw_global_info_t"
+        "sqrt_res_t"
     ],
     "struct_functions": {
         "color_t": {
@@ -278717,8 +278687,7 @@
         "cache_class_lru_rb_size",
         "cache_class_lru_ll_count",
         "cache_class_lru_ll_size",
-        "cache_class_sc_da",
-        "_nesting"
+        "cache_class_sc_da"
     ],
     "int_constants": [
         "DPI_DEF",

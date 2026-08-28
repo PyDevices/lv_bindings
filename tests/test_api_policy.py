@@ -30,7 +30,42 @@ def test_private_global_struct_is_not_public():
     structs = {struct.python_name: struct for struct in model.structs}
 
     assert structs["global_t"].visibility == "private"
-    assert structs["obj_t"].visibility == "public"
+    assert structs["obj_t"].visibility == "private"
+    assert structs["obj_t"].policy_reason == "not reachable from a public binding boundary"
+
+
+def test_private_global_accessor_is_not_public():
+    ir = parse_source(
+        "typedef struct _lv_global_t lv_global_t; "
+        "lv_global_t *lv_global_default(void);"
+    )
+    function = next(
+        item for item in build_api_model(ir).functions
+        if item.c_name == "lv_global_default"
+    )
+    assert function.visibility == "private"
+
+
+def test_unsupported_functions_require_explicit_waivers():
+    policy = ApiPolicy.from_file(POLICY_PATH)
+    assert set(policy.unsupported_functions) == {
+        "lv_animimg_get_src",
+        "lv_arclabel_set_text_fmt",
+        "lv_buttonmatrix_get_map",
+        "lv_keyboard_get_map_array",
+        "lv_label_set_text_fmt",
+        "lv_label_set_text_vfmt",
+        "lv_msgbox_add_text_fmt",
+        "lv_spangroup_set_span_text_fmt",
+        "lv_table_set_cell_value_fmt",
+        "lv_subject_snprintf",
+        "lv_span_set_text_fmt",
+        "lv_snprintf",
+        "lv_vsnprintf",
+        "lv_text_set_text_vfmt",
+    }
+    for record in policy.unsupported_functions.values():
+        assert record.reason and record.test
 
 
 def test_internal_callback_hooks_are_not_public():
@@ -43,6 +78,19 @@ def test_internal_callback_hooks_are_not_public():
         item for item in model.variables if item.c_name == "lv_text_encoded_next"
     )
     assert variable.visibility == "private"
+
+
+def test_private_object_storage_structs_are_not_public():
+    policy = ApiPolicy.from_file(POLICY_PATH)
+    assert {"lv_obj_spec_attr_t", "lv_obj_style_t"} <= set(policy.private_structs)
+
+
+def test_symbol_identifier_enum_is_private():
+    ir = parse_source(
+        "typedef enum _lv_str_symbol_id_t { LV_STR_SYMBOL_ID_OK } _lv_str_symbol_id_t;"
+    )
+    enum = build_api_model(ir).enums[0]
+    assert enum.visibility == "private"
 
 
 def test_tjpgd_exception_is_target_specific():
@@ -73,7 +121,11 @@ def test_policy_records_have_reason_and_test_references():
     assert policy.target_exceptions
     for record in policy.private_functions.values():
         assert record.reason and record.test
+    for record in policy.unsupported_functions.values():
+        assert record.reason and record.test
     for record in policy.private_structs.values():
+        assert record.reason and record.test
+    for record in policy.private_enums.values():
         assert record.reason and record.test
     for record in policy.private_variables.values():
         assert record.reason and record.test

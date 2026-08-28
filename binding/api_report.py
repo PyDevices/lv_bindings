@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import gzip
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -18,7 +19,13 @@ from typing import Any, Mapping
 from .api_model import TARGETS
 from .verify_api import validate_api_data
 
-REPORT_SCHEMA_VERSION = 1
+REPORT_SCHEMA_VERSION = 2
+
+TARGET_ARTIFACTS = {
+    "micropython": "lvgl_micropython.c",
+    "circuitpython": "lvgl_circuitpython.c",
+    "cpython": "lvgl_python.c",
+}
 
 
 def load_json(path: Path) -> Any:
@@ -28,6 +35,19 @@ def load_json(path: Path) -> Any:
         with gzip.open(path, "rt", encoding="utf-8") as stream:
             return json.load(stream)
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def target_artifact_hashes(generated_dir: Path) -> dict[str, dict[str, str]]:
+    """Hash each generated target C artifact for an auditable report."""
+
+    result = {}
+    for target in TARGETS:
+        path = generated_dir / TARGET_ARTIFACTS[target]
+        result[target] = {
+            "file": path.name,
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
+    return result
 
 
 def _available(record: Mapping[str, Any], target: str) -> bool:
@@ -233,6 +253,7 @@ def _parity(exports: Mapping[str, set[str]]) -> dict[str, Any]:
     return {
         "union_count": len(union),
         "intersection_count": len(intersection),
+        "common_coverage": len(intersection) / float(len(union) or 1),
         "all_targets_equal": all(item == sets[0] for item in sets[1:]),
         "coverage_of_union": {
             target: len(exports[target]) / float(len(union) or 1)
@@ -393,6 +414,7 @@ def _baseline_report(
 def build_report(
     data: Mapping[str, Any], baseline: Mapping[str, Any] | None = None,
     classification: Mapping[str, Any] | None = None,
+    target_artifacts: Mapping[str, Mapping[str, str]] | None = None,
 ) -> Mapping[str, Any]:
     """Build a deterministic report from canonical model JSON data."""
 
@@ -400,7 +422,7 @@ def build_report(
     if errors:
         raise ValueError("invalid canonical API model: %s" % "; ".join(errors))
     exports = public_export_sets(data)
-    return {
+    report = {
         "schema_version": REPORT_SCHEMA_VERSION,
         "api_hash": data["api_hash"],
         "inventory": _record_inventory(data),
@@ -410,6 +432,11 @@ def build_report(
         "target_parity": _parity(exports),
         "baseline_compatibility": _baseline_report(data, baseline, classification),
     }
+    if target_artifacts is not None:
+        report["target_artifacts"] = {
+            target: dict(target_artifacts[target]) for target in TARGETS
+        }
+    return report
 
 
 def _markdown(report: Mapping[str, Any]) -> str:
@@ -439,6 +466,8 @@ def _markdown(report: Mapping[str, Any]) -> str:
             "",
             "- Shared exports: %d" % parity["intersection_count"],
             "- Union exports: %d" % parity["union_count"],
+            "- Common-target API coverage: %.2f%%"
+            % (parity["common_coverage"] * 100.0),
             "- Availability exceptions: %d" % len(parity["availability_exceptions"]),
             "",
             "## Record inventory",
@@ -453,6 +482,23 @@ def _markdown(report: Mapping[str, Any]) -> str:
             for visibility, count in counts.items()
         )
         lines.append("| `%s` | %s |" % (section, rendered or "none"))
+    artifacts = report.get("target_artifacts")
+    if artifacts is not None:
+        lines.extend(
+            [
+                "",
+                "## Generated target artifacts",
+                "",
+                "| Target | File | SHA-256 |",
+                "| --- | --- | --- |",
+            ]
+        )
+        for target in TARGETS:
+            artifact = artifacts[target]
+            lines.append(
+                "| %s | `%s` | `%s` |"
+                % (target, artifact["file"], artifact["sha256"])
+            )
     baseline = report.get("baseline_compatibility")
     if baseline is not None:
         lines.extend(
@@ -511,7 +557,12 @@ def main(argv=None):
         if args.classification is not None
         else None
     )
-    report = build_report(data, baseline, classification)
+    report = build_report(
+        data,
+        baseline,
+        classification,
+        target_artifact_hashes(args.api.parent),
+    )
     rendered = (
         json.dumps(report, indent=2, sort_keys=True) + "\n"
         if args.format == "json"

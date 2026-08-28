@@ -102,16 +102,15 @@ regenerated. The legacy `generated/lvgl.json` file remains a C-generator
 introspection artifact; it is not a typings source.
 
 `binding.api_report` validates the canonical model and reports qualified export
-counts, target availability exceptions, inheritance-expanded object APIs, and
-the current diagnostic projection against the historical baseline. The
-baseline projection remains informational while canonical lowering replaces
-the historical implementation.
+counts, common-target coverage, target availability exceptions,
+inheritance-expanded object APIs, generated target-artifact hashes, and the
+diagnostic projection against the historical baseline.
 
 All targets receive the same parsed declaration IR, canonical API model,
 context-local generation state, conversion discovery, inheritance order,
 registration plan, and diagnostics policy. MicroPython and CircuitPython share
 the `mp_obj_t` native lowering because CircuitPython embeds the same object API;
-CircuitPython-only registration and lifecycle code lives in its glue module.
+target registration and VM/GC lifecycle mechanics remain in target glue.
 CPython lowering is native `PyObject *` code with its own GIL/lock and module
 initialization glue. Target emitters may choose different C representations,
 but they do not choose different public declarations.

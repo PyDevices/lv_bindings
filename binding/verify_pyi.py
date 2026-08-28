@@ -15,8 +15,8 @@ from .emit_pyi_canonical import _identifier
 from .verify_api import validate_api_data
 
 _ALL_TARGETS = frozenset(TARGETS)
-_HELPER_NAMES = frozenset({"Blob", "C_Pointer", "LvReferenceError", "Struct", "_Nesting"})
-_PRIVATE_HELPER_NAMES = frozenset({"_BlobT", "_StructT"})
+_HELPER_NAMES = frozenset({"C_Pointer", "LvReferenceError"})
+_PRIVATE_HELPER_NAMES = frozenset({"_Blob", "_BlobT", "_Struct", "_StructT"})
 
 
 def _available(item: Mapping[str, Any], target: str) -> bool:
@@ -200,8 +200,6 @@ def _expected_top_level(data: Mapping[str, Any], target: str) -> set[str]:
         for item in data.get("variables", ())
         if _public(item, target) and item.get("c_name") != "_nesting"
     )
-    if any(item.get("c_name") == "_nesting" for item in data.get("variables", ())):
-        expected.add("_nesting")
     expected.update(
         _identifier(item["python_name"])
         for item in data.get("constants", ())

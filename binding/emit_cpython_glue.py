@@ -4,7 +4,7 @@ from __future__ import print_function
 import collections
 
 from . import runtime
-from .emit_backend import enum_namespace_plan, module_registration_plan
+from .emit_backend import enum_namespace_plan, module_registration_plan, public_enum_module_names, public_struct_c_names
 
 
 # This module owns no mirrored emitter globals; generated output is routed
@@ -139,6 +139,9 @@ def finish_py_module(max_phase):
     cpython_struct_sizes = runtime.get("cpython_struct_sizes", {})
     obj_names = runtime.get("obj_names", [])
     module_funcs = runtime.get("module_funcs", [])
+    canonical_enum_names = public_enum_module_names(
+        runtime.get("api_model"), "cpython"
+    )
     registration = module_registration_plan(
         max_phase=max_phase,
         int_constants=int_constants,
@@ -149,6 +152,16 @@ def finish_py_module(max_phase):
         struct_aliases=struct_aliases,
         obj_names=obj_names,
         module_funcs=module_funcs,
+        public_struct_names=public_struct_c_names(runtime.get("api_model"), "cpython"),
+        public_enum_names=(
+            frozenset(
+                name
+                for name in enums
+                if export_name(name, "enum") in canonical_enum_names
+            )
+            if canonical_enum_names is not None
+            else None
+        ),
     )
 
     print(
@@ -248,11 +261,7 @@ static struct PyModuleDef lvgl_module_def = {
     if max_phase >= 3:
         print("    py_lv_runtime_init_types();")
         print("    if (PyType_Ready(&py_blob_type) < 0) return NULL;")
-        print("    Py_INCREF((PyObject *)&py_blob_type);")
-        print('    if (PyModule_AddObject(m, "Blob", (PyObject *)&py_blob_type) < 0) return NULL;')
         print("    if (PyType_Ready(&py_lv_base_struct_type) < 0) return NULL;")
-        print("    Py_INCREF((PyObject *)&py_lv_base_struct_type);")
-        print('    if (PyModule_AddObject(m, "Struct", (PyObject *)&py_lv_base_struct_type) < 0) return NULL;')
         print("    if (PyType_Ready(&py_C_Pointer_type) < 0) return NULL;")
         print("    Py_INCREF((PyObject *)&py_C_Pointer_type);")
         print('    if (PyModule_AddObject(m, "C_Pointer", (PyObject *)&py_C_Pointer_type) < 0) return NULL;')
@@ -393,9 +402,5 @@ static struct PyModuleDef lvgl_module_def = {
                 )
             )
 
-    print("    if (lvpy_nesting_obj) {")
-    print("        Py_INCREF(lvpy_nesting_obj);")
-    print('        if (PyModule_AddObject(m, "_nesting", lvpy_nesting_obj) < 0) return NULL;')
-    print("    }")
     print("    return m;")
     print("}")

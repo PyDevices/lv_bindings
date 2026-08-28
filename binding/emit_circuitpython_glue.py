@@ -4,7 +4,7 @@ from __future__ import print_function
 import collections
 
 from . import runtime
-from .emit_backend import enum_namespace_plan, module_registration_plan
+from .emit_backend import enum_namespace_plan, module_registration_plan, public_enum_module_names, public_struct_c_names
 
 
 # This module owns no mirrored emitter globals; generated output is routed
@@ -33,6 +33,9 @@ def _module_global_entries(
     obj_names=None,
     module_funcs=None,
 ):
+    canonical_enum_names = public_enum_module_names(
+        runtime.get("api_model"), "circuitpython"
+    )
     plan = module_registration_plan(
         max_phase=max_phase,
         int_constants=int_constants,
@@ -43,6 +46,18 @@ def _module_global_entries(
         struct_aliases=struct_aliases or {},
         obj_names=obj_names or (),
         module_funcs=module_funcs or (),
+        public_struct_names=public_struct_c_names(
+            runtime.get("api_model"), "circuitpython"
+        ),
+        public_enum_names=(
+            frozenset(
+                name
+                for name in enums
+                if export_name(name, "enum") in canonical_enum_names
+            )
+            if canonical_enum_names is not None
+            else None
+        ),
     )
     entries = []
     if plan.int_constants or plan.generated_globals:

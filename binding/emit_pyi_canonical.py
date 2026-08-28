@@ -173,14 +173,14 @@ class CanonicalPyiEmitter:
         self._add()
         # These intentionally stay private: they describe only the generic
         # runtime helpers below, not LVGL declarations in the public API.
-        self._add('_StructT = TypeVar("_StructT", bound="Struct")')
+        self._add('_StructT = TypeVar("_StructT", bound="_Struct")')
         self._add('_BlobT = TypeVar("_BlobT")')
         self._add()
 
     def _emit_helpers(self) -> None:
         self._add("class LvReferenceError(Exception): ...")
         self._add()
-        self._add("class Struct:")
+        self._add("class _Struct:")
         self._add("__SIZE__: ClassVar[int]", 1)
         self._add(
             "def __init__(self, fields: dict[str, Any] | None = None, /, **kwargs: Any) -> None: ...",
@@ -200,14 +200,14 @@ class CanonicalPyiEmitter:
             1,
         )
         self._add()
-        self._add("class C_Pointer(Struct):")
+        self._add("class C_Pointer(_Struct):")
         self._add("__SIZE__: ClassVar[int]", 1)
         self._add("ptr_val: Any", 1)
         self._add("str_val: str | None", 1)
         self._add("int_val: int", 1)
         self._add("uint_val: int", 1)
         self._add()
-        self._add("class Blob:")
+        self._add("class _Blob:")
         self._add(
             "def __dereference__(self, size: int | None = ..., /) -> memoryview | None: ...",
             1,
@@ -219,9 +219,6 @@ class CanonicalPyiEmitter:
             "def __cast__(self, target_type: type[_BlobT], /) -> _BlobT: ...",
             1,
         )
-        self._add()
-        self._add("class _Nesting:")
-        self._add("value: int", 1)
         self._add()
 
     def _module_enums(self) -> list[Mapping[str, Any]]:
@@ -263,7 +260,7 @@ class CanonicalPyiEmitter:
             key=lambda item: item["python_name"],
         ):
             name = _identifier(struct["python_name"])
-            self._add("class %s(Struct):" % name)
+            self._add("class %s(_Struct):" % name)
             emitted = False
             field_names = set()
             for field in struct.get("fields", ()):
@@ -369,7 +366,7 @@ class CanonicalPyiEmitter:
             parent_type = (
                 _identifier(parent)
                 if parent in object_names
-                else "Struct"
+                else "_Struct"
             )
             self._add("class %s(%s):" % (_identifier(object_name), parent_type))
             emitted = False
@@ -428,8 +425,6 @@ class CanonicalPyiEmitter:
         ):
             name = _identifier(variable.get("python_name") or variable["c_name"])
             self._add("%s: %s" % (name, self._view_type(variable)))
-        if any(variable.get("c_name") == "_nesting" for variable in self.variables):
-            self._add("_nesting: _Nesting")
         self._add()
 
     def _emit_functions(self) -> None:

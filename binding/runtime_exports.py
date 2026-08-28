@@ -1,4 +1,4 @@
-"""Symbols omitted from generated C per target; IR/.pyi may still list them."""
+"""Select the canonical module-function surface for native registration."""
 
 from __future__ import print_function
 
@@ -21,12 +21,36 @@ RUNTIME_SKIP_MODULE_FUNCS = {
     ),
 }
 
+LIFECYCLE_MODULE_FUNCS = frozenset({"lv_init", "lv_deinit"})
+
 
 def skip_module_func(func_name, target):
     return func_name in RUNTIME_SKIP_MODULE_FUNCS.get(target, frozenset())
 
 
-def filter_module_funcs_for_target(module_funcs, target):
-    if target not in RUNTIME_SKIP_MODULE_FUNCS:
-        return module_funcs
-    return [func for func in module_funcs if not skip_module_func(func.name, target)]
+def filter_module_funcs_for_target(module_funcs, target, api_model=None):
+    """Return public canonical module functions available on ``target``.
+
+    The legacy emitters discover functions through generation side effects.
+    Registration must instead follow the canonical API roles so a struct or
+    object method can never leak into one target's module namespace.
+    """
+    if api_model is None:
+        return [
+            func
+            for func in module_funcs
+            if not skip_module_func(func.name, target)
+        ]
+    public = {
+        function.c_name
+        for function in api_model.functions
+        if function.visibility == "public"
+        and function.role == "module"
+        and target in function.available_on
+    }
+    return [func for func in module_funcs if func.name in public]
+
+
+def filter_registration_module_funcs(module_funcs):
+    """Exclude lifecycle functions supplied by each target's module glue."""
+    return [func for func in module_funcs if func.name not in LIFECYCLE_MODULE_FUNCS]

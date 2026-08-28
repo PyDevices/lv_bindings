@@ -1,5 +1,5 @@
 {
-  "api_hash": "7b40051b4b443ef62cbb91893a6cb971bfc5181cb05be81a7a26e4c16c0dc73d",
+  "api_hash": "3e5f11f89b243834d376088f5261970cf6ffa3f6ca91dbbb3510d62f631a754f",
   "constants": [
     {
       "available_on": [
@@ -2464,7 +2464,7 @@
           "value": "2"
         }
       ],
-      "module_name": "FONT_FMT_TXT_BITMAP_FORMAT",
+      "module_name": "FONT_FMT_TXT",
       "owners": [],
       "python_name": "FONT_FMT_TXT_BITMAP_FORMAT",
       "typedef_names": [
@@ -2504,7 +2504,7 @@
           "value": null
         }
       ],
-      "module_name": "FONT_FMT_TXT_CMAP_TYPE",
+      "module_name": "FONT_FMT_TXT_CMAP",
       "owners": [],
       "python_name": "FONT_FMT_TXT_CMAP_TYPE",
       "typedef_names": [
@@ -2788,7 +2788,7 @@
           "value": "0x02"
         }
       ],
-      "module_name": "FS_WHENCE",
+      "module_name": "FS_SEEK",
       "owners": [],
       "python_name": "FS_WHENCE",
       "typedef_names": [
@@ -4352,10 +4352,9 @@
       ],
       "module_name": "OPA",
       "owners": [],
-      "policy_reason": "outside module prefix",
       "python_name": "OPACITY_LEVEL",
       "typedef_names": [],
-      "visibility": "private"
+      "visibility": "public"
     },
     {
       "available_on": [
@@ -5359,7 +5358,7 @@
       ],
       "module_name": "SYMBOL",
       "owners": [],
-      "policy_reason": "outside module prefix",
+      "policy_reason": "Internal identifier enum used to construct the public SYMBOL string namespace.",
       "python_name": "STR_SYMBOL_ID",
       "typedef_names": [],
       "visibility": "private"
@@ -5914,10 +5913,9 @@
       ],
       "module_name": "STYLE",
       "owners": [],
-      "policy_reason": "outside module prefix",
       "python_name": "STYLE_ID",
       "typedef_names": [],
-      "visibility": "private"
+      "visibility": "public"
     },
     {
       "available_on": [
@@ -6641,10 +6639,9 @@
       ],
       "module_name": "TREE_WALK",
       "owners": [],
-      "policy_reason": "outside module prefix",
       "python_name": "TREE_WALK_MODE",
       "typedef_names": [],
-      "visibility": "private"
+      "visibility": "public"
     }
   ],
   "functions": [
@@ -11349,8 +11346,8 @@
           }
         }
       ],
-      "python_name": "get_src",
-      "receiver": "animimg",
+      "policy_reason": "Returns a pointer-to-pointer image source array without a length, so the binding cannot construct a bounded Python sequence safely.",
+      "python_name": "animimg_get_src",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -11369,11 +11366,11 @@
         "conversion": "pointer",
         "python_type": "Any"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": false,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -15515,8 +15512,8 @@
           }
         }
       ],
-      "python_name": "set_text_fmt",
-      "receiver": "arclabel",
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
+      "python_name": "arclabel_set_text_fmt",
       "return_type": {
         "kind": "primitive",
         "name": "void"
@@ -15526,11 +15523,11 @@
         "conversion": "none",
         "python_type": "None"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -15982,9 +15979,9 @@
             "kind": "array"
           },
           "view": {
-            "category": "array",
-            "conversion": "array",
-            "python_type": "Sequence[area_t]"
+            "category": "struct_array",
+            "conversion": "struct_pointer",
+            "python_type": "area_t"
           }
         },
         {
@@ -21913,8 +21910,8 @@
           }
         }
       ],
-      "python_name": "get_map",
-      "receiver": "buttonmatrix",
+      "policy_reason": "Returns a pointer-to-pointer string map without a bounded Python ownership contract.",
+      "python_name": "buttonmatrix_get_map",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -21936,11 +21933,11 @@
         "conversion": "pointer",
         "python_type": "Any"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": false,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -26379,9 +26376,9 @@
             "kind": "array"
           },
           "view": {
-            "category": "array",
-            "conversion": "array",
-            "python_type": "Sequence[calendar_date_t]"
+            "category": "struct_array",
+            "conversion": "struct_pointer",
+            "python_type": "calendar_date_t"
           }
         },
         {
@@ -58414,7 +58411,7 @@
           "view": {
             "category": "enum",
             "conversion": "enum_int",
-            "python_type": "FS_WHENCE | int"
+            "python_type": "FS_SEEK | int"
           }
         }
       ],
@@ -59483,6 +59480,7 @@
         "line": 5512
       },
       "parameters": [],
+      "policy_reason": "Returns LVGL's private process-global state, whose implementation fields are deliberately not part of the Python API.",
       "python_name": "global_default",
       "return_type": {
         "kind": "pointer",
@@ -59500,7 +59498,7 @@
       "static": false,
       "storage": [],
       "variadic": false,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -59746,9 +59744,9 @@
             "kind": "array"
           },
           "view": {
-            "category": "array",
-            "conversion": "array",
-            "python_type": "Sequence[color_t]"
+            "category": "struct_array",
+            "conversion": "struct_pointer",
+            "python_type": "color_t"
           }
         },
         {
@@ -69994,9 +69992,9 @@
             "kind": "array"
           },
           "view": {
-            "category": "array",
-            "conversion": "array",
-            "python_type": "Sequence[point_t]"
+            "category": "struct_array",
+            "conversion": "struct_pointer",
+            "python_type": "point_t"
           }
         }
       ],
@@ -72425,8 +72423,8 @@
           }
         }
       ],
-      "python_name": "get_map_array",
-      "receiver": "keyboard",
+      "policy_reason": "Returns a pointer-to-pointer string map without a bounded Python ownership contract.",
+      "python_name": "keyboard_get_map_array",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -72448,11 +72446,11 @@
         "conversion": "pointer",
         "python_type": "Any"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": false,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -74153,8 +74151,8 @@
           }
         }
       ],
-      "python_name": "set_text_fmt",
-      "receiver": "label",
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
+      "python_name": "label_set_text_fmt",
       "return_type": {
         "kind": "primitive",
         "name": "void"
@@ -74164,11 +74162,11 @@
         "conversion": "none",
         "python_type": "None"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -74458,8 +74456,8 @@
           }
         }
       ],
-      "python_name": "set_text_vfmt",
-      "receiver": "label",
+      "policy_reason": "C va_list values have no portable Python representation and cannot cross the binding boundary.",
+      "python_name": "label_set_text_vfmt",
       "return_type": {
         "kind": "primitive",
         "name": "void"
@@ -74469,11 +74467,11 @@
         "conversion": "none",
         "python_type": "None"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": false,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -75855,9 +75853,9 @@
             "kind": "array"
           },
           "view": {
-            "category": "array",
-            "conversion": "array",
-            "python_type": "Sequence[point_precise_t]"
+            "category": "struct_array",
+            "conversion": "struct_pointer",
+            "python_type": "point_precise_t"
           }
         },
         {
@@ -75947,9 +75945,9 @@
             "kind": "array"
           },
           "view": {
-            "category": "array",
-            "conversion": "array",
-            "python_type": "Sequence[point_precise_t]"
+            "category": "struct_array",
+            "conversion": "struct_pointer",
+            "python_type": "point_precise_t"
           }
         },
         {
@@ -80423,8 +80421,8 @@
           }
         }
       ],
-      "python_name": "add_text_fmt",
-      "receiver": "msgbox",
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
+      "python_name": "msgbox_add_text_fmt",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -80437,11 +80435,11 @@
         "conversion": "object_handle",
         "python_type": "obj"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -120303,9 +120301,9 @@
             "kind": "array"
           },
           "view": {
-            "category": "array",
-            "conversion": "array",
-            "python_type": "Sequence[point_t]"
+            "category": "struct_array",
+            "conversion": "struct_pointer",
+            "python_type": "point_t"
           }
         },
         {
@@ -129148,6 +129146,7 @@
           }
         }
       ],
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
       "python_name": "snprintf",
       "return_type": {
         "kind": "primitive",
@@ -129162,7 +129161,7 @@
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -129410,6 +129409,7 @@
           }
         }
       ],
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
       "python_name": "set_text_fmt",
       "receiver": "span_t",
       "return_type": {
@@ -129425,7 +129425,7 @@
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -131260,8 +131260,8 @@
           }
         }
       ],
-      "python_name": "set_span_text_fmt",
-      "receiver": "spangroup",
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
+      "python_name": "spangroup_set_span_text_fmt",
       "return_type": {
         "kind": "primitive",
         "name": "void"
@@ -131271,11 +131271,11 @@
         "conversion": "none",
         "python_type": "None"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -147459,6 +147459,7 @@
           }
         }
       ],
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
       "python_name": "snprintf",
       "receiver": "subject_t",
       "return_type": {
@@ -147474,7 +147475,7 @@
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -148873,8 +148874,8 @@
           }
         }
       ],
-      "python_name": "set_cell_value_fmt",
-      "receiver": "table",
+      "policy_reason": "A Python binding cannot safely forward a C ellipsis argument list without a declared conversion contract.",
+      "python_name": "table_set_cell_value_fmt",
       "return_type": {
         "kind": "primitive",
         "name": "void"
@@ -148884,11 +148885,11 @@
         "conversion": "none",
         "python_type": "None"
       },
-      "role": "object_method",
+      "role": "module",
       "static": false,
       "storage": [],
       "variadic": true,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -151175,6 +151176,7 @@
           }
         }
       ],
+      "policy_reason": "C va_list values have no portable Python representation and cannot cross the binding boundary.",
       "python_name": "text_set_text_vfmt",
       "return_type": {
         "kind": "pointer",
@@ -151192,7 +151194,7 @@
       "static": false,
       "storage": [],
       "variadic": false,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -157713,6 +157715,7 @@
           }
         }
       ],
+      "policy_reason": "C va_list values have no portable Python representation and cannot cross the binding boundary.",
       "python_name": "vsnprintf",
       "return_type": {
         "kind": "primitive",
@@ -157727,7 +157730,7 @@
       "static": false,
       "storage": [],
       "variadic": false,
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -158236,7 +158239,6 @@
         "get_anim",
         "get_duration",
         "get_repeat_count",
-        "get_src",
         "get_src_count",
         "set_completed_cb",
         "set_duration",
@@ -158326,7 +158328,6 @@
         "set_radius",
         "set_recolor",
         "set_text",
-        "set_text_fmt",
         "set_text_horizontal_align",
         "set_text_static",
         "set_text_vertical_align"
@@ -158414,7 +158415,6 @@
         "clear_button_ctrl",
         "clear_button_ctrl_all",
         "get_button_text",
-        "get_map",
         "get_one_checked",
         "get_selected_button",
         "has_button_ctrl",
@@ -158737,7 +158737,6 @@
       "methods": [
         "def_event_cb",
         "get_button_text",
-        "get_map_array",
         "get_mode",
         "get_popovers",
         "get_selected_button",
@@ -158774,11 +158773,9 @@
         "set_long_mode",
         "set_recolor",
         "set_text",
-        "set_text_fmt",
         "set_text_selection_end",
         "set_text_selection_start",
-        "set_text_static",
-        "set_text_vfmt"
+        "set_text_static"
       ],
       "parent": "obj",
       "python_name": "label",
@@ -158941,7 +158938,6 @@
         "add_footer_button",
         "add_header_button",
         "add_text",
-        "add_text_fmt",
         "add_title",
         "close",
         "close_async",
@@ -159621,7 +159617,6 @@
         "set_overflow",
         "set_span_style",
         "set_span_text",
-        "set_span_text_fmt",
         "set_span_text_static"
       ],
       "parent": "obj",
@@ -159721,7 +159716,6 @@
         "set_cell_ctrl",
         "set_cell_user_data",
         "set_cell_value",
-        "set_cell_value_fmt",
         "set_column_count",
         "set_column_width",
         "set_row_count",
@@ -160069,11 +160063,12 @@
         "line": 309
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "_3dtexture_t",
       "typedef_names": [
         "lv_3dtexture_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -160161,11 +160156,12 @@
         "line": 556
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "anim_bezier3_para_t",
       "typedef_names": [
         "lv_anim_bezier3_para_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -160247,11 +160243,12 @@
         "line": 5210
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "anim_state_t",
       "typedef_names": [
         "lv_anim_state_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -160943,11 +160940,12 @@
         "line": 6242
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "animimg_t",
       "typedef_names": [
         "lv_animimg_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161174,11 +161172,12 @@
         "line": 6383
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "arc_t",
       "typedef_names": [
         "lv_arc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161196,11 +161195,12 @@
         "line": 269
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "arclabel_t",
       "typedef_names": [
         "lv_arclabel_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161504,11 +161504,12 @@
         "line": 6115
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "bar_anim_t",
       "typedef_names": [
         "lv_bar_anim_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161612,7 +161613,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "bar_anim_t"
+            "python_type": "Any"
           }
         },
         {
@@ -161624,7 +161625,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "bar_anim_t"
+            "python_type": "Any"
           }
         },
         {
@@ -161661,11 +161662,12 @@
         "line": 6121
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "bar_t",
       "typedef_names": [
         "lv_bar_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161768,11 +161770,12 @@
         "line": 5809
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "barcode_t",
       "typedef_names": [
         "lv_barcode_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161851,11 +161854,12 @@
         "line": 4015
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "binfont_font_src_t",
       "typedef_names": [
         "lv_binfont_font_src_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161904,11 +161908,12 @@
         "line": 4078
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "builtin_font_src_t",
       "typedef_names": [
         "lv_builtin_font_src_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -161939,11 +161944,12 @@
         "line": 6336
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "button_t",
       "typedef_names": [
         "lv_button_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -162090,11 +162096,12 @@
         "line": 6104
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "buttonmatrix_t",
       "typedef_names": [
         "lv_buttonmatrix_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -162796,11 +162803,12 @@
         "line": 6148
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "calendar_t",
       "typedef_names": [
         "lv_calendar_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -162858,11 +162866,12 @@
         "line": 5798
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "canvas_t",
       "typedef_names": [
         "lv_canvas_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -163304,11 +163313,12 @@
         "line": 6321
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "chart_t",
       "typedef_names": [
         "lv_chart_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -163367,11 +163377,12 @@
         "line": 6209
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "checkbox_t",
       "typedef_names": [
         "lv_checkbox_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -163519,11 +163530,12 @@
         "line": 803
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "color16a_t",
       "typedef_names": [
         "lv_color16a_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -163833,11 +163845,12 @@
         "line": 6015
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "cover_check_info_t",
       "typedef_names": [
         "lv_cover_check_info_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -165786,11 +165799,12 @@
         "line": 5374
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "draw_global_info_t",
       "typedef_names": [
         "lv_draw_global_info_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -167298,11 +167312,12 @@
         "line": 5361
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "draw_mask_t",
       "typedef_names": [
         "lv_draw_mask_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -168004,11 +168019,12 @@
         "line": 5913
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "draw_sw_blend_fill_dsc_t",
       "typedef_names": [
         "lv_draw_sw_blend_fill_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -168198,11 +168214,12 @@
         "line": 5924
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "draw_sw_blend_image_dsc_t",
       "typedef_names": [
         "lv_draw_sw_blend_image_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -168910,11 +168927,12 @@
         "line": 5382
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "draw_sw_thread_dsc_t",
       "typedef_names": [
         "lv_draw_sw_thread_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -168960,11 +168978,12 @@
         "line": 5391
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "draw_sw_unit_t",
       "typedef_names": [
         "lv_draw_sw_unit_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -169573,11 +169592,12 @@
         "line": 332
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "draw_vector_dsc_t",
       "typedef_names": [
         "lv_draw_vector_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -169623,11 +169643,12 @@
         "line": 6263
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "dropdown_list_t",
       "typedef_names": [
         "lv_dropdown_list_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -169821,11 +169842,12 @@
         "line": 6248
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "dropdown_t",
       "typedef_names": [
         "lv_dropdown_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -170174,11 +170196,12 @@
         "line": 348
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "ffmpeg_player_t",
       "typedef_names": [
         "lv_ffmpeg_player_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -170196,11 +170219,12 @@
         "line": 320
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "file_explorer_t",
       "typedef_names": [
         "lv_file_explorer_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -170497,7 +170521,7 @@
           "view": {
             "category": "enum",
             "conversion": "enum_int",
-            "python_type": "FONT_FMT_TXT_CMAP_TYPE | int"
+            "python_type": "FONT_FMT_TXT_CMAP | int"
           }
         }
       ],
@@ -170508,11 +170532,12 @@
         "line": 4039
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "font_fmt_txt_cmap_t",
       "typedef_names": [
         "lv_font_fmt_txt_cmap_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -170556,7 +170581,7 @@
           "view": {
             "category": "struct_pointer",
             "conversion": "struct_pointer",
-            "python_type": "font_fmt_txt_glyph_dsc_t"
+            "python_type": "Any"
           }
         },
         {
@@ -170574,7 +170599,7 @@
           "view": {
             "category": "struct_pointer",
             "conversion": "struct_pointer",
-            "python_type": "font_fmt_txt_cmap_t"
+            "python_type": "Any"
           }
         },
         {
@@ -170679,11 +170704,12 @@
         "line": 4066
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "font_fmt_txt_dsc_t",
       "typedef_names": [
         "lv_font_fmt_txt_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -170776,11 +170802,12 @@
         "line": 4025
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "font_fmt_txt_glyph_dsc_t",
       "typedef_names": [
         "lv_font_fmt_txt_glyph_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -170877,11 +170904,12 @@
         "line": 4054
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "font_fmt_txt_kern_classes_t",
       "typedef_names": [
         "lv_font_fmt_txt_kern_classes_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -170962,11 +170990,12 @@
         "line": 4048
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "font_fmt_txt_kern_pair_t",
       "typedef_names": [
         "lv_font_fmt_txt_kern_pair_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -171287,11 +171316,12 @@
         "line": 238
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "font_manager_t",
       "typedef_names": [
         "lv_font_manager_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -171663,11 +171693,12 @@
         "line": 325
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "fpoint_t",
       "typedef_names": [
         "lv_fpoint_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -171685,11 +171716,12 @@
         "line": 243
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "fragment_class_t",
       "typedef_names": [
         "lv_fragment_class_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -171707,11 +171739,12 @@
         "line": 244
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "fragment_managed_states_t",
       "typedef_names": [
         "lv_fragment_managed_states_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -171729,11 +171762,12 @@
         "line": 242
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "fragment_t",
       "typedef_names": [
         "lv_fragment_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -171751,11 +171785,12 @@
         "line": 324
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "freetype_outline_event_param_t",
       "typedef_names": [
         "lv_freetype_outline_event_param_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -171773,11 +171808,12 @@
         "line": 323
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "freetype_outline_vector_t",
       "typedef_names": [
         "lv_freetype_outline_vector_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -172315,7 +172351,7 @@
           "view": {
             "category": "callback",
             "conversion": "callback",
-            "python_type": "Callable[[fs_drv_t, Any, int, FS_WHENCE | int], FS_RES | int]"
+            "python_type": "Callable[[fs_drv_t, Any, int, FS_SEEK | int], FS_RES | int]"
           }
         },
         {
@@ -173038,7 +173074,7 @@
           "view": {
             "category": "struct_pointer",
             "conversion": "struct_pointer",
-            "python_type": "layout_dsc_t"
+            "python_type": "Any"
           }
         },
         {
@@ -173113,7 +173149,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "timer_state_t"
+            "python_type": "Any"
           }
         },
         {
@@ -173125,7 +173161,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "anim_state_t"
+            "python_type": "Any"
           }
         },
         {
@@ -173137,7 +173173,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "tick_state_t"
+            "python_type": "Any"
           }
         },
         {
@@ -173227,7 +173263,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "draw_global_info_t"
+            "python_type": "Any"
           }
         },
         {
@@ -173305,7 +173341,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "linux_proc_stat_t"
+            "python_type": "Any"
           }
         }
       ],
@@ -173339,11 +173375,12 @@
         "line": 313
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "gltf_environment_t",
       "typedef_names": [
         "lv_gltf_environment_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -173361,11 +173398,12 @@
         "line": 314
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "gltf_ibl_sampler_t",
       "typedef_names": [
         "lv_gltf_ibl_sampler_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -173383,11 +173421,12 @@
         "line": 312
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "gltf_model_node_t",
       "typedef_names": [
         "lv_gltf_model_node_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -173405,11 +173444,12 @@
         "line": 311
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "gltf_model_t",
       "typedef_names": [
         "lv_gltf_model_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -173427,11 +173467,12 @@
         "line": 310
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "gltf_t",
       "typedef_names": [
         "lv_gltf_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -174605,11 +174646,12 @@
         "line": 5855
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "image_header_cache_data_t",
       "typedef_names": [
         "lv_image_header_cache_data_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -174939,11 +174981,12 @@
         "line": 5781
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "image_t",
       "typedef_names": [
         "lv_image_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -174992,11 +175035,12 @@
         "line": 6159
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "imagebutton_src_info_t",
       "typedef_names": [
         "lv_imagebutton_src_info_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -175034,7 +175078,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Sequence[imagebutton_src_info_t]"
+            "python_type": "Sequence[Any]"
           }
         },
         {
@@ -175052,7 +175096,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Sequence[imagebutton_src_info_t]"
+            "python_type": "Sequence[Any]"
           }
         },
         {
@@ -175070,7 +175114,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Sequence[imagebutton_src_info_t]"
+            "python_type": "Sequence[Any]"
           }
         }
       ],
@@ -175081,11 +175125,12 @@
         "line": 6163
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "imagebutton_t",
       "typedef_names": [
         "lv_imagebutton_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -175103,11 +175148,12 @@
         "line": 319
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "ime_pinyin_t",
       "typedef_names": [
         "lv_ime_pinyin_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176193,11 +176239,12 @@
         "line": 6226
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "keyboard_t",
       "typedef_names": [
         "lv_keyboard_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176423,11 +176470,12 @@
         "line": 6438
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "label_t",
       "typedef_names": [
         "lv_label_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176719,11 +176767,12 @@
         "line": 5462
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "layout_dsc_t",
       "typedef_names": [
         "lv_layout_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176778,11 +176827,12 @@
         "line": 6378
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "led_t",
       "typedef_names": [
         "lv_led_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176800,11 +176850,12 @@
         "line": 334
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "libinput_event_t",
       "typedef_names": [
         "lv_libinput_event_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176822,11 +176873,12 @@
         "line": 335
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "libinput_t",
       "typedef_names": [
         "lv_libinput_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176906,11 +176958,12 @@
         "line": 6232
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "line_t",
       "typedef_names": [
         "lv_line_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -176958,11 +177011,12 @@
         "line": 5099
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "linux_proc_stat_t",
       "typedef_names": [
         "lv_linux_proc_stat_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -177221,11 +177275,12 @@
         "line": 6271
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "menu_history_t",
       "typedef_names": [
         "lv_menu_history_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -177274,11 +177329,12 @@
         "line": 6267
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "menu_load_page_event_data_t",
       "typedef_names": [
         "lv_menu_load_page_event_data_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -177336,11 +177392,12 @@
         "line": 6297
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "menu_page_t",
       "typedef_names": [
         "lv_menu_page_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -177626,11 +177683,12 @@
         "line": 6274
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "menu_t",
       "typedef_names": [
         "lv_menu_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -177648,11 +177706,12 @@
         "line": 318
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "monkey_config_t",
       "typedef_names": [
         "lv_monkey_config_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -177743,11 +177802,12 @@
         "line": 6097
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "msgbox_t",
       "typedef_names": [
         "lv_msgbox_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -178249,11 +178309,12 @@
         "line": 5742
       },
       "methods": [],
+      "policy_reason": "Private object storage reached only through LVGL's internal object implementation.",
       "python_name": "obj_spec_attr_t",
       "typedef_names": [
         "lv_obj_spec_attr_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -178355,11 +178416,12 @@
         "line": 5958
       },
       "methods": [],
+      "policy_reason": "Private object style storage reached only through LVGL's internal object implementation.",
       "python_name": "obj_style_t",
       "typedef_names": [
         "lv_obj_style_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -178513,7 +178575,7 @@
           "view": {
             "category": "struct_pointer",
             "conversion": "struct_pointer",
-            "python_type": "obj_spec_attr_t"
+            "python_type": "Any"
           }
         },
         {
@@ -178528,7 +178590,7 @@
           "view": {
             "category": "struct_pointer",
             "conversion": "struct_pointer",
-            "python_type": "obj_style_t"
+            "python_type": "Any"
           }
         },
         {
@@ -179260,11 +179322,12 @@
         "update_layout",
         "update_snap"
       ],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "obj_t",
       "typedef_names": [
         "lv_obj_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -179406,11 +179469,12 @@
         "line": 349
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "opengles_window_t",
       "typedef_names": [
         "lv_opengles_window_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -179428,11 +179492,12 @@
         "line": 350
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "opengles_window_texture_t",
       "typedef_names": [
         "lv_opengles_window_texture_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -179554,11 +179619,12 @@
         "line": 245
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "profiler_builtin_config_t",
       "typedef_names": [
         "lv_profiler_builtin_config_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -179625,11 +179691,12 @@
         "line": 5803
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "qrcode_t",
       "typedef_names": [
         "lv_qrcode_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -179818,11 +179885,12 @@
         "line": 347
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "rlottie_t",
       "typedef_names": [
         "lv_rlottie_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -179927,11 +179995,12 @@
         "line": 6214
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "roller_t",
       "typedef_names": [
         "lv_roller_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -179989,11 +180058,12 @@
         "line": 6354
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "scale_needle_t",
       "typedef_names": [
         "lv_scale_needle_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -180432,11 +180502,12 @@
         "line": 6359
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "scale_t",
       "typedef_names": [
         "lv_scale_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -180544,11 +180615,12 @@
         "line": 6134
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "slider_t",
       "typedef_names": [
         "lv_slider_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -180817,11 +180889,12 @@
         "line": 6428
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "spangroup_t",
       "typedef_names": [
         "lv_spangroup_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -180952,11 +181025,12 @@
         "line": 6410
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "spinbox_t",
       "typedef_names": [
         "lv_spinbox_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -180974,11 +181048,12 @@
         "line": 308
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "spinner_t",
       "typedef_names": [
         "lv_spinner_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -181068,11 +181143,12 @@
         "line": 1609
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "style_const_prop_t",
       "typedef_names": [
         "lv_style_const_prop_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -181830,11 +181906,12 @@
         "line": 6143
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "switch_t",
       "typedef_names": [
         "lv_switch_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -181898,11 +181975,12 @@
         "line": 6194
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "table_cell_t",
       "typedef_names": [
         "lv_table_cell_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -182029,11 +182107,12 @@
         "line": 6199
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "table_t",
       "typedef_names": [
         "lv_table_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -182100,11 +182179,12 @@
         "line": 6456
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "tabview_t",
       "typedef_names": [
         "lv_tabview_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -182407,11 +182487,12 @@
         "line": 6169
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "textarea_t",
       "typedef_names": [
         "lv_textarea_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -182659,11 +182740,12 @@
         "line": 5220
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "tick_state_t",
       "typedef_names": [
         "lv_tick_state_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -182709,11 +182791,12 @@
         "line": 6402
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "tileview_t",
       "typedef_names": [
         "lv_tileview_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -182756,11 +182839,12 @@
         "line": 6406
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "tileview_tile_t",
       "typedef_names": [
         "lv_tileview_tile_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -182941,11 +183025,12 @@
         "line": 5193
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "timer_state_t",
       "typedef_names": [
         "lv_timer_state_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183271,11 +183356,12 @@
         "line": 329
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "vector_fill_dsc_t",
       "typedef_names": [
         "lv_vector_fill_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183293,11 +183379,12 @@
         "line": 328
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "vector_gradient_t",
       "typedef_names": [
         "lv_vector_gradient_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183315,11 +183402,12 @@
         "line": 331
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "vector_path_ctx_t",
       "typedef_names": [
         "lv_vector_path_ctx_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183337,11 +183425,12 @@
         "line": 327
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "vector_path_t",
       "typedef_names": [
         "lv_vector_path_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183359,11 +183448,12 @@
         "line": 330
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "vector_stroke_dsc_t",
       "typedef_names": [
         "lv_vector_stroke_dsc_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183394,11 +183484,12 @@
         "line": 6223
       },
       "methods": [],
+      "policy_reason": "represented by an LVGL object wrapper",
       "python_name": "win_t",
       "typedef_names": [
         "lv_win_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183439,11 +183530,12 @@
         "line": 333
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "xkb_t",
       "typedef_names": [
         "lv_xkb_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183463,7 +183555,7 @@
           "view": {
             "category": "struct",
             "conversion": "struct_value",
-            "python_type": "yuv_plane_t"
+            "python_type": "Any"
           }
         },
         {
@@ -183496,11 +183588,12 @@
         "line": 971
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "yuv_buf_t",
       "typedef_names": [
         "lv_yuv_buf_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -183546,11 +183639,12 @@
         "line": 967
       },
       "methods": [],
+      "policy_reason": "not reachable from a public binding boundary",
       "python_name": "yuv_plane_t",
       "typedef_names": [
         "lv_yuv_plane_t"
       ],
-      "visibility": "public"
+      "visibility": "private"
     }
   ],
   "typedefs": [
@@ -183922,7 +184016,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "_3dtexture_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -185218,7 +185312,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "anim_bezier3_para_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -185655,7 +185749,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "anim_state_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -187146,7 +187240,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "bar_anim_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -187316,7 +187410,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "binfont_font_src_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -187463,7 +187557,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "builtin_font_src_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -189283,7 +189377,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "color16a_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -189659,7 +189753,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "cover_check_info_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -190724,7 +190818,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "draw_global_info_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -191177,7 +191271,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "draw_mask_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -191251,7 +191345,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "draw_sw_blend_fill_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -191342,7 +191436,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "draw_sw_blend_image_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -191766,7 +191860,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "draw_sw_thread_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -191791,7 +191885,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "draw_sw_unit_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -191938,7 +192032,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "draw_vector_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -191963,7 +192057,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "dropdown_list_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192185,7 +192279,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "ffmpeg_player_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192210,7 +192304,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "file_explorer_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192307,7 +192401,7 @@
       "view": {
         "category": "enum",
         "conversion": "enum_int",
-        "python_type": "FONT_FMT_TXT_BITMAP_FORMAT | int"
+        "python_type": "FONT_FMT_TXT | int"
       },
       "visibility": "public"
     },
@@ -192331,7 +192425,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "font_fmt_txt_cmap_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192355,7 +192449,7 @@
       "view": {
         "category": "enum",
         "conversion": "enum_int",
-        "python_type": "FONT_FMT_TXT_CMAP_TYPE | int"
+        "python_type": "FONT_FMT_TXT_CMAP | int"
       },
       "visibility": "public"
     },
@@ -192379,7 +192473,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "font_fmt_txt_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192403,7 +192497,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "font_fmt_txt_glyph_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192427,7 +192521,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "font_fmt_txt_kern_classes_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192451,7 +192545,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "font_fmt_txt_kern_pair_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192573,7 +192667,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "font_manager_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192647,7 +192741,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "fpoint_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192698,7 +192792,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "fragment_class_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192723,7 +192817,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "fragment_managed_states_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192748,7 +192842,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "fragment_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192773,7 +192867,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "freetype_outline_event_param_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192798,7 +192892,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "freetype_outline_vector_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -192992,7 +193086,7 @@
       "view": {
         "category": "enum",
         "conversion": "enum_int",
-        "python_type": "FS_WHENCE | int"
+        "python_type": "FS_SEEK | int"
       },
       "visibility": "public"
     },
@@ -193068,7 +193162,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "gltf_environment_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -193093,7 +193187,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "gltf_ibl_sampler_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -193118,7 +193212,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "gltf_model_node_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -193143,7 +193237,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "gltf_model_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -193168,7 +193262,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "gltf_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -194136,7 +194230,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "image_header_cache_data_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -194234,7 +194328,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "imagebutton_src_info_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -194308,7 +194402,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "ime_pinyin_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -195673,7 +195767,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "layout_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -195926,7 +196020,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "libinput_event_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -195951,7 +196045,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "libinput_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -196000,7 +196094,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "linux_proc_stat_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -196254,7 +196348,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "menu_history_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -196279,7 +196373,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "menu_load_page_event_data_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -196428,7 +196522,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "monkey_config_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -196737,7 +196831,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "obj_spec_attr_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -196762,7 +196856,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "obj_style_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -197063,7 +197157,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "opengles_window_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -197088,7 +197182,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "opengles_window_texture_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -197235,7 +197329,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "profiler_builtin_config_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -197992,7 +198086,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "rlottie_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -198115,7 +198209,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "scale_needle_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -198848,7 +198942,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "style_const_prop_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -199240,7 +199334,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "table_cell_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -199652,7 +199746,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "tick_state_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -199702,7 +199796,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "tileview_tile_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -199848,7 +199942,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "timer_state_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -200977,7 +201071,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "vector_fill_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -201002,7 +201096,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "vector_gradient_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -201027,7 +201121,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "vector_path_ctx_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -201052,7 +201146,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "vector_path_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -201077,7 +201171,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "vector_stroke_dsc_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -201257,7 +201351,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "xkb_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -201281,7 +201375,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "yuv_buf_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -201305,7 +201399,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "yuv_plane_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },

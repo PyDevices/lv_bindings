@@ -144,14 +144,18 @@ def test_lifecycle_dunders_are_not_part_of_the_shared_public_namespace():
         encoding="utf-8"
     )
 
-    # MicroPython's user-module loader uses these hooks.  CircuitPython's
-    # generated source excludes them when LV_CIRCUITPYTHON_BUILD is defined,
-    # and CPython owns module lifecycle through the extension loader.  They
-    # are therefore runtime integration details, never shared API exports.
-    assert {"__init__", "__del__"} <= mp_module_names(micropython)
-    assert "#ifndef LV_CIRCUITPYTHON_BUILD" in circuitpython
-    assert {"__init__", "__del__"}.isdisjoint(mp_module_names(circuitpython))
-    assert {"__init__", "__del__"}.isdisjoint(py_module_names(cpython))
+    for names in (
+        mp_module_names(micropython),
+        mp_module_names(circuitpython),
+        py_module_names(cpython),
+    ):
+        assert {"init", "deinit", "is_initialized"} <= names
+        assert {"__init__", "__del__"}.isdisjoint(names)
+
+    for source in (micropython, circuitpython):
+        assert "mp_lv_init_mpobj" not in source
+        assert "mp_lv_deinit_mpobj" not in source
+        assert "static const mp_lv_struct_t mp__nesting" not in source
 
 
 def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypatch):
@@ -292,6 +296,28 @@ def test_failed_generation_shares_diagnostic_and_removal_policy():
     assert "missing conversion" in diagnostic
     assert "fixture()" in diagnostic
     assert remaining == ["other"]
+
+
+def test_failed_generation_rejects_unwaived_public_functions():
+    method = SimpleNamespace(name="lv_public")
+    model = SimpleNamespace(
+        functions=(
+            SimpleNamespace(
+                c_name="lv_public",
+                visibility="public",
+                available_on=("micropython", "circuitpython", "cpython"),
+            ),
+        )
+    )
+    with pytest.raises(RuntimeError, match="unsupported public function"):
+        failed_generation(
+            method=method,
+            problem="missing conversion",
+            funcs=(method,),
+            render_method=lambda value: value.name,
+            api_model=model,
+            target="cpython",
+        )
 
 
 def test_target_lowering_setup_uses_common_defaults():

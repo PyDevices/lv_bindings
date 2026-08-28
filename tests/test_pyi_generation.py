@@ -314,7 +314,6 @@ def test_generated_stub_covers_the_shared_ir_namespace():
         for variable in api["variables"]
         if variable["visibility"] == "public"
     )
-    expected.add("_nesting")
     expected.update(
         constant["python_name"]
         for constant in api["constants"]
