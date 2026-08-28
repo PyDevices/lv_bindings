@@ -126,7 +126,7 @@ class CanonicalPyiEmitter:
         self._add("# Naming style: %s" % self.naming_style)
         self._add('"""Type stubs for LVGL Python bindings (auto-generated)."""')
         self._add("from __future__ import annotations")
-        self._add("from collections.abc import Callable")
+        self._add("from collections.abc import Callable, Sequence")
         self._add("from typing import Any, ClassVar")
         self._add()
 

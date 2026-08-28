@@ -855,7 +855,9 @@ def _build_type_view_resolver(
                     return ApiTypeView("Any", "opaque_pointer", "opaque")
             return ApiTypeView("Any", "pointer", "pointer")
         if type_.kind == "array":
-            return ApiTypeView("Any", "array", "array")
+            element = type_.element or CType(kind="primitive", name="void")
+            element_type = view(element, seen).python_type
+            return ApiTypeView("Sequence[%s]" % element_type, "array", "array")
         if type_.kind == "function":
             return ApiTypeView(callable_type(type_), "callback", "callback")
         if type_.kind == "ellipsis":

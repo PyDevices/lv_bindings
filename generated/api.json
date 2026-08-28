@@ -1,5 +1,5 @@
 {
-  "api_hash": "78110522b6ed489d18f30b5b89e42125aac3a107b7780badadad5632c74d19c4",
+  "api_hash": "7b40051b4b443ef62cbb91893a6cb971bfc5181cb05be81a7a26e4c16c0dc73d",
   "constants": [
     {
       "available_on": [
@@ -11832,7 +11832,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[Any]"
           }
         },
         {
@@ -11930,7 +11930,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[Any]"
           }
         },
         {
@@ -15984,7 +15984,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[area_t]"
           }
         },
         {
@@ -22436,7 +22436,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[buttonmatrix.CTRL | int]"
           }
         }
       ],
@@ -22520,7 +22520,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[str]"
           }
         }
       ],
@@ -26381,7 +26381,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[calendar_date_t]"
           }
         },
         {
@@ -30972,7 +30972,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         }
       ],
@@ -31067,7 +31067,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         }
       ],
@@ -31394,7 +31394,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -31509,7 +31509,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -31535,7 +31535,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -48719,7 +48719,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[Any]"
           }
         },
         {
@@ -59748,7 +59748,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[color_t]"
           }
         },
         {
@@ -59774,7 +59774,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -59800,7 +59800,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -69996,7 +69996,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[point_t]"
           }
         }
       ],
@@ -72757,7 +72757,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[str]"
           }
         },
         {
@@ -72783,7 +72783,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[buttonmatrix.CTRL | int]"
           }
         }
       ],
@@ -75857,7 +75857,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[point_precise_t]"
           }
         },
         {
@@ -75949,7 +75949,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[point_precise_t]"
           }
         },
         {
@@ -105785,7 +105785,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -105811,7 +105811,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         }
       ],
@@ -120305,7 +120305,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[point_t]"
           }
         },
         {
@@ -127160,7 +127160,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[str]"
           }
         }
       ],
@@ -145137,7 +145137,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -146483,7 +146483,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[subject_t]"
           }
         },
         {
@@ -162749,7 +162749,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[str]"
           }
         },
         {
@@ -162785,7 +162785,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[Sequence[int]]"
           }
         }
       ],
@@ -163165,7 +163165,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -163183,7 +163183,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -163201,7 +163201,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -163219,7 +163219,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -164169,7 +164169,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[area_t]"
           }
         },
         {
@@ -164187,7 +164187,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -169229,7 +169229,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[point_precise_t]"
           }
         },
         {
@@ -172772,7 +172772,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         }
       ],
@@ -173251,7 +173251,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[draw_sw_mask_radius_circle_dsc_t]"
           }
         },
         {
@@ -173457,7 +173457,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[grad_stop_t]"
           }
         },
         {
@@ -175034,7 +175034,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[imagebutton_src_info_t]"
           }
         },
         {
@@ -175052,7 +175052,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[imagebutton_src_info_t]"
           }
         },
         {
@@ -175070,7 +175070,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[imagebutton_src_info_t]"
           }
         }
       ],
@@ -175133,7 +175133,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[INDEV_GESTURE | int]"
           }
         },
         {
@@ -175154,7 +175154,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[Any]"
           }
         },
         {
@@ -175895,7 +175895,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[indev_gesture_recognizer_t]"
           }
         },
         {
@@ -175928,7 +175928,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[Any]"
           }
         },
         {
@@ -175946,7 +175946,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[INDEV_GESTURE | int]"
           }
         }
       ],
@@ -176250,7 +176250,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         },
         {
@@ -176947,7 +176947,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         }
       ],
@@ -181887,7 +181887,7 @@
           "view": {
             "category": "array",
             "conversion": "array",
-            "python_type": "Any"
+            "python_type": "Sequence[int]"
           }
         }
       ],
@@ -191546,7 +191546,7 @@
       "view": {
         "category": "array",
         "conversion": "array",
-        "python_type": "Any"
+        "python_type": "Sequence[draw_sw_mask_radius_circle_dsc_t]"
       },
       "visibility": "public"
     },

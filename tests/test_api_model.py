@@ -197,6 +197,21 @@ def test_api_model_does_not_reference_private_structs_in_public_views():
     assert function.return_view.category == "struct_pointer"
 
 
+def test_api_model_describes_arrays_as_nested_sequences():
+    declarations = parse_source(
+        "typedef struct packet { int values[2][3]; } lv_packet_t; "
+        "void lv_use_values(const int values[3]);",
+        filename="array-views.h",
+    )
+
+    model = build_api_model(declarations)
+    function = next(item for item in model.functions if item.c_name == "lv_use_values")
+    packet = next(item for item in model.structs if item.python_name == "packet_t")
+
+    assert function.parameter_views[0].python_type == "Sequence[int]"
+    assert packet.field_views[0].python_type == "Sequence[Sequence[int]]"
+
+
 def test_api_model_detects_duplicate_exports():
     from dataclasses import replace
 
