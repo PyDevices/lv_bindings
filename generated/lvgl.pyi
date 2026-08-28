@@ -7,18 +7,6 @@ from typing import Any, ClassVar, TypeAlias
 
 class LvReferenceError(Exception): ...
 
-class C_Pointer:
-    ptr_val: Any
-    str_val: str | None
-    int_val: int
-    uint_val: int
-
-class Blob:
-    def __dereference__(self) -> Any: ...
-
-class _Nesting:
-    value: int
-
 class Struct:
     __SIZE__: ClassVar[int]
     def __init__(self, fields: dict[str, Any] | None = None, /, **kwargs: Any) -> None: ...
@@ -28,6 +16,20 @@ class Struct:
     def __cast_instance__(cls, obj: Any) -> Any: ...
     @classmethod
     def __dereference__(cls, obj: Any) -> Any: ...
+
+class C_Pointer(Struct):
+    __SIZE__: ClassVar[int]
+    ptr_val: Any
+    str_val: str | None
+    int_val: int
+    uint_val: int
+
+class Blob:
+    def __dereference__(self) -> Any: ...
+    def __cast__(self, target_type: type[Any] | None = ...) -> Any: ...
+
+class _Nesting:
+    value: int
 
 class ALIGN:
     DEFAULT: int

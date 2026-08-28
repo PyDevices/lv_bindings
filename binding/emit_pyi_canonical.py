@@ -175,18 +175,6 @@ class CanonicalPyiEmitter:
     def _emit_helpers(self) -> None:
         self._add("class LvReferenceError(Exception): ...")
         self._add()
-        self._add("class C_Pointer:")
-        self._add("ptr_val: Any", 1)
-        self._add("str_val: str | None", 1)
-        self._add("int_val: int", 1)
-        self._add("uint_val: int", 1)
-        self._add()
-        self._add("class Blob:")
-        self._add("def __dereference__(self) -> Any: ...", 1)
-        self._add()
-        self._add("class _Nesting:")
-        self._add("value: int", 1)
-        self._add()
         self._add("class Struct:")
         self._add("__SIZE__: ClassVar[int]", 1)
         self._add(
@@ -199,6 +187,23 @@ class CanonicalPyiEmitter:
         self._add("def __cast_instance__(cls, obj: Any) -> Any: ...", 1)
         self._add("@classmethod", 1)
         self._add("def __dereference__(cls, obj: Any) -> Any: ...", 1)
+        self._add()
+        self._add("class C_Pointer(Struct):")
+        self._add("__SIZE__: ClassVar[int]", 1)
+        self._add("ptr_val: Any", 1)
+        self._add("str_val: str | None", 1)
+        self._add("int_val: int", 1)
+        self._add("uint_val: int", 1)
+        self._add()
+        self._add("class Blob:")
+        self._add("def __dereference__(self) -> Any: ...", 1)
+        self._add(
+            "def __cast__(self, target_type: type[Any] | None = ...) -> Any: ...",
+            1,
+        )
+        self._add()
+        self._add("class _Nesting:")
+        self._add("value: int", 1)
         self._add()
 
     def _module_enums(self) -> list[Mapping[str, Any]]:

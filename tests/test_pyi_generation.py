@@ -222,7 +222,7 @@ def test_generated_stub_annotations_reference_declared_names():
         for node in tree.body
         if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
     )
-    declared.update({"Any", "Callable", "ClassVar", "None", "Sequence", "TypeAlias", "bool", "bytes", "dict", "float", "int", "list", "set", "str", "tuple"})
+    declared.update({"Any", "Callable", "ClassVar", "None", "Sequence", "TypeAlias", "bool", "bytes", "dict", "float", "int", "list", "set", "str", "tuple", "type"})
     declared.update(
         child.target.id
         for node in ast.walk(tree)

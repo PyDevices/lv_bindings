@@ -141,6 +141,29 @@ def test_canonical_emitter_uses_views_and_does_not_duplicate_nested_enums():
     }
 
 
+def test_canonical_emitter_describes_runtime_helper_types():
+    output = StringIO()
+    CanonicalPyiEmitter(_api_data(), lvgl_version="9.5").emit(output)
+    tree = ast.parse(output.getvalue())
+    classes = {node.name: node for node in tree.body if isinstance(node, ast.ClassDef)}
+
+    pointer = classes["C_Pointer"]
+    assert isinstance(pointer.bases[0], ast.Name)
+    assert pointer.bases[0].id == "Struct"
+    pointer_members = {
+        child.target.id
+        for child in pointer.body
+        if isinstance(child, ast.AnnAssign) and isinstance(child.target, ast.Name)
+    }
+    assert pointer_members == {"__SIZE__", "ptr_val", "str_val", "int_val", "uint_val"}
+
+    blob = classes["Blob"]
+    assert {child.name for child in blob.body if isinstance(child, ast.FunctionDef)} == {
+        "__dereference__",
+        "__cast__",
+    }
+
+
 def test_canonical_emitter_can_emit_target_specific_exceptions():
     output = StringIO()
     CanonicalPyiEmitter(
