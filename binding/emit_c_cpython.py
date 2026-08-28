@@ -3,7 +3,6 @@ from __future__ import print_function
 
 import collections
 import copy
-import os
 import re
 from os.path import commonprefix
 
@@ -52,6 +51,7 @@ from .parse import (
     remove_quals,
 )
 from . import runtime
+from .emit_backend import resolve_emitter_headers, target_banner
 from .runtime_exports import filter_module_funcs_for_target
 from .util import eprint, memoize
 
@@ -62,26 +62,12 @@ def emit_c():
     global enum_referenced, generated_obj_names, generated_globals
     global module_funcs, functions_not_generated, enums
 
-    headers = list(args.input)
-    for header in headers:
-        if "lvgl.h" in header:
-            path, _ = os.path.split(header)
-            if path and path != "lvgl.h":
-                path = os.path.join(path, "src", "lvgl_private.h")
-            else:
-                path = "src/lvgl_private.h"
-
-            headers.append(path)
-            break
+    headers = resolve_emitter_headers(args.input)
 
     emit_options = runtime.get("emit_options", {})
     _emit_target = emit_options.get("target", "micropython")
     _emit_max_phase = emit_options.get("max_phase")
-    _target_banner = (
-        " *\n * Target: {target}\n".format(target=_emit_target)
-        if _emit_target == "cpython"
-        else ""
-    )
+    _target_banner = target_banner(_emit_target, include=_emit_target == "cpython")
 
     print(
         """

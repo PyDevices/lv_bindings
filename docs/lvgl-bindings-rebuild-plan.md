@@ -349,7 +349,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   standard and CircuitPython Unix coverage rebuilt with cmods and passed the
   shared LVGL smoke probe; CPython smoke probe passed. A repository-wide pytest
   invocation additionally discovers LVGL's vendored upstream tests, which
-  require unavailable doxygen, so the intended repository suite is pytest tests.`
+  require unavailable doxygen, so the intended repository suite is pytest tests.
+  Second migration slice: native emitters now share header resolution and the
+  generated-file target-banner policy through binding.emit_backend. This
+  preserves existing target-specific banner choices and adds LVGL's private
+  header exactly once for every backend. Validation: 98 repository tests
+  passed; binding.generate --check passed.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

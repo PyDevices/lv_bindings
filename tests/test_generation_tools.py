@@ -17,7 +17,11 @@ from binding.generator import (
 )
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
-from binding.emit_backend import prepare_target_lowering
+from binding.emit_backend import (
+    prepare_target_lowering,
+    resolve_emitter_headers,
+    target_banner,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -193,3 +197,14 @@ def test_target_lowering_setup_uses_common_defaults():
     assert runtime.get("generated_globals") == []
     assert runtime.get("module_funcs") == []
     assert runtime.get("generated_funcs") == {}
+
+
+def test_target_lowering_header_and_banner_policy_is_shared():
+    assert resolve_emitter_headers(["lvgl/lvgl.h", "extra.h"]) == [
+        "lvgl/lvgl.h",
+        "extra.h",
+        "lvgl/src/lvgl_private.h",
+    ]
+    assert resolve_emitter_headers(["lvgl.h"]) == ["lvgl.h", "src/lvgl_private.h"]
+    assert target_banner("cpython", include=True) == " *\n * Target: cpython\n"
+    assert target_banner("micropython", include=False) == ""
