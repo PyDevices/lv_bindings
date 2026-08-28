@@ -11,6 +11,7 @@ from __future__ import print_function
 
 import argparse
 import copy
+import gzip
 import hashlib
 import json
 import re
@@ -53,7 +54,24 @@ KNOWN_DIFFERENCES = {
 
 
 def _load_json(path):
-    return json.loads(Path(path).read_text())
+    path = Path(path)
+    if path.suffix == ".gz":
+        with gzip.open(path, "rt", encoding="utf-8") as stream:
+            return json.load(stream)
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _write_json(path, data):
+    """Write deterministic JSON, using gzip for compact baseline artifacts."""
+
+    rendered = json.dumps(data, separators=(",", ":"), sort_keys=True) + "\n"
+    path = Path(path)
+    if path.suffix == ".gz":
+        with path.open("wb") as raw:
+            with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as stream:
+                stream.write(rendered.encode("utf-8"))
+        return
+    path.write_text(rendered, encoding="utf-8")
 
 
 def _normalize_value(value):
@@ -636,9 +654,7 @@ def main(argv=None):
     }
 
     args.output_json.parent.mkdir(parents=True, exist_ok=True)
-    args.output_json.write_text(
-        json.dumps(report, separators=(",", ":"), sort_keys=True) + "\n"
-    )
+    _write_json(args.output_json, report)
     args.output_markdown.write_text(
         _markdown_report(provenance, baseline, sorted(target_manifests), comparisons)
     )

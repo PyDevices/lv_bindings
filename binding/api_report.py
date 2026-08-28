@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import gzip
 import json
 import sys
 from pathlib import Path
@@ -18,6 +19,15 @@ from .api_model import TARGETS
 from .verify_api import validate_api_data
 
 REPORT_SCHEMA_VERSION = 1
+
+
+def load_json(path: Path) -> Any:
+    """Load a JSON artifact, including the compact ``.json.gz`` baseline."""
+
+    if path.suffix == ".gz":
+        with gzip.open(path, "rt", encoding="utf-8") as stream:
+            return json.load(stream)
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _available(record: Mapping[str, Any], target: str) -> bool:
@@ -490,14 +500,14 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, help="write report to this path")
     args = parser.parse_args(argv)
 
-    data = json.loads(args.api.read_text(encoding="utf-8"))
+    data = load_json(args.api)
     baseline = (
-        json.loads(args.baseline.read_text(encoding="utf-8"))
+        load_json(args.baseline)
         if args.baseline is not None
         else None
     )
     classification = (
-        json.loads(args.classification.read_text(encoding="utf-8"))
+        load_json(args.classification)
         if args.classification is not None
         else None
     )

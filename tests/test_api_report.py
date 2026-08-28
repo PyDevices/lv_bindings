@@ -1,11 +1,11 @@
-import json
 from pathlib import Path
 
 import pytest
 
 from binding.api_model import build_api_model
-from binding.api_report import build_report, public_export_sets
+from binding.api_report import build_report, load_json, public_export_sets
 from binding.ir import parse_source
+from tools.baseline_report import _load_json, _write_json
 
 
 def _model_data():
@@ -95,18 +95,27 @@ def test_report_compares_against_compact_baseline():
     assert comparison["coverage"] == 1.0
 
 
+def test_compact_baseline_json_is_deterministic_and_readable(tmp_path):
+    first = tmp_path / "first.json.gz"
+    second = tmp_path / "second.json.gz"
+    baseline = {"schema": 1, "baseline": {"functions": {"count": 0}}}
+
+    _write_json(first, baseline)
+    _write_json(second, baseline)
+
+    assert first.read_bytes() == second.read_bytes()
+    assert _load_json(first) == baseline
+    assert load_json(first) == baseline
+
+
 def test_current_baseline_differences_have_a_complete_classification():
     root = Path(__file__).resolve().parents[1]
-    data = json.loads((root / "generated" / "api.json").read_text(encoding="utf-8"))
-    baseline = json.loads(
-        (root / "docs/baseline/lvgl-bindings-api-baseline.json").read_text(
-            encoding="utf-8"
-        )
+    data = load_json(root / "generated" / "api.json")
+    baseline = load_json(
+        root / "docs/baseline/lvgl-bindings-api-baseline.json.gz"
     )
-    classification = json.loads(
-        (root / "docs/baseline/lvgl-bindings-api-baseline-classification.json").read_text(
-            encoding="utf-8"
-        )
+    classification = load_json(
+        root / "docs/baseline/lvgl-bindings-api-baseline-classification.json"
     )
 
     comparison = build_report(data, baseline, classification)["baseline_compatibility"]

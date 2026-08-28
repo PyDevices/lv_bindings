@@ -79,7 +79,9 @@ PYTHONPATH=. .venv/bin/python -m binding.generate --target cpython
 PYTHONPATH=. .venv/bin/python -m binding.generate --pyi-only         # shared stub only
 PYTHONPATH=. .venv/bin/python -m binding.generate --check            # read-only reproducibility check
 PYTHONPATH=. .venv/bin/python -m binding.api_report generated/api.json \
-    --baseline docs/baseline/lvgl-bindings-api-baseline.json --format markdown
+    --baseline docs/baseline/lvgl-bindings-api-baseline.json.gz \
+    --classification docs/baseline/lvgl-bindings-api-baseline-classification.json \
+    --format markdown
 ```
 
 The unified command preprocesses LVGL once and writes the selected target C

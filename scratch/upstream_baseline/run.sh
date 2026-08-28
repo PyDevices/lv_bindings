@@ -74,5 +74,5 @@ done
     --target "micropython=$WORK/micropython.json" \
     --target "circuitpython=$WORK/circuitpython.json" \
     --target "cpython=$WORK/cpython.json" \
-    --output-json "$OUTPUT_DIR/lvgl-bindings-api-baseline.json" \
+    --output-json "$OUTPUT_DIR/lvgl-bindings-api-baseline.json.gz" \
     --output-markdown "$OUTPUT_DIR/lvgl-bindings-api-baseline.md"
