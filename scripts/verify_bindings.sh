@@ -45,6 +45,10 @@ PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m binding.verify_pyi \
     "$GENERATED/api.json" "$GENERATED/lvgl.pyi"
 echo
 
+echo "==> Static-check generated/lvgl.pyi"
+PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m mypy "$GENERATED/lvgl.pyi"
+echo
+
 echo "==> Validate generated/lvgl_circuitpython.c"
 "$PYTHON" - "$LVCP_C" "$LVIR_JSON" <<'PY'
 import json

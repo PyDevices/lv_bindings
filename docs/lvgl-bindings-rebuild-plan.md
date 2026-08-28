@@ -262,17 +262,19 @@ Progress note: ``binding/emit_pyi_canonical.py`` renders the shared stub from
 Common-target emission filters target-only declarations; nested enum classes
 are emitted once, struct field/method collisions follow the generated runtime
 attribute precedence, string symbols use ``str`` members, explicit private
-implementation types do not appear as undefined annotations, and fixed C
-arrays are represented as nested ``Sequence[...]`` views. The generated stub
-parses cleanly and has regression coverage for signatures, target filtering,
-duplicate declarations, arrays, and annotation references. A static type
-checker and runtime probes remain future gates.
+implementation types do not appear as undefined annotations, fixed C arrays
+are represented as nested ``Sequence[...]`` views, and class-local private
+``TypeAlias`` declarations prevent field names from shadowing type names.
+Incompatible LVGL widget overrides carry narrowly targeted mypy override
+notes. The generated stub parses cleanly and has regression coverage for
+signatures, target filtering, duplicate declarations, arrays, aliases, and
+annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 ### Gate
 
 - [x] Typings unit tests pass.
 - [x] The stub parses.
-- [ ] The stub passes static type checking.
+- [x] The stub passes static type checking.
 - [x] No duplicate declarations remain.
 - [ ] Runtime namespace probes pass for all three targets.
 
@@ -280,7 +282,7 @@ checker and runtime probes remain future gates.
 
 - Commit SHA: `bf4f1e0`
 - Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `./scripts/verify_bindings.sh`
-- Notes: `The shared lvgl.pyi is emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, variables, and fixed arrays; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. The dead legacy pyi emitter and its tests were removed; pyi_prototypes remains only for legacy C-generator metadata enrichment. binding.verify_pyi checks top-level and qualified member names, field/variable/enum annotations, constructors, receivers, static methods, variadics, defaults, and return types from the manifest; it runs in verify_bindings.sh. Generated C and CircuitPython header files were unchanged. Static type checking, enum-value comparison, private-helper audit, overload handling, and runtime stub probes remain open.`
+- Notes: `The shared lvgl.pyi is emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, variables, and fixed arrays; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. Struct fields that shadow type names use private class-local TypeAlias declarations, and incompatible inherited widget signatures are marked with targeted mypy override notes. The dead legacy pyi emitter and its tests were removed; pyi_prototypes remains only for legacy C-generator metadata enrichment. binding.verify_pyi checks top-level and qualified member names, field/variable/enum annotations, constructors, receivers, static methods, variadics, defaults, aliases, and return types from the manifest; it runs in verify_bindings.sh. requirements-dev.txt pins mypy==2.3.1, and static checking passes. Generated C and CircuitPython header files were unchanged. Enum-value comparison, generic private-helper audit, overload handling, and runtime stub probes remain open.`
 
 ## Checkpoint 5 — Unified target backends
 
@@ -429,6 +431,7 @@ Add focused tests for:
 - [x] Target exception validation.
 - [x] Deterministic JSON/API hashes.
 - [x] Typing signatures and duplicate declarations.
+- [x] Generated-stub static checking.
 - [ ] Callback GC/lifetime behavior.
 - [ ] Struct field reads/writes and buffer views.
 - [ ] `None` handling for optional pointers.

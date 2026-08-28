@@ -189,6 +189,86 @@ def test_canonical_emitter_omits_struct_methods_shadowed_by_fields():
     assert [child.target.id for child in sample.body if isinstance(child, ast.AnnAssign)] == ["size"]
 
 
+def test_canonical_emitter_aliases_types_shadowed_by_struct_fields():
+    data = _api_data()
+    data["structs"] = [
+        {
+            "c_name": "lv_sample_t",
+            "python_name": "sample_t",
+            "kind": "struct",
+            "fields": [
+                {"name": "obj", "type": {"kind": "pointer"}, "view": _view("obj", "object_pointer", "object_handle")},
+                {"name": "next", "type": {"kind": "pointer"}, "view": _view("obj", "object_pointer", "object_handle")},
+            ],
+            "available_on": TARGETS,
+            "visibility": "public",
+        }
+    ]
+
+    output = StringIO()
+    CanonicalPyiEmitter(data, lvgl_version="9.5").emit(output)
+    sample = next(
+        node for node in ast.parse(output.getvalue()).body
+        if isinstance(node, ast.ClassDef) and node.name == "sample_t"
+    )
+    aliases = {
+        child.target.id: child.value.value
+        for child in sample.body
+        if isinstance(child, ast.AnnAssign)
+        and isinstance(child.target, ast.Name)
+        and child.target.id.startswith("__lv_type_")
+    }
+    fields = {
+        child.target.id: ast.unparse(child.annotation)
+        for child in sample.body
+        if isinstance(child, ast.AnnAssign)
+        and isinstance(child.target, ast.Name)
+        and child.target.id in {"obj", "next"}
+    }
+    assert aliases == {"__lv_type_obj": "obj"}
+    assert fields == {"obj": "__lv_type_obj", "next": "__lv_type_obj"}
+
+
+def test_canonical_emitter_marks_incompatible_inherited_methods():
+    data = _api_data()
+    data["functions"].extend(
+        [
+            {
+                "c_name": "lv_obj_delete",
+                "python_name": "delete",
+                "role": "object_method",
+                "receiver": "obj",
+                "parameters": [
+                    {"name": "obj", "type": {"kind": "pointer"}, "view": _view("obj", "object_pointer", "object_handle")}
+                ],
+                "return_view": _view("None", "void", "none"),
+                "available_on": TARGETS,
+                "visibility": "public",
+                "static": False,
+            },
+            {
+                "c_name": "lv_widget_delete",
+                "python_name": "delete",
+                "role": "object_method",
+                "receiver": "widget",
+                "parameters": [
+                    {"name": "widget", "type": {"kind": "pointer"}, "view": _view("obj", "object_pointer", "object_handle")},
+                    {"name": "flags", "type": {"kind": "primitive", "name": "int"}, "view": _view("int")},
+                ],
+                "return_view": _view("int"),
+                "available_on": TARGETS,
+                "visibility": "public",
+                "static": False,
+            },
+        ]
+    )
+
+    output = StringIO()
+    CanonicalPyiEmitter(data, lvgl_version="9.5").emit(output)
+
+    assert "def delete(self, flags: int) -> int: ...  # type: ignore[override]" in output.getvalue()
+
+
 def test_load_canonical_api_rejects_invalid_content(tmp_path: Path):
     data = _api_data()
     data["api_hash"] = api_hash_for_dict(data)

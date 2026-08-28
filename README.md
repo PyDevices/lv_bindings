@@ -56,8 +56,12 @@ Place `lvgl-bindings/` as a sibling of `lvgl-micropython/`, `lvgl-circuitpython/
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install -r requirements-dev.txt
 ```
+
+The runtime generator dependency set is available separately through
+`requirements.txt`; `requirements-dev.txt` also installs the pinned test and
+static-checking tools used by the validation commands below.
 
 ## Typical workflow
 

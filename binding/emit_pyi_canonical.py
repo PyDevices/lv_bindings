@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any, Mapping, TextIO
 
@@ -87,6 +88,12 @@ class CanonicalPyiEmitter:
         self.enums = tuple(data.get("enums", ()))
         self.variables = tuple(data.get("variables", ()))
         self.constants = tuple(data.get("constants", ()))
+        self._type_names = frozenset(
+            _identifier(item["python_name"])
+            for section in ("objects", "structs", "enums")
+            for item in data.get(section, ())
+            if item.get("python_name")
+        )
 
     def _available(self, item: Mapping[str, Any]) -> bool:
         available = set(item.get("available_on", ()))
@@ -97,14 +104,49 @@ class CanonicalPyiEmitter:
     def _public(self, item: Mapping[str, Any]) -> bool:
         return item.get("visibility") == "public" and self._available(item)
 
-    def _view_type(self, item: Mapping[str, Any]) -> str:
+    def _view_type(
+        self,
+        item: Mapping[str, Any],
+        *,
+        type_aliases: Mapping[str, str] | None = None,
+    ) -> str:
         view = item.get("view")
         if not isinstance(view, Mapping):
             raise ValueError("canonical API item is missing a type view")
         python_type = view.get("python_type")
         if not isinstance(python_type, str) or not python_type:
             raise ValueError("canonical API type view has no Python type")
+        for type_name, alias in (type_aliases or {}).items():
+            python_type = re.sub(r"\b%s\b" % re.escape(type_name), alias, python_type)
         return python_type
+
+    def _shadowed_type_aliases(
+        self, field_names: set[str], referenced_types: tuple[str, ...]
+    ) -> dict[str, str]:
+        return {
+            type_name: "__lv_type_%s" % type_name
+            for type_name in sorted(field_names & self._type_names)
+            if any(
+                re.search(r"\b%s\b" % re.escape(type_name), reference)
+                for reference in referenced_types
+            )
+        }
+
+    def _inherited_method_names(self, object_name: str) -> set[str]:
+        objects = {item["python_name"]: item for item in self.objects}
+        names: set[str] = set()
+        parent = objects.get(object_name, {}).get("parent")
+        while parent is not None:
+            names.update(
+                function["python_name"]
+                for function in self.functions
+                if function.get("role") == "object_method"
+                and function.get("receiver") == parent
+                and function.get("visibility") == "public"
+                and self._available(function)
+            )
+            parent = objects.get(parent, {}).get("parent")
+        return names
 
     def emit(self, out: TextIO) -> None:
         self.lines = []
@@ -127,7 +169,7 @@ class CanonicalPyiEmitter:
         self._add('"""Type stubs for LVGL Python bindings (auto-generated)."""')
         self._add("from __future__ import annotations")
         self._add("from collections.abc import Callable, Sequence")
-        self._add("from typing import Any, ClassVar")
+        self._add("from typing import Any, ClassVar, TypeAlias")
         self._add()
 
     def _emit_helpers(self) -> None:
@@ -206,7 +248,37 @@ class CanonicalPyiEmitter:
                 if field_name in field_names:
                     raise ValueError("duplicate struct field %s.%s" % (name, field_name))
                 field_names.add(field_name)
-                self._add("%s: %s" % (field_name, self._view_type(field)), 1)
+            referenced_types = tuple(
+                field.get("view", {}).get("python_type", "")
+                for field in struct.get("fields", ())
+            )
+            referenced_types += tuple(
+                parameter.get("view", {}).get("python_type", "")
+                for function in functions
+                if function.get("receiver") == struct["python_name"]
+                for parameter in function.get("parameters", ())
+            )
+            referenced_types += tuple(
+                function.get("return_view", {}).get("python_type", "")
+                for function in functions
+                if function.get("receiver") == struct["python_name"]
+            )
+            type_aliases = self._shadowed_type_aliases(
+                field_names, referenced_types
+            )
+            for type_name, alias in type_aliases.items():
+                self._add('%s: TypeAlias = "%s"' % (alias, type_name), 1)
+            if type_aliases:
+                emitted = True
+            for field in struct.get("fields", ()):
+                field_name = _identifier(field.get("name") or "field")
+                self._add(
+                    "%s: %s" % (
+                        field_name,
+                        self._view_type(field, type_aliases=type_aliases),
+                    ),
+                    1,
+                )
                 emitted = True
             for function in sorted(
                 (
@@ -224,9 +296,16 @@ class CanonicalPyiEmitter:
                     continue
                 if function.get("static"):
                     self._add("@staticmethod", 1)
-                    signature = self._signature(function, instance=False)
+                    signature = self._signature(
+                        function, instance=False, type_aliases=type_aliases
+                    )
                 else:
-                    signature = self._signature(function, instance=True, skip_receiver=True)
+                    signature = self._signature(
+                        function,
+                        instance=True,
+                        skip_receiver=True,
+                        type_aliases=type_aliases,
+                    )
                 self._add("def %s" % signature, 1)
                 emitted = True
             if not emitted:
@@ -302,7 +381,10 @@ class CanonicalPyiEmitter:
                     signature = self._signature(function, instance=False)
                 else:
                     signature = self._signature(function, instance=True, skip_receiver=True)
-                self._add("def %s" % signature, 1)
+                override_note = ""
+                if function["python_name"] in self._inherited_method_names(object_name):
+                    override_note = "  # type: ignore[override]"
+                self._add("def %s%s" % (signature, override_note), 1)
                 emitted = True
             if not emitted:
                 self._add("...", 1)
@@ -352,14 +434,17 @@ class CanonicalPyiEmitter:
         *,
         instance: bool,
         skip_receiver: bool = False,
+        type_aliases: Mapping[str, str] | None = None,
     ) -> str:
-        params = self._parameters(function, skip_receiver=skip_receiver)
+        params = self._parameters(
+            function, skip_receiver=skip_receiver, type_aliases=type_aliases
+        )
         if instance:
             params = "self" + (", " + params if params else "")
         return "%s(%s) -> %s: ..." % (
             _identifier(function["python_name"]),
             params,
-            self._return_type(function),
+            self._return_type(function, type_aliases=type_aliases),
         )
 
     def _parameters(
@@ -368,6 +453,7 @@ class CanonicalPyiEmitter:
         *,
         skip_receiver: bool,
         constructor: bool = False,
+        type_aliases: Mapping[str, str] | None = None,
     ) -> str:
         parameters = list(function.get("parameters", ()))
         if skip_receiver and not function.get("static"):
@@ -392,22 +478,33 @@ class CanonicalPyiEmitter:
                 and parameter.get("name") == "parent"
                 and parameter.get("view", {}).get("category") == "object_pointer"
             ):
-                parameter_type = self._view_type(parameter) + " | None"
+                parameter_type = (
+                    self._view_type(parameter, type_aliases=type_aliases) + " | None"
+                )
                 default = " = ..."
             else:
-                parameter_type = self._view_type(parameter)
+                parameter_type = self._view_type(
+                    parameter, type_aliases=type_aliases
+                )
             result.append("%s: %s%s" % (name, parameter_type, default))
         if function.get("variadic"):
             result.append("*args: Any")
         return ", ".join(result)
 
-    def _return_type(self, function: Mapping[str, Any]) -> str:
+    def _return_type(
+        self,
+        function: Mapping[str, Any],
+        *,
+        type_aliases: Mapping[str, str] | None = None,
+    ) -> str:
         view = function.get("return_view")
         if not isinstance(view, Mapping):
             raise ValueError("canonical API function is missing a return view")
         python_type = view.get("python_type")
         if not isinstance(python_type, str) or not python_type:
             raise ValueError("canonical API function has no return Python type")
+        for type_name, alias in (type_aliases or {}).items():
+            python_type = re.sub(r"\b%s\b" % re.escape(type_name), alias, python_type)
         return python_type
 
 

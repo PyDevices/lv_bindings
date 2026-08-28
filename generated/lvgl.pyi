@@ -3,7 +3,7 @@
 """Type stubs for LVGL Python bindings (auto-generated)."""
 from __future__ import annotations
 from collections.abc import Callable, Sequence
-from typing import Any, ClassVar
+from typing import Any, ClassVar, TypeAlias
 
 class LvReferenceError(Exception): ...
 
@@ -824,7 +824,8 @@ class animimg_t(Struct):
     pic_count: int
 
 class arc_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     rotation: int
     indic_angle_start: float
     indic_angle_end: float
@@ -902,7 +903,8 @@ class bar_anim_t(Struct):
     anim_state: int
 
 class bar_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     cur_value: int
     min_value: int
     max_value: int
@@ -915,7 +917,8 @@ class bar_t(Struct):
     orientation: bar.ORIENTATION | int
 
 class barcode_t(Struct):
-    canvas: canvas
+    __lv_type_canvas: TypeAlias = "canvas"
+    canvas: __lv_type_canvas
     dark_color: color_t
     light_color: color_t
     scale: int
@@ -934,10 +937,12 @@ class builtin_font_src_t(Struct):
     size: int
 
 class button_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
 
 class buttonmatrix_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     map_p: Any
     button_areas: area_t
     ctrl_bits: buttonmatrix.CTRL | int
@@ -1027,8 +1032,9 @@ class calendar_date_t(Struct):
     day: int
 
 class calendar_t(Struct):
-    obj: obj
-    btnm: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
+    btnm: __lv_type_obj
     today: calendar_date_t
     showed_date: calendar_date_t
     highlighted_dates: calendar_date_t
@@ -1062,7 +1068,8 @@ class chart_series_t(Struct):
     y_axis_sec: int
 
 class chart_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     series_ll: ll_t
     cursor_ll: ll_t
     ymin: Sequence[int]
@@ -1077,7 +1084,8 @@ class chart_t(Struct):
     update_mode: chart.UPDATE_MODE | int
 
 class checkbox_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     txt: str
     static_txt: int
 
@@ -1362,7 +1370,8 @@ class draw_buf_t(Struct):
     def to_image(self, img: image_dsc_t) -> None: ...
 
 class draw_dsc_base_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     part: int
     id1: int
     id2: int
@@ -1723,12 +1732,14 @@ class draw_vector_dsc_t(Struct):
     ...
 
 class dropdown_list_t(Struct):
-    obj: obj
-    dropdown: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
+    dropdown: __lv_type_obj
 
 class dropdown_t(Struct):
-    obj: obj
-    list: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
+    list: __lv_type_obj
     text: str
     symbol: Any
     options: str
@@ -2113,7 +2124,8 @@ class image_header_t(Struct):
     reserved_2: int
 
 class image_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     src: Any
     bitmap_mask_src: image_dsc_t
     offset: point_t
@@ -2134,7 +2146,8 @@ class imagebutton_src_info_t(Struct):
     header: image_header_t
 
 class imagebutton_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     src_mid: Sequence[imagebutton_src_info_t]
     src_left: Sequence[imagebutton_src_info_t]
     src_right: Sequence[imagebutton_src_info_t]
@@ -2297,7 +2310,8 @@ class keyboard_t(Struct):
     popovers: int
 
 class label_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     text: str
     dot: Sequence[int]
     dot_begin: int
@@ -2341,7 +2355,8 @@ class layout_dsc_t(Struct):
     user_data: Any
 
 class led_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     color: color_t
     bright: int
 
@@ -2352,7 +2367,8 @@ class libinput_t(Struct):
     ...
 
 class line_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     point_array: Any
     point_num: int
     y_inv: int
@@ -2405,24 +2421,26 @@ class menu_load_page_event_data_t(Struct):
     page: obj
 
 class menu_page_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     title: str
     static_title: int
 
 class menu_t(Struct):
-    obj: obj
-    storage: obj
-    main: obj
-    main_page: obj
-    main_header: obj
-    main_header_back_btn: obj
-    main_header_title: obj
-    sidebar: obj
-    sidebar_page: obj
-    sidebar_header: obj
-    sidebar_header_back_btn: obj
-    sidebar_header_title: obj
-    selected_tab: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
+    storage: __lv_type_obj
+    main: __lv_type_obj
+    main_page: __lv_type_obj
+    main_header: __lv_type_obj
+    main_header_back_btn: __lv_type_obj
+    main_header_title: __lv_type_obj
+    sidebar: __lv_type_obj
+    sidebar_page: __lv_type_obj
+    sidebar_header: __lv_type_obj
+    sidebar_header_back_btn: __lv_type_obj
+    sidebar_header_title: __lv_type_obj
+    selected_tab: __lv_type_obj
     history_ll: ll_t
     cur_depth: int
     prev_depth: int
@@ -2434,11 +2452,12 @@ class monkey_config_t(Struct):
     ...
 
 class msgbox_t(Struct):
-    obj: obj
-    header: obj
-    content: obj
-    footer: obj
-    title: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
+    header: __lv_type_obj
+    content: __lv_type_obj
+    footer: __lv_type_obj
+    title: __lv_type_obj
 
 class obj_class_t(Struct):
     base_class: obj_class_t
@@ -2548,7 +2567,8 @@ class profiler_builtin_config_t(Struct):
     ...
 
 class qrcode_t(Struct):
-    canvas: canvas
+    __lv_type_canvas: TypeAlias = "canvas"
+    canvas: __lv_type_canvas
     dark_color: color_t
     light_color: color_t
     quiet_zone: int
@@ -2581,7 +2601,8 @@ class rlottie_t(Struct):
     ...
 
 class roller_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     option_cnt: int
     sel_opt_id: int
     sel_opt_id_ori: int
@@ -2590,7 +2611,8 @@ class roller_t(Struct):
     moved: int
 
 class scale_needle_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     value: int
     length: int
 
@@ -2610,7 +2632,8 @@ class scale_section_t(Struct):
     last_tick_idx_is_major: int
 
 class scale_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     section_ll: ll_t
     txt_src: Any
     mode: scale.MODE | int
@@ -2629,7 +2652,8 @@ class scale_t(Struct):
     needles: array_t
 
 class slider_t(Struct):
-    bar: bar
+    __lv_type_bar: TypeAlias = "bar"
+    bar: __lv_type_bar
     left_knob_area: area_t
     right_knob_area: area_t
     pressed_point: point_t
@@ -2655,7 +2679,8 @@ class span_t(Struct):
     def set_text_static(self, text: str) -> None: ...
 
 class spangroup_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     lines: int
     indent: int
     cache_w: int
@@ -2908,7 +2933,8 @@ class subject_value_t(Struct):
     float_v: float
 
 class switch_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     anim_state: int
     orientation: switch.ORIENTATION | int
 
@@ -2918,7 +2944,8 @@ class table_cell_t(Struct):
     txt: Sequence[int]
 
 class table_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     col_cnt: int
     row_cnt: int
     cell_data: Any
@@ -2928,7 +2955,8 @@ class table_t(Struct):
     row_act: int
 
 class tabview_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     tab_cur: int
     tab_pos: DIR | int
     tab_bar_size: int
@@ -2941,8 +2969,9 @@ class text_attributes_t(Struct):
     def init(self) -> None: ...
 
 class textarea_t(Struct):
-    obj: obj
-    label: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
+    label: __lv_type_obj
     placeholder_txt: str
     pwd_tmp: str
     pwd_bullet: str
@@ -2981,11 +3010,13 @@ class tick_state_t(Struct):
     delay_cb: Callable[[int], None]
 
 class tileview_t(Struct):
-    obj: obj
-    tile_act: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
+    tile_act: __lv_type_obj
 
 class tileview_tile_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
     dir: DIR | int
 
 class timer_state_t(Struct):
@@ -3057,7 +3088,8 @@ class vector_stroke_dsc_t(Struct):
     ...
 
 class win_t(Struct):
-    obj: obj
+    __lv_type_obj: TypeAlias = "obj"
+    obj: __lv_type_obj
 
 class xkb_t(Struct):
     ...
@@ -3073,7 +3105,7 @@ class yuv_plane_t(Struct):
 
 class animimg(obj):
     def __init__(self, parent: obj | None = ...) -> None: ...
-    def delete(self) -> int: ...
+    def delete(self) -> int: ...  # type: ignore[override]
     def get_anim(self) -> anim_t: ...
     def get_duration(self) -> int: ...
     def get_repeat_count(self) -> int: ...
@@ -3560,7 +3592,7 @@ class imagebutton(obj):
     def set_src_left(self, state: imagebutton.STATE | int, src_left: Any) -> None: ...
     def set_src_mid(self, state: imagebutton.STATE | int, src_mid: Any) -> None: ...
     def set_src_right(self, state: imagebutton.STATE | int, src_right: Any) -> None: ...
-    def set_state(self, state: imagebutton.STATE | int) -> None: ...
+    def set_state(self, state: imagebutton.STATE | int) -> None: ...  # type: ignore[override]
 
 class keyboard(obj):
     class MODE:
@@ -4271,7 +4303,7 @@ class qrcode(obj):
     def set_data(self, data: str) -> None: ...
     def set_light_color(self, color: color_t) -> None: ...
     def set_quiet_zone(self, enable: int) -> None: ...
-    def set_size(self, size: int) -> None: ...
+    def set_size(self, size: int) -> None: ...  # type: ignore[override]
     def update(self, data: Any, data_len: int) -> RESULT | int: ...
 
 class roller(obj):
@@ -4369,7 +4401,7 @@ class spangroup(obj):
     def bind_span_text(self, span: span_t, subject: subject_t, fmt: str) -> observer_t: ...
     def delete_span(self, span: span_t) -> None: ...
     def get_align(self) -> TEXT_ALIGN | int: ...
-    def get_child(self, id: int) -> span_t: ...
+    def get_child(self, id: int) -> span_t: ...  # type: ignore[override]
     def get_expand_height(self, width: int) -> int: ...
     def get_expand_width(self, max_width: int) -> int: ...
     def get_indent(self) -> int: ...
@@ -4381,7 +4413,7 @@ class spangroup(obj):
     def get_span_coords(self, span: span_t) -> span_coords_t: ...
     def get_span_count(self) -> int: ...
     def refresh(self) -> None: ...
-    def set_align(self, align: TEXT_ALIGN | int) -> None: ...
+    def set_align(self, align: TEXT_ALIGN | int) -> None: ...  # type: ignore[override]
     def set_indent(self, indent: int) -> None: ...
     def set_max_lines(self, lines: int) -> None: ...
     def set_mode(self, mode: SPAN_MODE | int) -> None: ...
@@ -4502,7 +4534,7 @@ class textarea(obj):
     def get_text_selection(self) -> int: ...
     def set_accepted_chars(self, list: str) -> None: ...
     def set_accepted_chars_static(self, list: str) -> None: ...
-    def set_align(self, align: TEXT_ALIGN | int) -> None: ...
+    def set_align(self, align: TEXT_ALIGN | int) -> None: ...  # type: ignore[override]
     def set_cursor_click_pos(self, en: int) -> None: ...
     def set_cursor_pos(self, pos: int) -> None: ...
     def set_insert_replace(self, txt: str) -> None: ...

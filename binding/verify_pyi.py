@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any, Mapping
@@ -65,8 +66,36 @@ def _annotation_text(node: ast.AST | None) -> str | None:
     return ast.unparse(node) if node is not None else None
 
 
+def _class_type_aliases(class_node: ast.ClassDef) -> dict[str, str]:
+    aliases = {}
+    for node in class_node.body:
+        if not (
+            isinstance(node, ast.AnnAssign)
+            and isinstance(node.target, ast.Name)
+            and isinstance(node.annotation, ast.Name)
+            and node.annotation.id == "TypeAlias"
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, str)
+        ):
+            continue
+        aliases[node.value.value] = node.target.id
+    return aliases
+
+
+def _apply_type_aliases(
+    python_type: str, type_aliases: Mapping[str, str]
+) -> str:
+    for type_name, alias in type_aliases.items():
+        python_type = re.sub(r"\b%s\b" % re.escape(type_name), alias, python_type)
+    return python_type
+
+
 def _expected_parameters(
-    function: Mapping[str, Any], *, skip_receiver: bool, constructor: bool
+    function: Mapping[str, Any],
+    *,
+    skip_receiver: bool,
+    constructor: bool,
+    type_aliases: Mapping[str, str] | None = None,
 ) -> list[tuple[str, str, bool]]:
     parameters = list(function.get("parameters", ()))
     if skip_receiver and not function.get("static"):
@@ -87,6 +116,7 @@ def _expected_parameters(
         parameter_type = parameter.get("view", {}).get("python_type")
         if not isinstance(parameter_type, str) or not parameter_type:
             parameter_type = "Any"
+        parameter_type = _apply_type_aliases(parameter_type, type_aliases or {})
         default = (
             constructor
             and index == 0
@@ -102,19 +132,25 @@ def _expected_parameters(
 
 
 def _expected_function_signature(
-    function: Mapping[str, Any], *, instance: bool, skip_receiver: bool = False
+    function: Mapping[str, Any],
+    *,
+    instance: bool,
+    skip_receiver: bool = False,
+    type_aliases: Mapping[str, str] | None = None,
 ) -> tuple[list[tuple[str, str, bool]], str, bool]:
     constructor = function.get("role") == "constructor"
     parameters = _expected_parameters(
         function,
         skip_receiver=skip_receiver,
         constructor=constructor,
+        type_aliases=type_aliases,
     )
     if instance or constructor:
         parameters.insert(0, ("self", "", False))
     return_type = "None" if constructor else function.get("return_view", {}).get("python_type")
     if not isinstance(return_type, str) or not return_type:
         return_type = "Any"
+    return_type = _apply_type_aliases(return_type, type_aliases or {})
     return parameters, return_type, bool(function.get("static"))
 
 
@@ -316,11 +352,13 @@ def validate_pyi_data(
         label: str,
         instance: bool,
         skip_receiver: bool = False,
+        type_aliases: Mapping[str, str] | None = None,
     ) -> None:
         expected, return_type, expected_static = _expected_function_signature(
             function,
             instance=instance,
             skip_receiver=skip_receiver,
+            type_aliases=type_aliases,
         )
         actual, actual_return, actual_static = _actual_function_signature(node)
         expected_shape = [(name, annotation or None) for name, annotation, _ in expected]
@@ -373,6 +411,11 @@ def validate_pyi_data(
                 label="%s.%s" % (receiver, node_name),
                 instance=instance,
                 skip_receiver=skip_receiver,
+                type_aliases=(
+                    _class_type_aliases(receiver_node)
+                    if role == "struct_method"
+                    else None
+                ),
             )
 
     for item in data.get("enums", ()):
@@ -406,10 +449,13 @@ def validate_pyi_data(
         if class_node is None:
             continue
         members = _member_nodes(class_node)
+        type_aliases = _class_type_aliases(class_node)
         for field in item.get("fields", ()):
             field_node = members.get(_identifier(field.get("name") or "field"))
             if isinstance(field_node, ast.AnnAssign):
                 expected_type = field.get("view", {}).get("python_type")
+                if isinstance(expected_type, str):
+                    expected_type = _apply_type_aliases(expected_type, type_aliases)
                 actual_type = _annotation_text(field_node.annotation)
                 if actual_type != expected_type:
                     errors.append(

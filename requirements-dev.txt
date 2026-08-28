@@ -1,0 +1,4 @@
+# Dependencies for the generator test and validation suite.
+-r requirements.txt
+pytest==9.1.1
+mypy==2.3.1
