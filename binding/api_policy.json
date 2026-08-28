@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "private_functions": [
+    {
+      "name": "mp_lv_deinit_gc",
+      "reason": "Binding lifecycle helper; not part of the user-facing LVGL module API.",
+      "test": "tests/test_api_policy.py::test_private_runtime_helpers_are_not_public"
+    },
+    {
+      "name": "mp_lv_get_roots",
+      "reason": "Binding garbage-collector root helper; not part of the user-facing LVGL module API.",
+      "test": "tests/test_api_policy.py::test_private_runtime_helpers_are_not_public"
+    },
+    {
+      "name": "mp_lv_init_gc",
+      "reason": "Binding lifecycle helper; not part of the user-facing LVGL module API.",
+      "test": "tests/test_api_policy.py::test_private_runtime_helpers_are_not_public"
+    }
+  ],
+  "private_structs": [
+    {
+      "name": "lv_global_t",
+      "reason": "Process-global LVGL state is an implementation detail, not a public struct wrapper.",
+      "test": "tests/test_api_policy.py::test_private_global_struct_is_not_public"
+    }
+  ],
+  "target_exceptions": [
+    {
+      "name": "lv_tjpgd_deinit",
+      "target": "circuitpython",
+      "reason": "CircuitPython's configured LVGL build excludes the TJPGD subsystem.",
+      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+    },
+    {
+      "name": "lv_tjpgd_deinit",
+      "target": "cpython",
+      "reason": "CPython's configured LVGL build excludes the TJPGD subsystem.",
+      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+    },
+    {
+      "name": "lv_tjpgd_init",
+      "target": "circuitpython",
+      "reason": "CircuitPython's configured LVGL build excludes the TJPGD subsystem.",
+      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+    },
+    {
+      "name": "lv_tjpgd_init",
+      "target": "cpython",
+      "reason": "CPython's configured LVGL build excludes the TJPGD subsystem.",
+      "test": "tests/test_api_policy.py::test_tjpgd_exception_is_target_specific"
+    }
+  ]
+}

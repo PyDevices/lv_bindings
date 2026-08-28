@@ -34,7 +34,7 @@ lvgl-bindings/
   binding/              # Modular Python generator
   lvgl/                 # LVGL submodule (git submodule update --init)
   lv_conf.h             # Shared LVGL config for all targets
-  generated/            # Generated bindings (lvgl_*.c, lvgl.pyi — committed)
+  generated/            # Generated bindings, API model, and shared stub (committed)
   python/               # Hand-written helpers (display_driver.py — committed)
   packages/             # Optional MIP manifests
   binding/generate.py    # Unified all-target generator
@@ -77,8 +77,10 @@ PYTHONPATH=. .venv/bin/python -m binding.generate --check            # read-only
 ```
 
 The unified command preprocesses LVGL once and writes the selected target C
-source, shared `lvgl.json`/`lvgl.pp`, the CircuitPython generated header, and
-the shared `lvgl.pyi`. Preprocessing removes compiler line markers so the
+source, the target-neutral `api.json`, shared `lvgl.json`/`lvgl.pp`, the
+CircuitPython generated header, and the shared `lvgl.pyi`. The API model is
+hashed and includes visibility and target availability; deliberate exceptions
+are recorded in `binding/api_policy.json`. Preprocessing removes compiler line markers so the
 inputs are reproducible across checkout paths. The command's `--check` mode
 generates into a temporary directory and never changes the working tree.
 
@@ -86,8 +88,8 @@ Use `--naming-style pythonic` only when deliberately testing the alternate
 profile; release generation remains on the legacy upstream-compatible names.
 
 The shared stub is generated from `generated/lvgl.json` and `generated/lvgl.pp`.
-Use `--pyi-only` when changing typing enrichment so the C bindings and their IR
-inputs are not regenerated.
+Use `--pyi-only` when changing typing enrichment so the C bindings, API model,
+and their IR inputs are not regenerated.
 
 ```bash
 ./scripts/verify_bindings.sh  # Read-only checks

@@ -148,7 +148,10 @@ function specifiers such as ``static inline``, and has focused coverage for
 qualified pointers, arrays, callbacks, anonymous records, unions, and forward
 aliases. A target-neutral API-model library has been started, but it is not
 yet the generated metadata or typings source of truth; policy, reachability,
-and backend lowering remain in Checkpoint 3 and later.
+and backend lowering remain in Checkpoint 3 and later. The shared generator
+now materializes that model as ``generated/api.json`` with a content hash;
+the legacy ``lvgl.json``/``lvgl.pyi`` path remains in place until the model is
+complete enough to replace it.
 
 - [x] Add a read-only declaration index for alias resolution, first-argument
   relationships, and struct-function classification. The index is used by
@@ -170,16 +173,24 @@ and backend lowering remain in Checkpoint 3 and later.
 
 ### Work
 
-- [ ] Build a second model describing the Python API rather than C syntax.
+- [x] Build a second model describing the Python API rather than C syntax.
 - [ ] Record qualified location, Python/C names, parameters, return type,
   constructor/method/module role, enum ownership, aliases, inheritance,
   callbacks, conversions, lifetime semantics, and target availability.
-- [ ] Classify methods from declaration relationships and first-argument types,
+- [x] Classify methods from declaration relationships and first-argument types,
   not only function-name prefixes.
-- [ ] Move deliberate deviations into an auditable policy file.
-- [ ] Require every target exception to include a reason and test reference.
-- [ ] Generate deterministic, versioned `generated/api.json` with an API hash.
+- [x] Move deliberate deviations into an auditable policy file.
+- [x] Require every target exception to include a reason and test reference.
+- [x] Generate deterministic, versioned `generated/api.json` with an API hash.
 - [ ] Add a report command for compatibility and parity metrics.
+
+Progress note: ``binding/api_model.py`` now records C/Python names, normalized
+types, declaration locations, object inheritance, callback typedefs, enum
+values, visibility, and target availability. ``binding/api_policy.json`` is
+validated against the current translation unit and ``generated/api.json`` is
+written from the same immutable model shared by all target runs. Conversion
+plans, lifetime semantics, enum ownership, reachability, and compatibility
+reporting are still pending; the legacy metadata/stub path remains active.
 
 ### Gate
 

@@ -22,6 +22,7 @@ static inline int point_sum(point_t *point, int extra);
     assert ir.structs[0].fields[1].type.canonical() == "const unsigned"
 
     assert ir.enums[0].members == ("MODE_OFF", "MODE_ON")
+    assert ir.enums[0].values == (("MODE_OFF", None), ("MODE_ON", "2"))
     assert ir.typedefs_by_name["event_cb_t"].type.canonical() == (
         "void (point_t *, int) *"
     )

@@ -132,3 +132,4 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
 
     assert calls.count(source) == 1
     assert namespace["declaration_ir"] is prepared.declaration_ir
+    assert namespace["api_model"] is prepared.api_model

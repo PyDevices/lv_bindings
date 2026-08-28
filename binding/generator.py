@@ -20,6 +20,7 @@ _ANALYSIS_STATE_NAMES = (
     "ast",
     "declaration_ir",
     "declaration_index",
+    "api_model",
     "lvgl_json",
     "forward_struct_decls",
     "typedefs",
@@ -53,6 +54,8 @@ def prepare_analysis(args, source, pp_cmd, cmd_line, emit_print):
     from pycparser import c_generator, c_parser
 
     from . import runtime
+    from .api_model import build_api_model
+    from .api_policy import ApiPolicy
     from .analyze import analyze
 
     runtime.reset()
@@ -66,6 +69,14 @@ def prepare_analysis(args, source, pp_cmd, cmd_line, emit_print):
     runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
     runtime.sync_to_ctx(ctx)
     ctx.declaration_ir = runtime.get("declaration_ir")
+    policy = ApiPolicy.default(module_prefix=ctx.module_prefix)
+    ctx.api_model = build_api_model(
+        ctx.declaration_ir,
+        module_prefix=ctx.module_prefix,
+        base_obj_type=ctx.base_obj_type,
+        policy=policy,
+    )
+    runtime.set_("api_model", ctx.api_model)
     runtime.publish(__import__("sys").modules)
     runtime.sync_to_ctx(ctx)
     return ctx
@@ -83,6 +94,8 @@ def analysis_snapshot(ctx):
     # every backend receives the exact canonical declaration set, not a copy.
     if hasattr(ctx, "declaration_ir"):
         snapshot["declaration_ir"] = ctx.declaration_ir
+    if hasattr(ctx, "api_model"):
+        snapshot["api_model"] = ctx.api_model
     return snapshot
 
 
@@ -96,6 +109,8 @@ def _new_context(args, source, pp_cmd, cmd_line, emit_print, analysis_state=None
         values = copy.deepcopy(analysis_state)
         if "declaration_ir" in analysis_state:
             values["declaration_ir"] = analysis_state["declaration_ir"]
+        if "api_model" in analysis_state:
+            values["api_model"] = analysis_state["api_model"]
         for name, value in values.items():
             setattr(ctx, name, value)
         ctx._analysis_ready = True

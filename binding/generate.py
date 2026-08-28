@@ -12,6 +12,8 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from .artifacts import manifest_for_directory
+from .api_model import write_api_model
+from .api_policy import ApiPolicy, validate_policy_against_declarations
 from .emit_pyi import write_pyi
 from .generator import (
     analysis_snapshot,
@@ -122,6 +124,7 @@ def generate(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     metadata_path = output_dir / "lvgl.json"
+    api_path = output_dir / "api.json"
     pp_path = output_dir / "lvgl.pp"
     pyi_path = output_dir / "lvgl.pyi"
 
@@ -152,6 +155,11 @@ def generate(
         lambda *unused_args, **unused_kwargs: None,
     )
     shared_analysis = analysis_snapshot(prepared)
+    validate_policy_against_declarations(
+        ApiPolicy.default(module_prefix=prepared.module_prefix),
+        prepared.declaration_ir,
+    )
+    write_api_model(prepared.api_model, api_path)
 
     # The metadata schema is still the legacy public API schema.  Until the
     # canonical Python API model lands, it is emitted once from the shared
@@ -294,13 +302,20 @@ def main(argv=None):
         return 0
 
     if args.target != "all":
-        selected = (TARGET_OUTPUTS[args.target], "lvgl.json", "lvgl.pp", "lvgl.pyi")
+        selected = (
+            TARGET_OUTPUTS[args.target],
+            "api.json",
+            "lvgl.json",
+            "lvgl.pp",
+            "lvgl.pyi",
+        )
         if args.target == "circuitpython":
             selected += ("lvgl_circuitpython.h",)
     elif args.pyi_only:
         selected = ("lvgl.pyi",)
     else:
         selected = (
+            "api.json",
             "lvgl.json",
             "lvgl.pp",
             "lvgl.pyi",

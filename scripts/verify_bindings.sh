@@ -25,6 +25,10 @@ echo "==> Validate shared IR (lvgl.json)"
 "$PYTHON" "$LV_BINDINGS_DIR/binding/verify_ir.py" "$GENERATED"
 echo
 
+echo "==> Validate target-neutral API model (api.json)"
+PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m binding.verify_api "$GENERATED/api.json"
+echo
+
 echo "==> Validate public namespace parity (MP reference)"
 "$PYTHON" "$LV_BINDINGS_DIR/binding/verify_namespace.py" "$GENERATED"
 echo

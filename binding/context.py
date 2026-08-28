@@ -34,6 +34,7 @@ class BindingContext:
         "ast",
         "declaration_ir",
         "declaration_index",
+        "api_model",
         "lvgl_json",
         "forward_struct_decls",
         "typedefs",
