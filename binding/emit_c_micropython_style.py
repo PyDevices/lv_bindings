@@ -54,6 +54,7 @@ from . import runtime
 from .emit_backend import (
     callback_return_conversion_available,
     callback_return_lowering,
+    conversion_available,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     resolve_emitter_headers,
@@ -1973,12 +1974,14 @@ typedef union {
                 cast = (
                     "(void*)" if isinstance(arg.type, c_ast.PtrDecl) else ""
                 )  # needed when field is const. casting to void overrides it
-                if arg_type not in lv_to_mp or not lv_to_mp[arg_type]:
-                    try_generate_type(arg.type)
-                    if arg_type not in lv_to_mp or not lv_to_mp[arg_type]:
-                        raise MissingConversionException(
-                            "Callback: Missing conversion to %s" % arg_type
-                        )
+                if not conversion_available(
+                    conversions=lv_to_mp,
+                    type_name=arg_type,
+                    generate_type=lambda: try_generate_type(arg.type),
+                ):
+                    raise MissingConversionException(
+                        "Callback: Missing conversion to %s" % arg_type
+                    )
                 arg_metadata = {"type": lv_mp_type[arg_type]}
                 if arg.name:
                     arg_metadata["name"] = arg.name
@@ -2201,10 +2204,12 @@ GENMPY_UNUSED static {return_type} {func_name}_callback({func_args})
                     )
                 arg_type = get_type(arg.type, remove_quals=True)
                 # print('/* --> arg = %s, arg_type = %s */' %(gen.visit(arg), arg_type))
-                if arg_type not in mp_to_lv or not mp_to_lv[arg_type]:
-                    try_generate_type(arg.type)
-                    if arg_type not in mp_to_lv or not mp_to_lv[arg_type]:
-                        raise MissingConversionException("Missing conversion to %s" % arg_type)
+                if not conversion_available(
+                    conversions=mp_to_lv,
+                    type_name=arg_type,
+                    generate_type=lambda: try_generate_type(arg.type),
+                ):
+                    raise MissingConversionException("Missing conversion to %s" % arg_type)
                 arg_metadata = {"type": lv_mp_type[arg_type]}
                 if arg.name:
                     arg_metadata["name"] = arg.name
@@ -2303,13 +2308,14 @@ static {builtin_macro}(mp_{func_obj_name}_mpobj, {param_count}, mp_{func_name}, 
                 ):
                     try_generate_array_type(func.type.type)
                 # print('/* --> return_type = %s, qualified_return_type = %s\n%s */' % (return_type, qualified_return_type, func.type.type))
-                if return_type != "void":
-                    if return_type not in lv_to_mp or not lv_to_mp[return_type]:
-                        try_generate_type(func.type.type)
-                        if return_type not in lv_to_mp or not lv_to_mp[return_type]:
-                            raise MissingConversionException(
-                                "Missing conversion from %s" % return_type
-                            )
+                if return_type != "void" and not conversion_available(
+                    conversions=lv_to_mp,
+                    type_name=return_type,
+                    generate_type=lambda: try_generate_type(func.type.type),
+                ):
+                    raise MissingConversionException(
+                        "Missing conversion from %s" % return_type
+                    )
                 return_lowering = function_return_lowering(
                     return_type=return_type,
                     qualified_return_type=qualified_return_type,

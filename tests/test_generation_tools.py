@@ -20,6 +20,7 @@ from binding.verify_namespace import mp_module_names, py_module_names
 from binding.emit_backend import (
     callback_return_conversion_available,
     callback_return_lowering,
+    conversion_available,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
@@ -294,6 +295,33 @@ def test_callback_return_conversion_attempts_generation_only_when_needed():
 
     assert callback_return_conversion_available(
         return_type="resolved_t", mp_to_lv=mappings, generate_type=generate_resolved
+    )
+    assert generated == ["missing", "resolved"]
+
+
+def test_conversion_available_retries_a_missing_mapping_once():
+    conversions = {"present_t": "present"}
+    generated = []
+
+    assert conversion_available(
+        conversions=conversions,
+        type_name="present_t",
+        generate_type=lambda: generated.append("present"),
+    )
+    assert not conversion_available(
+        conversions=conversions,
+        type_name="missing_t",
+        generate_type=lambda: generated.append("missing"),
+    )
+
+    def generate_resolved():
+        generated.append("resolved")
+        conversions["resolved_t"] = "resolved"
+
+    assert conversion_available(
+        conversions=conversions,
+        type_name="resolved_t",
+        generate_type=generate_resolved,
     )
     assert generated == ["missing", "resolved"]
 

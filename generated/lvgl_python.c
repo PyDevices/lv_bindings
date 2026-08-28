@@ -28041,7 +28041,7 @@ static PyMethodDef py_lv_animimg_set_completed_cb_def = {
 
 /*
  * Function NOT generated:
- * 'const void **'
+ * Missing conversion from const void **
  * const void **lv_animimg_get_src(lv_obj_t *obj)
  */
     
@@ -31519,7 +31519,7 @@ static PyMethodDef py_lv_buttonmatrix_set_one_checked_def = {
 
 /*
  * Function NOT generated:
- * 'const char * const *'
+ * Missing conversion from const char * const *
  * const char * const *lv_buttonmatrix_get_map(const lv_obj_t *obj)
  */
     
@@ -36439,7 +36439,7 @@ static PyMethodDef py_lv_keyboard_get_popovers_def = {
 
 /*
  * Function NOT generated:
- * 'const char * const *'
+ * Missing conversion from const char * const *
  * const char * const *lv_keyboard_get_map_array(const lv_obj_t *kb)
  */
     

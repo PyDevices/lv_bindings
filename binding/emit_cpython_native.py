@@ -8,6 +8,7 @@ import copy
 from pycparser import c_ast
 
 from . import runtime
+from .emit_backend import callback_return_conversion_available, conversion_available
 from .helpers import (
     is_global_callback,
     is_method_of,
@@ -600,14 +601,14 @@ def gen_callback_func_cpython(func, func_name=None, user_data_argument=False):
             )
 
     return_type = get_type_fn(func.type, remove_quals=False)
-    if return_type != "void" and (
-        return_type not in mp_to_lv or not mp_to_lv[return_type]
+    if not callback_return_conversion_available(
+        return_type=return_type,
+        mp_to_lv=mp_to_lv,
+        generate_type=lambda: try_generate_type(func.type),
     ):
-        try_generate_type(func.type)
-        if return_type not in mp_to_lv or not mp_to_lv[return_type]:
-            raise MissingConversionException(
-                "Callback return value: Missing conversion to %s" % return_type
-            )
+        raise MissingConversionException(
+            "Callback return value: Missing conversion to %s" % return_type
+        )
 
     callback_metadata[func_name]["return_type"] = lv_mp_type[return_type]
     build_arg_lines = []
@@ -615,8 +616,14 @@ def gen_callback_func_cpython(func, func_name=None, user_data_argument=False):
     for i, arg in enumerate(args):
         arg_type = get_type_fn(arg.type, remove_quals=True)
         cast = "(void*)" if isinstance(arg.type, c_ast.PtrDecl) else ""
-        if arg_type not in lv_to_mp or not lv_to_mp[arg_type]:
-            try_generate_type(arg.type)
+        if not conversion_available(
+            conversions=lv_to_mp,
+            type_name=arg_type,
+            generate_type=lambda: try_generate_type(arg.type),
+        ):
+            raise MissingConversionException(
+                "Callback: Missing conversion to %s" % arg_type
+            )
         convertor = lv_to_mp[arg_type]
         build_arg_lines.append(
             "PyObject *py_arg%d = %s(%sarg%d);"
@@ -816,10 +823,12 @@ def build_py_func_arg_line(arg, index, func, py_var):
         add_default_declname(fixed_arg, cname)
 
     arg_type = get_type_fn(arg.type, remove_quals=True)
-    if arg_type not in mp_to_lv or not mp_to_lv[arg_type]:
-        try_generate_type(arg.type)
-        if arg_type not in mp_to_lv or not mp_to_lv[arg_type]:
-            raise MissingConversionException("Missing conversion to %s" % arg_type)
+    if not conversion_available(
+        conversions=mp_to_lv,
+        type_name=arg_type,
+        generate_type=lambda: try_generate_type(arg.type),
+    ):
+        raise MissingConversionException("Missing conversion to %s" % arg_type)
 
     convertor = mp_to_lv[arg_type]
     cast = ""
@@ -918,8 +927,14 @@ def gen_py_func(func, obj_name):
         build_return = "Py_RETURN_NONE;"
         allow_threads = False
     else:
-        if return_type not in lv_to_mp or not lv_to_mp[return_type]:
-            try_generate_type(func.type.type)
+        if not conversion_available(
+            conversions=lv_to_mp,
+            type_name=return_type,
+            generate_type=lambda: try_generate_type(func.type.type),
+        ):
+            raise _h("MissingConversionException")(
+                "Missing conversion from %s" % return_type
+            )
         result_decl = "%s _res;\n    " % gen.visit(func.type.type)
         c_call = "_res = (({func_ptr}){c_func})({send_args});"
         cast = "(void*)" if isinstance(func.type.type, c_ast.PtrDecl) else ""

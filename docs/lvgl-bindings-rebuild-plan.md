@@ -381,7 +381,16 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   void, no regeneration for an existing conversion, and exactly one recursive
   generation attempt for a missing conversion before retaining the existing
   diagnostic. Validation: 104 repository tests passed; binding.generate
-  --check passed; generated artifacts remain unchanged.`
+  --check passed; generated artifacts remain unchanged. Ninth migration slice:
+  argument and return conversion discovery now shares one tested, one-retry
+  rule across both native emitters. The generated CPython diagnostics for
+  three unsupported double-pointer returns now report their missing conversion
+  instead of exposing a raw mapping key; no supported API changes. Full
+  cross-target validation: 105 repository tests and binding.generate --check
+  passed; CPython and CircuitPython Unix builds passed their shared smoke
+  probe. The MicroPython Unix artifact is unchanged, but its full cmods build
+  is currently blocked before LVGL by unrelated audioif SplitterTap.c errors
+  (audioroute_splitter_obj_t has no base/mono members).`
 
 ## Checkpoint 6 — Semantic and API corrections
 

@@ -155,10 +155,23 @@ def callback_return_conversion_available(*, return_type, mp_to_lv, generate_type
     every other missing mapping gets exactly one generation attempt before the
     caller reports its existing target-neutral diagnostic.
     """
-    if return_type == "void" or mp_to_lv.get(return_type):
+    return return_type == "void" or conversion_available(
+        conversions=mp_to_lv, type_name=return_type, generate_type=generate_type
+    )
+
+
+def conversion_available(*, conversions, type_name, generate_type):
+    """Ensure a target-neutral conversion mapping exists, with one retry.
+
+    Conversion maps are populated lazily because lowering a declaration may
+    expose additional types.  Native backends share the same rule: use an
+    existing non-empty mapping, otherwise generate once and check again.  The
+    caller retains the context-specific error text and C lowering.
+    """
+    if conversions.get(type_name):
         return True
     generate_type()
-    return bool(mp_to_lv.get(return_type))
+    return bool(conversions.get(type_name))
 
 
 def struct_pointer_helpers_source(
