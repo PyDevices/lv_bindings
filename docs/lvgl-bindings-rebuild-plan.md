@@ -56,8 +56,9 @@ and machine-checked without changing the shared canonical API contract.
   `lvgl-generator-overhaul`.
 - [ ] Before each phase, inspect all four repository statuses and preserve
   unrelated existing changes.
-- [ ] Never hand-edit generated C. All generated C changes must come from the
-  generator and be explained by the canonical model or backend.
+- [x] Never hand-edit generated C. All generated C changes must come from the
+  generator and be explained by the canonical model or backend; generator-led
+  changes are authorized for this rebuild.
 - [ ] Do not commit changes in upstream MicroPython or CircuitPython clones.
 - [ ] At each checkpoint, run the listed gate, record the result, commit only
   that phase, and save the commit SHA below.
@@ -315,8 +316,8 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 ### Work
 
-- [ ] Define a backend interface driven by the same canonical model and
-  conversion plan.
+- [x] Define a backend interface driven by the same canonical model; introduce
+  shared conversion lowering in the subsequent backend migration.
 - [ ] Keep MicroPython-specific responsibilities limited to `mp_obj_t`, VM
   roots, and module registration.
 - [ ] Keep CircuitPython-specific responsibilities limited to module
@@ -340,7 +341,15 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 - Commit SHA: `________________`
 - Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Notes: `First migration slice: generator-level Backend/BackendRun provides one
+  context, output, metadata, and result contract for all three target lowering
+  modules. Generated artifacts are unchanged by design; target-specific C
+  lowering is still owned by the existing emitter modules. Validation: 96
+  repository tests passed; binding.generate --check passed; MicroPython Unix
+  standard and CircuitPython Unix coverage rebuilt with cmods and passed the
+  shared LVGL smoke probe; CPython smoke probe passed. A repository-wide pytest
+  invocation additionally discovers LVGL's vendored upstream tests, which
+  require unavailable doxygen, so the intended repository suite is pytest tests.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

@@ -10,11 +10,10 @@ from binding.artifacts import compare_manifests, manifest_for_directory
 from binding.cli import _stable_command_line
 from binding.generate import _extract_circuitpython_header, _normalized_for_check, generate
 from binding.generator import (
+    BACKENDS,
     analysis_snapshot,
     prepare_analysis,
-    run_circuitpython,
-    run_cpython,
-    run_micropython,
+    run_backend,
 )
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
@@ -159,14 +158,19 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
     monkeypatch.setattr("binding.emit_micropython.analyze", unexpected_analysis)
     monkeypatch.setattr("binding.emit_circuitpython.analyze", unexpected_analysis)
     monkeypatch.setattr("binding.emit_cpython.analyze", unexpected_analysis)
-    runners = (run_micropython, run_circuitpython, run_cpython)
+    runners = tuple(BACKENDS)
     namespaces = []
-    for runner in runners:
+    for target in runners:
         output = io.StringIO()
-        result = runner(args, source, "pp", output, "cmd", analysis_state=state)
-        namespaces.append(result[1])
+        run = run_backend(target, args, source, "pp", output, "cmd", analysis_state=state)
+        namespaces.append(run.namespace)
 
     assert calls.count(source) == 1
     for namespace in namespaces:
         assert namespace["declaration_ir"] is prepared.declaration_ir
         assert namespace["api_model"] is prepared.api_model
+
+
+def test_backends_have_one_common_run_contract():
+    assert tuple(BACKENDS) == ("micropython", "circuitpython", "cpython")
+    assert {backend.name for backend in BACKENDS.values()} == set(BACKENDS)

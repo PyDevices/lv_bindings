@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 _LV_BINDINGS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _LV_BINDINGS_DIR)
 
-from .generator import run_circuitpython, run_cpython, run_micropython
+from .generator import run_backend
 from binding.metadata import align_namespace_to_ir, save_bindings_ir, save_metadata
 from binding.naming import set_naming_style
 from binding.preprocess import preprocess
@@ -148,40 +148,36 @@ def main(argv=None):
         import os
 
         devnull = io.open(os.devnull, "w")
-        _result, namespace = run_micropython(args, source, pp_cmd, devnull, cmd_line)
+        run = run_backend("micropython", args, source, pp_cmd, devnull, cmd_line)
         devnull.close()
         ir_path = args.ir
         if not ir_path:
             raise SystemExit("IR mode requires --ir <path>")
-        save_bindings_ir(namespace, ir_path)
+        save_bindings_ir(run.namespace, ir_path)
         if args.metadata:
-            save_metadata(namespace, args.metadata)
+            save_metadata(run.namespace, args.metadata)
         return 0
 
     if args.target == "circuitpython":
         source, pp_cmd = preprocess(args)
-        _result, namespace, emitted = run_circuitpython(
-            args, source, pp_cmd, sys.stdout, cmd_line
-        )
-        _save_outputs(namespace, args)
-        return 0 if emitted else 2
+        run = run_backend("circuitpython", args, source, pp_cmd, sys.stdout, cmd_line)
+        _save_outputs(run.namespace, args)
+        return 0 if run.emitted else 2
 
     if args.target == "cpython":
         source, pp_cmd = preprocess(args)
-        _result, namespace, emitted = run_cpython(
-            args, source, pp_cmd, sys.stdout, cmd_line
-        )
-        _save_outputs(namespace, args)
-        return 0 if emitted else 2
+        run = run_backend("cpython", args, source, pp_cmd, sys.stdout, cmd_line)
+        _save_outputs(run.namespace, args)
+        return 0 if run.emitted else 2
 
     if args.target != "micropython":
         raise SystemExit("Unsupported target: %s" % args.target)
 
     source, pp_cmd = preprocess(args)
 
-    _result, namespace = run_micropython(args, source, pp_cmd, sys.stdout, cmd_line)
+    run = run_backend("micropython", args, source, pp_cmd, sys.stdout, cmd_line)
 
-    _save_outputs(namespace, args)
+    _save_outputs(run.namespace, args)
 
     return 0
 

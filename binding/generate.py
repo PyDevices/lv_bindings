@@ -18,9 +18,7 @@ from .emit_pyi import write_pyi
 from .generator import (
     analysis_snapshot,
     prepare_analysis,
-    run_circuitpython,
-    run_cpython,
-    run_micropython,
+    run_backend,
 )
 from .metadata import save_bindings_ir
 from .preprocess import preprocess
@@ -168,7 +166,8 @@ def generate(
     # canonical Python API model lands, it is emitted once from the shared
     # analysis and then consumed read-only by every target.
     metadata_output = io.StringIO()
-    _result, metadata_namespace = run_micropython(
+    metadata_run = run_backend(
+        "micropython",
         args,
         source,
         "Preprocessing was disabled.",
@@ -180,11 +179,12 @@ def generate(
         (output_dir / TARGET_OUTPUTS["micropython"]).write_text(
             metadata_output.getvalue(), encoding="utf-8"
         )
-    save_bindings_ir(metadata_namespace, metadata_path)
+    save_bindings_ir(metadata_run.namespace, metadata_path)
 
     if "circuitpython" in selected:
         output = io.StringIO()
-        run_circuitpython(
+        circuitpython_run = run_backend(
+            "circuitpython",
             args,
             source,
             "Preprocessing was disabled.",
@@ -202,7 +202,8 @@ def generate(
 
     if "cpython" in selected:
         output = io.StringIO()
-        run_cpython(
+        run_backend(
+            "cpython",
             args,
             source,
             "Preprocessing was disabled.",

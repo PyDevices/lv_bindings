@@ -3,10 +3,35 @@
 from __future__ import print_function
 
 import copy
+from dataclasses import dataclass
+from importlib import import_module
 
 from .context import BindingContext
-from .emit_micropython import run as emit_run_micropython
 from .metadata import build_result
+
+
+@dataclass(frozen=True)
+class Backend:
+    """Target-specific lowering entry point behind the common generator flow."""
+
+    name: str
+    emitter_module: str
+
+
+@dataclass
+class BackendRun:
+    """Artifacts shared by every target lowering run."""
+
+    result: object
+    namespace: dict
+    emitted: bool = True
+
+
+BACKENDS = {
+    "micropython": Backend("micropython", "binding.emit_micropython"),
+    "circuitpython": Backend("circuitpython", "binding.emit_circuitpython"),
+    "cpython": Backend("cpython", "binding.emit_cpython"),
+}
 
 
 _ANALYSIS_STATE_NAMES = (
@@ -117,8 +142,14 @@ def _new_context(args, source, pp_cmd, cmd_line, emit_print, analysis_state=None
     return ctx
 
 
-def run_micropython(args, source, pp_cmd, out, cmd_line, analysis_state=None):
+def run_backend(target, args, source, pp_cmd, out, cmd_line, analysis_state=None):
+    """Lower one shared analysis snapshot through a named target backend."""
     import builtins
+
+    try:
+        backend = BACKENDS[target]
+    except KeyError:
+        raise ValueError("unsupported backend: %s" % target)
 
     def emit_print(*a, **k):
         k.setdefault("file", out)
@@ -127,60 +158,10 @@ def run_micropython(args, source, pp_cmd, out, cmd_line, analysis_state=None):
     ctx = _new_context(
         args, source, pp_cmd, cmd_line, emit_print, analysis_state=analysis_state
     )
-    emit_run_micropython(ctx)
+    import_module(backend.emitter_module).run(ctx)
     from . import helpers
 
     namespace = {name: getattr(ctx, name) for name in ctx.export_names()}
     namespace["simplify_identifier"] = helpers.simplify_identifier
     namespace["get_enum_name"] = helpers.get_enum_name
-    return build_result(ctx), namespace
-
-
-def run_circuitpython(args, source, pp_cmd, out, cmd_line, analysis_state=None):
-    import builtins
-
-    from .emit_circuitpython import run as emit_run_cp
-
-    def emit_print(*a, **k):
-        k.setdefault("file", out)
-        builtins.print(*a, **k)
-
-    ctx = _new_context(
-        args, source, pp_cmd, cmd_line, emit_print, analysis_state=analysis_state
-    )
-    emit_run_cp(ctx)
-    emitted = True
-    from . import helpers
-
-    namespace = {}
-    for name in ctx.export_names():
-        if hasattr(ctx, name):
-            namespace[name] = getattr(ctx, name)
-    namespace["simplify_identifier"] = helpers.simplify_identifier
-    namespace["get_enum_name"] = helpers.get_enum_name
-    return build_result(ctx), namespace, emitted
-
-
-def run_cpython(args, source, pp_cmd, out, cmd_line, analysis_state=None):
-    import builtins
-
-    from .emit_cpython import run as emit_run_cpython
-
-    def emit_print(*a, **k):
-        k.setdefault("file", out)
-        builtins.print(*a, **k)
-
-    ctx = _new_context(
-        args, source, pp_cmd, cmd_line, emit_print, analysis_state=analysis_state
-    )
-    emit_run_cpython(ctx)
-    emitted = True
-    from . import helpers
-
-    namespace = {}
-    for name in ctx.export_names():
-        if hasattr(ctx, name):
-            namespace[name] = getattr(ctx, name)
-    namespace["simplify_identifier"] = helpers.simplify_identifier
-    namespace["get_enum_name"] = helpers.get_enum_name
-    return build_result(ctx), namespace, emitted
+    return BackendRun(build_result(ctx), namespace)
