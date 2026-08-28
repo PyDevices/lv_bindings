@@ -418,7 +418,14 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   ordered backend plan for members, nested enums, and widget-scoped references.
   CircuitPython and CPython retain their distinct C namespace emitters while
   sharing the public nesting policy. Validation: 109 repository tests and
-  binding.generate --check passed; generated artifacts remain unchanged.`
+  binding.generate --check passed; generated artifacts remain unchanged.
+  Fourteenth migration slice: phase-gated module registration now uses one
+  ordered backend plan for constants, globals, top-level enums, generated
+  structs and aliases, object types, and module functions. Each target keeps
+  its native C registration mechanism and lifecycle-only exports, while the
+  shared plan prevents selection-policy drift. Validation: 110 repository
+  tests and binding.generate --check passed; generated artifacts remain
+  unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

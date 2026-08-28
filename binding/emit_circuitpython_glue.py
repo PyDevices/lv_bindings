@@ -4,7 +4,7 @@ from __future__ import print_function
 import collections
 
 from . import runtime
-from .emit_backend import enum_namespace_plan
+from .emit_backend import enum_namespace_plan, module_registration_plan
 
 
 # This module owns no mirrored emitter globals; generated output is routed
@@ -33,64 +33,70 @@ def _module_global_entries(
     obj_names=None,
     module_funcs=None,
 ):
+    plan = module_registration_plan(
+        max_phase=max_phase,
+        int_constants=int_constants,
+        generated_globals=generated_globals,
+        enums=enums,
+        enum_referenced=enum_referenced,
+        generated_structs=generated_structs or {},
+        struct_aliases=struct_aliases or {},
+        obj_names=obj_names or (),
+        module_funcs=module_funcs or (),
+    )
     entries = []
-    if max_phase >= 1:
-        for int_constant in int_constants:
+    if plan.int_constants or plan.generated_globals:
+        for int_constant in plan.int_constants:
             entries.append(
                 "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(MP_ROM_INT({value})) }}".format(
                     name=export_name(int_constant, "constant"),
                     value=int_constant,
                 )
             )
-        for global_name in generated_globals:
+        for global_name in plan.generated_globals:
             entries.append(
                 "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{global_name}) }}".format(
                     name=export_name(global_name, "blob"),
                     global_name=global_name,
                 )
             )
-    if max_phase >= 2:
-        for enum_name in enums.keys():
-            if enum_name in enum_referenced:
-                continue
+    if plan.enum_names:
+        for enum_name in plan.enum_names:
             entries.append(
                 "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_lv_{enum}_type_base) }}".format(
                     name=export_name(enum_name, "enum"),
                     enum=enum_name,
                 )
             )
-    if max_phase >= 3:
-        if generated_structs:
-            for struct_name in generated_structs:
-                if not generated_structs[struct_name]:
-                    continue
-                entries.append(
-                    "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{struct_name}_type) }}".format(
-                        name=export_name(struct_name, "struct"),
-                        struct_name=sanitize(struct_name),
-                    )
+    if plan.struct_names:
+        for struct_name in plan.struct_names:
+            entries.append(
+                "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{struct_name}_type) }}".format(
+                    name=export_name(struct_name, "struct"),
+                    struct_name=sanitize(struct_name),
                 )
-        if struct_aliases:
-            for struct_name in struct_aliases:
-                entries.append(
-                    "    {{ MP_ROM_QSTR(MP_QSTR_{alias_name}), MP_ROM_PTR(&mp_{struct_name}_type) }}".format(
-                        struct_name=sanitize(struct_name),
-                        alias_name=export_name(struct_aliases[struct_name], "struct"),
-                    )
+            )
+    if plan.struct_alias_names:
+        for struct_name in plan.struct_alias_names:
+            entries.append(
+                "    {{ MP_ROM_QSTR(MP_QSTR_{alias_name}), MP_ROM_PTR(&mp_{struct_name}_type) }}".format(
+                    struct_name=sanitize(struct_name),
+                    alias_name=export_name(struct_aliases[struct_name], "struct"),
                 )
-    if max_phase >= 5 and obj_names:
+            )
+    if plan.object_names:
         entries.append(
             "    { MP_ROM_QSTR(MP_QSTR_LvReferenceError), MP_ROM_PTR(&mp_type_LvReferenceError) }"
         )
-        for obj_name in obj_names:
+        for obj_name in plan.object_names:
             entries.append(
                 "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_lv_{obj}_type_base) }}".format(
                     name=export_name(obj_name, "object"),
                     obj=sanitize(obj_name),
                 )
             )
-    if max_phase >= 6 and module_funcs:
-        for func in module_funcs:
+    if plan.module_functions:
+        for func in plan.module_functions:
             entries.append(
                 "    {{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{func}_mpobj) }}".format(
                     name=export_name(func.name, "function"),

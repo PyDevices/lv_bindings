@@ -62,6 +62,24 @@ class EnumNamespacePlan:
     widget_scoped_nested_names: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ModuleRegistrationPlan:
+    """Target-neutral declarations exported from the module at one phase.
+
+    Backends use different C APIs to publish these objects, but must expose
+    the same declaration set and retain declaration order.  This plan keeps
+    the selection policy independent from those VM-specific C APIs.
+    """
+
+    int_constants: tuple[str, ...]
+    generated_globals: tuple[str, ...]
+    enum_names: tuple[str, ...]
+    struct_names: tuple[str, ...]
+    struct_alias_names: tuple[str, ...]
+    object_names: tuple[str, ...]
+    module_functions: tuple[object, ...]
+
+
 _TARGET_PROFILES = {
     "micropython": TargetLoweringProfile("micropython", True),
     "circuitpython": TargetLoweringProfile("circuitpython", True),
@@ -137,6 +155,43 @@ def enum_namespace_plan(*, enums, get_enum_members, is_method_of, is_widget_scop
             ),
         )
         for enum_name in enum_names
+    )
+
+
+def module_registration_plan(
+    *,
+    max_phase,
+    int_constants,
+    generated_globals,
+    enums,
+    enum_referenced,
+    generated_structs,
+    struct_aliases,
+    obj_names,
+    module_funcs,
+):
+    """Select the shared public module surface for a completed phase.
+
+    A declaration remains in its original discovery order.  Backends receive
+    empty tuples for features not available in the requested phase, rather
+    than each reimplementing phase gates and referenced-enum filtering.
+    """
+    return ModuleRegistrationPlan(
+        int_constants=tuple(int_constants) if max_phase >= 1 else (),
+        generated_globals=tuple(generated_globals) if max_phase >= 1 else (),
+        enum_names=(
+            tuple(name for name in enums if name not in enum_referenced)
+            if max_phase >= 2
+            else ()
+        ),
+        struct_names=(
+            tuple(name for name, generated in generated_structs.items() if generated)
+            if max_phase >= 3
+            else ()
+        ),
+        struct_alias_names=(tuple(struct_aliases) if max_phase >= 3 else ()),
+        object_names=tuple(obj_names) if max_phase >= 5 else (),
+        module_functions=tuple(module_funcs) if max_phase >= 6 else (),
     )
 
 

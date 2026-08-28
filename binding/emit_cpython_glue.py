@@ -4,7 +4,7 @@ from __future__ import print_function
 import collections
 
 from . import runtime
-from .emit_backend import enum_namespace_plan
+from .emit_backend import enum_namespace_plan, module_registration_plan
 
 
 # This module owns no mirrored emitter globals; generated output is routed
@@ -139,6 +139,17 @@ def finish_py_module(max_phase):
     cpython_struct_sizes = runtime.get("cpython_struct_sizes", {})
     obj_names = runtime.get("obj_names", [])
     module_funcs = runtime.get("module_funcs", [])
+    registration = module_registration_plan(
+        max_phase=max_phase,
+        int_constants=int_constants,
+        generated_globals=generated_globals,
+        enums=enums,
+        enum_referenced=enum_referenced,
+        generated_structs=generated_structs,
+        struct_aliases=struct_aliases,
+        obj_names=obj_names,
+        module_funcs=module_funcs,
+    )
 
     print(
         """
@@ -197,15 +208,15 @@ static struct PyModuleDef lvgl_module_def = {
     print("        return NULL;")
     print("    }")
 
-    if max_phase >= 1:
-        for int_constant in int_constants:
+    if registration.int_constants or registration.generated_globals:
+        for int_constant in registration.int_constants:
             name = export_name(int_constant, "constant")
             print(
                 '    if (PyModule_AddIntConstant(m, "{name}", {value}) < 0) return NULL;'.format(
                     name=name, value=int_constant
                 )
             )
-        for global_name in generated_globals:
+        for global_name in registration.generated_globals:
             if not global_name.startswith("LV_"):
                 continue
             if global_name.startswith("LV_SYMBOL_"):
@@ -219,10 +230,8 @@ static struct PyModuleDef lvgl_module_def = {
                 )
             )
 
-    if max_phase >= 2:
-        for enum_name in enums.keys():
-            if enum_name in enum_referenced:
-                continue
+    if registration.enum_names:
+        for enum_name in registration.enum_names:
             safe = sanitize(enum_name)
             py_name = export_name(enum_name, "enum")
             print(
@@ -251,10 +260,8 @@ static struct PyModuleDef lvgl_module_def = {
         print("        Py_INCREF(PyLvReferenceError);")
         print('        if (PyModule_AddObject(m, "LvReferenceError", PyLvReferenceError) < 0) return NULL;')
         print("    }")
-        if generated_structs:
-            for struct_name in generated_structs:
-                if not generated_structs[struct_name]:
-                    continue
+        if registration.struct_names:
+            for struct_name in registration.struct_names:
                 san = sanitize(struct_name)
                 struct_tag = (
                     "struct "
@@ -284,8 +291,8 @@ static struct PyModuleDef lvgl_module_def = {
                         name=py_name, san=san
                     )
                 )
-        if struct_aliases:
-            for struct_name in struct_aliases:
+        if registration.struct_alias_names:
+            for struct_name in registration.struct_alias_names:
                 san = sanitize(struct_name)
                 struct_tag = (
                     "struct "
@@ -334,9 +341,9 @@ static struct PyModuleDef lvgl_module_def = {
                 )
             )
 
-    if max_phase >= 5 and obj_names:
+    if registration.object_names:
         enums = runtime.get("enums", {})
-        for obj_name in obj_names:
+        for obj_name in registration.object_names:
             san = sanitize(obj_name)
             print(
                 '    if (PyType_Ready(&py_lv_{san}_type) < 0) return NULL;'.format(
@@ -372,9 +379,9 @@ static struct PyModuleDef lvgl_module_def = {
                 )
             )
 
-    if max_phase >= 6 and module_funcs:
+    if registration.module_functions:
         generated_funcs = runtime.get("generated_funcs", {})
-        for func in module_funcs:
+        for func in registration.module_functions:
             py_func = _resolved_py_func_name(func.name, generated_funcs)
             if not py_func:
                 continue

@@ -24,6 +24,7 @@ from binding.emit_backend import (
     enum_namespace_plan,
     function_reuse_allowed,
     function_return_lowering,
+    module_registration_plan,
     mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
     resolve_emitter_headers,
@@ -430,3 +431,43 @@ def test_struct_pointer_helpers_preserve_target_null_and_warning_policy():
     assert "GENMPY_UNUSED" not in cpython
     assert "if (self_in == mp_const_none) return NULL;" in cpython
     assert "mp_write_ptr_lv_point_t" in mpy
+
+
+def test_module_registration_plan_preserves_phase_gates_and_declaration_order():
+    functions = (SimpleNamespace(name="lv_init"), SimpleNamespace(name="lv_tick_inc"))
+    full = module_registration_plan(
+        max_phase=6,
+        int_constants=("LV_FIRST", "LV_SECOND"),
+        generated_globals=("LV_GLOBAL",),
+        enums={"lv_state_t": {}, "lv_obj_flag_t": {}},
+        enum_referenced={"lv_obj_flag_t": True},
+        generated_structs={"lv_point_t": True, "lv_unused_t": False},
+        struct_aliases={"lv_point_t": "lv_point"},
+        obj_names=("lv_obj_t",),
+        module_funcs=functions,
+    )
+
+    assert full.int_constants == ("LV_FIRST", "LV_SECOND")
+    assert full.generated_globals == ("LV_GLOBAL",)
+    assert full.enum_names == ("lv_state_t",)
+    assert full.struct_names == ("lv_point_t",)
+    assert full.struct_alias_names == ("lv_point_t",)
+    assert full.object_names == ("lv_obj_t",)
+    assert full.module_functions == functions
+
+    phase_two = module_registration_plan(
+        max_phase=2,
+        int_constants=("LV_FIRST",),
+        generated_globals=("LV_GLOBAL",),
+        enums={"lv_state_t": {}},
+        enum_referenced={},
+        generated_structs={"lv_point_t": True},
+        struct_aliases={"lv_point_t": "lv_point"},
+        obj_names=("lv_obj_t",),
+        module_funcs=functions,
+    )
+    assert phase_two.int_constants == ("LV_FIRST",)
+    assert phase_two.enum_names == ("lv_state_t",)
+    assert not phase_two.struct_names
+    assert not phase_two.object_names
+    assert not phase_two.module_functions
