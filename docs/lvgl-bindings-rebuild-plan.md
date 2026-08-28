@@ -131,8 +131,9 @@ and machine-checked without changing the shared canonical API contract.
 - [ ] Represent function declarations, parameters, struct fields, anonymous and
   forward declarations, callbacks, static-inline prototypes, and source
   locations.
-- [x] Represent function declarations, parameters, struct fields, callbacks,
-  static-inline prototypes, and source locations in the declaration IR.
+- [x] Represent function declarations, parameters, struct fields, anonymous and
+  forward declarations, callbacks, static-inline prototypes, and source
+  locations in the declaration IR.
 - [x] Parse the preprocessed translation unit once in the unified all-target
   command and pass one immutable declaration IR to each target context.
 - [ ] Remove target conditions from parsing and analysis.
@@ -351,7 +352,7 @@ or reanalyzing the translation unit while preserving the C output gate.
 
 Add focused tests for:
 
-- [ ] Forward declarations and typedef aliases.
+- [x] Forward declarations and typedef aliases.
 - [ ] Anonymous structs/unions.
 - [ ] Qualified pointers and arrays.
 - [ ] Function pointers and callbacks.

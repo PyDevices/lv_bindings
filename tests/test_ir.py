@@ -60,3 +60,29 @@ def test_declaration_index_resolves_aliases_and_struct_methods():
         "widget_set_value"
     ]
     assert index.structs_by_name["widget_t"].name == "widget"
+
+
+def test_parse_ast_merges_forward_declarations_and_aliases():
+    ir = parse_source(
+        "struct node; typedef struct node node_t; struct node { int value; }; "
+        "enum state; typedef enum state state_t; enum state { STATE_READY = 4 };",
+        filename="forward.h",
+    )
+
+    assert [(struct.name, struct.typedef_names, struct.complete) for struct in ir.structs] == [
+        ("node", ("node_t",), True)
+    ]
+    assert ir.structs[0].fields[0].name == "value"
+    assert [(enum.name, enum.typedef_names, enum.values) for enum in ir.enums] == [
+        ("state", ("state_t",), (("STATE_READY", "4"),))
+    ]
+
+
+def test_parse_source_keeps_anonymous_struct_identity():
+    ir = parse_source(
+        "typedef struct { int x; } point_t; typedef struct { int y; } other_t;",
+        filename="anonymous.h",
+    )
+
+    assert [struct.name for struct in ir.structs] == [None, None]
+    assert [struct.typedef_names for struct in ir.structs] == [("point_t",), ("other_t",)]

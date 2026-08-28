@@ -120,6 +120,7 @@ class CEnum:
     members: Tuple[str, ...] = ()
     typedef_names: Tuple[str, ...] = ()
     complete: bool = False
+    values: Tuple[Tuple[str, Optional[str]], ...] = ()
     location: SourceLocation = field(default_factory=SourceLocation)
 
 
@@ -422,15 +423,20 @@ class _Converter:
 
     def enum(self, node: c_ast.Enum, typedef_names: Sequence[str] = ()) -> CEnum:
         members = ()
+        values = ()
         if node.values is not None:
-            members = tuple(
-                enumerator.name for enumerator in (node.values.enumerators or ())
+            enumerators = node.values.enumerators or ()
+            members = tuple(enumerator.name for enumerator in enumerators)
+            values = tuple(
+                (enumerator.name, self.expression(enumerator.value))
+                for enumerator in enumerators
             )
         return CEnum(
             name=node.name,
             members=members,
             typedef_names=tuple(typedef_names),
             complete=node.values is not None,
+            values=values,
             location=self.location(node),
         )
 
@@ -458,20 +464,62 @@ def parse_ast(ast: c_ast.FileAST) -> DeclarationIR:
     enums = []
     typedefs = []
     variables = []
-    struct_keys = set()
-    enum_keys = set()
+    struct_positions = {}
+    enum_positions = {}
 
     def add_struct(node, typedef_names=()):
-        key = (id(node), tuple(typedef_names))
-        if key not in struct_keys:
-            struct_keys.add(key)
-            structs.append(converter.struct(node, typedef_names))
+        kind = "union" if isinstance(node, c_ast.Union) else "struct"
+        key = (kind, node.name) if node.name else (kind, id(node))
+        declaration = converter.struct(node, typedef_names)
+        if key not in struct_positions:
+            struct_positions[key] = len(structs)
+            structs.append(declaration)
+            return
+        position = struct_positions[key]
+        previous = structs[position]
+        typedefs = tuple(dict.fromkeys(previous.typedef_names + declaration.typedef_names))
+        complete = previous.complete or declaration.complete
+        fields = declaration.fields if declaration.complete else previous.fields
+        location = (
+            declaration.location
+            if declaration.complete and not previous.complete
+            else previous.location
+        )
+        structs[position] = CStruct(
+            name=previous.name or declaration.name,
+            kind=previous.kind,
+            fields=fields,
+            typedef_names=typedefs,
+            complete=complete,
+            location=location,
+        )
 
     def add_enum(node, typedef_names=()):
-        key = (id(node), tuple(typedef_names))
-        if key not in enum_keys:
-            enum_keys.add(key)
-            enums.append(converter.enum(node, typedef_names))
+        key = ("named", node.name) if node.name else ("anonymous", id(node))
+        declaration = converter.enum(node, typedef_names)
+        if key not in enum_positions:
+            enum_positions[key] = len(enums)
+            enums.append(declaration)
+            return
+        position = enum_positions[key]
+        previous = enums[position]
+        typedefs = tuple(dict.fromkeys(previous.typedef_names + declaration.typedef_names))
+        complete = previous.complete or declaration.complete
+        members = declaration.members if declaration.complete else previous.members
+        values = declaration.values if declaration.complete else previous.values
+        location = (
+            declaration.location
+            if declaration.complete and not previous.complete
+            else previous.location
+        )
+        enums[position] = CEnum(
+            name=previous.name or declaration.name,
+            members=members,
+            typedef_names=typedefs,
+            complete=complete,
+            values=values,
+            location=location,
+        )
 
     def typedef_composite(node):
         """Return a composite directly named by a typedef, if present."""
