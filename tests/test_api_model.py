@@ -110,6 +110,58 @@ def test_api_model_uses_typedef_and_member_stems_for_singleton_enums():
     assert enum.members == (("MAIN", None),)
 
 
+def test_api_model_records_target_neutral_python_type_views():
+    declarations = parse_source(
+        "typedef struct _lv_obj_t lv_obj_t; "
+        "typedef unsigned char uint8_t; "
+        "typedef struct point { int x; } point_t; "
+        "typedef enum { LV_MODE_OFF = 0, LV_MODE_ON = 1 } lv_mode_t; "
+        "typedef void (*event_cb_t)(int value); "
+        "lv_obj_t *lv_obj_create(lv_obj_t *parent); "
+        "lv_obj_t *lv_widget_create(lv_obj_t *parent); "
+        "void lv_unsupported(long double value); "
+        "void lv_widget_set(lv_obj_t *widget, event_cb_t callback, "
+        "const char *text, uint8_t *samples, point_t *point, "
+        "lv_mode_t mode, void *user_data);",
+        filename="type-views.h",
+    )
+
+    model = build_api_model(declarations)
+    functions = {function.c_name: function for function in model.functions}
+    setter = functions["lv_widget_set"]
+
+    assert setter.return_view.python_type == "None"
+    assert [view.category for view in setter.parameter_views] == [
+        "object_pointer",
+        "callback",
+        "string",
+        "typed_buffer",
+        "struct_pointer",
+        "enum",
+        "opaque_pointer",
+    ]
+    assert [view.python_type for view in setter.parameter_views] == [
+        "obj",
+        "Callable[[int], None]",
+        "str",
+        "Any",
+        "point_t",
+        "MODE | int",
+        "Any",
+    ]
+    callback = next(item for item in model.typedefs if item.name == "event_cb_t")
+    assert callback.type_view.python_type == "Callable[[int], None]"
+    obj_typedef = next(item for item in model.typedefs if item.name == "obj_t")
+    assert obj_typedef.type_view.python_type == "obj"
+    assert obj_typedef.type_view.category == "object"
+    point = next(item for item in model.structs if item.python_name == "point_t")
+    assert point.field_views[0].python_type == "int"
+    unsupported = functions["lv_unsupported"].parameter_views[0]
+    assert unsupported.python_type == "Any"
+    assert unsupported.category == "unknown"
+    assert unsupported.conversion == "unsupported"
+
+
 def test_api_model_detects_duplicate_exports():
     from dataclasses import replace
 

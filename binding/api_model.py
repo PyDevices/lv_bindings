@@ -7,21 +7,18 @@ so the three backends can lower the same model.
 
 from __future__ import annotations
 
-import json
 import hashlib
-from dataclasses import dataclass, field
+import json
+from dataclasses import dataclass, field, replace
 from os.path import commonprefix
 from typing import Any, Mapping, Optional, Tuple
 
 from .ir import (
     CEnum,
     CField,
-    CFunction,
     CParameter,
     CStruct,
-    CTypedef,
     CType,
-    CVariable,
     DeclarationIndex,
     DeclarationIR,
     SourceLocation,
@@ -29,6 +26,7 @@ from .ir import (
 
 
 TARGETS = ("micropython", "circuitpython", "cpython")
+API_SCHEMA_VERSION = 2
 
 
 # These are the established public spellings used by the upstream-compatible
@@ -92,19 +90,12 @@ def _type_to_dict(type_: CType) -> Mapping[str, Any]:
     return result
 
 
-def _parameter_to_dict(parameter: CParameter) -> Mapping[str, Any]:
-    result = {"name": parameter.name, "type": _type_to_dict(parameter.type)}
-    if parameter.location.file is not None:
-        result["location"] = {
-            "file": parameter.location.file,
-            "line": parameter.location.line,
-            "column": parameter.location.column,
-        }
-    return result
-
-
-def _field_to_dict(field_: CField) -> Mapping[str, Any]:
+def _field_to_dict(
+    field_: CField, view: Optional[ApiTypeView] = None
+) -> Mapping[str, Any]:
     result = {"name": field_.name, "type": _type_to_dict(field_.type)}
+    if view is not None:
+        result["view"] = view.to_dict()
     if field_.bit_width is not None:
         result["bit_width"] = field_.bit_width
     return result
@@ -116,6 +107,44 @@ def _location_to_dict(location: SourceLocation) -> Mapping[str, Any]:
         "line": location.line,
         "column": location.column,
     }
+
+
+@dataclass(frozen=True)
+class ApiTypeView:
+    """Target-neutral interpretation of one C type at the Python boundary."""
+
+    python_type: str
+    category: str
+    conversion: str
+    nullable: Optional[bool] = None
+    lifetime: Optional[str] = None
+
+    def to_dict(self) -> Mapping[str, Any]:
+        result = {
+            "python_type": self.python_type,
+            "category": self.category,
+            "conversion": self.conversion,
+        }
+        if self.nullable is not None:
+            result["nullable"] = self.nullable
+        if self.lifetime is not None:
+            result["lifetime"] = self.lifetime
+        return result
+
+
+def _parameter_to_dict(
+    parameter: CParameter, view: Optional[ApiTypeView] = None
+) -> Mapping[str, Any]:
+    result = {"name": parameter.name, "type": _type_to_dict(parameter.type)}
+    if view is not None:
+        result["view"] = view.to_dict()
+    if parameter.location.file is not None:
+        result["location"] = {
+            "file": parameter.location.file,
+            "line": parameter.location.line,
+            "column": parameter.location.column,
+        }
+    return result
 
 
 @dataclass(frozen=True)
@@ -134,13 +163,23 @@ class ApiFunction:
     visibility: str = "public"
     policy_reason: Optional[str] = None
     location: Optional[SourceLocation] = field(default=None)
+    parameter_views: Tuple[ApiTypeView, ...] = ()
+    return_view: Optional[ApiTypeView] = None
 
     def to_dict(self) -> Mapping[str, Any]:
         result = {
             "c_name": self.c_name,
             "python_name": self.python_name,
             "role": self.role,
-            "parameters": [_parameter_to_dict(parameter) for parameter in self.parameters],
+            "parameters": [
+                _parameter_to_dict(
+                    parameter,
+                    self.parameter_views[index]
+                    if index < len(self.parameter_views)
+                    else None,
+                )
+                for index, parameter in enumerate(self.parameters)
+            ],
             "return_type": _type_to_dict(self.return_type),
             "static": self.static,
             "variadic": self.variadic,
@@ -149,6 +188,8 @@ class ApiFunction:
             "available_on": list(self.available_on),
             "visibility": self.visibility,
         }
+        if self.return_view is not None:
+            result["return_view"] = self.return_view.to_dict()
         if self.policy_reason is not None:
             result["policy_reason"] = self.policy_reason
         if self.receiver is not None:
@@ -171,13 +212,22 @@ class ApiStruct:
     visibility: str = "public"
     policy_reason: Optional[str] = None
     location: Optional[SourceLocation] = field(default=None)
+    field_views: Tuple[ApiTypeView, ...] = ()
 
     def to_dict(self) -> Mapping[str, Any]:
         result = {
             "c_name": self.c_name,
             "python_name": self.python_name,
             "kind": self.kind,
-            "fields": [_field_to_dict(field_) for field_ in self.fields],
+            "fields": [
+                _field_to_dict(
+                    field_,
+                    self.field_views[index]
+                    if index < len(self.field_views)
+                    else None,
+                )
+                for index, field_ in enumerate(self.fields)
+            ],
             "typedef_names": list(self.typedef_names),
             "complete": self.complete,
             "available_on": list(self.available_on),
@@ -239,6 +289,7 @@ class ApiTypedef:
     visibility: str = "public"
     policy_reason: Optional[str] = None
     location: Optional[SourceLocation] = field(default=None)
+    type_view: Optional[ApiTypeView] = None
 
     def to_dict(self) -> Mapping[str, Any]:
         result = {
@@ -249,6 +300,8 @@ class ApiTypedef:
             "available_on": list(self.available_on),
             "visibility": self.visibility,
         }
+        if self.type_view is not None:
+            result["view"] = self.type_view.to_dict()
         if self.policy_reason is not None:
             result["policy_reason"] = self.policy_reason
         if self.location is not None:
@@ -266,6 +319,7 @@ class ApiVariable:
     visibility: str = "public"
     policy_reason: Optional[str] = None
     location: Optional[SourceLocation] = field(default=None)
+    type_view: Optional[ApiTypeView] = None
 
     def to_dict(self) -> Mapping[str, Any]:
         result = {
@@ -276,6 +330,8 @@ class ApiVariable:
             "available_on": list(self.available_on),
             "visibility": self.visibility,
         }
+        if self.type_view is not None:
+            result["view"] = self.type_view.to_dict()
         if self.policy_reason is not None:
             result["policy_reason"] = self.policy_reason
         if self.location is not None:
@@ -346,7 +402,7 @@ class ApiModel:
     typedefs: Tuple[ApiTypedef, ...]
     variables: Tuple[ApiVariable, ...]
     constants: Tuple[ApiConstant, ...] = ()
-    schema_version: int = 1
+    schema_version: int = API_SCHEMA_VERSION
 
     def _content_dict(self) -> Mapping[str, Any]:
         return {
@@ -605,6 +661,191 @@ def _enum_exports(
     return module_name or None, (), stem
 
 
+_INTEGER_TYPES = frozenset(
+    {
+        "char",
+        "short",
+        "int",
+        "long",
+        "signed",
+        "unsigned",
+        "_Bool",
+        "bool",
+        "int8_t",
+        "uint8_t",
+        "int16_t",
+        "uint16_t",
+        "int32_t",
+        "uint32_t",
+        "int64_t",
+        "uint64_t",
+        "intptr_t",
+        "uintptr_t",
+        "size_t",
+    }
+)
+_INTEGER_WORDS = frozenset({"char", "short", "int", "long", "signed", "unsigned"})
+
+
+def _is_integer_name(name: Optional[str]) -> bool:
+    if not name:
+        return False
+    if name in _INTEGER_TYPES:
+        return True
+    words = set(name.split())
+    return bool(words) and words <= _INTEGER_WORDS and "float" not in words
+
+
+def _build_type_view_resolver(
+    objects: Tuple[ApiObject, ...],
+    structs: Tuple[ApiStruct, ...],
+    enums: Tuple[ApiEnum, ...],
+    typedefs: Tuple[ApiTypedef, ...],
+):
+    """Create a target-neutral C-to-Python type-view resolver."""
+
+    object_by_c = {item.c_type: item.python_name for item in objects}
+    struct_by_c = {}
+    for item in structs:
+        if item.c_name:
+            struct_by_c[item.c_name] = item.python_name
+        for alias in item.typedef_names:
+            struct_by_c[alias] = item.python_name
+        object_name = next(
+            (
+                object_.python_name
+                for object_ in objects
+                if object_.python_name + "_t" == item.python_name
+                or object_.c_type in item.typedef_names
+                or item.c_name == "_" + object_.c_type
+            ),
+            None,
+        )
+        if object_name is not None:
+            for alias in (item.c_name,) + item.typedef_names:
+                if alias:
+                    object_by_c[alias] = object_name
+    enum_by_c = {}
+    for item in enums:
+        if item.module_name is not None:
+            python_type = item.module_name
+        elif item.owners:
+            owner, nested_name = item.owners[0]
+            python_type = "%s.%s" % (owner, nested_name)
+        else:
+            python_type = item.python_name
+        for alias in item.typedef_names:
+            enum_by_c[alias] = python_type + " | int"
+        if item.c_name:
+            enum_by_c[item.c_name] = python_type + " | int"
+    typedef_by_c = {
+        item.c_name or item.name: item for item in typedefs
+    }
+
+    def named_view(name: Optional[str], seen: Tuple[str, ...]) -> ApiTypeView:
+        if not name:
+            return ApiTypeView("Any", "unknown", "unsupported")
+        if name in object_by_c:
+            return ApiTypeView(object_by_c[name], "object", "object_handle")
+        if name in struct_by_c:
+            return ApiTypeView(struct_by_c[name], "struct", "struct_value")
+        if name in enum_by_c:
+            return ApiTypeView(enum_by_c[name], "enum", "enum_int")
+        typedef = typedef_by_c.get(name)
+        if typedef is not None and name not in seen:
+            return view(typedef.type, seen + (name,), alias=name)
+        if name == "void":
+            return ApiTypeView("None", "void", "none")
+        if _is_integer_name(name):
+            return ApiTypeView("int", "scalar", "integer")
+        if name in {"float", "double"}:
+            return ApiTypeView("float", "scalar", "float")
+        if name == "va_list":
+            return ApiTypeView("Any", "opaque", "opaque")
+        return ApiTypeView("Any", "unknown", "unsupported")
+
+    def view(
+        type_: CType,
+        seen: Tuple[str, ...] = (),
+        alias: Optional[str] = None,
+    ) -> ApiTypeView:
+        if type_.kind in {"primitive", "identifier"}:
+            return named_view(type_.name, seen)
+        if type_.kind in {"struct", "union"}:
+            result = named_view(type_.name, seen)
+            if type_.name is None and alias is not None:
+                result = named_view(alias, seen)
+            if result.category == "unknown":
+                return ApiTypeView("Any", "struct", "struct_value")
+            return result
+        if type_.kind == "enum":
+            result = named_view(type_.name, seen)
+            if type_.name is None and alias is not None:
+                result = named_view(alias, seen)
+            if result.category == "unknown":
+                return ApiTypeView("int", "enum", "enum_int")
+            return result
+        if type_.kind == "pointer":
+            target = type_.target or CType(kind="primitive", name="void")
+            if target.kind == "function":
+                return ApiTypeView(
+                    callable_type(target),
+                    "callback",
+                    "callback",
+                )
+            if target.kind in {"primitive", "identifier", "struct", "union", "enum"}:
+                target_view = view(target, seen)
+                if target_view.category == "object":
+                    return ApiTypeView(
+                        target_view.python_type,
+                        "object_pointer",
+                        "object_handle",
+                    )
+                if target_view.category == "struct":
+                    return ApiTypeView(
+                        target_view.python_type,
+                        "struct_pointer",
+                        "struct_pointer",
+                    )
+                if target_view.category == "enum":
+                    return ApiTypeView(
+                        target_view.python_type,
+                        "enum_pointer",
+                        "enum_pointer",
+                    )
+                if target.kind == "primitive" and target.name == "char":
+                    return ApiTypeView("str", "string", "string")
+                if (
+                    target.kind == "primitive" and _is_integer_name(target.name)
+                ) or (
+                    target.kind == "identifier"
+                    and target_view.category == "scalar"
+                    and target_view.python_type == "int"
+                ):
+                    return ApiTypeView("Any", "typed_buffer", "typed_buffer")
+                if target.kind == "primitive" and target.name == "void":
+                    return ApiTypeView("Any", "opaque_pointer", "opaque")
+            return ApiTypeView("Any", "pointer", "pointer")
+        if type_.kind == "array":
+            return ApiTypeView("Any", "array", "array")
+        if type_.kind == "function":
+            return ApiTypeView(callable_type(type_), "callback", "callback")
+        if type_.kind == "ellipsis":
+            return ApiTypeView("Any", "variadic", "variadic")
+        return ApiTypeView("Any", "unknown", "unsupported")
+
+    def callable_type(type_: CType) -> str:
+        parameters = [view(parameter.type).python_type for parameter in type_.parameters]
+        return_type = view(type_.return_type or CType(kind="primitive", name="void"))
+        if type_.variadic:
+            parameter_spec = "..."
+        else:
+            parameter_spec = "[%s]" % ", ".join(parameters)
+        return "Callable[%s, %s]" % (parameter_spec, return_type.python_type)
+
+    return view
+
+
 def build_api_model(
     declarations: DeclarationIR,
     *,
@@ -658,7 +899,6 @@ def build_api_model(
         plain = _strip_prefix(function.name, module_prefix)
         role = "module"
         receiver = None
-        static = False
         if function.name in constructors.values():
             role = "constructor"
             receiver = next(
@@ -869,13 +1109,45 @@ def build_api_model(
                     value=value,
                     location=enum.location,
                 )
-            )
+                )
+    enum_tuple = tuple(enums)
+    type_view = _build_type_view_resolver(
+        objects, structs, enum_tuple, typedefs
+    )
+    functions = tuple(
+        replace(
+            function,
+            parameter_views=tuple(
+                type_view(parameter.type) for parameter in function.parameters
+            ),
+            return_view=type_view(function.return_type),
+        )
+        for function in functions
+    )
+    structs = tuple(
+        replace(
+            struct,
+            field_views=tuple(type_view(field_.type) for field_ in struct.fields),
+        )
+        for struct in structs
+    )
+    typedefs = tuple(
+        replace(
+            typedef,
+            type_view=type_view(typedef.type, alias=typedef.c_name or typedef.name),
+        )
+        for typedef in typedefs
+    )
+    variables = tuple(
+        replace(variable, type_view=type_view(variable.type))
+        for variable in variables
+    )
     return ApiModel(
         module_prefix=module_prefix,
-        functions=tuple(functions),
+        functions=functions,
         objects=objects,
         structs=structs,
-        enums=tuple(enums),
+        enums=enum_tuple,
         typedefs=typedefs,
         variables=variables,
         constants=tuple(constants),

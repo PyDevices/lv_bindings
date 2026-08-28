@@ -52,7 +52,7 @@ and machine-checked without changing the shared canonical API contract.
 
 ## Working rules
 
-- [ ] Work from a dedicated branch, for example
+- [x] Work from a dedicated branch, for example
   `lvgl-generator-overhaul`.
 - [ ] Before each phase, inspect all four repository statuses and preserve
   unrelated existing changes.
@@ -128,9 +128,6 @@ and machine-checked without changing the shared canonical API contract.
   representations.
 - [x] Represent primitive, qualified, pointer, array, function-pointer, enum,
   struct, union, and typedef types in `binding/ir.py`.
-- [ ] Represent function declarations, parameters, struct fields, anonymous and
-  forward declarations, callbacks, static-inline prototypes, and source
-  locations.
 - [x] Represent function declarations, parameters, struct fields, anonymous and
   forward declarations, callbacks, static-inline prototypes, and source
   locations in the declaration IR.
@@ -183,7 +180,7 @@ complete enough to replace it.
 - [x] Record qualified location, Python/C names, parameters, return type,
   constructor/method/module role, enum ownership, aliases, inheritance,
   callbacks, and target availability.
-- [ ] Add target-neutral conversion classifications and Python type views.
+- [x] Add target-neutral conversion classifications and Python type views.
 - [ ] Record callback/object lifetime semantics from verified runtime behavior.
 - [x] Classify methods from declaration relationships and first-argument types,
   not only function-name prefixes.
@@ -199,21 +196,30 @@ validated against the current translation unit and ``generated/api.json`` is
 written from the same immutable model shared by all target runs. The
 ``binding.api_report`` command now reports inheritance-expanded qualified
 exports, target availability exceptions, visibility inventory, and a
-diagnostic projection against the compact historical baseline. Conversion
-plans, lifetime semantics, reachability, and acceptance of the compatibility
-score are still pending; the legacy metadata/stub path remains active.
+diagnostic projection against the compact historical baseline. Target-neutral
+conversion categories and Python type views now cover function parameters and
+returns, struct fields, typedefs, and variables. The model records explicit
+callback, object-handle, struct, enum, string, typed-buffer, array,
+opaque-pointer, pointer, scalar, void, and unsupported conversions;
+``generated/api.json`` is schema version 2 and its validator requires every
+boundary type to carry a view. Object typedefs resolve to their public wrapper
+types, including opaque ``struct _lv_*_t`` definitions, and anonymous
+typedef-backed records resolve through their alias. Lifetime/nullability,
+reachability, backend lowering, and acceptance of the compatibility score are
+still pending; the legacy metadata/stub path remains active.
 
-Interim safe checkpoint: the current model reports 22,923 MicroPython
-qualified exports and 22,921 CircuitPython/CPython exports, with two explicit
+Interim safe checkpoint: the current model reports 22,997 MicroPython
+qualified exports and 22,995 CircuitPython/CPython exports, with two explicit
 TJPGD availability exceptions. Its historical name/location projection is
-96.99% (21,511/22,179), but the remaining missing/extra entries are not yet
+98.58% (21,865/22,179), but the remaining missing/extra entries are not yet
 classified for acceptance. The report and validator are therefore diagnostic,
 not a completed C3 gate.
 
 Enum ownership is now explicit in the model: module-level exports, nested
 widget exports, duplex aliases such as ``OBJ_FLAG``/``obj.FLAG``, and normalized
 members are recorded independently of the C emitters. The current generated
-API hash after this increment is ``e8aca31d23ca8545cd1233d5618022b1c82663dd6bdc5075672d52b81fd26d21``.
+API hash after this increment is
+``e4135a6f3645caa6a271b0ba2698271e70f626fcb89eae7686f2996bb40a1268``.
 
 ### Gate
 
@@ -401,7 +407,7 @@ Add focused tests for:
 - [x] Widget inheritance and method ownership.
 - [x] Enum nesting and aliases.
 - [x] Duplicate export detection.
-- [ ] Unsupported conversions.
+- [x] Unsupported conversions.
 - [x] Target exception validation.
 - [x] Deterministic JSON/API hashes.
 - [ ] Typing signatures and duplicate declarations.

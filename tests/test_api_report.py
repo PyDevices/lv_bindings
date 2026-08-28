@@ -49,6 +49,11 @@ def test_report_records_target_exceptions_and_is_deterministic():
             "function_specifiers": [],
             "available_on": ["micropython"],
             "visibility": "public",
+            "return_view": {
+                "python_type": "None",
+                "category": "void",
+                "conversion": "none",
+            },
         }
     )
     from binding.api_model import api_hash_for_dict

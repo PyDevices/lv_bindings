@@ -7,12 +7,27 @@ import json
 import sys
 from pathlib import Path
 
-from .api_model import TARGETS, api_hash_for_dict
+from .api_model import API_SCHEMA_VERSION, TARGETS, api_hash_for_dict
+
+
+def _validate_type_view(view, label, errors):
+    if not isinstance(view, dict):
+        errors.append("%s must be an object" % label)
+        return
+    for key in ("python_type", "category", "conversion"):
+        if not isinstance(view.get(key), str) or not view[key]:
+            errors.append("%s.%s must be a non-empty string" % (label, key))
+    if "nullable" in view and not isinstance(view["nullable"], bool):
+        errors.append("%s.nullable must be boolean" % label)
+    if "lifetime" in view and (
+        not isinstance(view["lifetime"], str) or not view["lifetime"]
+    ):
+        errors.append("%s.lifetime must be a non-empty string" % label)
 
 
 def validate_api_data(data):
     errors = []
-    if data.get("schema_version") != 1:
+    if data.get("schema_version") != API_SCHEMA_VERSION:
         errors.append("unsupported API schema version")
     if not isinstance(data.get("api_hash"), str):
         errors.append("missing api_hash")
@@ -34,6 +49,24 @@ def validate_api_data(data):
             errors.append("section %s must be a list" % section)
     function_exports = {}
     for function in data.get("functions", ()):
+        parameters = function.get("parameters")
+        if isinstance(parameters, list):
+            for index, parameter in enumerate(parameters):
+                _validate_type_view(
+                    parameter.get("view"),
+                    "function %s parameter %d view"
+                    % (function.get("c_name"), index),
+                    errors,
+                )
+        else:
+            errors.append(
+                "function %s parameters must be a list" % function.get("c_name")
+            )
+        _validate_type_view(
+            function.get("return_view"),
+            "function %s return view" % function.get("c_name"),
+            errors,
+        )
         available = function.get("available_on", ())
         if not set(available) <= set(TARGETS):
             errors.append("function %s has an unknown target" % function.get("c_name"))
@@ -65,6 +98,26 @@ def validate_api_data(data):
         "constants",
     ):
         for item in data.get(section, ()):
+            if section == "structs":
+                fields = item.get("fields")
+                if isinstance(fields, list):
+                    for index, field in enumerate(fields):
+                        _validate_type_view(
+                            field.get("view"),
+                            "struct %s field %d view"
+                            % (item.get("python_name"), index),
+                            errors,
+                        )
+                else:
+                    errors.append(
+                        "struct %s fields must be a list" % item.get("python_name")
+                    )
+            elif section in {"typedefs", "variables"}:
+                _validate_type_view(
+                    item.get("view"),
+                    "%s %s view" % (section[:-1], item.get("python_name")),
+                    errors,
+                )
             available = item.get("available_on", ())
             if not set(available) <= set(TARGETS):
                 name = item.get("python_name") or item.get("name") or item.get("c_name")
