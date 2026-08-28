@@ -48,6 +48,7 @@ def test_api_model_json_is_deterministic_and_includes_callbacks():
     assert len(model.api_hash) == 64
     assert '"api_hash": "{}"'.format(model.api_hash) in rendered
     assert api_hash_for_dict(model.to_dict()) == model.api_hash
+    assert model.validation_errors() == ()
     assert '"callback": true' in rendered
     assert '"variadic": true' in rendered
 
@@ -65,3 +66,17 @@ def test_api_model_groups_preprocessor_enum_families_and_constants():
     assert enums["MODE"].members == (("OFF", "0"), ("ON", "1"))
     constants = {constant.python_name: constant for constant in model.constants}
     assert constants["LIMIT"].value == "4"
+
+
+def test_api_model_detects_duplicate_exports():
+    from dataclasses import replace
+
+    declarations = parse_source("void lv_dup(int);")
+
+    model = build_api_model(declarations)
+    duplicate = replace(model, functions=model.functions + (model.functions[0],))
+
+    assert any(
+        "duplicate export module.dup" in error
+        for error in duplicate.validation_errors()
+    )

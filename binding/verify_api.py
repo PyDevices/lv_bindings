@@ -23,12 +23,73 @@ def validate_api_data(data):
     for section in ("functions", "objects", "structs", "enums", "typedefs", "variables"):
         if not isinstance(data.get(section), list):
             errors.append("section %s must be a list" % section)
+    function_exports = {}
     for function in data.get("functions", ()):
         available = function.get("available_on", ())
         if not set(available) <= set(TARGETS):
             errors.append("function %s has an unknown target" % function.get("c_name"))
         if function.get("visibility") == "public" and not available:
             errors.append("public function %s has no targets" % function.get("c_name"))
+        if function.get("visibility") == "public":
+            key = (
+                function.get("role"),
+                function.get("receiver"),
+                function.get("python_name"),
+            )
+            if key in function_exports:
+                errors.append(
+                    "duplicate function export %s (%s and %s)"
+                    % (
+                        function.get("python_name"),
+                        function_exports[key],
+                        function.get("c_name"),
+                    )
+                )
+            else:
+                function_exports[key] = function.get("c_name")
+    names = {}
+    for function in data.get("functions", ()):
+        if function.get("visibility") != "public" or function.get("role") != "module":
+            continue
+        name = function.get("python_name")
+        if name in names:
+            errors.append(
+                "duplicate module export %s (function and %s)" % (name, names[name])
+            )
+        else:
+            names[name] = "function"
+    type_names = {
+        item.get("python_name")
+        for section in ("structs", "enums")
+        for item in data.get(section, ())
+        if item.get("visibility") == "public"
+    }
+    for section in ("objects", "structs", "enums", "typedefs", "variables", "constants"):
+        for item in data.get(section, ()):
+            if item.get("visibility") != "public":
+                continue
+            name = item.get("python_name") or item.get("name")
+            if (
+                section == "typedefs"
+                and name in type_names
+                and item.get("type", {}).get("kind") in {"struct", "union", "enum"}
+            ):
+                continue
+            if name in names:
+                errors.append(
+                    "duplicate module export %s (%s and %s)"
+                    % (name, names[name], section)
+                )
+            else:
+                names[name] = section
+            members = item.get("members")
+            if isinstance(members, list):
+                member_names = [member.get("name") for member in members]
+                if len(member_names) != len(set(member_names)):
+                    errors.append("duplicate enum members: %s" % name)
+            methods = item.get("methods") if section == "objects" else None
+            if isinstance(methods, list) and len(methods) != len(set(methods)):
+                errors.append("duplicate object methods: %s" % name)
     return errors
 
 

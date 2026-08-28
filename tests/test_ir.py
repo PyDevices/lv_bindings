@@ -123,3 +123,16 @@ def test_parse_source_captures_anonymous_union_and_nested_record_types():
     point_type = ir.structs[1].fields[0].type
     assert point_type.kind == "struct"
     assert point_type.name is None
+
+
+def test_parse_source_deduplicates_repeated_function_prototypes():
+    ir = parse_source("void lv_repeat(int value); void lv_repeat(int other);")
+
+    assert [function.name for function in ir.functions] == ["lv_repeat"]
+
+
+def test_parse_source_rejects_conflicting_function_prototypes():
+    import pytest
+
+    with pytest.raises(ValueError, match="conflicting declarations for lv_repeat"):
+        parse_source("void lv_repeat(int value); void lv_repeat(float value);")

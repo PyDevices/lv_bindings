@@ -1,5 +1,5 @@
 {
-  "api_hash": "11bedddd54434ee08d4d0e2230d98f6d0f65eae712a8c719c4ef2b8f2a802cef",
+  "api_hash": "6fc4b4cd3bcfd3d7a211df122885a8daf7243088c8cfdf89cf839dbbfeafbc8d",
   "constants": [
     {
       "available_on": [
@@ -103131,66 +103131,6 @@
         "circuitpython",
         "cpython"
       ],
-      "c_name": "lv_span_set_text_static",
-      "function_specifiers": [],
-      "location": {
-        "column": 6,
-        "file": "<none>",
-        "line": 4763
-      },
-      "parameters": [
-        {
-          "location": {
-            "column": 40,
-            "file": "<none>",
-            "line": 4763
-          },
-          "name": "span",
-          "type": {
-            "kind": "pointer",
-            "target": {
-              "kind": "identifier",
-              "name": "lv_span_t"
-            }
-          }
-        },
-        {
-          "location": {
-            "column": 59,
-            "file": "<none>",
-            "line": 4763
-          },
-          "name": "text",
-          "type": {
-            "kind": "pointer",
-            "target": {
-              "kind": "primitive",
-              "name": "char",
-              "qualifiers": [
-                "const"
-              ]
-            }
-          }
-        }
-      ],
-      "python_name": "set_text_static",
-      "receiver": "span_t",
-      "return_type": {
-        "kind": "primitive",
-        "name": "void"
-      },
-      "role": "struct_method",
-      "static": false,
-      "storage": [],
-      "variadic": false,
-      "visibility": "public"
-    },
-    {
-      "available_on": [
-        "micropython",
-        "circuitpython",
-        "cpython"
-      ],
       "c_name": "lv_span_stack_deinit",
       "function_specifiers": [],
       "location": {
@@ -142908,7 +142848,6 @@
         "get_text",
         "set_text",
         "set_text_fmt",
-        "set_text_static",
         "set_text_static"
       ],
       "python_name": "span_t",

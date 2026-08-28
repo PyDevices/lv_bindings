@@ -604,8 +604,25 @@ def parse_ast(ast: c_ast.FileAST) -> DeclarationIR:
                 )
             )
 
+    unique_functions = []
+    function_positions = {}
+    for function in functions:
+        previous_position = function_positions.get(function.name)
+        if previous_position is None:
+            function_positions[function.name] = len(unique_functions)
+            unique_functions.append(function)
+            continue
+        previous = unique_functions[previous_position]
+        if previous.signature != function.signature:
+            raise ValueError(
+                "conflicting declarations for %s: %s / %s"
+                % (function.name, previous.signature, function.signature)
+            )
+        if function.is_definition and not previous.is_definition:
+            unique_functions[previous_position] = function
+
     return DeclarationIR(
-        functions=tuple(functions),
+        functions=tuple(unique_functions),
         structs=tuple(structs),
         enums=tuple(enums),
         typedefs=tuple(typedefs),

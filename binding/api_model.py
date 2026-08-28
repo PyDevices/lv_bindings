@@ -347,6 +347,77 @@ class ApiModel:
     def api_hash(self) -> str:
         return api_hash_for_dict(self._content_dict())
 
+    def validation_errors(self) -> Tuple[str, ...]:
+        """Return semantic model errors that do not require a target backend."""
+
+        errors = []
+        seen = {}
+
+        def add(scope: str, name: str, source: str) -> None:
+            key = (scope, name)
+            previous = seen.get(key)
+            if previous is not None:
+                errors.append(
+                    "duplicate export %s.%s (%s and %s)"
+                    % (scope, name, previous, source)
+                )
+            else:
+                seen[key] = source
+
+        for function in self.functions:
+            if function.visibility != "public":
+                continue
+            scope = (
+                "module"
+                if function.role == "module"
+                else "constructor.%s" % function.receiver
+                if function.role == "constructor"
+                else "%s.%s" % (function.role, function.receiver or "<missing>")
+            )
+            add(scope, function.python_name, function.c_name)
+            if not set(function.available_on) <= set(TARGETS):
+                errors.append("unknown target on function %s" % function.c_name)
+            if not function.available_on:
+                errors.append("public function has no targets: %s" % function.c_name)
+
+        for obj in self.objects:
+            if obj.visibility == "public":
+                add("module", obj.python_name, "object " + obj.python_name)
+                if len(obj.methods) != len(set(obj.methods)):
+                    errors.append("duplicate object methods: %s" % obj.python_name)
+        for struct in self.structs:
+            if struct.visibility == "public":
+                add("module", struct.python_name, "struct " + struct.python_name)
+        for enum in self.enums:
+            if enum.visibility == "public":
+                add("module", enum.python_name, "enum " + enum.python_name)
+                members = [name for name, _value in enum.members]
+                if len(members) != len(set(members)):
+                    errors.append("duplicate enum members: %s" % enum.python_name)
+        type_names = {
+            item.python_name
+            for item in self.structs + self.enums
+            if item.visibility == "public"
+        }
+        for typedef in self.typedefs:
+            if typedef.visibility == "public":
+                # A typedef that names a concrete struct/enum is the C alias
+                # for that same Python type, not a second module export.
+                if typedef.name in type_names and typedef.type.kind in {
+                    "struct",
+                    "union",
+                    "enum",
+                }:
+                    continue
+                add("module", typedef.name, "typedef " + typedef.c_name)
+        for variable in self.variables:
+            if variable.visibility == "public":
+                add("module", variable.python_name or variable.c_name, "variable " + variable.c_name)
+        for constant in self.constants:
+            if constant.visibility == "public":
+                add("module", constant.python_name, "constant " + constant.c_name)
+        return tuple(errors)
+
     def to_dict(self) -> Mapping[str, Any]:
         result = dict(self._content_dict())
         result["api_hash"] = self.api_hash

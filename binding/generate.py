@@ -159,6 +159,9 @@ def generate(
         ApiPolicy.default(module_prefix=prepared.module_prefix),
         prepared.declaration_ir,
     )
+    model_errors = prepared.api_model.validation_errors()
+    if model_errors:
+        raise ValueError("invalid canonical API model: %s" % "; ".join(model_errors))
     write_api_model(prepared.api_model, api_path)
 
     # The metadata schema is still the legacy public API schema.  Until the
