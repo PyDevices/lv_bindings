@@ -98,21 +98,21 @@ and machine-checked without changing the shared canonical API contract.
 
 ### Work
 
-- [ ] Update `/home/brad/gh/pydevices/lvgl-bindings/requirements.txt` to
+- [x] Update `/home/brad/gh/pydevices/lvgl-bindings/requirements.txt` to
   `pycparser==3.0`.
-- [ ] Vendor or refresh fake-libc headers from the matching pycparser release.
-- [ ] Add deterministic preprocessing and artifact hashing.
-- [ ] Add a unified generator command for all targets.
-- [ ] Preserve a `pyi-only` path for typing-only regeneration.
-- [ ] Add a read-only check command that generates into a temporary directory.
-- [ ] Add parser and generator fixture tests.
-- [ ] Add initial Linux CI for generator tests and current-output checks.
+- [x] Vendor or refresh fake-libc headers from the matching pycparser release.
+- [x] Add deterministic preprocessing and artifact hashing.
+- [x] Add a unified generator command for all targets.
+- [x] Preserve a `pyi-only` path for typing-only regeneration.
+- [x] Add a read-only check command that generates into a temporary directory.
+- [x] Add parser and generator fixture tests.
+- [x] Add initial Linux CI for generator tests and current-output checks.
 
 ### Gate
 
-- [ ] All existing typings tests pass.
-- [ ] The current generated C bodies and metadata remain compatible.
-- [ ] Existing MicroPython, CircuitPython, and CPython smoke tests pass.
+- [x] All existing typings tests pass.
+- [x] The current generated C bodies and metadata remain compatible.
+- [x] Existing MicroPython, CircuitPython, and CPython smoke tests pass.
 
 ### Handoff
 

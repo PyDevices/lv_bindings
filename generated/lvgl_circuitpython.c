@@ -5,7 +5,7 @@
  *
  * Target: circuitpython
  * Command line:
- * /home/brad/gh/pydevices/cmods/lv_bindings/binding/gen_binding.py --target circuitpython -M lvgl -MP lv --ir /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.json -E /home/brad/gh/pydevices/cmods/lv_bindings/generated/lvgl.pp lvgl/lvgl.h
+ * gen_binding.py --target circuitpython -M lvgl -MP lv --naming-style legacy --read-only-ir --ir generated/lvgl.json -E generated/lvgl.pp lvgl/lvgl.h
  *
  * Preprocessing command:
  * Preprocessing was disabled.

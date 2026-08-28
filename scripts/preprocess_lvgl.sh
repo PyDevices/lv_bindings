@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Preprocess lvgl/lvgl.h once with MicroPython-canonical flags (no LV_*_BUILD).
+# Preprocess lvgl/lvgl.h once with deterministic canonical flags (no LV_*_BUILD).
 # Writes generated/lvgl.pp and prints that path on stdout.
 set -e
 
@@ -10,12 +10,12 @@ FAKE_LIBC="$LV_BINDINGS_DIR/fake_libc_include"
 
 mkdir -p "$GENERATED"
 
-CPP="${CPP:-gcc -E}"
+CPP="${CPP:-gcc}"
 LV_CFLAGS="${LV_CFLAGS:-}"
 PP_FILE="$GENERATED/lvgl.pp"
 
 echo "Preprocessing $LVGL_H (MP-canonical flags)" >&2
-$CPP $LV_CFLAGS -E -DPYCPARSER \
+$CPP $LV_CFLAGS -E -P -std=c99 -DPYCPARSER \
     -I "$FAKE_LIBC" \
     "$LV_BINDINGS_DIR/$LVGL_H" >"$PP_FILE"
 

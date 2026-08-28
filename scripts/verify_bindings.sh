@@ -10,36 +10,16 @@ else
     PYTHON=python3
 fi
 GENERATED="$LV_BINDINGS_DIR/generated"
-BASELINE="$GENERATED/baseline"
 LVCP_C="$GENERATED/lvgl_circuitpython.c"
 LVPY_C="$GENERATED/lvgl_python.c"
-LVMP_C="$GENERATED/lvgl_micropython.c"
 LVIR_JSON="$GENERATED/lvgl.json"
 
-echo "==> Regenerate all binding targets"
-"$LV_BINDINGS_DIR/regenerate_lvmp.sh"
-"$LV_BINDINGS_DIR/regenerate_lvcp.sh"
-"$LV_BINDINGS_DIR/regenerate_lvpy.sh"
+echo "==> Verify deterministic generated artifacts"
+(
+    cd "$LV_BINDINGS_DIR"
+    PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m binding.generate --check
+)
 echo
-
-if [ -f "$BASELINE/lvmp.c" ] || [ -f "$BASELINE/lvgl_micropython.c" ]; then
-    echo "==> MP byte regression vs baseline (C body, excluding header metadata)"
-    if [ -f "$BASELINE/lvgl_micropython.c" ]; then
-        BASELINE_MP="$BASELINE/lvgl_micropython.c"
-    else
-        BASELINE_MP="$BASELINE/lvmp.c"
-    fi
-    diff -q <(tail -n +14 "$BASELINE_MP") <(tail -n +14 "$LVMP_C")
-    if [ -f "$BASELINE/lvgl.pp" ]; then
-        diff -q "$BASELINE/lvgl.pp" "$GENERATED/lvgl.pp"
-    elif [ -f "$BASELINE/bindings.pp" ]; then
-        diff -q "$BASELINE/bindings.pp" "$GENERATED/lvgl.pp"
-    elif [ -f "$BASELINE/lvmp.c.pp" ]; then
-        diff -q "$BASELINE/lvmp.c.pp" "$GENERATED/lvgl.pp"
-    fi
-    echo "OK: lvgl_micropython.c body matches baseline"
-    echo
-fi
 
 echo "==> Validate shared IR (lvgl.json)"
 "$PYTHON" "$LV_BINDINGS_DIR/binding/verify_ir.py" "$GENERATED"

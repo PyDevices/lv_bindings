@@ -37,10 +37,9 @@ lvgl-bindings/
   generated/            # Generated bindings (lvgl_*.c, lvgl.pyi — committed)
   python/               # Hand-written helpers (display_driver.py — committed)
   packages/             # Optional MIP manifests
-  regenerate_lvmp.sh    # MicroPython bindings
-  regenerate_lvcp.sh    # CircuitPython bindings
-  regenerate_lvpy.sh    # CPython bindings (native PyInit_lvgl)
-  scripts/              # preprocess_lvgl.sh, verify_bindings.sh
+  binding/generate.py    # Unified all-target generator
+  tools/                 # Artifact hashing and smoke checks
+  scripts/               # Verification and release utilities
 ```
 
 ## Clone
@@ -69,26 +68,29 @@ The practical flow is: make a small change in **`binding/`** or the LVGL submodu
 Regenerate after changing `lvgl/`, `lv_conf.h`, or `binding/`, then commit the updated files under `generated/`:
 
 ```bash
-./regenerate_lvmp.sh          # MicroPython → lvgl_micropython.c + lvgl.pp/json/pyi
-./regenerate_lvcp.sh          # CircuitPython → lvgl_circuitpython.c + lvgl_circuitpython.h + …
-./regenerate_lvpy.sh          # CPython → lvgl_python.c + lvgl.pp/json/pyi
-./regenerate_all.sh           # All three targets (release workflow)
-./regenerate_all.sh --pyi-only # Shared lvgl.pyi only; leaves C and IR untouched
+PYTHONPATH=. .venv/bin/python -m binding.generate                    # all targets
+PYTHONPATH=. .venv/bin/python -m binding.generate --target micropython
+PYTHONPATH=. .venv/bin/python -m binding.generate --target circuitpython
+PYTHONPATH=. .venv/bin/python -m binding.generate --target cpython
+PYTHONPATH=. .venv/bin/python -m binding.generate --pyi-only         # shared stub only
+PYTHONPATH=. .venv/bin/python -m binding.generate --check            # read-only reproducibility check
 ```
 
-Each regenerate script is self-contained: it preprocesses LVGL headers and writes
-`generated/*.c`, shared `lvgl.json`, `lvgl.pp`, and `lvgl.pyi`.
+The unified command preprocesses LVGL once and writes the selected target C
+source, shared `lvgl.json`/`lvgl.pp`, the CircuitPython generated header, and
+the shared `lvgl.pyi`. Preprocessing removes compiler line markers so the
+inputs are reproducible across checkout paths. The command's `--check` mode
+generates into a temporary directory and never changes the working tree.
 
-Per-target scripts read `LV_NAMING_STYLE` from the environment (`pythonic` for PEP 8-style
-export names; default is legacy / MP-shaped). Pass `--pythonic` to `regenerate_all.sh`
-to set that for all three targets.
+Use `--naming-style pythonic` only when deliberately testing the alternate
+profile; release generation remains on the legacy upstream-compatible names.
 
-The shared stub is generated from the existing `generated/lvgl.json` and
-`generated/lvgl.pp`. Use `--pyi-only` when changing typing enrichment so the C
-bindings and their IR inputs are not regenerated.
+The shared stub is generated from `generated/lvgl.json` and `generated/lvgl.pp`.
+Use `--pyi-only` when changing typing enrichment so the C bindings and their IR
+inputs are not regenerated.
 
 ```bash
-./scripts/verify_bindings.sh  # Regenerate all targets + regression checks
+./scripts/verify_bindings.sh  # Read-only checks
 ```
 
 After regen, rebuild the consumer repo(s) (`lvgl-micropython`,
@@ -114,5 +116,3 @@ into each consumer with that repo's `scripts/sync_from_lvgl_bindings.sh`.
 | [lvgl-micropython](https://github.com/PyDevices/lvgl-micropython) | MicroPython C module: `generated/lvgl_micropython.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
 | [lvgl-circuitpython](https://github.com/PyDevices/lvgl-circuitpython) | CircuitPython tree patches: `generated/lvgl_circuitpython.c`, `generated/lvgl_circuitpython.h`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` → `lib/` |
 | [lvgl-python](https://github.com/PyDevices/lvgl-python) | CPython extension & TestPyPI wheel publisher: `generated/lvgl_python.c`, `lvgl/`, `lv_conf.h`, `python/display_driver.py` (see [releasing-bindings.md](docs/releasing-bindings.md#cpython-auto-release-lvgl-python)) |
-
-

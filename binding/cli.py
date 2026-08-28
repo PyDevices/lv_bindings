@@ -95,6 +95,11 @@ def build_arg_parser():
         help="emit: generate target C source (default); ir: analyze + IR only",
     )
     parser.add_argument(
+        "--read-only-ir",
+        action="store_true",
+        help="use --ir as input without rewriting it",
+    )
+    parser.add_argument(
         "--naming-style",
         choices=["legacy", "pythonic"],
         default=os.environ.get("LV_NAMING_STYLE", "legacy"),
@@ -112,8 +117,20 @@ def _save_outputs(namespace, args):
         align_namespace_to_ir(namespace, args.ir)
     if args.metadata:
         save_metadata(namespace, args.metadata)
-    if args.ir and args.target in ("micropython", "circuitpython"):
+    if (
+        args.ir
+        and args.target in ("micropython", "circuitpython")
+        and not args.read_only_ir
+    ):
         save_bindings_ir(namespace, args.ir)
+
+
+def _stable_command_line(argv):
+    """Keep generated headers independent of the checkout's absolute path."""
+
+    if not argv:
+        return "gen_binding.py"
+    return " ".join([os.path.basename(argv[0])] + list(argv[1:]))
 
 
 def main(argv=None):
@@ -121,12 +138,12 @@ def main(argv=None):
         argv = sys.argv
     args = build_arg_parser().parse_args(argv[1:])
     set_naming_style(args.naming_style)
+    cmd_line = _stable_command_line(argv)
 
     if args.mode == "ir":
         if args.target != "micropython":
             raise SystemExit("IR mode requires --target micropython")
         source, pp_cmd = preprocess(args)
-        cmd_line = " ".join(argv)
         import io
         import os
 
@@ -143,7 +160,6 @@ def main(argv=None):
 
     if args.target == "circuitpython":
         source, pp_cmd = preprocess(args)
-        cmd_line = " ".join(argv)
         _result, namespace, emitted = run_circuitpython(
             args, source, pp_cmd, sys.stdout, cmd_line
         )
@@ -152,7 +168,6 @@ def main(argv=None):
 
     if args.target == "cpython":
         source, pp_cmd = preprocess(args)
-        cmd_line = " ".join(argv)
         _result, namespace, emitted = run_cpython(
             args, source, pp_cmd, sys.stdout, cmd_line
         )
@@ -163,7 +178,6 @@ def main(argv=None):
         raise SystemExit("Unsupported target: %s" % args.target)
 
     source, pp_cmd = preprocess(args)
-    cmd_line = " ".join(argv)
 
     _result, namespace = run_micropython(args, source, pp_cmd, sys.stdout, cmd_line)
 
