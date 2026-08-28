@@ -188,15 +188,26 @@ complete enough to replace it.
 - [x] Move deliberate deviations into an auditable policy file.
 - [x] Require every target exception to include a reason and test reference.
 - [x] Generate deterministic, versioned `generated/api.json` with an API hash.
-- [ ] Add a report command for compatibility and parity metrics.
+- [x] Add a report command for compatibility and parity metrics.
 
 Progress note: ``binding/api_model.py`` now records C/Python names, normalized
 types, declaration locations, object inheritance, callback typedefs, enum
 values, visibility, and target availability. ``binding/api_policy.json`` is
 validated against the current translation unit and ``generated/api.json`` is
-written from the same immutable model shared by all target runs. Conversion
-plans, lifetime semantics, enum ownership, reachability, and compatibility
-reporting are still pending; the legacy metadata/stub path remains active.
+written from the same immutable model shared by all target runs. The
+``binding.api_report`` command now reports inheritance-expanded qualified
+exports, target availability exceptions, visibility inventory, and a
+diagnostic projection against the compact historical baseline. Conversion
+plans, lifetime semantics, enum ownership, reachability, and acceptance of the
+compatibility score are still pending; the legacy metadata/stub path remains
+active.
+
+Interim safe checkpoint: the current model reports 22,923 MicroPython
+qualified exports and 22,921 CircuitPython/CPython exports, with two explicit
+TJPGD availability exceptions. Its historical name/location projection is
+96.99% (21,511/22,179), but the remaining missing/extra entries are not yet
+classified for acceptance. The report and validator are therefore diagnostic,
+not a completed C3 gate.
 
 ### Gate
 
@@ -381,12 +392,12 @@ Add focused tests for:
 - [x] Qualified pointers and arrays.
 - [x] Function pointers and callbacks.
 - [x] Static-inline declarations.
-- [ ] Widget inheritance and method ownership.
+- [x] Widget inheritance and method ownership.
 - [ ] Enum nesting and aliases.
-- [ ] Duplicate export detection.
+- [x] Duplicate export detection.
 - [ ] Unsupported conversions.
-- [ ] Target exception validation.
-- [ ] Deterministic JSON/API hashes.
+- [x] Target exception validation.
+- [x] Deterministic JSON/API hashes.
 - [ ] Typing signatures and duplicate declarations.
 - [ ] Callback GC/lifetime behavior.
 - [ ] Struct field reads/writes and buffer views.

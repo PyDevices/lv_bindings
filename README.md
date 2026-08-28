@@ -74,6 +74,8 @@ PYTHONPATH=. .venv/bin/python -m binding.generate --target circuitpython
 PYTHONPATH=. .venv/bin/python -m binding.generate --target cpython
 PYTHONPATH=. .venv/bin/python -m binding.generate --pyi-only         # shared stub only
 PYTHONPATH=. .venv/bin/python -m binding.generate --check            # read-only reproducibility check
+PYTHONPATH=. .venv/bin/python -m binding.api_report generated/api.json \
+    --baseline docs/baseline/lvgl-bindings-api-baseline.json --format markdown
 ```
 
 The unified command preprocesses LVGL once and writes the selected target C
@@ -90,6 +92,12 @@ profile; release generation remains on the legacy upstream-compatible names.
 The shared stub is generated from `generated/lvgl.json` and `generated/lvgl.pp`.
 Use `--pyi-only` when changing typing enrichment so the C bindings, API model,
 and their IR inputs are not regenerated.
+
+`binding.api_report` validates the canonical model and reports qualified export
+counts, target availability exceptions, inheritance-expanded object APIs, and
+the current diagnostic projection against the historical baseline. The
+baseline projection is informational until canonical lowering replaces the
+legacy metadata/stub path.
 
 ```bash
 ./scripts/verify_bindings.sh  # Read-only checks

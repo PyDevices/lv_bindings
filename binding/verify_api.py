@@ -20,7 +20,16 @@ def validate_api_data(data):
         errors.append("api_hash does not match canonical content")
     if data.get("module_prefix") != "lv":
         errors.append("unexpected module prefix")
-    for section in ("functions", "objects", "structs", "enums", "typedefs", "variables"):
+    sections = (
+        "functions",
+        "objects",
+        "structs",
+        "enums",
+        "typedefs",
+        "variables",
+        "constants",
+    )
+    for section in sections:
         if not isinstance(data.get(section), list):
             errors.append("section %s must be a list" % section)
     function_exports = {}
@@ -47,6 +56,22 @@ def validate_api_data(data):
                 )
             else:
                 function_exports[key] = function.get("c_name")
+    for section in (
+        "objects",
+        "structs",
+        "enums",
+        "typedefs",
+        "variables",
+        "constants",
+    ):
+        for item in data.get(section, ()):
+            available = item.get("available_on", ())
+            if not set(available) <= set(TARGETS):
+                name = item.get("python_name") or item.get("name") or item.get("c_name")
+                errors.append("%s %s has an unknown target" % (section, name))
+            if item.get("visibility") == "public" and not available:
+                name = item.get("python_name") or item.get("name") or item.get("c_name")
+                errors.append("public %s %s has no targets" % (section, name))
     names = {}
     for function in data.get("functions", ()):
         if function.get("visibility") != "public" or function.get("role") != "module":
