@@ -527,38 +527,38 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 ### Work
 
-- [ ] Update `lvgl-micropython` build paths, checks, tests, and documentation.
-- [ ] Update `lvgl-circuitpython` generated-header integration, lifecycle glue,
+- [x] Update `lvgl-micropython` build paths, checks, tests, and documentation.
+- [x] Update `lvgl-circuitpython` generated-header integration, lifecycle glue,
   registration, tests, and documentation.
-- [ ] Update `lvgl-python` runtime helpers, stub installation, extension tests,
+- [x] Update `lvgl-python` runtime helpers, stub installation, extension tests,
   packaging, and documentation.
-- [ ] Add Linux PR validation for generator tests, all-target generation,
+- [x] Add Linux PR validation for generator tests, all-target generation,
   parity, MicroPython Unix, CircuitPython Unix, and CPython builds/smoke tests.
-- [ ] Validate MicroPython user-C-module builds for supported Unix, Windows,
+- [x] Validate MicroPython user-C-module builds for supported Unix, Windows,
   WebAssembly, and MCU ports.
-- [ ] Validate CircuitPython patch builds for supported Unix, Windows, and MCU
-  ports.
-- [ ] Keep CPython extension and wheel testing for supported Unix, Windows,
+- [x] Validate CircuitPython patch builds for supported Unix and MCU ports. The
+  current CircuitPython 10.2.1 source tree has no Windows port target to build.
+- [x] Keep CPython extension and wheel testing for supported Unix, Windows,
   Android, and additional release platforms in release workflows.
-- [ ] Separate generation/checking from release mutation.
-- [ ] Ensure release tooling validates the matrix, computes the next `9.5.N`
+- [x] Separate generation/checking from release mutation.
+- [x] Ensure release tooling validates the matrix, computes the next `9.5.N`
   version, and creates commits/tags only when explicitly invoked.
-- [ ] Ensure downstream sync consumes an exact bindings commit or tag.
+- [x] Ensure downstream sync consumes an exact bindings commit or tag.
 
 ### Gate
 
-- [ ] A release dry run generates all artifacts and passes every check.
-- [ ] The expected LVGL-matched `9.5.N` version is produced.
-- [ ] No external publication occurs during implementation validation.
+- [x] A release dry run generates all artifacts and passes every check.
+- [x] The expected LVGL-matched `9.5.N` version is produced.
+- [x] No external publication occurs during implementation validation.
 
 ### Handoff
 
-- Bindings commit SHA: `________________`
-- MicroPython commit SHA: `________________`
-- CircuitPython commit SHA: `________________`
-- CPython commit SHA: `________________`
-- Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Bindings commit SHA: `a690f0acc3ced1f65ba89a0e50fe027cb2120d32`
+- MicroPython commit SHA: `26d15672b1418baa64abe3229b75b11e6359d368`
+- CircuitPython commit SHA: `83b24e2a939c714401c26106a6c8e60bed4c27f4`
+- CPython commit SHA: `8f4fca66d5a58a662b28eced7639901e327a7643`
+- Validation command(s): `TMPDIR=/tmp/lvgl-bindings-pytest .venv/bin/python -m pytest -q -s tests`; `./regenerate_all.sh --check --hash`; `./scripts/release_dry_run.sh`; `./scripts/publish_release_tag.sh --dry-run`; MicroPython/CircuitPython consumer unit tests; CPython consumer unit tests and editable smoke; CPython wheel build and archive inspection; `../cmods/build_mp.sh --port unix --variant standard` + smoke; MicroPython Windows cross-build; `../cmods/build_mp.sh --port webassembly --variant pydevices` + Node smoke; LVGL-only `../cmods/build_mp.sh --port rp2 --board RPI_PICO2`; `../cmods/build_cp.sh --port unix --variant coverage` + smoke; `CP_SKIP_EXT='audioif displayif pygraphics' ../cmods/build_cp.sh --port espressif --board adafruit_qualia_s3_rgb666`
+- Notes: `All consumers reject branch refs and record the resolved 40-character source commit in LVGL_BINDINGS_COMMIT. Their Make/CMake/setup integration verifies the generated artifacts and source pin before building. CircuitPython includes the generated header and has one owner each for registration and lifecycle; its patch script now exits successfully after a completed apply. CPython installs the ABI-named pyi beside the extension, and its wheel contains both files. Linux PR CI builds and smokes all three consumers through exact pinned revisions. Generation is non-mutating; tag creation and downstream publication require separate explicit commands or publish inputs. The release dry run passed 129 tests, deterministic all-target generation, parity/stub/mypy checks, and produced expected version 9.5.15. Tag dry-run left v9.5.15 absent, and no commit, tag, dispatch, release, or package publication occurred. MicroPython Unix and WebAssembly runtime smoke passed; Windows cross-build passed but Wine was unavailable for runtime smoke; an isolated RP2350 MCU build produced firmware. CircuitPython Unix runtime smoke passed and the LVGL-only Qualia S3 MCU build produced firmware; CircuitPython 10.2.1 has no Windows port directory. Broader cmods probes also exposed unrelated integration constraints without changing their owners: the full MicroPython ESP32-S3 workspace build stops in displayif on removed MP_ETIMEDOUT, and a stock Feather RP2040 CircuitPython image exceeds its 1020 KiB firmware region. The bindings themselves compiled in both cases before those failures.`
 
 ## Checkpoint 8 — Cleanup and final handoff
 
