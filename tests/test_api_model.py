@@ -9,7 +9,8 @@ def test_api_model_classifies_common_declarations_without_target_policy():
         "typedef void (*changed_cb_t)(widget_t *widget); "
         "lv_obj_t *lv_widget_create(lv_obj_t *parent); "
         "void lv_widget_set_value(lv_obj_t *widget, int value); "
-        "int lv_widget_count(int limit); "
+        "int lv_widget_static(int value); "
+        "int lv_count(int limit); "
         "enum mode { MODE_OFF = 0, MODE_ON = 1 };",
         filename="api.h",
     )
@@ -20,14 +21,16 @@ def test_api_model_classifies_common_declarations_without_target_policy():
     assert functions["lv_widget_create"].role == "constructor"
     assert functions["lv_widget_set_value"].role == "object_method"
     assert functions["lv_widget_set_value"].python_name == "set_value"
-    assert functions["lv_widget_count"].role == "module"
-    assert functions["lv_widget_count"].available_on == (
+    assert functions["lv_widget_static"].role == "object_method"
+    assert functions["lv_widget_static"].static is True
+    assert functions["lv_count"].role == "module"
+    assert functions["lv_count"].available_on == (
         "micropython",
         "circuitpython",
         "cpython",
     )
-    assert functions["lv_widget_count"].static is False
-    assert model.objects[0].methods == ("set_value",)
+    assert functions["lv_count"].static is False
+    assert model.objects[0].methods == ("set_value", "static")
     assert model.objects[0].parent == "obj"
     assert model.objects[0].c_type == "lv_widget_t"
     structs = {struct.c_name: struct for struct in model.structs}

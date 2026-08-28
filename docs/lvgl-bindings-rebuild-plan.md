@@ -143,6 +143,12 @@ surface. The next structural step is to migrate those decisions to the
 declaration IR; the current shared snapshot prevents a target from reparsing
 or reanalyzing the translation unit while preserving the C output gate.
 
+Constructor and direct widget-method ownership decisions now come from the
+shared API model, including exact constructor matching, longest-prefix
+ownership, and static-method detection from the first argument. The emitter
+still receives AST nodes for C rendering, and the generated-C body gate remains
+clean.
+
 The declaration IR now normalizes C ``(void)`` parameter lists, preserves
 function specifiers such as ``static inline``, and has focused coverage for
 qualified pointers, arrays, callbacks, anonymous records, unions, and forward

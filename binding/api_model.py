@@ -541,26 +541,28 @@ def build_api_model(
         role = "module"
         receiver = None
         static = False
-        object_name = next(
-            (
-                object_name
-                for object_name in constructors
-                if plain.startswith(object_name + "_")
-                and decision.visibility == "public"
-                and _same_struct(
-                    index,
-                    index.first_argument_type_name(function.name),
-                    base_obj_type,
+        if function.name in constructors.values():
+            role = "constructor"
+            receiver = next(
+                name for name, c_name in constructors.items() if c_name == function.name
+            )
+        elif decision.visibility == "public":
+            matching_objects = sorted(
+                (
+                    object_name
+                    for object_name in constructors
+                    if plain.startswith(object_name + "_")
+                ),
+                key=len,
+                reverse=True,
+            )
+            if matching_objects:
+                role = "object_method"
+                receiver = matching_objects[0]
+                object_methods[receiver].append(
+                    plain[len(receiver) + 1 :]
                 )
-            ),
-            None,
-        )
-        if object_name is not None:
-            role = "constructor" if plain == object_name + "_create" else "object_method"
-            receiver = object_name
-            if role == "object_method":
-                object_methods[object_name].append(plain[len(object_name) + 1 :])
-        elif function.name in struct_receivers:
+        if role == "module" and function.name in struct_receivers:
             role = "struct_method"
             receiver = struct_receivers[function.name]
         functions.append(
@@ -577,7 +579,14 @@ def build_api_model(
                 receiver=receiver,
                 parameters=function.parameters,
                 return_type=function.return_type,
-                static=("static" in function.storage),
+                static=(
+                    role == "object_method"
+                    and not _same_struct(
+                        index,
+                        index.first_argument_type_name(function.name),
+                        base_obj_type,
+                    )
+                ),
                 variadic=function.variadic,
                 storage=function.storage,
                 function_specifiers=function.function_specifiers,

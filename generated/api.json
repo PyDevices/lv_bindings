@@ -1,5 +1,5 @@
 {
-  "api_hash": "6fc4b4cd3bcfd3d7a211df122885a8daf7243088c8cfdf89cf839dbbfeafbc8d",
+  "api_hash": "b6dd36b5a5e8a05e7d260d6243ed796b11db044398bb692d0634723843980505",
   "constants": [
     {
       "available_on": [
@@ -13307,7 +13307,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -14610,7 +14610,7 @@
         }
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -14659,7 +14659,7 @@
         "name": "uint32_t"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -14705,7 +14705,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -14985,7 +14985,7 @@
         }
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -15181,7 +15181,7 @@
         "name": "bool"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -15230,7 +15230,7 @@
         "name": "bool"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -15543,7 +15543,7 @@
         "name": "uint32_t"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -17288,7 +17288,7 @@
         "name": "void"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -22163,13 +22163,14 @@
           }
         }
       ],
-      "python_name": "canvas_buf_size",
+      "python_name": "buf_size",
+      "receiver": "canvas",
       "return_type": {
         "kind": "identifier",
         "name": "uint32_t"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -27392,7 +27393,7 @@
         "name": "lv_color_t"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -28201,7 +28202,7 @@
         "name": "bool"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -28715,7 +28716,7 @@
         "name": "uint16_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -33920,7 +33921,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -34811,7 +34812,7 @@
         "name": "bool"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -35314,7 +35315,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -47375,13 +47376,14 @@
           }
         }
       ],
-      "python_name": "gif_get_size",
+      "python_name": "get_size",
+      "receiver": "gif",
       "return_type": {
         "kind": "primitive",
         "name": "bool"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -49926,14 +49928,14 @@
           }
         }
       ],
-      "python_name": "image_buf_free",
-      "receiver": "image_dsc_t",
+      "python_name": "buf_free",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50046,13 +50048,14 @@
           }
         }
       ],
-      "python_name": "image_buf_get_transformed_area",
+      "python_name": "buf_get_transformed_area",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50111,14 +50114,14 @@
           }
         }
       ],
-      "python_name": "image_buf_set_palette",
-      "receiver": "image_dsc_t",
+      "python_name": "buf_set_palette",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50156,13 +50159,14 @@
           }
         }
       ],
-      "python_name": "image_cache_drop",
+      "python_name": "cache_drop",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50181,13 +50185,14 @@
         "line": 5322
       },
       "parameters": [],
-      "python_name": "image_cache_dump",
+      "python_name": "cache_dump",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50219,13 +50224,14 @@
           }
         }
       ],
-      "python_name": "image_cache_init",
+      "python_name": "cache_init",
+      "receiver": "image",
       "return_type": {
         "kind": "identifier",
         "name": "lv_result_t"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50244,13 +50250,14 @@
         "line": 5320
       },
       "parameters": [],
-      "python_name": "image_cache_is_enabled",
+      "python_name": "cache_is_enabled",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "bool"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50269,7 +50276,8 @@
         "line": 5321
       },
       "parameters": [],
-      "python_name": "image_cache_iter_create",
+      "python_name": "cache_iter_create",
+      "receiver": "image",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -50277,8 +50285,8 @@
           "name": "lv_iter_t"
         }
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50322,13 +50330,14 @@
           }
         }
       ],
-      "python_name": "image_cache_resize",
+      "python_name": "cache_resize",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50456,8 +50465,8 @@
           }
         }
       ],
-      "python_name": "add_to_cache",
-      "receiver": "image_decoder_t",
+      "python_name": "decoder_add_to_cache",
+      "receiver": "image",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -50465,8 +50474,8 @@
           "name": "lv_cache_entry_t"
         }
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50501,14 +50510,14 @@
           }
         }
       ],
-      "python_name": "image_decoder_close",
-      "receiver": "image_decoder_dsc_t",
+      "python_name": "decoder_close",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50527,7 +50536,8 @@
         "line": 3290
       },
       "parameters": [],
-      "python_name": "image_decoder_create",
+      "python_name": "decoder_create",
+      "receiver": "image",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -50535,8 +50545,8 @@
           "name": "lv_image_decoder_t"
         }
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50555,13 +50565,14 @@
         "line": 5878
       },
       "parameters": [],
-      "python_name": "image_decoder_deinit",
+      "python_name": "decoder_deinit",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50596,14 +50607,14 @@
           }
         }
       ],
-      "python_name": "delete",
-      "receiver": "image_decoder_t",
+      "python_name": "decoder_delete",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50671,14 +50682,14 @@
           }
         }
       ],
-      "python_name": "image_decoder_get_area",
-      "receiver": "image_decoder_dsc_t",
+      "python_name": "decoder_get_area",
+      "receiver": "image",
       "return_type": {
         "kind": "identifier",
         "name": "lv_result_t"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50731,13 +50742,14 @@
           }
         }
       ],
-      "python_name": "image_decoder_get_info",
+      "python_name": "decoder_get_info",
+      "receiver": "image",
       "return_type": {
         "kind": "identifier",
         "name": "lv_result_t"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50772,8 +50784,8 @@
           }
         }
       ],
-      "python_name": "get_next",
-      "receiver": "image_decoder_t",
+      "python_name": "decoder_get_next",
+      "receiver": "image",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -50781,8 +50793,8 @@
           "name": "lv_image_decoder_t"
         }
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50826,13 +50838,14 @@
           }
         }
       ],
-      "python_name": "image_decoder_init",
+      "python_name": "decoder_init",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50903,14 +50916,14 @@
           }
         }
       ],
-      "python_name": "image_decoder_open",
-      "receiver": "image_decoder_dsc_t",
+      "python_name": "decoder_open",
+      "receiver": "image",
       "return_type": {
         "kind": "identifier",
         "name": "lv_result_t"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -50960,8 +50973,8 @@
           }
         }
       ],
-      "python_name": "image_decoder_post_process",
-      "receiver": "image_decoder_dsc_t",
+      "python_name": "decoder_post_process",
+      "receiver": "image",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -50969,8 +50982,8 @@
           "name": "lv_draw_buf_t"
         }
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -51017,14 +51030,14 @@
           }
         }
       ],
-      "python_name": "set_close_cb",
-      "receiver": "image_decoder_t",
+      "python_name": "decoder_set_close_cb",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -51071,14 +51084,14 @@
           }
         }
       ],
-      "python_name": "set_get_area_cb",
-      "receiver": "image_decoder_t",
+      "python_name": "decoder_set_get_area_cb",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -51125,14 +51138,14 @@
           }
         }
       ],
-      "python_name": "set_info_cb",
-      "receiver": "image_decoder_t",
+      "python_name": "decoder_set_info_cb",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -51179,14 +51192,14 @@
           }
         }
       ],
-      "python_name": "set_open_cb",
-      "receiver": "image_decoder_t",
+      "python_name": "decoder_set_open_cb",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -51923,13 +51936,14 @@
           }
         }
       ],
-      "python_name": "image_header_cache_drop",
+      "python_name": "header_cache_drop",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -51948,13 +51962,14 @@
         "line": 5316
       },
       "parameters": [],
-      "python_name": "image_header_cache_dump",
+      "python_name": "header_cache_dump",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -51986,13 +52001,14 @@
           }
         }
       ],
-      "python_name": "image_header_cache_init",
+      "python_name": "header_cache_init",
+      "receiver": "image",
       "return_type": {
         "kind": "identifier",
         "name": "lv_result_t"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -52011,13 +52027,14 @@
         "line": 5314
       },
       "parameters": [],
-      "python_name": "image_header_cache_is_enabled",
+      "python_name": "header_cache_is_enabled",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "bool"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -52036,7 +52053,8 @@
         "line": 5315
       },
       "parameters": [],
-      "python_name": "image_header_cache_iter_create",
+      "python_name": "header_cache_iter_create",
+      "receiver": "image",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -52044,8 +52062,8 @@
           "name": "lv_iter_t"
         }
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -52089,13 +52107,14 @@
           }
         }
       ],
-      "python_name": "image_header_cache_resize",
+      "python_name": "header_cache_resize",
+      "receiver": "image",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -52913,13 +52932,14 @@
           }
         }
       ],
-      "python_name": "image_src_get_type",
+      "python_name": "src_get_type",
+      "receiver": "image",
       "return_type": {
         "kind": "identifier",
         "name": "lv_image_src_t"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -57956,13 +57976,14 @@
           }
         }
       ],
-      "python_name": "keyboard_def_event_cb",
+      "python_name": "def_event_cb",
+      "receiver": "keyboard",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -63068,7 +63089,7 @@
         "name": "void"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -63204,8 +63225,8 @@
           }
         }
       ],
-      "python_name": "cont_create",
-      "receiver": "menu",
+      "python_name": "create",
+      "receiver": "menu_cont",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -63213,7 +63234,7 @@
           "name": "lv_obj_t"
         }
       },
-      "role": "object_method",
+      "role": "constructor",
       "static": false,
       "storage": [],
       "variadic": false,
@@ -63669,8 +63690,8 @@
           }
         }
       ],
-      "python_name": "page_create",
-      "receiver": "menu",
+      "python_name": "create",
+      "receiver": "menu_page",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -63678,7 +63699,7 @@
           "name": "lv_obj_t"
         }
       },
-      "role": "object_method",
+      "role": "constructor",
       "static": false,
       "storage": [],
       "variadic": false,
@@ -63714,8 +63735,8 @@
           }
         }
       ],
-      "python_name": "section_create",
-      "receiver": "menu",
+      "python_name": "create",
+      "receiver": "menu_section",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -63723,7 +63744,7 @@
           "name": "lv_obj_t"
         }
       },
-      "role": "object_method",
+      "role": "constructor",
       "static": false,
       "storage": [],
       "variadic": false,
@@ -63759,8 +63780,8 @@
           }
         }
       ],
-      "python_name": "separator_create",
-      "receiver": "menu",
+      "python_name": "create",
+      "receiver": "menu_separator",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -63768,7 +63789,7 @@
           "name": "lv_obj_t"
         }
       },
-      "role": "object_method",
+      "role": "constructor",
       "static": false,
       "storage": [],
       "variadic": false,
@@ -64901,7 +64922,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -64946,7 +64967,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -64991,7 +65012,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -65036,7 +65057,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -65081,7 +65102,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -67974,8 +67995,8 @@
           }
         }
       ],
-      "python_name": "create_obj",
-      "receiver": "obj_class_t",
+      "python_name": "class_create_obj",
+      "receiver": "obj",
       "return_type": {
         "kind": "pointer",
         "target": {
@@ -67983,8 +68004,8 @@
           "name": "lv_obj_t"
         }
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -68190,13 +68211,14 @@
           }
         }
       ],
-      "python_name": "obj_delete_anim_completed_cb",
+      "python_name": "delete_anim_completed_cb",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -68408,13 +68430,14 @@
           }
         }
       ],
-      "python_name": "obj_enable_style_refresh",
+      "python_name": "enable_style_refresh",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -68467,14 +68490,14 @@
           }
         }
       ],
-      "python_name": "obj_event_base",
-      "receiver": "obj_class_t",
+      "python_name": "event_base",
+      "receiver": "obj",
       "return_type": {
         "kind": "identifier",
         "name": "lv_result_t"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -70699,7 +70722,7 @@
         "name": "lv_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -70766,7 +70789,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -70827,7 +70850,7 @@
         "name": "uint32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -70888,7 +70911,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -70949,7 +70972,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71016,7 +71039,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71077,7 +71100,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71138,7 +71161,7 @@
         "name": "bool"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71199,7 +71222,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71260,7 +71283,7 @@
         "name": "lv_base_dir_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71321,7 +71344,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71382,7 +71405,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71449,7 +71472,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71510,7 +71533,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71571,7 +71594,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71632,7 +71655,7 @@
         "name": "lv_grad_dir_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71693,7 +71716,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71754,7 +71777,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71815,7 +71838,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71876,7 +71899,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71937,7 +71960,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -71998,7 +72021,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72065,7 +72088,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72126,7 +72149,7 @@
         "name": "bool"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72187,7 +72210,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72248,7 +72271,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72309,7 +72332,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72376,7 +72399,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72437,7 +72460,7 @@
         "name": "lv_blend_mode_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72498,7 +72521,7 @@
         "name": "bool"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72559,7 +72582,7 @@
         "name": "lv_blur_quality_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72620,7 +72643,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72681,7 +72704,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72742,7 +72765,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72803,7 +72826,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72864,7 +72887,7 @@
         "name": "bool"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72925,7 +72948,7 @@
         "name": "lv_border_side_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -72986,7 +73009,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73131,7 +73154,7 @@
         "name": "bool"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73198,7 +73221,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73259,7 +73282,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73320,7 +73343,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73381,7 +73404,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73442,7 +73465,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73503,7 +73526,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73564,7 +73587,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73625,7 +73648,7 @@
         "name": "lv_blur_quality_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73686,7 +73709,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73747,7 +73770,7 @@
         "name": "lv_flex_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73808,7 +73831,7 @@
         "name": "lv_flex_flow_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73869,7 +73892,7 @@
         "name": "uint8_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73930,7 +73953,7 @@
         "name": "lv_flex_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -73991,7 +74014,7 @@
         "name": "lv_flex_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74052,7 +74075,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74113,7 +74136,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74174,7 +74197,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74235,7 +74258,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74296,7 +74319,7 @@
         "name": "lv_grid_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74357,7 +74380,7 @@
         "name": "lv_grid_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74418,7 +74441,7 @@
         "name": "lv_grid_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74485,7 +74508,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74546,7 +74569,7 @@
         "name": "lv_grid_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74613,7 +74636,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74674,7 +74697,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74741,7 +74764,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74802,7 +74825,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74863,7 +74886,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74924,7 +74947,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -74985,7 +75008,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75046,7 +75069,7 @@
         "name": "uint16_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75107,7 +75130,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75168,7 +75191,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75229,7 +75252,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75290,7 +75313,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75351,7 +75374,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75412,7 +75435,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75473,7 +75496,7 @@
         "name": "bool"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75534,7 +75557,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75595,7 +75618,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75656,7 +75679,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75717,7 +75740,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75778,7 +75801,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75839,7 +75862,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75900,7 +75923,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -75961,7 +75984,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76022,7 +76045,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76083,7 +76106,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76144,7 +76167,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76262,7 +76285,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76323,7 +76346,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76384,7 +76407,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76445,7 +76468,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76506,7 +76529,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76567,7 +76590,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76628,7 +76651,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76689,7 +76712,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76750,7 +76773,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76811,7 +76834,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76872,7 +76895,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -76933,7 +76956,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77063,7 +77086,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77124,7 +77147,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77185,7 +77208,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77246,7 +77269,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77364,7 +77387,7 @@
         "name": "uint32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77425,7 +77448,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77486,7 +77509,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77547,7 +77570,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77608,7 +77631,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77669,7 +77692,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77730,7 +77753,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77791,7 +77814,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77852,7 +77875,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77913,7 +77936,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -77974,7 +77997,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78035,7 +78058,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78096,7 +78119,7 @@
         "name": "lv_text_align_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78157,7 +78180,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78218,7 +78241,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78279,7 +78302,7 @@
         "name": "lv_text_decor_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78346,7 +78369,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78407,7 +78430,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78468,7 +78491,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78529,7 +78552,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78590,7 +78613,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78651,7 +78674,7 @@
         "name": "lv_color_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78712,7 +78735,7 @@
         "name": "lv_opa_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78773,7 +78796,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78834,7 +78857,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78895,7 +78918,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -78956,7 +78979,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79017,7 +79040,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79078,7 +79101,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79139,7 +79162,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79200,7 +79223,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79261,7 +79284,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79322,7 +79345,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79383,7 +79406,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79444,7 +79467,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79511,7 +79534,7 @@
         }
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79572,7 +79595,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79633,7 +79656,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79694,7 +79717,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79755,7 +79778,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79816,7 +79839,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -79877,7 +79900,7 @@
         "name": "int32_t"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -81810,7 +81833,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -81934,7 +81957,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -82094,13 +82117,14 @@
           }
         }
       ],
-      "python_name": "obj_null_on_delete",
+      "python_name": "null_on_delete",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -82204,13 +82228,14 @@
           }
         }
       ],
-      "python_name": "obj_redraw",
+      "python_name": "redraw",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -82260,13 +82285,14 @@
           }
         }
       ],
-      "python_name": "obj_refr",
+      "python_name": "refr",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -83258,13 +83284,14 @@
           }
         }
       ],
-      "python_name": "obj_report_style_change",
+      "python_name": "report_style_change",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -90142,7 +90169,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -90278,7 +90305,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -90546,7 +90573,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -91276,7 +91303,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -91478,7 +91505,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -91548,7 +91575,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -91948,7 +91975,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -92756,7 +92783,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -93756,7 +93783,7 @@
         "name": "void"
       },
       "role": "object_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -95340,13 +95367,14 @@
         "line": 5975
       },
       "parameters": [],
-      "python_name": "obj_style_deinit",
+      "python_name": "style_deinit",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -95452,12 +95480,13 @@
           }
         }
       ],
-      "python_name": "obj_style_get_selector_part",
+      "python_name": "style_get_selector_part",
+      "receiver": "obj",
       "return_type": {
         "kind": "identifier",
         "name": "lv_part_t"
       },
-      "role": "module",
+      "role": "object_method",
       "static": true,
       "storage": [
         "static"
@@ -95494,12 +95523,13 @@
           }
         }
       ],
-      "python_name": "obj_style_get_selector_state",
+      "python_name": "style_get_selector_state",
+      "receiver": "obj",
       "return_type": {
         "kind": "identifier",
         "name": "lv_state_t"
       },
-      "role": "module",
+      "role": "object_method",
       "static": true,
       "storage": [
         "static"
@@ -95521,13 +95551,14 @@
         "line": 5974
       },
       "parameters": [],
-      "python_name": "obj_style_init",
+      "python_name": "style_init",
+      "receiver": "obj",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "module",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -99996,14 +100027,14 @@
           }
         }
       ],
-      "python_name": "set_range",
-      "receiver": "scale_section_t",
+      "python_name": "section_set_range",
+      "receiver": "scale",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -100065,14 +100096,14 @@
           }
         }
       ],
-      "python_name": "set_style",
-      "receiver": "scale_section_t",
+      "python_name": "section_set_style",
+      "receiver": "scale",
       "return_type": {
         "kind": "primitive",
         "name": "void"
       },
-      "role": "struct_method",
-      "static": false,
+      "role": "object_method",
+      "static": true,
       "storage": [],
       "variadic": false,
       "visibility": "public"
@@ -106180,7 +106211,7 @@
         "name": "int32_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -106641,7 +106672,7 @@
         "name": "bool"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -107292,7 +107323,7 @@
         "name": "uint32_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -107368,7 +107399,7 @@
         "name": "lv_style_res_t"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -107459,7 +107490,7 @@
         "name": "bool"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -107656,7 +107687,7 @@
         "name": "bool"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -111720,7 +111751,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -111832,7 +111863,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -112052,7 +112083,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -112650,7 +112681,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -112816,7 +112847,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -112874,7 +112905,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -113202,7 +113233,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -113932,7 +113963,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -114752,7 +114783,7 @@
         "name": "void"
       },
       "role": "struct_method",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -117344,7 +117375,7 @@
         "name": "uint16_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -117386,7 +117417,7 @@
         "name": "uint32_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -119302,7 +119333,7 @@
         "name": "uint32_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -120024,7 +120055,7 @@
         "name": "bool"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -120066,7 +120097,7 @@
         "name": "bool"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -120161,7 +120192,7 @@
         "name": "bool"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -122868,7 +122899,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -123008,7 +123039,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -123053,7 +123084,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -123098,7 +123129,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -123143,7 +123174,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -123188,7 +123219,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -123233,7 +123264,7 @@
         "name": "lv_result_t"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -125295,7 +125326,7 @@
         }
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -125324,7 +125355,7 @@
         "name": "int"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -125353,7 +125384,7 @@
         "name": "int"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -125382,7 +125413,7 @@
         "name": "int"
       },
       "role": "module",
-      "static": true,
+      "static": false,
       "storage": [
         "static"
       ],
@@ -126124,6 +126155,7 @@
       "c_type": "lv_canvas_t",
       "constructor": "lv_canvas_create",
       "methods": [
+        "buf_size",
         "copy_buf",
         "fill_bg",
         "finish_layer",
@@ -126266,6 +126298,7 @@
         "get_current_frame_index",
         "get_frame_count",
         "get_loop_count",
+        "get_size",
         "is_loaded",
         "pause",
         "restart",
@@ -126289,6 +126322,30 @@
       "constructor": "lv_image_create",
       "methods": [
         "bind_src",
+        "buf_free",
+        "buf_get_transformed_area",
+        "buf_set_palette",
+        "cache_drop",
+        "cache_dump",
+        "cache_init",
+        "cache_is_enabled",
+        "cache_iter_create",
+        "cache_resize",
+        "decoder_add_to_cache",
+        "decoder_close",
+        "decoder_create",
+        "decoder_deinit",
+        "decoder_delete",
+        "decoder_get_area",
+        "decoder_get_info",
+        "decoder_get_next",
+        "decoder_init",
+        "decoder_open",
+        "decoder_post_process",
+        "decoder_set_close_cb",
+        "decoder_set_get_area_cb",
+        "decoder_set_info_cb",
+        "decoder_set_open_cb",
         "get_antialias",
         "get_bitmap_map_src",
         "get_blend_mode",
@@ -126305,6 +126362,12 @@
         "get_src_width",
         "get_transformed_height",
         "get_transformed_width",
+        "header_cache_drop",
+        "header_cache_dump",
+        "header_cache_init",
+        "header_cache_is_enabled",
+        "header_cache_iter_create",
+        "header_cache_resize",
         "set_antialias",
         "set_bitmap_map_src",
         "set_blend_mode",
@@ -126318,7 +126381,8 @@
         "set_scale",
         "set_scale_x",
         "set_scale_y",
-        "set_src"
+        "set_src",
+        "src_get_type"
       ],
       "parent": "obj",
       "python_name": "image",
@@ -126355,6 +126419,7 @@
       "c_type": "lv_keyboard_t",
       "constructor": "lv_keyboard_create",
       "methods": [
+        "def_event_cb",
         "get_button_text",
         "get_map_array",
         "get_mode",
@@ -126475,7 +126540,6 @@
       "methods": [
         "back_button_is_root",
         "clear_history",
-        "cont_create",
         "get_cur_main_page",
         "get_cur_sidebar_page",
         "get_main_header",
@@ -126484,9 +126548,6 @@
         "get_mode_root_back_button",
         "get_sidebar_header",
         "get_sidebar_header_back_button",
-        "page_create",
-        "section_create",
-        "separator_create",
         "set_load_page_event",
         "set_mode_header",
         "set_mode_root_back_button",
@@ -126623,13 +126684,17 @@
         "calculate_style_text_align",
         "center",
         "check_type",
+        "class_create_obj",
         "class_init_obj",
         "clean",
         "delete",
+        "delete_anim_completed_cb",
         "delete_async",
         "delete_delayed",
         "destruct",
         "dump_tree",
+        "enable_style_refresh",
+        "event_base",
         "fade_in",
         "fade_out",
         "get_child",
@@ -126863,7 +126928,10 @@
         "move_foreground",
         "move_to",
         "move_to_index",
+        "null_on_delete",
         "readjust_scroll",
+        "redraw",
+        "refr",
         "refr_pos",
         "refr_size",
         "refresh_ext_draw_size",
@@ -126881,6 +126949,7 @@
         "remove_style_all",
         "remove_theme",
         "replace_style",
+        "report_style_change",
         "reset_transform",
         "scroll_by",
         "scroll_by_bounded",
@@ -127064,7 +127133,11 @@
         "style_apply_color_filter",
         "style_apply_recolor",
         "style_create_transition",
+        "style_deinit",
         "style_get_disabled",
+        "style_get_selector_part",
+        "style_get_selector_state",
+        "style_init",
         "style_set_disabled",
         "style_state_compare",
         "swap",
@@ -127143,6 +127216,8 @@
         "get_range_min_value",
         "get_rotation",
         "get_total_tick_count",
+        "section_set_range",
+        "section_set_style",
         "set_angle_range",
         "set_draw_ticks_on_top",
         "set_image_needle_value",
@@ -138086,10 +138161,10 @@
         "line": 5861
       },
       "methods": [
-        "image_decoder_close",
-        "image_decoder_get_area",
-        "image_decoder_open",
-        "image_decoder_post_process"
+        "decoder_close",
+        "decoder_get_area",
+        "decoder_open",
+        "decoder_post_process"
       ],
       "python_name": "image_decoder_dsc_t",
       "typedef_names": [
@@ -138172,13 +138247,13 @@
         "line": 5838
       },
       "methods": [
-        "add_to_cache",
-        "delete",
-        "get_next",
-        "set_close_cb",
-        "set_get_area_cb",
-        "set_info_cb",
-        "set_open_cb"
+        "decoder_add_to_cache",
+        "decoder_delete",
+        "decoder_get_next",
+        "decoder_set_close_cb",
+        "decoder_set_get_area_cb",
+        "decoder_set_info_cb",
+        "decoder_set_open_cb"
       ],
       "python_name": "image_decoder_t",
       "typedef_names": [
@@ -138256,8 +138331,8 @@
         "line": 983
       },
       "methods": [
-        "image_buf_free",
-        "image_buf_set_palette"
+        "buf_free",
+        "buf_set_palette"
       ],
       "python_name": "image_dsc_t",
       "typedef_names": [
@@ -140831,8 +140906,8 @@
         "line": 5983
       },
       "methods": [
-        "create_obj",
-        "obj_event_base"
+        "class_create_obj",
+        "event_base"
       ],
       "python_name": "obj_class_t",
       "typedef_names": [
@@ -142502,8 +142577,8 @@
         "line": 6339
       },
       "methods": [
-        "set_range",
-        "set_style"
+        "section_set_range",
+        "section_set_style"
       ],
       "python_name": "scale_section_t",
       "typedef_names": [

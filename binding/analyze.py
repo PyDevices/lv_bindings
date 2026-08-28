@@ -34,6 +34,8 @@ from .parse import (
     remove_quals,
 )
 from .ir import DeclarationIndex, parse_ast
+from .api_model import build_api_model
+from .api_policy import ApiPolicy
 from .util import memoize
 
 
@@ -56,6 +58,16 @@ def get_ctor(obj_name):
 
 
 def get_methods(obj_name):
+    api_model = runtime.get("api_model", None)
+    if api_model is not None:
+        method_names = {
+            function.c_name
+            for function in api_model.functions
+            if function.role == "object_method"
+            and function.receiver == obj_name
+            and function.visibility == "public"
+        }
+        return [func for func in runtime.get("funcs") if func.name in method_names]
     return [
         func
         for func in runtime.get("funcs")
@@ -282,6 +294,17 @@ def analyze():
     )
     runtime.set_("declaration_ir", declaration_ir)
     runtime.set_("declaration_index", declaration_index)
+    api_model = runtime.get("api_model", None)
+    if api_model is None:
+        api_model = build_api_model(
+            declaration_ir,
+            module_prefix=runtime.get("module_prefix", "lv"),
+            base_obj_type=runtime.get("base_obj_type", "lv_obj_t"),
+            policy=ApiPolicy.default(
+                module_prefix=runtime.get("module_prefix", "lv")
+            ),
+        )
+        runtime.set_("api_model", api_model)
 
 
     # Types and structs
@@ -352,7 +375,15 @@ def analyze():
         f for f in all_funcs if not f.name.startswith("_")
     ]  # functions that start with underscore are usually internal
     # eprint('... %s' % ',\n'.join(sorted('%s' % func.name for func in funcs)))
-    obj_ctors = [func for func in funcs if is_obj_ctor(func)]
+    if api_model is not None:
+        constructor_names = {
+            function.c_name
+            for function in api_model.functions
+            if function.role == "constructor" and function.visibility == "public"
+        }
+        obj_ctors = [func for func in funcs if func.name in constructor_names]
+    else:
+        obj_ctors = [func for func in funcs if is_obj_ctor(func)]
     # eprint('CTORS(%d): %s' % (len(obj_ctors), ', '.join(sorted('%s' % ctor.name for ctor in obj_ctors))))
     for obj_ctor in obj_ctors:
         funcs.remove(obj_ctor)
