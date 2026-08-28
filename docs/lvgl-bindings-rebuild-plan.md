@@ -435,7 +435,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   `micropython` or `circuitpython` lowering target rather than silently
   defaulting to MicroPython. This makes its two-backend scope explicit without
   changing either target's C output. Validation: 112 repository tests and
-  binding.generate --check passed; generated artifacts remain unchanged.`
+  binding.generate --check passed; generated artifacts remain unchanged.
+  Seventeenth migration slice: removed the unreachable MP-object declaration
+  preamble from the CPython-native emitter now that its target contract is
+  enforced. The CPython object declaration is unconditional within its phase;
+  generated artifacts remain unchanged. Validation: 112 repository tests and
+  binding.generate --check passed.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

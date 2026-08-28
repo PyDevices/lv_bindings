@@ -124,33 +124,11 @@ def emit_c():
     # Enable objects, if supported
     #
 
-    if len(obj_names) > 0 and (_emit_max_phase is None or _emit_max_phase >= 5) and _emit_target == "cpython":
+    if len(obj_names) > 0 and (_emit_max_phase is None or _emit_max_phase >= 5):
         print(
             """
 #define LV_OBJ_T lv_obj_t
 """
-        )
-
-    if len(obj_names) > 0 and (_emit_max_phase is None or _emit_max_phase >= 5) and _emit_target != "cpython":
-        print(
-            """
-#define LV_OBJ_T {obj_type}
-
-typedef struct mp_lv_obj_type_t {{
-    const lv_obj_class_t *lv_obj_class;
-    const mp_obj_type_t *mp_obj_type;
-}} mp_lv_obj_type_t;
-
-static const mp_lv_obj_type_t mp_lv_{base_obj}_type;
-static const mp_lv_obj_type_t *mp_lv_obj_types[];
-
-static inline const mp_obj_type_t *get_BaseObj_type(void)
-{{
-    return mp_lv_{base_obj}_type.mp_obj_type;
-}}
-
-MP_DEFINE_EXCEPTION(LvReferenceError, Exception)
-    """.format(obj_type=base_obj_type, base_obj=base_obj_name)
         )
 
     #
