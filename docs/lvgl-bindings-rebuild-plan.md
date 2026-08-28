@@ -181,7 +181,7 @@ for Python-facing outputs.
   constructor/method/module role, enum ownership, aliases, inheritance,
   callbacks, and target availability.
 - [x] Add target-neutral conversion classifications and Python type views.
-- [ ] Record callback/object lifetime semantics from verified runtime behavior.
+- [x] Record callback/object lifetime semantics from verified runtime behavior.
 - [x] Classify methods from declaration relationships and first-argument types,
   not only function-name prefixes.
 - [x] Move deliberate deviations into an auditable policy file.
@@ -207,8 +207,13 @@ types, including opaque ``struct _lv_*_t`` definitions, and anonymous
 typedef-backed records resolve through their alias. Explicitly hidden
 implementation structs are prevented from leaking into public annotations;
 the canonical pyi emitter lowers those views to ``Any`` where necessary.
-Lifetime/nullability, reachability, backend lowering, and acceptance of the
-compatibility score are still pending.
+Runtime evidence now establishes that event callbacks remain callable after
+``gc.collect()`` both while their widget wrapper is referenced and after the
+wrapper is released and the object is reached again through ``get_child()``.
+The shared Unix smoke test passed those cases on MicroPython, CircuitPython,
+and CPython. This records callback rooting across the three current runtimes;
+nullability, broader object-destruction semantics, reachability, backend
+lowering, and acceptance of the compatibility score are still pending.
 
 Interim safe checkpoint: the current model reports 22,997 MicroPython
 qualified exports and 22,995 CircuitPython/CPython exports, with two explicit
@@ -447,7 +452,7 @@ Add focused tests for:
 - [x] Deterministic JSON/API hashes.
 - [x] Typing signatures and duplicate declarations.
 - [x] Generated-stub static checking.
-- [ ] Callback GC/lifetime behavior.
+- [x] Callback GC/lifetime behavior.
 - [ ] Struct field reads/writes and buffer views.
 - [ ] `None` handling for optional pointers.
 - [ ] Cross-target namespace and enum-value parity.
