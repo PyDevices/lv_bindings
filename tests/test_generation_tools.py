@@ -18,6 +18,7 @@ from binding.generator import (
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
 from binding.emit_backend import (
+    callback_return_lowering,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
@@ -255,6 +256,17 @@ def test_function_return_lowering_preserves_void_and_pointer_conversion_policy()
     assert pointer.build_result == "lv_obj_t * _res = "
     assert pointer.build_return_value == "lv_to_mp_obj((void*)_res)"
     assert pointer.metadata_return_type == "lv.obj"
+
+
+def test_callback_return_lowering_preserves_void_and_conversion_policy():
+    mappings = {"lv_result_t": "mp_to_lv_result"}
+
+    void = callback_return_lowering(return_type="void", mp_to_lv=mappings)
+    result = callback_return_lowering(return_type="lv_result_t", mp_to_lv=mappings)
+
+    assert (void.result_assignment, void.return_value) == ("", "")
+    assert result.result_assignment == "mp_obj_t callback_result = "
+    assert result.return_value == " mp_to_lv_result(callback_result)"
 
 
 def test_struct_pointer_helpers_preserve_target_null_and_warning_policy():

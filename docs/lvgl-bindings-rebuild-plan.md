@@ -372,7 +372,11 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   pointer const-discard casts, conversion wrappers, and API metadata. Recursive
   conversion discovery remains owned by each emitter. Validation: 102
   repository tests passed; binding.generate --check passed; generated artifacts
-  remain unchanged.`
+  remain unchanged. Seventh migration slice: callback result lowering now uses
+  a shared typed contract for void callbacks and resolved MP-to-LVGL
+  conversions; recursive conversion discovery remains emitter-owned.
+  Validation: 103 repository tests passed; binding.generate --check passed;
+  generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

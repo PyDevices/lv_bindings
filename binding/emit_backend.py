@@ -36,6 +36,14 @@ class FunctionReturnLowering:
     metadata_return_type: str
 
 
+@dataclass(frozen=True)
+class CallbackReturnLowering:
+    """C fragments for one callback result through the MP compatibility API."""
+
+    result_assignment: str
+    return_value: str
+
+
 def prepare_target_lowering(ctx, *, target, max_phase):
     """Set common emitter state without imposing a VM-specific C contract."""
     runtime.set_("emit_options", {"target": target, "max_phase": max_phase})
@@ -122,6 +130,20 @@ def function_return_lowering(
             type=lv_to_mp[return_type], cast="(void*)" if is_pointer else ""
         ),
         lv_mp_type[return_type],
+    )
+
+
+def callback_return_lowering(*, return_type, mp_to_lv):
+    """Lower a callback result after the emitter resolves its conversion.
+
+    Callback conversion discovery stays emitter-owned because it can recurse
+    into type generation.  Once that mapping exists, all native targets use
+    the same ``mp_call_function_n_kw`` result storage and conversion policy.
+    """
+    if return_type == "void":
+        return CallbackReturnLowering("", "")
+    return CallbackReturnLowering(
+        "mp_obj_t callback_result = ", " %s(callback_result)" % mp_to_lv[return_type]
     )
 
 

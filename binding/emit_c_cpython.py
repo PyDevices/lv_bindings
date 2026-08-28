@@ -52,6 +52,7 @@ from .parse import (
 )
 from . import runtime
 from .emit_backend import (
+    callback_return_lowering,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     resolve_emitter_headers,
@@ -2104,6 +2105,10 @@ typedef union {
                         )
 
                 callback_metadata[func_name]["return_type"] = lv_mp_type[return_type]
+                return_lowering = callback_return_lowering(
+                    return_type=return_type,
+                    mp_to_lv=mp_to_lv,
+                )
                 print(
                     """
 /*
@@ -2134,12 +2139,8 @@ GENMPY_UNUSED static {return_type} {func_name}_callback({func_args})
                             ]
                         ),
                         user_data=full_user_data,
-                        return_value_assignment=""
-                        if return_type == "void"
-                        else "mp_obj_t callback_result = ",
-                        return_value=""
-                        if return_type == "void"
-                        else " %s(callback_result)" % mp_to_lv[return_type],
+                        return_value_assignment=return_lowering.result_assignment,
+                        return_value=return_lowering.return_value,
                     )
                 )
                 generated_callbacks[func_name] = True
