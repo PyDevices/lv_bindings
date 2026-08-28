@@ -249,10 +249,12 @@ API hash after this increment is
 - [ ] Accurately represent arrays and overloads.
 - [ ] Use private underscored types for generic blob/struct internals.
 - [x] Exclude explicitly unavailable symbols.
-- [ ] Replace regex-only namespace checks with manifest-based qualified export
+- [x] Replace regex-only namespace checks with manifest-based qualified export
   verification.
-- [ ] Verify module exports, type/member exports, enum ownership/values,
-  signatures, exceptions, and private helper leakage.
+- [x] Verify module exports, type/member exports, enum ownership, and target
+  filtering against the canonical manifest.
+- [ ] Verify enum values, signatures, target exceptions, and private helper
+  leakage in the pyi/runtime contract.
 
 Progress note: ``binding/emit_pyi_canonical.py`` renders the shared stub from
 ``generated/api.json`` and validates the model before pyi-only generation.
@@ -274,9 +276,9 @@ checker and runtime probes remain future gates.
 
 ### Handoff
 
-- Commit SHA: `1b9ac42`
+- Commit SHA: `7c397c8`
 - Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `./scripts/verify_bindings.sh`
-- Notes: `The shared lvgl.pyi is now emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, and variables; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. The dead legacy pyi emitter and its tests were removed; pyi_prototypes remains only for legacy C-generator metadata enrichment. Generated C and CircuitPython header files were unchanged. Static type checking and runtime stub probes remain open.`
+- Notes: `The shared lvgl.pyi is now emitted exclusively from schema-versioned generated/api.json. Canonical type views cover parameters, returns, fields, typedefs, and variables; target-only declarations are excluded from the common stub; nested enum duplication and field/method collisions are guarded by tests. The dead legacy pyi emitter and its tests were removed; pyi_prototypes remains only for legacy C-generator metadata enrichment. binding.verify_pyi now checks top-level and qualified member names from the manifest and runs in verify_bindings.sh. Generated C and CircuitPython header files were unchanged. Static type checking, enum-value/signature comparison, private-helper audit, and runtime stub probes remain open.`
 
 ## Checkpoint 5 — Unified target backends
 
