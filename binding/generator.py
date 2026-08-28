@@ -1,4 +1,4 @@
-"""Target run() bridges from cli to emit_* orchestrators and metadata export."""
+"""Shared analysis and target-backend orchestration."""
 
 from __future__ import print_function
 
@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from importlib import import_module
 
 from .context import BindingContext
-from .metadata import build_result
 
 
 @dataclass(frozen=True)
@@ -20,10 +19,9 @@ class Backend:
 
 @dataclass
 class BackendRun:
-    """Artifacts shared by every target lowering run."""
+    """Completed lowering run for one target."""
 
-    result: object
-    namespace: dict
+    context: BindingContext
     emitted: bool = True
 
 
@@ -155,9 +153,4 @@ def run_backend(target, args, source, pp_cmd, out, cmd_line, analysis_state=None
         args, source, pp_cmd, cmd_line, emit_print, analysis_state=analysis_state
     )
     import_module(backend.emitter_module).run(ctx)
-    from . import helpers
-
-    namespace = {name: getattr(ctx, name) for name in ctx.export_names()}
-    namespace["simplify_identifier"] = helpers.simplify_identifier
-    namespace["get_enum_name"] = helpers.get_enum_name
-    return BackendRun(build_result(ctx), namespace)
+    return BackendRun(ctx)

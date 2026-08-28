@@ -113,7 +113,7 @@ def is_widget_scoped_only_enum(enum_name):
 
 
 def collect_enum_referenced(enums, obj_names):
-    """Return enum names attached to widget types (MicroPython module-global semantics)."""
+    """Return enum names attached to widget types in the shared API contract."""
     enum_referenced = collections.OrderedDict()
     for obj_name in obj_names:
         for enum_name in enums.keys():

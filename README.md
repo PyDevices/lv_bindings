@@ -25,6 +25,10 @@ Every other repo in the family links back to this section rather than repeating 
   sister projects fit together, and what `python/display_driver.py` does.
 - [Loading fonts at runtime](docs/fonts.md) — `fonts/*.bin` and
   `python/fs_driver.py`: any built-in font without a firmware rebuild.
+- [Generator architecture](docs/generator-architecture.md) — canonical model,
+  policy, target lowering, parser pin, and validation invariants.
+- [Generator migration](docs/generator-migration.md) — clean-break command and
+  artifact changes from the pre-rebuild generator.
 - [docs/](docs/) — the full index.
 
 ## Layout
@@ -85,21 +89,18 @@ PYTHONPATH=. .venv/bin/python -m binding.api_report generated/api.json \
 ```
 
 The unified command preprocesses LVGL once and writes the selected target C
-source, the target-neutral `api.json`, shared `lvgl.json`/`lvgl.pp`, the
-CircuitPython generated header, and the shared `lvgl.pyi`. The API model is
+source, the target-neutral `api.json`, shared `lvgl.pp`, the CircuitPython
+generated header, and the shared `lvgl.pyi`. The API model is
 hashed and includes visibility and target availability; deliberate exceptions
 are recorded in `binding/api_policy.json`. Preprocessing removes compiler line markers so the
 inputs are reproducible across checkout paths. The command's `--check` mode
 generates into a temporary directory and never changes the working tree.
 
-Use `--naming-style pythonic` only when deliberately testing the alternate
-profile; release generation remains on the legacy upstream-compatible names.
-
 The shared stub is generated exclusively from the canonical
 `generated/api.json` model. Use `--pyi-only` when changing typing emission so
-the C bindings, shared declaration IR, and preprocessed input are not
-regenerated. The legacy `generated/lvgl.json` file remains a C-generator
-introspection artifact; it is not a typings source.
+the C bindings, canonical API model, and preprocessed input are not
+regenerated. The public names are the single established upstream-compatible
+profile; the rebuild intentionally has no alternate naming mode.
 
 `binding.api_report` validates the canonical model and reports qualified export
 counts, common-target coverage, target availability exceptions,

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import re
 from pathlib import Path
 from typing import Optional, Sequence
@@ -56,7 +55,6 @@ def write_pyi(
     *,
     target: str = "all",
     lvgl_version: Optional[str] = None,
-    naming_style: Optional[str] = None,
     repo_root: Optional[Path] = None,
 ) -> None:
     """Render one common or target-specific stub from ``api.json``."""
@@ -67,7 +65,6 @@ def write_pyi(
         data,
         target=target,
         lvgl_version=lvgl_version or read_lvgl_version_major_minor(repo_root),
-        naming_style=naming_style or "legacy",
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as handle:
@@ -139,12 +136,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         default=Path(__file__).resolve().parent.parent / "generated",
         help="Directory containing canonical API artifacts",
     )
-    parser.add_argument(
-        "--naming-style",
-        choices=["legacy", "pythonic"],
-        default=os.environ.get("LV_NAMING_STYLE", "legacy"),
-        help="Label the generated stub's naming profile (default: legacy)",
-    )
     args = parser.parse_args(argv)
     api_path = args.api or default_api_path(args.generated_dir)
     output_path = args.output or default_output_path(args.generated_dir)
@@ -152,7 +143,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         api_path,
         output_path,
         target=args.target,
-        naming_style=args.naming_style,
     )
     print("Wrote {}".format(output_path))
     return 0

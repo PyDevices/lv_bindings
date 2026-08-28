@@ -9,7 +9,6 @@ from typing import Dict, Iterable, Mapping
 
 DEFAULT_ARTIFACTS = (
     "api.json",
-    "lvgl.json",
     "lvgl.pp",
     "lvgl.pyi",
     "lvgl_circuitpython.c",

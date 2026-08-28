@@ -37,6 +37,18 @@ def load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def write_json(path: Path, data: Any) -> None:
+    """Write deterministic JSON, optionally with reproducible gzip encoding."""
+
+    rendered = json.dumps(data, separators=(",", ":"), sort_keys=True) + "\n"
+    if path.suffix == ".gz":
+        with path.open("wb") as raw:
+            with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as stream:
+                stream.write(rendered.encode("utf-8"))
+        return
+    path.write_text(rendered, encoding="utf-8")
+
+
 def target_artifact_hashes(generated_dir: Path) -> dict[str, dict[str, str]]:
     """Hash each generated target C artifact for an auditable report."""
 

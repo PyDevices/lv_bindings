@@ -1,8 +1,8 @@
 # Upstream baseline scratch harness
 
 `run.sh` runs the pinned `lv_binding_micropython` generator against the
-current LVGL preprocessed input, generates temporary metadata for each current
-target, and writes a normalized report. It is an oracle for the rebuild, not a
+committed preprocessed input and verifies its temporary metadata and C output
+against the compact historical baseline. It is a provenance oracle, not a
 production regeneration path.
 
 Run it from the repository root:
@@ -11,7 +11,7 @@ Run it from the repository root:
 scratch/upstream_baseline/run.sh
 ```
 
-The default output is `docs/baseline/`. All upstream source, generated C, and
-target metadata intermediates are created under a temporary directory and are
-removed when the command exits. Set `LVGL_BINDINGS_UPSTREAM_REPO` to reuse an
-existing checkout at the pinned commit instead of cloning one.
+All upstream source and generated output are created under a temporary
+directory and removed when the command exits. The command does not rewrite the
+baseline. Set `LVGL_BINDINGS_UPSTREAM_REPO` to reuse an existing checkout at
+the pinned commit instead of cloning one.

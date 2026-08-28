@@ -3,7 +3,7 @@
  * Auto-Generated file, DO NOT EDIT!
  *
  * Command line:
- * gen_binding.py --target micropython -M lvgl -MP lv --naming-style legacy --read-only-ir --ir generated/lvgl.json -E generated/lvgl.pp lvgl/lvgl.h
+ * python -m binding.generate --target micropython
  *
  * Preprocessing command:
  * Preprocessing was disabled.

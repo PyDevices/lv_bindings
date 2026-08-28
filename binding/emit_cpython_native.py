@@ -35,7 +35,7 @@ _EMIT_HELPERS = ContextVar("lvgl_cpython_emit_helpers", default=None)
 
 
 def bind_emit_helpers(local_ns):
-    """Bind legacy emitter helpers to the active CPython backend run."""
+    """Bind AST-emitter helpers to the active CPython backend run."""
     from . import analyze as analyze_mod
 
     analyze_fns = (

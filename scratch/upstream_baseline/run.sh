@@ -10,16 +10,16 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 UPSTREAM_URL="https://github.com/lvgl/lv_binding_micropython.git"
 UPSTREAM_REF="60dfbd41f99c2757d1fe3bffab246c818afebcc4"
 PYTHON="${PYTHON:-$ROOT/.venv/bin/python}"
-OUTPUT_DIR="${1:-$ROOT/docs/baseline}"
+BASELINE="$ROOT/docs/baseline/lvgl-bindings-api-baseline.json.gz"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
     cat <<'EOF'
-Usage: scratch/upstream_baseline/run.sh [OUTPUT_DIR]
+Usage: scratch/upstream_baseline/run.sh
 
 The optional LVGL_BINDINGS_UPSTREAM_REPO environment variable can point to an
 existing checkout of lv_binding_micropython. Otherwise the pinned upstream
 commit is cloned into a temporary directory. Generated intermediates remain
-temporary; only the normalized report is written to OUTPUT_DIR.
+temporary; the committed compact baseline is verified read-only.
 EOF
     exit 0
 fi
@@ -57,22 +57,7 @@ UPSTREAM_C="$WORK/upstream.c"
     -M lvgl -MP lv -MD "$UPSTREAM_JSON" \
     -E "$ROOT/generated/lvgl.pp" "$ROOT/lvgl/lvgl.h" >"$UPSTREAM_C"
 
-for target in micropython circuitpython cpython; do
-    "$PYTHON" "$ROOT/binding/gen_binding.py" \
-        --target "$target" -M lvgl -MP lv \
-        --metadata "$WORK/$target.json" \
-        -E "$ROOT/generated/lvgl.pp" "$ROOT/lvgl/lvgl.h" \
-        >"$WORK/$target.c"
-done
-
-"$PYTHON" "$ROOT/tools/baseline_report.py" \
-    --repo-root "$ROOT" \
+"$PYTHON" "$ROOT/tools/verify_upstream_baseline.py" \
     --upstream-metadata "$UPSTREAM_JSON" \
     --upstream-c "$UPSTREAM_C" \
-    --canonical "$ROOT/generated/lvgl.json" \
-    --preprocessed "$ROOT/generated/lvgl.pp" \
-    --target "micropython=$WORK/micropython.json" \
-    --target "circuitpython=$WORK/circuitpython.json" \
-    --target "cpython=$WORK/cpython.json" \
-    --output-json "$OUTPUT_DIR/lvgl-bindings-api-baseline.json.gz" \
-    --output-markdown "$OUTPUT_DIR/lvgl-bindings-api-baseline.md"
+    --baseline "$BASELINE"

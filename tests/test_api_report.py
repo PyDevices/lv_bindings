@@ -9,9 +9,9 @@ from binding.api_report import (
     load_json,
     public_export_sets,
     target_artifact_hashes,
+    write_json,
 )
 from binding.ir import parse_source
-from tools.baseline_report import _load_json, _write_json
 
 
 def _model_data():
@@ -107,11 +107,10 @@ def test_compact_baseline_json_is_deterministic_and_readable(tmp_path):
     second = tmp_path / "second.json.gz"
     baseline = {"schema": 1, "baseline": {"functions": {"count": 0}}}
 
-    _write_json(first, baseline)
-    _write_json(second, baseline)
+    write_json(first, baseline)
+    write_json(second, baseline)
 
     assert first.read_bytes() == second.read_bytes()
-    assert _load_json(first) == baseline
     assert load_json(first) == baseline
 
 

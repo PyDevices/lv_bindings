@@ -9,7 +9,6 @@ from types import SimpleNamespace
 import pytest
 
 from binding.artifacts import compare_manifests, manifest_for_directory
-from binding.cli import _stable_command_line
 from binding.generate import _extract_circuitpython_header, _normalized_for_check, generate
 from binding.generator import (
     BACKENDS,
@@ -68,25 +67,19 @@ def test_preprocessor_command_is_deterministic(monkeypatch):
 
 
 def test_artifact_manifest_hashes_and_compares(tmp_path):
-    (tmp_path / "lvgl.json").write_text("{}\n")
+    (tmp_path / "api.json").write_text("{}\n")
     (tmp_path / "lvgl.pp").write_text("void lv_init(void);\n")
 
-    first = manifest_for_directory(tmp_path, ("lvgl.json", "lvgl.pp"))
-    second = manifest_for_directory(tmp_path, ("lvgl.json", "lvgl.pp"))
+    first = manifest_for_directory(tmp_path, ("api.json", "lvgl.pp"))
+    second = manifest_for_directory(tmp_path, ("api.json", "lvgl.pp"))
     assert first == second
     assert compare_manifests(first, second)["equal"]
 
     (tmp_path / "lvgl.pp").write_text("void lv_deinit(void);\n")
-    changed = manifest_for_directory(tmp_path, ("lvgl.json", "lvgl.pp"))
+    changed = manifest_for_directory(tmp_path, ("api.json", "lvgl.pp"))
     comparison = compare_manifests(first, changed)
     assert comparison["changed"] == ["lvgl.pp"]
     assert not comparison["equal"]
-
-
-def test_command_line_uses_stable_executable_name():
-    assert _stable_command_line(
-        ["/different/checkout/binding/gen_binding.py", "--target", "cpython"]
-    ) == "gen_binding.py --target cpython"
 
 
 def test_circuitpython_header_extraction():
@@ -97,8 +90,8 @@ def test_circuitpython_header_extraction():
 
 
 def test_check_normalizes_generated_command_banner():
-    first = " * Command line:\n * /one/checkout/binding/gen_binding.py --target cpython\n"
-    second = " * Command line:\n * /another/checkout/binding/gen_binding.py --target cpython\n"
+    first = " * Command line:\n * python -m binding.generate --target cpython\n"
+    second = " * Command line:\n * python3 -m binding.generate --target cpython\n"
     assert _normalized_for_check("lvgl_python.c", first) == _normalized_for_check(
         "lvgl_python.c", second
     )
@@ -131,6 +124,28 @@ def test_unified_generator_help():
     assert result.returncode == 0
     assert "--pyi-only" in result.stdout
     assert "--check" in result.stdout
+
+
+def test_clean_break_keeps_one_generator_command_and_one_naming_contract():
+    for path in (
+        REPO_ROOT / "binding" / "gen_binding.py",
+        REPO_ROOT / "regenerate_lvmp.sh",
+        REPO_ROOT / "regenerate_lvcp.sh",
+        REPO_ROOT / "regenerate_lvpy.sh",
+        REPO_ROOT / "generated" / "lvgl.json",
+    ):
+        assert not path.exists()
+    assert not any((REPO_ROOT / "generated" / "baseline").iterdir())
+
+    result = subprocess.run(
+        [sys.executable, "-m", "binding.generate", "--help"],
+        cwd=REPO_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert "--naming-style" not in result.stdout
+    assert "pythonic" not in result.stdout.lower()
 
 
 def test_lifecycle_dunders_are_not_part_of_the_shared_public_namespace():
@@ -190,12 +205,12 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
     for target in runners:
         output = io.StringIO()
         run = run_backend(target, args, source, "pp", output, "cmd", analysis_state=state)
-        namespaces.append(run.namespace)
+        namespaces.append(run.context)
 
     assert calls.count(source) == 1
-    for namespace in namespaces:
-        assert namespace["declaration_ir"] is prepared.declaration_ir
-        assert namespace["api_model"] is prepared.api_model
+    for context in namespaces:
+        assert context.declaration_ir is prepared.declaration_ir
+        assert context.api_model is prepared.api_model
 
 
 def test_analysis_state_lives_on_context_not_analyze_module():

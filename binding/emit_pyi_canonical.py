@@ -71,7 +71,6 @@ class CanonicalPyiEmitter:
         *,
         target: str = "all",
         lvgl_version: str,
-        naming_style: str = "legacy",
     ) -> None:
         if data.get("schema_version") != API_SCHEMA_VERSION:
             raise ValueError("unsupported canonical API schema")
@@ -80,7 +79,6 @@ class CanonicalPyiEmitter:
         self.data = data
         self.target = target
         self.lvgl_version = lvgl_version
-        self.naming_style = naming_style
         self.lines: list[str] = []
         self.functions = tuple(data.get("functions", ()))
         self.objects = tuple(data.get("objects", ()))
@@ -165,7 +163,7 @@ class CanonicalPyiEmitter:
 
     def _header(self) -> None:
         self._add("# LVGL %s" % self.lvgl_version)
-        self._add("# Naming style: %s" % self.naming_style)
+        self._add("# Naming: upstream-compatible")
         self._add('"""Type stubs for LVGL Python bindings (auto-generated)."""')
         self._add("from __future__ import annotations")
         self._add("from collections.abc import Callable, Sequence")

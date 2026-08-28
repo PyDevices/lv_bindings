@@ -31,8 +31,8 @@ def skip_module_func(func_name, target):
 def filter_module_funcs_for_target(module_funcs, target, api_model=None):
     """Return public canonical module functions available on ``target``.
 
-    The legacy emitters discover functions through generation side effects.
-    Registration must instead follow the canonical API roles so a struct or
+    Native lowering discovers functions while generating wrappers.
+    Registration follows the canonical API roles so a struct or
     object method can never leak into one target's module namespace.
     """
     if api_model is None:

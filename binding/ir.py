@@ -239,7 +239,7 @@ class DeclarationIndex:
 
     @classmethod
     def _first_argument_type_name(cls, type_: CType) -> Optional[str]:
-        # This mirrors the legacy query: inspect one pointer/array layer, but
+        # Inspect one pointer/array layer, but
         # retain a second pointer layer (T ** is not a T struct receiver).
         if type_.kind in {"pointer", "array"}:
             type_ = type_.target or type_.element
@@ -277,7 +277,7 @@ class DeclarationIndex:
         first_type = self.first_argument_type_name(function_name)
         if self._struct_identity(first_type) != self._struct_identity(struct_name):
             return False
-        # Match the legacy relationship rule exactly: a common identifier
+        # Preserve the established relationship rule: a common identifier
         # prefix is enough, even when the first argument's struct tag has a
         # longer suffix (for example lv_obj_class_t/lv_obj_event_base).
         function_name = self._simplify(function_name)

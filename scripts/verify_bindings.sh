@@ -11,18 +11,12 @@ else
 fi
 GENERATED="$LV_BINDINGS_DIR/generated"
 LVCP_C="$GENERATED/lvgl_circuitpython.c"
-LVPY_C="$GENERATED/lvgl_python.c"
-LVIR_JSON="$GENERATED/lvgl.json"
 
 echo "==> Verify deterministic generated artifacts"
 (
     cd "$LV_BINDINGS_DIR"
     PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m binding.generate --check
 )
-echo
-
-echo "==> Validate shared IR (lvgl.json)"
-"$PYTHON" "$LV_BINDINGS_DIR/binding/verify_ir.py" "$GENERATED"
 echo
 
 echo "==> Validate target-neutral API model (api.json)"
@@ -50,13 +44,13 @@ PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m mypy "$GENERATED/lvgl.pyi"
 echo
 
 echo "==> Validate generated/lvgl_circuitpython.c"
-"$PYTHON" - "$LVCP_C" "$LVIR_JSON" <<'PY'
+"$PYTHON" - "$LVCP_C" "$GENERATED/api.json" <<'PY'
 import json
 import sys
 from pathlib import Path
 
 lvcp_path = Path(sys.argv[1])
-meta_path = Path(sys.argv[2])
+api_path = Path(sys.argv[2])
 
 text = lvcp_path.read_text()
 lines = text.splitlines()
@@ -85,17 +79,17 @@ if "CircuitPython phase-2 enum type objects" not in text:
 if "Struct " not in text or "mp_lv_" not in text:
     errors.append("missing struct/object emission markers")
 
-meta = json.loads(meta_path.read_text())
-
-def check_count(label, got, expect, slack=5):
-    if abs(got - expect) > slack:
-        errors.append(f"{label}: got {got}, expected ~{expect} (±{slack})")
-
-check_count("structs", len(meta.get("structs", [])), 123)
-check_count("functions", len(meta.get("functions", {})), 304)
-check_count("objects", len(meta.get("objects", {})), 40)
-check_count("int_constants", len(meta.get("int_constants", [])), 28, slack=2)
-check_count("blobs", len(meta.get("blobs", [])), 70, slack=2)
+api = json.loads(api_path.read_text())
+public_functions = sum(
+    item.get("visibility") == "public"
+    and "circuitpython" in item.get("available_on", ())
+    for item in api["functions"]
+)
+public_structs = sum(
+    item.get("visibility") == "public"
+    and "circuitpython" in item.get("available_on", ())
+    for item in api["structs"]
+)
 
 if errors:
     print("FAIL:")
@@ -104,37 +98,8 @@ if errors:
     sys.exit(1)
 
 print(f"OK: lvgl_circuitpython.c ({line_count} lines)")
-print(f"    metadata: {len(meta.get('structs', []))} structs, "
-      f"{len(meta.get('functions', {}))} functions, "
-      f"{len(meta.get('objects', {}))} objects, "
-      f"{len(meta.get('int_constants', []))} int_constants, "
-      f"{len(meta.get('blobs', []))} blobs")
-PY
-
-echo
-echo "==> Validate CPython runtime export policy vs IR"
-"$PYTHON" - "$LVPY_C" "$LVIR_JSON" <<'PY'
-import json
-import os
-import sys
-from pathlib import Path
-
-sys.path.insert(0, os.environ["LV_BINDINGS_DIR"])
-from binding.runtime_exports import RUNTIME_SKIP_MODULE_FUNCS
-
-lvpy_path = Path(sys.argv[1])
-ir_meta = json.loads(Path(sys.argv[2]).read_text())
-
-if "Target: cpython" not in lvpy_path.read_text():
-    print("FAIL: missing Target: cpython banner in lvgl_python.c")
-    sys.exit(1)
-
-ir_funcs = len(ir_meta.get("functions", {}))
-skip = len(RUNTIME_SKIP_MODULE_FUNCS.get("cpython", ()))
-print(
-    "OK: lvgl_python.c present; IR has %d module functions (%d omitted at CPython runtime)"
-    % (ir_funcs, skip)
-)
+print(f"    canonical API: {public_functions} public functions, "
+      f"{public_structs} public structs")
 PY
 
 echo

@@ -14,8 +14,6 @@ from .helpers import (
     ctor_name_from_obj_name,
     get_enum_name,
     is_global_callback,
-    is_method_of,
-    is_obj_ctor,
     is_struct,
     obj_name_from_ext_name,
     obj_name_from_func_name,
@@ -58,22 +56,15 @@ def get_ctor(obj_name):
 
 
 def get_methods(obj_name):
-    api_model = runtime.get("api_model", None)
-    if api_model is not None:
-        method_names = {
-            function.c_name
-            for function in api_model.functions
-            if function.role == "object_method"
-            and function.receiver == obj_name
-            and function.visibility == "public"
-        }
-        return [func for func in runtime.get("funcs") if func.name in method_names]
-    return [
-        func
-        for func in runtime.get("funcs")
-        if is_method_of(func.name, obj_name)
-        and (not func.name == ctor_name_from_obj_name(obj_name))
-    ]
+    api_model = runtime.get("api_model")
+    method_names = {
+        function.c_name
+        for function in api_model.functions
+        if function.role == "object_method"
+        and function.receiver == obj_name
+        and function.visibility == "public"
+    }
+    return [func for func in runtime.get("funcs") if func.name in method_names]
 
 
 @memoize
@@ -98,13 +89,14 @@ def get_first_arg(func):
 
 @memoize
 def get_first_arg_type(func):
-    declaration_index = runtime.get("declaration_index", None)
-    if declaration_index is not None and func.name in declaration_index.functions_by_name:
+    declaration_index = runtime.get("declaration_index")
+    if func.name in declaration_index.functions_by_name:
         return declaration_index.first_argument_type_name(func.name)
+    # Callback wrapper declarations are synthesized after the immutable
+    # declaration index is built. Their receiver classification still needs
+    # the concrete AST node created by lowering.
     first_arg = get_first_arg(func)
-    if not first_arg:
-        return None
-    if not first_arg.type:
+    if not first_arg or not first_arg.type:
         return None
     return get_type(first_arg.type, remove_quals=True)
 
@@ -118,45 +110,11 @@ def get_base_struct_name(struct_name):
 @memoize
 def get_struct_functions(struct_name):
     funcs = runtime.get("funcs")
-    declaration_index = runtime.get("declaration_index", None)
-    if declaration_index is not None:
-        function_names = {
-            function.name for function in declaration_index.struct_functions(struct_name)
-        }
-        return [func for func in funcs if func.name in function_names]
-    struct_aliases = runtime.get("struct_aliases", {})
-    structs = runtime.get("structs", {})
-    if not struct_name:
-        return []
-    base_struct_name = get_base_struct_name(struct_name)
-    # eprint("get_struct_functions %s: %s" % (struct_name, [get_type(func.type.args.params[0].type.type, remove_quals = True) for func in funcs if func.name.startswith(base_struct_name)]))
-    # eprint("get_struct_functions %s: %s" % (struct_name, struct_aliases[struct_name] if struct_name in struct_aliases else ""))
-
-    # for func in funcs:
-    #     print("/* get_struct_functions: func=%s, struct=%s, noncommon part=%s */" % (simplify_identifier(func.name), simplify_identifier(struct_name),
-    #         noncommon_part(simplify_identifier(func.name), simplify_identifier(struct_name))))
-
-    reverse_aliases = [
-        alias for alias in struct_aliases if struct_aliases[alias] == struct_name
-    ]
-
-    return (
-        [
-            func
-            for func in funcs
-            if noncommon_part(
-                simplify_identifier(func.name), simplify_identifier(struct_name)
-            )
-            != simplify_identifier(func.name)
-            and get_first_arg_type(func) == struct_name
-        ]
-        if (struct_name in structs or len(reverse_aliases) > 0)
-        else []
-    ) + (
-        get_struct_functions(struct_aliases[struct_name])
-        if struct_name in struct_aliases
-        else []
-    )
+    declaration_index = runtime.get("declaration_index")
+    function_names = {
+        function.name for function in declaration_index.struct_functions(struct_name)
+    }
+    return [func for func in funcs if func.name in function_names]
 
 
 @memoize
@@ -372,15 +330,12 @@ def analyze(ctx=None):
         f for f in all_funcs if not f.name.startswith("_")
     ]  # functions that start with underscore are usually internal
     # eprint('... %s' % ',\n'.join(sorted('%s' % func.name for func in funcs)))
-    if api_model is not None:
-        constructor_names = {
-            function.c_name
-            for function in api_model.functions
-            if function.role == "constructor" and function.visibility == "public"
-        }
-        obj_ctors = [func for func in funcs if func.name in constructor_names]
-    else:
-        obj_ctors = [func for func in funcs if is_obj_ctor(func)]
+    constructor_names = {
+        function.c_name
+        for function in api_model.functions
+        if function.role == "constructor" and function.visibility == "public"
+    }
+    obj_ctors = [func for func in funcs if func.name in constructor_names]
     # eprint('CTORS(%d): %s' % (len(obj_ctors), ', '.join(sorted('%s' % ctor.name for ctor in obj_ctors))))
     for obj_ctor in obj_ctors:
         funcs.remove(obj_ctor)

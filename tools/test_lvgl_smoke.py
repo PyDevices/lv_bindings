@@ -30,45 +30,8 @@ def _warn(msg):
     print("WARN: {}".format(msg), file=sys.stderr)
 
 
-def _pascal_case(name):
-    return "".join(part.capitalize() for part in name.split("_") if part)
-
-
-def _naming_style_from_env():
-    """Read LV_NAMING_STYLE when the port exposes getenv or environ."""
-    try:
-        import os
-    except ImportError:
-        return ""
-    getenv = getattr(os, "getenv", None)
-    if getenv is not None:
-        val = getenv("LV_NAMING_STYLE")
-        if val:
-            return val.lower()
-    environ = getattr(os, "environ", None)
-    if environ is not None:
-        return environ.get("LV_NAMING_STYLE", "").lower()
-    return ""
-
-
-def _use_pythonic_naming(lv=None):
-    if _naming_style_from_env() == "pythonic":
-        return True
-    if lv is not None:
-        button = getattr(lv, "Button", None)
-        legacy = getattr(lv, "button", None)
-        if button is not None and legacy is None:
-            return True
-    return False
-
-
 def _lv_export(lv, name):
-    """Resolve a module-level export (legacy snake_case or pythonic PascalCase)."""
-    if _use_pythonic_naming(lv):
-        pascal = _pascal_case(name)
-        value = getattr(lv, pascal, None)
-        if value is not None:
-            return value
+    """Resolve an established module-level export."""
     return getattr(lv, name, None)
 
 
@@ -77,10 +40,6 @@ def _widget_type(lv, name):
 
 
 def _widget_attr(obj, name):
-    if _use_pythonic_naming():
-        pascal = _pascal_case(name)
-        if hasattr(obj, pascal):
-            return getattr(obj, pascal)
     return getattr(obj, name)
 
 

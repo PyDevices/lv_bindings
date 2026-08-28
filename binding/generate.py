@@ -20,7 +20,6 @@ from .generator import (
     prepare_analysis,
     run_backend,
 )
-from .metadata import save_bindings_ir
 from .preprocess import preprocess
 
 
@@ -36,49 +35,26 @@ def _repo_root():
     return Path(__file__).resolve().parent.parent
 
 
-def _relative_or_absolute(path, root):
-    try:
-        return str(Path(path).resolve().relative_to(Path(root).resolve()))
-    except ValueError:
-        return str(Path(path).resolve())
-
-
-def _target_command_line(root, output_dir, target, naming_style):
+def _target_command_line(target):
     return " ".join(
         [
-            "gen_binding.py",
+            "python",
+            "-m",
+            "binding.generate",
             "--target",
             target,
-            "-M",
-            "lvgl",
-            "-MP",
-            "lv",
-            "--naming-style",
-            naming_style,
-            "--read-only-ir",
-            "--ir",
-            _relative_or_absolute(output_dir / "lvgl.json", root),
-            "-E",
-            _relative_or_absolute(output_dir / "lvgl.pp", root),
-            "lvgl/lvgl.h",
         ]
     )
 
 
-def _generation_args(root, output_dir, naming_style):
+def _generation_args(root, output_dir):
     return SimpleNamespace(
-        target="micropython",
         include=[str(root / "fake_libc_include")],
         define=[],
         ep=str(output_dir / "lvgl.pp"),
         json=None,
         module_name="lvgl",
         module_prefix="lv",
-        metadata=None,
-        ir=str(output_dir / "lvgl.json"),
-        mode="emit",
-        read_only_ir=True,
-        naming_style=naming_style,
         input=["lvgl/lvgl.h"],
     )
 
@@ -112,7 +88,6 @@ def generate(
     root=None,
     output_dir=None,
     target="all",
-    naming_style="legacy",
     pyi_only=False,
 ):
     """Generate selected targets into *output_dir* and return artifact metadata."""
@@ -121,7 +96,6 @@ def generate(
     output_dir = Path(output_dir or root / "generated").resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    metadata_path = output_dir / "lvgl.json"
     api_path = output_dir / "api.json"
     pp_path = output_dir / "lvgl.pp"
     pyi_path = output_dir / "lvgl.pyi"
@@ -135,7 +109,6 @@ def generate(
             api_path,
             pyi_path,
             target="all",
-            naming_style=naming_style,
             repo_root=root,
         )
         return manifest_for_directory(output_dir, ("lvgl.pyi",))
@@ -143,13 +116,13 @@ def generate(
     _preprocess_to(output_dir, root)
     selected = TARGETS if target == "all" else (target,)
 
-    args = _generation_args(root, output_dir, naming_style)
+    args = _generation_args(root, output_dir)
     source = pp_path.read_text(encoding="utf-8")
     prepared = prepare_analysis(
         args,
         source,
         "Preprocessing was disabled.",
-        _target_command_line(root, output_dir, "micropython", naming_style),
+        _target_command_line("all"),
         lambda *unused_args, **unused_kwargs: None,
     )
     shared_analysis = analysis_snapshot(prepared)
@@ -162,24 +135,20 @@ def generate(
         raise ValueError("invalid canonical API model: %s" % "; ".join(model_errors))
     write_api_model(prepared.api_model, api_path)
 
-    # The metadata schema is still the legacy public API schema.  Until the
-    # canonical Python API model lands, it is emitted once from the shared
-    # analysis and then consumed read-only by every target.
-    metadata_output = io.StringIO()
-    metadata_run = run_backend(
-        "micropython",
-        args,
-        source,
-        "Preprocessing was disabled.",
-        metadata_output,
-        _target_command_line(root, output_dir, "micropython", naming_style),
-        analysis_state=shared_analysis,
-    )
     if "micropython" in selected:
-        (output_dir / TARGET_OUTPUTS["micropython"]).write_text(
-            metadata_output.getvalue(), encoding="utf-8"
+        output = io.StringIO()
+        run_backend(
+            "micropython",
+            args,
+            source,
+            "Preprocessing was disabled.",
+            output,
+            _target_command_line("micropython"),
+            analysis_state=shared_analysis,
         )
-    save_bindings_ir(metadata_run.namespace, metadata_path)
+        (output_dir / TARGET_OUTPUTS["micropython"]).write_text(
+            output.getvalue(), encoding="utf-8"
+        )
 
     if "circuitpython" in selected:
         output = io.StringIO()
@@ -189,7 +158,7 @@ def generate(
             source,
             "Preprocessing was disabled.",
             output,
-            _target_command_line(root, output_dir, "circuitpython", naming_style),
+            _target_command_line("circuitpython"),
             analysis_state=shared_analysis,
         )
         circuitpython_source = output.getvalue()
@@ -208,7 +177,7 @@ def generate(
             source,
             "Preprocessing was disabled.",
             output,
-            _target_command_line(root, output_dir, "cpython", naming_style),
+            _target_command_line("cpython"),
             analysis_state=shared_analysis,
         )
         (output_dir / TARGET_OUTPUTS["cpython"]).write_text(
@@ -219,7 +188,6 @@ def generate(
         api_path,
         pyi_path,
         target="all",
-        naming_style=naming_style,
         repo_root=root,
     )
     return manifest_for_directory(output_dir)
@@ -278,9 +246,6 @@ def main(argv=None):
         "--target", choices=TARGETS + ("all",), default="all"
     )
     parser.add_argument(
-        "--naming-style", choices=("legacy", "pythonic"), default="legacy"
-    )
-    parser.add_argument(
         "--pyi-only", action="store_true", help="regenerate only lvgl.pyi"
     )
     parser.add_argument(
@@ -298,7 +263,6 @@ def main(argv=None):
             root=root,
             output_dir=output_dir,
             target=args.target,
-            naming_style=args.naming_style,
             pyi_only=args.pyi_only,
         )
         if args.hash:
@@ -309,7 +273,6 @@ def main(argv=None):
         selected = (
             TARGET_OUTPUTS[args.target],
             "api.json",
-            "lvgl.json",
             "lvgl.pp",
             "lvgl.pyi",
         )
@@ -320,7 +283,6 @@ def main(argv=None):
     else:
         selected = (
             "api.json",
-            "lvgl.json",
             "lvgl.pp",
             "lvgl.pyi",
             "lvgl_micropython.c",
@@ -338,7 +300,6 @@ def main(argv=None):
             root=root,
             output_dir=temporary_dir,
             target=args.target,
-            naming_style=args.naming_style,
             pyi_only=args.pyi_only,
         )
         differences = _compare_directories(output_dir, temporary, selected)
