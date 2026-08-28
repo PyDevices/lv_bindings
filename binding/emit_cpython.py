@@ -35,8 +35,8 @@ def _finalize_cpython_metadata(ctx):
 def emit_cpython(ctx):
     prepare_target_lowering(ctx, target="cpython", max_phase=7)
     if not getattr(ctx, "_analysis_ready", False):
-        analyze()
-    runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
+        analyze(ctx)
+    runtime.sync_from_ctx(ctx)
     runtime.publish(__import__("sys").modules)
     emit_c_mod.emit_c()
 
@@ -49,7 +49,6 @@ def run(ctx):
     try:
         emit_cpython(ctx)
     finally:
-        runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
         runtime.absorb_from(emit_c_mod)
         runtime.sync_to_ctx(ctx)
         _finalize_cpython_metadata(ctx)

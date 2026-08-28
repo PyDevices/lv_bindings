@@ -20,8 +20,8 @@ def run(ctx):
         # and CPython use their finite lifecycle phases below.
         prepare_target_lowering(ctx, target="micropython", max_phase=None)
         if not getattr(ctx, "_analysis_ready", False):
-            analyze()
-            runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
+            analyze(ctx)
+            runtime.sync_from_ctx(ctx)
         runtime.publish(__import__("sys").modules)
         emit_c_mod.emit_c()
     finally:

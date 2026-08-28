@@ -451,7 +451,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   global, function, callback, and module paths. A source-boundary regression
   test rejects reintroduced MicroPython C templates or CircuitPython lowering
   branches. Validation: 113 repository tests and binding.generate --check
-  passed; generated artifacts remain unchanged.`
+  passed; generated artifacts remain unchanged. Twentieth migration slice:
+  analysis now populates the active BindingContext directly and no longer
+  publishes or absorbs analysis globals. The active run is ContextVar-scoped,
+  and a regression test verifies that analyzed functions and conversions do
+  not leak onto the analyze module. Validation: 114 repository tests and
+  binding.generate --check passed; generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

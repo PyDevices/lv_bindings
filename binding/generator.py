@@ -90,10 +90,8 @@ def prepare_analysis(args, source, pp_cmd, cmd_line, emit_print):
     ctx.gen = c_generator.CGenerator()
     ctx.parsed_ast = ctx.parser.parse(source, filename="<none>")
     runtime.sync_from_ctx(ctx)
-    analyze()
-    runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
-    runtime.sync_to_ctx(ctx)
-    ctx.declaration_ir = runtime.get("declaration_ir")
+    analyze(ctx)
+    runtime.sync_from_ctx(ctx)
     policy = ApiPolicy.default(module_prefix=ctx.module_prefix)
     ctx.api_model = build_api_model(
         ctx.declaration_ir,

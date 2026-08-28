@@ -197,7 +197,7 @@ def get_enum_member_name(enum_member):
 def get_enum_value(obj_name, enum_member):
     return runtime.get("enums")[obj_name][enum_member]
 
-def register_int_ptr_type(convertor, *types):
+def register_int_ptr_type(mp_to_lv, lv_to_mp, lv_mp_type, convertor, *types):
     for ptr_type in types:
         for qualified_ptr_type in [ptr_type, "const " + ptr_type]:
             mp_to_lv[qualified_ptr_type] = "mp_array_to_%s" % (convertor)
@@ -205,15 +205,17 @@ def register_int_ptr_type(convertor, *types):
             lv_mp_type[qualified_ptr_type] = "void*"
 
 
-def analyze():
-    global obj_metadata, func_metadata, callback_metadata, func_prototypes
-    global parser, gen, ast, lvgl_json, forward_struct_decls
-    global typedefs, synonym, struct_typedefs, structs_without_typedef
-    global structs, explicit_structs, opaque_structs
-    global func_defs, func_decls, all_funcs, funcs, obj_ctors, obj_names
-    global parent_obj_names, enum_defs, func_typedefs, blobs, int_constants
-    global mp_to_lv, lv_to_mp, lv_mp_type, lv_to_mp_byref, lv_to_mp_funcptr
-    global declaration_ir, declaration_index
+def analyze(ctx=None):
+    """Populate one binding context from its parsed translation unit."""
+    if ctx is None:
+        ctx = runtime.current_context()
+
+    args = ctx.args
+    s = ctx.s
+    module_prefix = ctx.module_prefix
+    base_obj_name = ctx.base_obj_name
+    base_obj_type = ctx.base_obj_type
+    create_obj_pattern = ctx.create_obj_pattern
 
     obj_metadata = collections.OrderedDict()
     func_metadata = collections.OrderedDict()
@@ -221,9 +223,9 @@ def analyze():
 
     func_prototypes = {}
 
-    parser = runtime.get("parser", None) or c_parser.CParser()
-    gen = runtime.get("gen", None) or c_generator.CGenerator()
-    ast = runtime.get("parsed_ast", None)
+    parser = getattr(ctx, "parser", None) or c_parser.CParser()
+    gen = getattr(ctx, "gen", None) or c_generator.CGenerator()
+    ast = getattr(ctx, "parsed_ast", None)
     if ast is None:
         ast = parser.parse(s, filename="<none>")
 
@@ -286,25 +288,20 @@ def analyze():
 
     # ********************************************************************
 
-    declaration_ir = runtime.get("declaration_ir", None)
+    declaration_ir = getattr(ctx, "declaration_ir", None)
     if declaration_ir is None:
         declaration_ir = parse_ast(ast)
     declaration_index = DeclarationIndex.from_ir(
-        declaration_ir, module_prefix=runtime.get("module_prefix", "lv")
+        declaration_ir, module_prefix=module_prefix
     )
-    runtime.set_("declaration_ir", declaration_ir)
-    runtime.set_("declaration_index", declaration_index)
-    api_model = runtime.get("api_model", None)
+    api_model = getattr(ctx, "api_model", None)
     if api_model is None:
         api_model = build_api_model(
             declaration_ir,
-            module_prefix=runtime.get("module_prefix", "lv"),
-            base_obj_type=runtime.get("base_obj_type", "lv_obj_t"),
-            policy=ApiPolicy.default(
-                module_prefix=runtime.get("module_prefix", "lv")
-            ),
+            module_prefix=module_prefix,
+            base_obj_type=base_obj_type,
+            policy=ApiPolicy.default(module_prefix=module_prefix),
         )
-        runtime.set_("api_model", api_model)
 
 
     # Types and structs
@@ -576,13 +573,14 @@ def analyze():
     # These types would be converted automatically to/from array type.
     # Supported array (pointer) types are signed/unsigned int: 8bit, 16bit, 32bit and 64bit.
 
-    register_int_ptr_type("u8ptr", "unsigned char *", "uint8_t *")
+    register_int_ptr_type(mp_to_lv, lv_to_mp, lv_mp_type, "u8ptr", "unsigned char *", "uint8_t *")
 
-    register_int_ptr_type("u16ptr", "unsigned short *", "uint16_t *")
+    register_int_ptr_type(mp_to_lv, lv_to_mp, lv_mp_type, "u16ptr", "unsigned short *", "uint16_t *")
 
-    register_int_ptr_type("i16ptr", "short *", "int16_t *")
+    register_int_ptr_type(mp_to_lv, lv_to_mp, lv_mp_type, "i16ptr", "short *", "int16_t *")
 
     register_int_ptr_type(
+        mp_to_lv, lv_to_mp, lv_mp_type,
         "u32ptr",
         "uint32_t *",
         "unsigned *",
@@ -593,6 +591,7 @@ def analyze():
     )
 
     register_int_ptr_type(
+        mp_to_lv, lv_to_mp, lv_mp_type,
         "i32ptr",
         "int32_t *",
         "signed *",
@@ -605,12 +604,19 @@ def analyze():
     )
 
     register_int_ptr_type(
+        mp_to_lv, lv_to_mp, lv_mp_type,
         "u64ptr", "int64_t *", "signed long long *", "long long *", "long long int *"
     )
 
     register_int_ptr_type(
+        mp_to_lv, lv_to_mp, lv_mp_type,
         "i64ptr", "uint64_t *", "unsigned long long *", "unsigned long long int *"
     )
+
+    state = locals()
+    for name in ctx.export_names():
+        if name in state:
+            setattr(ctx, name, state[name])
 
 
     #

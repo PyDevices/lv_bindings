@@ -1,11 +1,23 @@
 """Global mirror for one generation run; analyze/emit modules use get/set_."""
 from __future__ import print_function
 
+from contextvars import ContextVar
+
 from .context import BindingContext
+
+
+_ACTIVE_CONTEXT = ContextVar("lvgl_binding_context", default=None)
+
+
+def current_context():
+    """Return the context for the active generation run."""
+    ctx = _ACTIVE_CONTEXT.get()
+    if ctx is None:
+        raise RuntimeError("no active binding generation context")
+    return ctx
 
 # Modules that mirror binding globals during generation.
 _CONSUMER_MODULES = (
-    "binding.analyze",
     "binding.emit_c_micropython_style",
     "binding.emit_c_cpython",
     "binding.helpers",
@@ -29,6 +41,7 @@ def sync_from_ctx(ctx):
     """Load context inputs into runtime and publish to consumer modules."""
     import sys
 
+    _ACTIVE_CONTEXT.set(ctx)
     for name in ctx.export_names():
         if hasattr(ctx, name):
             globals()[name] = getattr(ctx, name)

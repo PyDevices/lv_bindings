@@ -188,6 +188,20 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
         assert namespace["api_model"] is prepared.api_model
 
 
+def test_analysis_state_lives_on_context_not_analyze_module():
+    from binding import analyze as analyze_module
+
+    source = "typedef struct fixture { int value; } fixture_t; void lv_init(void);"
+    args = SimpleNamespace(
+        module_name="lvgl", module_prefix="lv", json=None, input=["fixture.h"]
+    )
+    prepared = prepare_analysis(args, source, "pp", "cmd", lambda *a, **k: None)
+
+    assert prepared.funcs
+    assert "funcs" not in analyze_module.__dict__
+    assert "mp_to_lv" not in analyze_module.__dict__
+
+
 def test_backends_have_one_common_run_contract():
     assert tuple(BACKENDS) == ("micropython", "circuitpython", "cpython")
     assert {backend.name for backend in BACKENDS.values()} == set(BACKENDS)

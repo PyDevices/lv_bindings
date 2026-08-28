@@ -12,8 +12,8 @@ def emit_circuitpython(ctx):
     """Run shared analysis and emit CircuitPython C source to ctx.emit_print."""
     prepare_target_lowering(ctx, target="circuitpython", max_phase=7)
     if not getattr(ctx, "_analysis_ready", False):
-        analyze()
-    runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
+        analyze(ctx)
+    runtime.sync_from_ctx(ctx)
     runtime.publish(__import__("sys").modules)
     emit_c_mod.emit_c()
 
@@ -24,6 +24,5 @@ def run(ctx):
     try:
         emit_circuitpython(ctx)
     finally:
-        runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
         runtime.absorb_from(emit_c_mod)
         runtime.sync_to_ctx(ctx)
