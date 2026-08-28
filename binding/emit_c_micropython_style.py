@@ -67,12 +67,6 @@ def emit_c():
     emit_options = runtime.get("emit_options", {})
     _emit_target = emit_options.get("target", "micropython")
     _emit_max_phase = emit_options.get("max_phase")
-    if _emit_target == "cpython":
-        from . import emit_c_cpython as _emit_c_cpython_mod
-        import sys
-
-        runtime.publish(sys.modules)
-        return _emit_c_cpython_mod.emit_c()
     _target_banner = target_banner(
         _emit_target, include=_emit_target != "micropython"
     )

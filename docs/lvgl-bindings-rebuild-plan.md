@@ -354,7 +354,10 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   generated-file target-banner policy through binding.emit_backend. This
   preserves existing target-specific banner choices and adds LVGL's private
   header exactly once for every backend. Validation: 98 repository tests
-  passed; binding.generate --check passed.`
+  passed; binding.generate --check passed. Third migration slice: CPython now
+  invokes its native emitter directly; the obsolete MicroPython-style dispatch
+  path was removed. This is a clean-break backend boundary, not a compatibility
+  wrapper, and preserves generated artifacts.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

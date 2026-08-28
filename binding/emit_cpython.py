@@ -1,8 +1,8 @@
-"""CPython target entry: analyze → emit_c_micropython_style dispatch → emit_c_cpython."""
+"""CPython target entry: analyze → emit_c_cpython."""
 
 from __future__ import print_function
 
-from . import emit_c_micropython_style as emit_c_mod
+from . import emit_c_cpython as emit_c_mod
 from . import runtime
 from .analyze import analyze, get_ctor, get_methods, has_ctor
 from .emit_backend import prepare_target_lowering
@@ -49,8 +49,5 @@ def run(ctx):
     finally:
         runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
         runtime.absorb_from(emit_c_mod)
-        from . import emit_c_cpython as emit_c_cpython_mod
-
-        runtime.absorb_from(emit_c_cpython_mod)
         runtime.sync_to_ctx(ctx)
         _finalize_cpython_metadata(ctx)

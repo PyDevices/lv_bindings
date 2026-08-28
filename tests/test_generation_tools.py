@@ -181,6 +181,13 @@ def test_backends_have_one_common_run_contract():
     assert {backend.name for backend in BACKENDS.values()} == set(BACKENDS)
 
 
+def test_cpython_backend_uses_its_native_emitter_directly():
+    from binding import emit_c_cpython, emit_c_micropython_style, emit_cpython
+
+    assert emit_cpython.emit_c_mod is emit_c_cpython
+    assert emit_cpython.emit_c_mod is not emit_c_micropython_style
+
+
 def test_target_lowering_setup_uses_common_defaults():
     from binding import runtime
 
