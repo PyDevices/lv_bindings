@@ -30,3 +30,15 @@ def test_pyi_manifest_verifier_reports_target_leakage():
     errors = validate_pyi_data(data, _render(data, target="micropython"))
 
     assert "unexpected top-level export: target_only" in errors
+
+
+def test_pyi_manifest_verifier_reports_signature_drift():
+    data = _validated_data()
+    source = _render(data).replace(
+        "def set_value(self, value: int) -> None: ...",
+        "def set_value(self, value: str) -> None: ...",
+    )
+
+    errors = validate_pyi_data(data, source)
+
+    assert any("signature mismatch: widget.set_value" in error for error in errors)

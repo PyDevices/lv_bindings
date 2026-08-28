@@ -61,6 +61,85 @@ def _member_nodes(class_node: ast.ClassDef) -> dict[str, ast.AST]:
     return nodes
 
 
+def _annotation_text(node: ast.AST | None) -> str | None:
+    return ast.unparse(node) if node is not None else None
+
+
+def _expected_parameters(
+    function: Mapping[str, Any], *, skip_receiver: bool, constructor: bool
+) -> list[tuple[str, str, bool]]:
+    parameters = list(function.get("parameters", ()))
+    if skip_receiver and not function.get("static"):
+        parameters = parameters[1:]
+    used = {"self"} if not constructor and not function.get("static") else set()
+    result = []
+    for index, parameter in enumerate(parameters):
+        name = _identifier(parameter.get("name") or "arg")
+        original = name
+        suffix = 2
+        while name in used:
+            name = "%s%d" % (original, suffix)
+            suffix += 1
+        used.add(name)
+        if parameter.get("type", {}).get("kind") == "ellipsis":
+            result.append(("*" + name, "Any", False))
+            continue
+        parameter_type = parameter.get("view", {}).get("python_type")
+        if not isinstance(parameter_type, str) or not parameter_type:
+            parameter_type = "Any"
+        default = (
+            constructor
+            and index == 0
+            and parameter.get("name") == "parent"
+            and parameter.get("view", {}).get("category") == "object_pointer"
+        )
+        if default:
+            parameter_type += " | None"
+        result.append((name, parameter_type, default))
+    if function.get("variadic"):
+        result.append(("*args", "Any", False))
+    return result
+
+
+def _expected_function_signature(
+    function: Mapping[str, Any], *, instance: bool, skip_receiver: bool = False
+) -> tuple[list[tuple[str, str, bool]], str, bool]:
+    constructor = function.get("role") == "constructor"
+    parameters = _expected_parameters(
+        function,
+        skip_receiver=skip_receiver,
+        constructor=constructor,
+    )
+    if instance or constructor:
+        parameters.insert(0, ("self", "", False))
+    return_type = "None" if constructor else function.get("return_view", {}).get("python_type")
+    if not isinstance(return_type, str) or not return_type:
+        return_type = "Any"
+    return parameters, return_type, bool(function.get("static"))
+
+
+def _actual_function_signature(node: ast.FunctionDef) -> tuple[list[tuple[str, str | None]], str | None, bool]:
+    parameters = []
+    for argument in node.args.posonlyargs + node.args.args:
+        parameters.append((argument.arg, _annotation_text(argument.annotation)))
+    if node.args.vararg is not None:
+        parameters.append(("*" + node.args.vararg.arg, _annotation_text(node.args.vararg.annotation)))
+    for argument in node.args.kwonlyargs:
+        parameters.append((argument.arg, _annotation_text(argument.annotation)))
+    if node.args.kwarg is not None:
+        parameters.append(("**" + node.args.kwarg.arg, _annotation_text(node.args.kwarg.annotation)))
+    static = any(
+        isinstance(decorator, ast.Name) and decorator.id == "staticmethod"
+        for decorator in node.decorator_list
+    )
+    return parameters, _annotation_text(node.returns), static
+
+
+def _default_parameter_indexes(node: ast.FunctionDef) -> set[int]:
+    first_default = len(node.args.args) - len(node.args.defaults)
+    return set(range(first_default, len(node.args.args)))
+
+
 def _expected_top_level(data: Mapping[str, Any], target: str) -> set[str]:
     expected = set(_HELPER_NAMES)
     for section in ("objects", "structs"):
@@ -227,6 +306,141 @@ def validate_pyi_data(
         for member in sorted(actual_members - expected_members):
             if not member.startswith("__"):
                 errors.append("unexpected member: %s.%s" % (name, member))
+
+    top_nodes = _top_level_nodes(tree)
+
+    def check_function(
+        function: Mapping[str, Any],
+        node: ast.FunctionDef,
+        *,
+        label: str,
+        instance: bool,
+        skip_receiver: bool = False,
+    ) -> None:
+        expected, return_type, expected_static = _expected_function_signature(
+            function,
+            instance=instance,
+            skip_receiver=skip_receiver,
+        )
+        actual, actual_return, actual_static = _actual_function_signature(node)
+        expected_shape = [(name, annotation or None) for name, annotation, _ in expected]
+        if actual != expected_shape or actual_return != return_type:
+            errors.append(
+                "signature mismatch: %s (expected %s -> %s, got %s -> %s)"
+                % (label, expected_shape, return_type, actual, actual_return)
+            )
+        expected_defaults = {
+            index
+            for index, (_name, _annotation, has_default) in enumerate(expected)
+            if has_default and not _name.startswith("*")
+        }
+        if _default_parameter_indexes(node) != expected_defaults:
+            errors.append("default mismatch: %s" % label)
+        if actual_static != expected_static:
+            errors.append("staticmethod mismatch: %s" % label)
+
+    for function in data.get("functions", ()):
+        if not _public(function, target):
+            continue
+        role = function.get("role")
+        if role == "module":
+            node = top_nodes.get(_identifier(function["python_name"]))
+            if isinstance(node, ast.FunctionDef):
+                check_function(function, node, label=function["python_name"], instance=False)
+            continue
+        receiver = function.get("receiver")
+        if not receiver:
+            continue
+        receiver_node = classes.get(_identifier(receiver))
+        if receiver_node is None:
+            continue
+        members = _member_nodes(receiver_node)
+        if role == "constructor":
+            node_name = "__init__"
+            instance = True
+            skip_receiver = False
+        elif role in {"object_method", "struct_method"}:
+            node_name = _identifier(function["python_name"])
+            instance = not function.get("static")
+            skip_receiver = instance
+        else:
+            continue
+        node = members.get(node_name)
+        if isinstance(node, ast.FunctionDef):
+            check_function(
+                function,
+                node,
+                label="%s.%s" % (receiver, node_name),
+                instance=instance,
+                skip_receiver=skip_receiver,
+            )
+
+    for item in data.get("enums", ()):
+        if not _public(item, target):
+            continue
+        enum_type = item.get("member_type", "int")
+        targets = []
+        if item.get("module_name"):
+            targets.append((_identifier(item["module_name"]), classes.get(_identifier(item["module_name"]))))
+        for owner in item.get("owners", ()):
+            owner_node = classes.get(_identifier(owner["object"]))
+            nested = _member_nodes(owner_node).get(owner["name"]) if owner_node else None
+            targets.append(("%s.%s" % (owner["object"], owner["name"]), nested))
+        for enum_label, enum_node in targets:
+            if not isinstance(enum_node, ast.ClassDef):
+                continue
+            for member in item.get("members", ()):
+                member_node = _member_nodes(enum_node).get(_identifier(member["name"]))
+                if isinstance(member_node, ast.AnnAssign):
+                    actual_type = _annotation_text(member_node.annotation)
+                    if actual_type != enum_type:
+                        errors.append(
+                            "enum member type mismatch: %s.%s (expected %s, got %s)"
+                            % (enum_label, member["name"], enum_type, actual_type)
+                        )
+
+    for item in data.get("structs", ()):
+        if not _public(item, target):
+            continue
+        class_node = classes.get(_identifier(item["python_name"]))
+        if class_node is None:
+            continue
+        members = _member_nodes(class_node)
+        for field in item.get("fields", ()):
+            field_node = members.get(_identifier(field.get("name") or "field"))
+            if isinstance(field_node, ast.AnnAssign):
+                expected_type = field.get("view", {}).get("python_type")
+                actual_type = _annotation_text(field_node.annotation)
+                if actual_type != expected_type:
+                    errors.append(
+                        "field type mismatch: %s.%s (expected %s, got %s)"
+                        % (
+                            item["python_name"],
+                            field.get("name"),
+                            expected_type,
+                            actual_type,
+                        )
+                    )
+
+    for variable in data.get("variables", ()):
+        if not _public(variable, target) or variable.get("c_name") == "_nesting":
+            continue
+        node = top_nodes.get(_identifier(variable["python_name"]))
+        if isinstance(node, ast.AnnAssign):
+            expected_type = variable.get("view", {}).get("python_type")
+            actual_type = _annotation_text(node.annotation)
+            if actual_type != expected_type:
+                errors.append(
+                    "variable type mismatch: %s (expected %s, got %s)"
+                    % (variable["python_name"], expected_type, actual_type)
+                )
+
+    for constant in data.get("constants", ()):
+        if not _public(constant, target):
+            continue
+        node = top_nodes.get(_identifier(constant["python_name"]))
+        if isinstance(node, ast.AnnAssign) and _annotation_text(node.annotation) != "int":
+            errors.append("constant type mismatch: %s" % constant["python_name"])
 
     return errors
 
