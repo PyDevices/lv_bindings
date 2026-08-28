@@ -493,35 +493,35 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 ### Work
 
-- [ ] Remove CPython-only module-level struct-function aliases.
-- [ ] Remove generated lifecycle dunders from the public contract; retain
+- [x] Remove CPython-only module-level struct-function aliases.
+- [x] Remove generated lifecycle dunders from the public contract; retain
   `init`, `deinit`, and `is_initialized`.
-- [ ] Remove private GC helpers and internal wrapper types from public exports.
-- [ ] Make `C_Pointer` and `LvReferenceError` consistent across targets.
-- [ ] Keep the intentional `OBJ_FLAG` module-level alias.
-- [ ] Keep concrete LVGL struct types and their methods.
-- [ ] Make enum nesting and aliases deterministic.
-- [ ] Represent TJPGD and similar build conflicts as explicit target
+- [x] Remove private GC helpers and internal wrapper types from public exports.
+- [x] Make `C_Pointer` and `LvReferenceError` consistent across targets.
+- [x] Keep the intentional `OBJ_FLAG` module-level alias.
+- [x] Keep concrete LVGL struct types and their methods.
+- [x] Make enum nesting and aliases deterministic.
+- [x] Represent TJPGD and similar build conflicts as explicit target
   exceptions.
-- [ ] Correct callback rooting, callback deletion, object lifetime, `None`
+- [x] Correct callback rooting, callback deletion, object lifetime, `None`
   handling, pointer validation, array conversion, and struct field access.
-- [ ] Turn unsupported functions into hard diagnostics unless explicitly waived
+- [x] Turn unsupported functions into hard diagnostics unless explicitly waived
   by policy.
 
 ### Gate
 
-- [ ] The common API is identical across targets except reviewed exceptions.
-- [ ] Every exception has a runtime test.
-- [ ] Every conversion family has runtime coverage.
-- [ ] Generated typings match the final runtime contract.
+- [x] The common API is identical across targets except reviewed exceptions.
+- [x] Every exception has a runtime test.
+- [x] Every conversion family has runtime coverage.
+- [x] Generated typings match the final runtime contract.
 
 ### Handoff
 
-- Commit SHA: `________________`
-- Common API score: `________________`
-- Exception count: `________________`
-- Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Commit SHA: `cc02710`
+- Common API score: `99.99% (23,186 shared / 23,188 union exports)`
+- Exception count: `2 (TJPGD init/deinit absent on CircuitPython and CPython)`
+- Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`; `./scripts/verify_bindings.sh`; `../cmods/build_mp.sh --port unix --variant standard` + MicroPython smoke; `../cmods/build_cp.sh --port unix --variant coverage` + CircuitPython smoke; CPython editable rebuild from generated/lvgl_python.c + CPython smoke; `PYTHONPATH=. .venv/bin/python -m binding.api_report generated/api.json --baseline docs/baseline/lvgl-bindings-api-baseline.json.gz --classification docs/baseline/lvgl-bindings-api-baseline-classification.json --format markdown`
+- Notes: `The canonical public contract now drives exact registration on every target. CPython-only struct-function aliases, lifecycle dunders, GC helpers, generic Struct/Blob types, _nesting, and implementation-only records are private or absent. Concrete reachable structs, C_Pointer, LvReferenceError, OBJ_FLAG, enum ownership, and explicit lifecycle names are consistent. Unsupported public generation failures are fatal unless an exact policy waiver records the reason and test. Runtime fixes cover callback retention/deletion, deleted-object errors, wrong-pointer rejection, None, contiguous struct arrays, fields, buffers, and multiple callbacks. All 125 unit tests, deterministic regeneration, manifest/stub/mypy verification, three native builds, and three strengthened smoke suites pass. Historical upstream projection is 99.53% with zero unexplained differences. Artifact SHA-256: MicroPython 2e10e55743275d9b3d4c3a5dc038512ea18cc9b0fc95a5e12ce6d8802c6fbe25; CircuitPython 44e0c36e1385945cae3cbe8711543114c766850440d20c5c5249fa6787761254; CPython bb85cdbe2a380a6554d011e911860e5a74f5c35bd3a32c695fe8f560f32c3fff.`
 
 ## Checkpoint 7 — Consumer integration, CI, and release workflow
 
@@ -607,14 +607,14 @@ Add focused tests for:
 - [x] Typing signatures and duplicate declarations.
 - [x] Generated-stub static checking.
 - [x] Callback GC/lifetime behavior.
-- [ ] Struct field reads/writes and buffer views.
-- [ ] `None` handling for optional pointers.
-- [ ] Cross-target namespace and enum-value parity.
+- [x] Struct field reads/writes and buffer views.
+- [x] `None` handling for optional pointers.
+- [x] Cross-target namespace and enum-value parity.
 
 The compatibility report must publish:
 
-- [ ] Exact upstream contract coverage percentage.
-- [ ] Common-target API coverage percentage.
-- [ ] Target exception count.
-- [ ] Unexplained difference count, which must be zero.
-- [ ] Per-target generated artifact hashes.
+- [x] Exact upstream contract coverage percentage.
+- [x] Common-target API coverage percentage.
+- [x] Target exception count.
+- [x] Unexplained difference count, which must be zero.
+- [x] Per-target generated artifact hashes.
