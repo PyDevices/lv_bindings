@@ -68,4 +68,4 @@ jobs:
           gh workflow run sync-and-release.yml \
             --repo PyDevices/lvgl-python \
             -f "lvgl_bindings_ref=${BINDINGS_SHA}" \
-            -f "publish=true"
+            -f "mode=release"

@@ -156,6 +156,9 @@ def test_lifecycle_dunders_are_not_part_of_the_shared_public_namespace():
         assert "mp_lv_init_mpobj" not in source
         assert "mp_lv_deinit_mpobj" not in source
         assert "static const mp_lv_struct_t mp__nesting" not in source
+        assert "static int _nesting" not in source
+        assert "_nesting++;" not in source
+        assert "_nesting--;" not in source
 
 
 def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypatch):

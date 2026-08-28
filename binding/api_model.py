@@ -1184,16 +1184,6 @@ def build_api_model(
         )
         for variable in declarations.variables
     )
-    variables.append(
-        ApiVariable(
-            c_name="_nesting",
-            type=CType(kind="primitive", name="int"),
-            python_name="_nesting",
-            storage=("static",),
-            visibility="private",
-            policy_reason="Binding re-entrancy guard; not a user-facing LVGL symbol.",
-        )
-    )
     constants = []
     anonymous_groups = {}
     enum_prefix = "ENUM_" + module_prefix.upper() + "_"
