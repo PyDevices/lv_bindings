@@ -404,7 +404,10 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   module-global mirror. Their output now goes through an explicit runtime emit
   function, leaving only legacy AST-facing modules in the mirror architecture.
   Validation: 107 repository tests and binding.generate --check passed;
-  generated artifacts remain unchanged.`
+  generated artifacts remain unchanged. Follow-up validation: the previously
+  failing MicroPython Unix standard build was retried successfully and passed
+  the complete shared LVGL smoke probe. CPython, CircuitPython Unix coverage,
+  and MicroPython Unix standard now all have current successful smoke evidence.`
 
 ## Checkpoint 6 — Semantic and API corrections
 
