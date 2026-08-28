@@ -564,30 +564,30 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 
 ### Work
 
-- [ ] Remove dead legacy emitters and analyzer paths.
-- [ ] Remove target-specific metadata alignment hacks.
-- [ ] Remove stale MicroPython-shaped IR terminology.
-- [ ] Remove obsolete full baseline C artifacts.
-- [ ] Update all documentation to describe the target-neutral architecture.
-- [ ] Document policy, exceptions, parser pins, commands, synchronization, and
+- [x] Remove dead legacy emitters and analyzer paths.
+- [x] Remove target-specific metadata alignment hacks.
+- [x] Remove stale MicroPython-shaped IR terminology.
+- [x] Remove obsolete full baseline C artifacts.
+- [x] Update all documentation to describe the target-neutral architecture.
+- [x] Document policy, exceptions, parser pins, commands, synchronization, and
   migration notes.
 
 ### Final gate
 
-- [ ] All four repositories contain only intentional changes.
-- [ ] All generated artifacts are reproducible.
-- [ ] All unit tests, builds, smoke tests, and parity checks pass.
-- [ ] The API report contains zero unexplained differences.
-- [ ] The final commit SHA is recorded below.
+- [x] All four repositories contain only intentional changes.
+- [x] All generated artifacts are reproducible.
+- [x] All unit tests, builds, smoke tests, and parity checks pass.
+- [x] The API report contains zero unexplained differences.
+- [x] The final commit SHA is recorded below.
 
 ### Final handoff
 
-- Bindings commit SHA: `________________`
-- MicroPython commit SHA: `________________`
-- CircuitPython commit SHA: `________________`
-- CPython commit SHA: `________________`
-- Final validation report: `________________`
-- Remaining follow-up: `________________________________________________`
+- Bindings commit SHA: `518c684c2fb988cfa200db4355924cc4fa1260b6`
+- MicroPython commit SHA: `976b7de52bd26b74fb76063804dd123c4efd55ca`
+- CircuitPython commit SHA: `b70f6e8d15ab58fa23a2bda42f4b4fa996c9b55e`
+- CPython commit SHA: `9b6a6a72c41d5246716f1d7f11cd90616f52e679`
+- Final validation report: `The clean-break generator architecture passes 97 focused tests, deterministic all-target regeneration, canonical API/stub/namespace/mypy checks, the release dry run, and the pinned historical upstream oracle. The canonical API hash remains 03bc15b7ba58855ae69f7866624feb24eea935a334876dc5dda46d1f5b8d5e54; common-target coverage is 99.99%, with two audited availability exceptions and zero unexplained historical differences. Fresh MicroPython and CircuitPython Unix builds passed the shared full-runtime smoke suite, the rebuilt CPython extension passed the same suite, and a CPython wheel build contains the ABI-named extension and matching pyi. All four repositories are clean after their exact-source synchronization commits.`
+- Remaining follow-up: `None. The broader platform constraints discovered and documented during Checkpoint 7 remain outside the generator's ownership.`
 
 ## Test inventory
 
