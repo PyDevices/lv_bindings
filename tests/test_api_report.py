@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 
 from binding.api_model import build_api_model
@@ -90,6 +93,25 @@ def test_report_compares_against_compact_baseline():
     assert comparison["baseline_entries"] == 3
     assert comparison["name_location_matches"] == 3
     assert comparison["coverage"] == 1.0
+
+
+def test_current_baseline_differences_have_a_complete_classification():
+    root = Path(__file__).resolve().parents[1]
+    data = json.loads((root / "generated" / "api.json").read_text(encoding="utf-8"))
+    baseline = json.loads(
+        (root / "docs/baseline/lvgl-bindings-api-baseline.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    classification = json.loads(
+        (root / "docs/baseline/lvgl-bindings-api-baseline-classification.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    comparison = build_report(data, baseline, classification)["baseline_compatibility"]
+    assert comparison["coverage"] >= 0.95
+    assert comparison["classification"]["unexplained"] == {"missing": [], "extra": []}
 
 
 def test_report_rejects_invalid_api_data():

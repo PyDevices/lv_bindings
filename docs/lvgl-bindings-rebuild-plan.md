@@ -235,18 +235,18 @@ API hash after this increment is
 
 ### Gate
 
-- [ ] Exact normalized upstream coverage is at least 95%.
-- [ ] Every difference is classified as a deliberate fix, private-symbol
+- [x] Exact normalized upstream coverage is at least 95%.
+- [x] Every difference is classified as a deliberate fix, private-symbol
   removal, or target exception.
-- [ ] No target is used as the semantic source of truth for another target.
-- [ ] The common model is identical across targets except listed exceptions.
+- [x] No target is used as the semantic source of truth for another target.
+- [x] The common model is identical across targets except listed exceptions.
 
 ### Handoff
 
 - Commit SHA: `________________`
-- Compatibility score: `________________`
-- Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Compatibility score: `98.87% (21,928/22,179)`
+- Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests/test_api_report.py`; `PYTHONPATH=. .venv/bin/python -m binding.api_report generated/api.json --baseline docs/baseline/lvgl-bindings-api-baseline.json --classification docs/baseline/lvgl-bindings-api-baseline-classification.json --format markdown`
+- Notes: `The baseline classification manifest covers every missing or extra historical entry. Canonical enum normalization, richer public struct exposure, upstream metadata omissions, and private runtime-helper removal are explicit categories. The shared model precedes all target emitters; the only availability differences are the two audited TJPGD exceptions.`
 
 ## Checkpoint 4 — Typings and parity verification
 

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "canonical-enum-normalization-missing",
+      "side": "missing",
+      "patterns": ["enum.*"],
+      "classification": "deliberate_fix",
+      "reason": "The canonical model preserves current LVGL enum ownership and names instead of upstream metadata aliases."
+    },
+    {
+      "id": "canonical-enum-normalization-extra",
+      "side": "extra",
+      "patterns": ["enum.*"],
+      "classification": "deliberate_fix",
+      "reason": "The canonical model exposes current LVGL enum ownership and names, including the OBJ_FLAG namespace omitted upstream."
+    },
+    {
+      "id": "private-runtime-helper-removal",
+      "side": "missing",
+      "patterns": ["blob._nesting", "module.function.mp_lv_*", "struct.*"],
+      "classification": "private_symbol_removal",
+      "reason": "These are binding-internal runtime helpers or implementation structs, not part of the target-neutral public API."
+    },
+    {
+      "id": "richer-struct-api",
+      "side": "extra",
+      "patterns": ["struct.*"],
+      "classification": "deliberate_fix",
+      "reason": "The canonical declaration model retains public LVGL structs and struct methods that the upstream metadata did not represent."
+    },
+    {
+      "id": "upstream-metadata-omissions",
+      "side": "extra",
+      "patterns": ["module.function.*", "object.*"],
+      "classification": "deliberate_fix",
+      "reason": "The canonical model retains public functions and widget methods omitted by the upstream metadata projection."
+    }
+  ]
+}

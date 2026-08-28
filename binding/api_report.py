@@ -8,6 +8,7 @@ explicit without silently turning either into a backend-specific contract.
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import sys
 from pathlib import Path
@@ -297,8 +298,50 @@ def _model_compatibility_entries(data: Mapping[str, Any]) -> set[str]:
     return result
 
 
+def _classify_differences(
+    differences: Mapping[str, list[str]], classification: Mapping[str, Any] | None
+) -> Mapping[str, Any]:
+    """Classify historical-baseline differences with an auditable rule file."""
+
+    if classification is None:
+        return {"classified": [], "unexplained": {key: list(value) for key, value in differences.items()}}
+    if classification.get("schema_version") != 1:
+        raise ValueError("unsupported baseline classification schema")
+    rules = classification.get("rules", ())
+    buckets: dict[str, dict[str, Any]] = {}
+    used = set()
+    unexplained = {side: [] for side in differences}
+    for side, entries in differences.items():
+        for entry in entries:
+            matches = [
+                rule for rule in rules
+                if rule.get("side") == side
+                and any(fnmatch.fnmatchcase(entry, pattern) for pattern in rule.get("patterns", ()))
+            ]
+            if len(matches) > 1:
+                raise ValueError("overlapping baseline classification rules for %s" % entry)
+            if not matches:
+                unexplained[side].append(entry)
+                continue
+            rule = matches[0]
+            rule_id = rule.get("id")
+            if not rule_id or not rule.get("classification") or not rule.get("reason"):
+                raise ValueError("baseline classification rules require id, classification, and reason")
+            used.add(rule_id)
+            bucket = buckets.setdefault(
+                rule_id,
+                {key: rule[key] for key in ("id", "classification", "reason")},
+            )
+            bucket.setdefault("entries", []).append(entry)
+    stale = sorted(rule.get("id") for rule in rules if rule.get("id") not in used)
+    if stale:
+        raise ValueError("stale baseline classification rules: %s" % ", ".join(stale))
+    return {"classified": [buckets[key] for key in sorted(buckets)], "unexplained": unexplained}
+
+
 def _baseline_report(
-    data: Mapping[str, Any], baseline: Mapping[str, Any] | None
+    data: Mapping[str, Any], baseline: Mapping[str, Any] | None,
+    classification: Mapping[str, Any] | None = None,
 ) -> Mapping[str, Any] | None:
     if baseline is None:
         return None
@@ -308,14 +351,17 @@ def _baseline_report(
     expected = _expand_manifest(base)
     actual = _model_compatibility_entries(data)
     common = expected & actual
+    differences = {"missing": sorted(expected - actual), "extra": sorted(actual - expected)}
+    classifications = _classify_differences(differences, classification)
+    explained = not any(classifications["unexplained"].values())
     return {
         "baseline_schema": baseline.get("schema"),
         "baseline_entries": len(expected),
         "candidate_entries": len(actual),
         "name_location_matches": len(common),
         "coverage": len(common) / float(len(expected) or 1),
-        "missing": sorted(expected - actual),
-        "extra": sorted(actual - expected),
+        **differences,
+        "classification": classifications,
         "historical_target_comparisons": {
             target: {
                 "coverage": baseline.get("targets", {})
@@ -326,14 +372,17 @@ def _baseline_report(
             for target in TARGETS
         },
         "interpretation": (
-            "The candidate projection is diagnostic while canonical lowering "
+            "Every historical difference is classified by the audited policy."
+            if explained
+            else "The candidate projection is diagnostic while canonical lowering "
             "is still under construction; it is not a release gate."
         ),
     }
 
 
 def build_report(
-    data: Mapping[str, Any], baseline: Mapping[str, Any] | None = None
+    data: Mapping[str, Any], baseline: Mapping[str, Any] | None = None,
+    classification: Mapping[str, Any] | None = None,
 ) -> Mapping[str, Any]:
     """Build a deterministic report from canonical model JSON data."""
 
@@ -349,7 +398,7 @@ def build_report(
             target: {"count": len(exports[target])} for target in TARGETS
         },
         "target_parity": _parity(exports),
-        "baseline_compatibility": _baseline_report(data, baseline),
+        "baseline_compatibility": _baseline_report(data, baseline, classification),
     }
 
 
@@ -409,6 +458,13 @@ def _markdown(report: Mapping[str, Any]) -> str:
                 ),
                 "- Missing: %d" % len(baseline["missing"]),
                 "- Extra: %d" % len(baseline["extra"]),
+                "- Classified differences: %d"
+                % len(baseline["classification"]["classified"]),
+                "- Unexplained differences: %d"
+                % sum(
+                    len(entries)
+                    for entries in baseline["classification"]["unexplained"].values()
+                ),
                 "",
                 baseline["interpretation"],
             ]
@@ -425,6 +481,10 @@ def main(argv=None):
         help="optional normalized upstream baseline JSON",
     )
     parser.add_argument(
+        "--classification", type=Path,
+        help="optional audited historical-baseline difference classifications",
+    )
+    parser.add_argument(
         "--format", choices=("json", "markdown"), default="json"
     )
     parser.add_argument("--output", type=Path, help="write report to this path")
@@ -436,7 +496,12 @@ def main(argv=None):
         if args.baseline is not None
         else None
     )
-    report = build_report(data, baseline)
+    classification = (
+        json.loads(args.classification.read_text(encoding="utf-8"))
+        if args.classification is not None
+        else None
+    )
+    report = build_report(data, baseline, classification)
     rendered = (
         json.dumps(report, indent=2, sort_keys=True) + "\n"
         if args.format == "json"
