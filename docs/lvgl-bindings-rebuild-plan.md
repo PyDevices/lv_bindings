@@ -446,7 +446,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   functions now delegate directly to the CPython-native lowering module, while
   retaining the target-neutral type-discovery helper and existing phase order.
   Validation: 112 repository tests and binding.generate --check passed;
-  generated artifacts remain unchanged.`
+  generated artifacts remain unchanged. Nineteenth migration slice: narrowed
+  the remaining CPython orchestration to CPython-only enum, object, struct,
+  global, function, callback, and module paths. A source-boundary regression
+  test rejects reintroduced MicroPython C templates or CircuitPython lowering
+  branches. Validation: 113 repository tests and binding.generate --check
+  passed; generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

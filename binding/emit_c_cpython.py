@@ -531,12 +531,7 @@ def emit_c():
 
     if _emit_max_phase is None or _emit_max_phase > 1:
 
-        if _emit_target == "circuitpython" and _emit_max_phase is not None and _emit_max_phase >= 2:
-            from .emit_circuitpython_glue import emit_phase2_enums
-
-            emit_phase2_enums()
-
-        if _emit_target == "cpython" and _emit_max_phase is not None and _emit_max_phase >= 2:
+        if _emit_max_phase is not None and _emit_max_phase >= 2:
             from .emit_cpython_glue import emit_phase2_enums_cpython
 
             emit_phase2_enums_cpython()
@@ -606,10 +601,9 @@ def emit_c():
 
         if _emit_max_phase is None or _emit_max_phase >= 5:
 
-            if _emit_target == "cpython":
-                from .emit_cpython_native import bind_emit_helpers
+            from .emit_cpython_native import bind_emit_helpers
 
-                bind_emit_helpers(locals())
+            bind_emit_helpers(locals())
 
             generated_obj_names = collections.OrderedDict()
             for obj_name in obj_names:
@@ -632,13 +626,12 @@ def emit_c():
                     gen_obj(obj_name)
                     generated_obj_names[obj_name] = True
 
-            if _emit_target == "cpython":
-                from .emit_cpython_native import bound_helper
+            from .emit_cpython_native import bound_helper
 
-                _gf = bound_helper("generated_funcs")
-                if _gf is not None:
-                    generated_funcs = _gf
-                runtime.set_("generated_funcs", generated_funcs)
+            _gf = bound_helper("generated_funcs")
+            if _gf is not None:
+                generated_funcs = _gf
+            runtime.set_("generated_funcs", generated_funcs)
 
     #
     # Generate structs which contain function members
@@ -696,39 +689,7 @@ def emit_c():
             pass
         runtime.set_("funcs", funcs)
 
-    def _emit_all_struct_types():
-        print(
-            """
-/*
- * CircuitPython phase-3 struct type generation
- */
-"""
-        )
-        for struct_name in list(structs.keys()):
-            if generated_structs.get(struct_name):
-                continue
-            try:
-                try_generate_struct(struct_name, structs[struct_name])
-            except MissingConversionException as exp:
-                print(
-                    """
-/*
- * Struct NOT generated: {name}
- * {problem}
- */
-""".format(
-                        name=struct_name,
-                        problem=exp,
-                    )
-                )
-
-
-    struct_locals_basic = collections.OrderedDict()
-
-
     def _emit_cpython_struct_methods(struct_list=None):
-        if _emit_target != "cpython":
-            return
         from .emit_cpython_native import (
             emit_struct_methods_cpython,
             gen_py_func,
@@ -771,159 +732,39 @@ def emit_c():
 
 
     def _emit_struct_locals_dicts(include_methods=False, struct_list=None):
-        if struct_list is None:
-            struct_names = list(generated_structs.keys())
-        else:
-            struct_names = struct_list
-        for struct_name in struct_names:
-            if not generated_structs.get(struct_name):
-                continue
-            if include_methods:
-                if generated_struct_functions.get(struct_name):
-                    continue
-            else:
-                if struct_locals_basic.get(struct_name):
-                    continue
-            sanitized_struct_name = sanitize(struct_name)
-            struct_funcs = (
-                list(get_struct_functions(struct_name)) if include_methods else []
-            )
-            if _emit_target == "cpython":
-                if not include_methods:
-                    struct_locals_basic[struct_name] = True
-                continue
-            if include_methods:
-                for struct_func in struct_funcs[:]:
-                    try:
-                        if struct_func.name not in generated_funcs:
-                            gen_mp_func(struct_func, struct_name)
-                    except MissingConversionException as exp:
-                        gen_func_error(struct_func, exp)
-                        struct_funcs.remove(struct_func)
-            if struct_name not in structs or structs[struct_name].decls:
-                struct_size_attr = "{{ MP_ROM_QSTR(MP_QSTR___SIZE__), MP_ROM_PTR(MP_ROM_INT(sizeof({struct_tag}{struct_name}))) }},".format(
-                    struct_name=struct_name,
-                    struct_tag="struct "
-                    if struct_name in structs_without_typedef.keys()
-                    else "",
-                )
-            else:
-                struct_size_attr = ""
-            print(
-                """
-static const mp_rom_map_elem_t mp_{sanitized_struct_name}_locals_dict_table[] = {{
-    {struct_size}
-    {functions}
-}};
-
-static MP_DEFINE_CONST_DICT(mp_{sanitized_struct_name}_locals_dict, mp_{sanitized_struct_name}_locals_dict_table);
-        """.format(
-                    struct_size=struct_size_attr,
-                    sanitized_struct_name=sanitized_struct_name,
-                    functions="".join(
-                        [
-                            "{{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{func}_mpobj) }},\n    ".format(
-                                name=sanitize(noncommon_part(f.name, struct_name)),
-                                func=f.name,
-                            )
-                            for f in struct_funcs
-                        ]
-                    ),
-                )
-            )
-            if include_methods:
-                generated_struct_functions[struct_name] = True
-            else:
-                struct_locals_basic[struct_name] = True
+        return None
 
 
     def gen_global(global_name, global_type_ast):
         global_type = get_type(global_type_ast, remove_quals=True)
-        if _emit_target == "cpython":
-            if global_name == "_nesting":
-                return
-            try_generate_type(global_type_ast)
-            cpython_global_types = runtime.get(
-                "cpython_global_types", collections.OrderedDict()
-            )
-            cpython_global_types[global_name] = (
-                global_type
-                if generated_structs.get(global_type, False)
-                else None
-            )
-            runtime.set_("cpython_global_types", cpython_global_types)
-            generated_globals.append(global_name)
+        if global_name == "_nesting":
             return
-        generated_global = try_generate_type(global_type_ast)
-        # print("/* generated_global = %s */" % generated_global)
-        if global_type not in generated_structs:
-            wrapped_type = lv_mp_type[global_type]
-            if not wrapped_type:
-                raise MissingConversionException(
-                    "Missing conversion to %s when generating global %s"
-                    % (wrapped_type, global_name)
-                )
-            global_type = sanitize("_lv_mp_%s_wrapper" % wrapped_type)
-            custom_struct_str = """
-typedef struct {{
-    {type} value;
-}} {name};
-        """.format(type=wrapped_type, name=global_type)
-            if global_type not in generated_structs:
-                print("/* Global struct wrapper for %s */" % wrapped_type)
-                print(custom_struct_str)
-                # eprint("%s: %s\n" % (wrapped_type, custom_struct_str))
-                try_generate_struct(
-                    global_type, parser.parse(custom_struct_str).ext[0].type.type
-                )
-
-        print(
-            """
-/*
- * {module_name} {global_name} global definitions
- */
-
-static const mp_lv_struct_t mp_{global_name} = {{
-    {{ &mp_{struct_name}_type }},
-    ({cast}*)&{global_name}
-}};
-    """.format(
-                module_name=module_name,
-                global_name=global_name,
-                struct_name=global_type,
-                cast=gen.visit(global_type_ast),
-            )
+        try_generate_type(global_type_ast)
+        cpython_global_types = runtime.get(
+            "cpython_global_types", collections.OrderedDict()
         )
+        cpython_global_types[global_name] = (
+            global_type if generated_structs.get(global_type, False) else None
+        )
+        runtime.set_("cpython_global_types", cpython_global_types)
+        generated_globals.append(global_name)
 
 
     for global_name in blobs:
         try:
             gen_global(global_name, blobs[global_name])
-            if _emit_target != "cpython":
-                generated_globals.append(global_name)
         except MissingConversionException as exp:
             gen_func_error(global_name, exp)
 
     if _emit_max_phase is None or _emit_max_phase >= 4:
-        if _emit_target == "cpython":
-            from .emit_cpython_native import bind_emit_helpers, bound_helper
+        from .emit_cpython_native import bind_emit_helpers, bound_helper
 
-            _gf = bound_helper("generated_funcs")
-            if _gf is not None:
-                generated_funcs = _gf
-            bind_emit_helpers(locals())
+        _gf = bound_helper("generated_funcs")
+        if _gf is not None:
+            generated_funcs = _gf
+        bind_emit_helpers(locals())
         try_generate_structs_from_first_argument()
         _emit_struct_locals_dicts(include_methods=True)
-
-    elif _emit_target == "circuitpython" and _emit_max_phase == 3:
-        _emit_all_struct_types()
-        _emit_struct_locals_dicts(include_methods=False)
-
-    elif _emit_target == "cpython" and _emit_max_phase == 3:
-        from .emit_cpython_native import bind_emit_helpers
-
-        bind_emit_helpers(locals())
-        _emit_all_struct_types()
 
     if _emit_max_phase is None or _emit_max_phase >= 6:
         #
@@ -941,19 +782,17 @@ static const mp_lv_struct_t mp_{global_name} = {{
         )
 
         # eprint("/* Generating global module functions /*")
-        if _emit_target == "cpython":
-            from .emit_cpython_native import bound_helper
+        from .emit_cpython_native import bound_helper
 
-            _candidates = [
-                generated_funcs,
-                runtime.get("generated_funcs", {}),
-                bound_helper("generated_funcs", {}),
-            ]
-            generated_funcs = max(_candidates, key=len)
+        _candidates = [
+            generated_funcs,
+            runtime.get("generated_funcs", {}),
+            bound_helper("generated_funcs", {}),
+        ]
+        generated_funcs = max(_candidates, key=len)
         module_funcs = [func for func in funcs if func.name not in generated_funcs]
         module_funcs = filter_module_funcs_for_target(module_funcs, _emit_target)
-        if _emit_target == "cpython":
-            runtime.set_("_cpython_module_exports", list(module_funcs))
+        runtime.set_("_cpython_module_exports", list(module_funcs))
         for module_func in module_funcs[
             :
         ]:  # clone list because we are changing it in the loop.
@@ -973,8 +812,7 @@ static const mp_lv_struct_t mp_{global_name} = {{
                 gen_func_error(module_func, exp)
                 module_funcs.remove(module_func)
 
-        if _emit_target == "cpython":
-            _emit_cpython_struct_methods()
+        _emit_cpython_struct_methods()
 
         functions_not_generated = [
             func.name for func in funcs if func.name not in generated_funcs
@@ -1004,12 +842,7 @@ static const mp_lv_struct_t mp_{global_name} = {{
             except MissingConversionException as exp:
                 gen_func_error(func, exp)
 
-    #
-    # Emit Mpy Module definition
-    #
-
-    emit_target = _emit_target
-    if emit_target == "cpython":
+    # Emit the CPython module definition.
         from .emit_cpython_glue import finish_py_module
         runtime.set_("generated_funcs", generated_funcs)
         runtime.set_("module_funcs", module_funcs)
@@ -1037,160 +870,3 @@ py_lv_obj_type_t *py_lv_obj_types[] = {{
             )
         )
         finish_py_module(_emit_max_phase or 7)
-        return
-
-    if emit_target == "circuitpython":
-        from .emit_circuitpython_glue import emit_phase2_enums, finish_cp_fragment
-
-        if _emit_max_phase is not None and _emit_max_phase >= 2:
-            emit_phase2_enums()
-        if _emit_max_phase is not None and _emit_max_phase < 6:
-            module_funcs = []
-        runtime.set_("module_funcs", module_funcs)
-        runtime.set_("generated_globals", generated_globals)
-        runtime.set_("int_constants", int_constants)
-        runtime.set_("generated_structs", generated_structs)
-        runtime.set_("struct_aliases", struct_aliases)
-        runtime.set_("enums", runtime.get("enums"))
-        if len(obj_names) > 0 and (_emit_max_phase is None or _emit_max_phase >= 5) and _emit_target != "cpython":
-            print(
-                """
-static const mp_lv_obj_type_t *mp_lv_obj_types[] = {{
-    {obj_types},
-    NULL
-}};
-""".format(
-                    obj_types=",\n    ".join(
-                        ["&mp_lv_%s_type" % sanitize(o) for o in obj_names]
-                    )
-                )
-            )
-        finish_cp_fragment(_emit_max_phase or 7)
-        return
-
-    # eprint("/* Generating module definition */")
-    print(
-        """
-
-/*
- * {module_name} module definitions
- */
-
-static const mp_rom_map_elem_t {module_name}_globals_table[] = {{
-    {{ MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_{module_name}) }},
-    {{ MP_ROM_QSTR(MP_QSTR___init__), MP_ROM_PTR(&lvgl_mod___init___obj) }},
-    {{ MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&lvgl_mod___del___obj) }},
-    {objects}
-    {functions}
-    {enums}
-    {structs}
-    {struct_aliases}
-    {blobs}
-    {int_constants}
-#ifdef LV_OBJ_T
-    {{ MP_ROM_QSTR(MP_QSTR_LvReferenceError), MP_ROM_PTR(&mp_type_LvReferenceError) }},
-#endif // LV_OBJ_T
-}};
-""".format(
-            module_name=sanitize(module_name),
-            objects="".join(
-                [
-                    "{{ MP_ROM_QSTR(MP_QSTR_{obj}), MP_ROM_PTR(&mp_lv_{obj}_type_base) }},\n    ".format(
-                        obj=sanitize(o)
-                    )
-                    for o in obj_names
-                ]
-            ),
-            functions="".join(
-                [
-                    "{{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{func}_mpobj) }},\n    ".format(
-                        name=sanitize(simplify_identifier(f.name)), func=f.name
-                    )
-                    for f in module_funcs
-                ]
-            ),
-            enums="".join(
-                [
-                    "{{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_lv_{enum}_type_base) }},\n    ".format(
-                        name=sanitize(get_enum_name(enum_name)), enum=enum_name
-                    )
-                    for enum_name in enums.keys()
-                    if enum_name not in enum_referenced
-                ]
-            ),
-            structs="".join(
-                [
-                    "{{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{struct_name}_type) }},\n    ".format(
-                        name=sanitize(simplify_identifier(struct_name)),
-                        struct_name=sanitize(struct_name),
-                    )
-                    for struct_name in generated_structs
-                    if generated_structs[struct_name]
-                ]
-            ),
-            struct_aliases="".join(
-                [
-                    "{{ MP_ROM_QSTR(MP_QSTR_{alias_name}), MP_ROM_PTR(&mp_{struct_name}_type) }},\n    ".format(
-                        struct_name=sanitize(struct_name),
-                        alias_name=sanitize(
-                            simplify_identifier(struct_aliases[struct_name])
-                        ),
-                    )
-                    for struct_name in struct_aliases.keys()
-                ]
-            ),
-            blobs="".join(
-                [
-                    "{{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_{global_name}) }},\n    ".format(
-                        name=sanitize(simplify_identifier(global_name)),
-                        global_name=global_name,
-                    )
-                    for global_name in generated_globals
-                ]
-            ),
-            int_constants="".join(
-                [
-                    "{{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(MP_ROM_INT({value})) }},\n    ".format(
-                        name=sanitize(get_enum_name(int_constant)), value=int_constant
-                    )
-                    for int_constant in int_constants
-                ]
-            ),
-        )
-    )
-
-
-    print(
-        """
-static MP_DEFINE_CONST_DICT (
-    mp_module_{module_name}_globals,
-    {module_name}_globals_table
-);
-
-const mp_obj_module_t mp_module_{module_name} = {{
-    .base = {{ &mp_type_module }},
-    .globals = (mp_obj_dict_t*)&mp_module_{module_name}_globals
-}};
-
-MP_REGISTER_MODULE(MP_QSTR_{module_name}, mp_module_{module_name});
-
-""".format(
-            module_name=module_name,
-        )
-    )
-
-    # Add an array of all object types
-
-    if len(obj_names) > 0:
-        print(
-            """
-static const mp_lv_obj_type_t *mp_lv_obj_types[] = {{
-    {obj_types},
-    NULL
-}};
-    """.format(
-                obj_types=",\n    ".join(
-                    ["&mp_lv_%s_type" % obj_name for obj_name in obj_names]
-                )
-            )
-        )

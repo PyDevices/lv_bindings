@@ -200,6 +200,15 @@ def test_cpython_backend_uses_its_native_emitter_directly():
     assert emit_cpython.emit_c_mod is not emit_c_micropython_style
 
 
+def test_cpython_emitter_contains_no_cross_target_lowering_branches():
+    source = (Path(__file__).parents[1] / "binding" / "emit_c_cpython.py").read_text()
+
+    assert "if _emit_target" not in source
+    assert "mp_obj_t" not in source
+    assert "MP_REGISTER_MODULE" not in source
+    assert "emit_circuitpython_glue" not in source
+
+
 def test_target_lowering_setup_uses_common_defaults():
     from binding import runtime
 
