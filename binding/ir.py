@@ -97,6 +97,7 @@ class CFunction:
     parameters: Tuple[CParameter, ...]
     variadic: bool = False
     storage: Tuple[str, ...] = ()
+    function_specifiers: Tuple[str, ...] = ()
     is_definition: bool = False
     location: SourceLocation = field(default_factory=SourceLocation)
 
@@ -401,6 +402,18 @@ class _Converter:
             for parameter in node.params
             if not isinstance(parameter, c_ast.EllipsisParam)
         )
+        # In a C prototype, ``(void)`` means no parameters.  pycparser keeps
+        # the ``void`` Typename node, so normalize it here rather than making
+        # every target backend special-case a phantom argument.
+        if (
+            not variadic
+            and len(parameters) == 1
+            and parameters[0].name is None
+            and parameters[0].type.kind == "primitive"
+            and parameters[0].type.name == "void"
+            and not parameters[0].type.qualifiers
+        ):
+            parameters = ()
         return parameters, variadic
 
     def fields(self, node: Any) -> Tuple[CField, ...]:
@@ -460,6 +473,7 @@ def _function_from_decl(converter: _Converter, declaration: Any, is_definition=F
         parameters=parameters,
         variadic=variadic,
         storage=tuple(declaration.storage or ()),
+        function_specifiers=tuple(declaration.funcspec or ()),
         is_definition=is_definition,
         location=converter.location(declaration),
     )

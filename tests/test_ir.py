@@ -31,6 +31,8 @@ static inline int point_sum(point_t *point, int extra);
         "int point_sum(point_t *, int)"
     )
     assert ir.functions_by_name["point_sum"].location == ir.functions[0].location
+    assert ir.functions_by_name["point_sum"].storage == ("static",)
+    assert ir.functions_by_name["point_sum"].function_specifiers == ("inline",)
 
 
 def test_parse_source_preserves_arrays_and_variadic_functions():
@@ -44,6 +46,16 @@ def test_parse_source_preserves_arrays_and_variadic_functions():
     assert function.variadic
     assert function.signature == "int format(const char *, ...)"
     assert function.parameters[0].type.canonical() == "const char *"
+
+
+def test_parse_source_normalizes_void_parameter_lists():
+    ir = parse_source("void no_args(void); typedef void (*callback_t)(void);")
+
+    assert ir.functions_by_name["no_args"].parameters == ()
+    callback = ir.typedefs_by_name["callback_t"].type.target
+    assert callback is not None
+    assert callback.parameters == ()
+    assert callback.canonical() == "void ()"
 
 
 def test_parse_source_preserves_pointer_qualifiers():
@@ -95,3 +107,18 @@ def test_parse_source_keeps_anonymous_struct_identity():
 
     assert [struct.name for struct in ir.structs] == [None, None]
     assert [struct.typedef_names for struct in ir.structs] == [("point_t",), ("other_t",)]
+
+
+def test_parse_source_captures_anonymous_union_and_nested_record_types():
+    ir = parse_source(
+        "typedef union { int code; float value; } result_t; "
+        "typedef struct container { struct { int x; } point; } container_t;",
+        filename="anonymous_union.h",
+    )
+
+    assert ir.structs[0].kind == "union"
+    assert ir.structs[0].name is None
+    assert ir.structs[0].typedef_names == ("result_t",)
+    point_type = ir.structs[1].fields[0].type
+    assert point_type.kind == "struct"
+    assert point_type.name is None

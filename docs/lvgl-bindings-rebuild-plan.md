@@ -143,6 +143,13 @@ surface. The next structural step is to migrate those decisions to the
 declaration IR; the current shared snapshot prevents a target from reparsing
 or reanalyzing the translation unit while preserving the C output gate.
 
+The declaration IR now normalizes C ``(void)`` parameter lists, preserves
+function specifiers such as ``static inline``, and has focused coverage for
+qualified pointers, arrays, callbacks, anonymous records, unions, and forward
+aliases. A target-neutral API-model library has been started, but it is not
+yet the generated metadata or typings source of truth; policy, reachability,
+and backend lowering remain in Checkpoint 3 and later.
+
 - [x] Add a read-only declaration index for alias resolution, first-argument
   relationships, and struct-function classification. The index is used by
   legacy-facing queries with an AST fallback for synthetic helper declarations.
@@ -353,10 +360,10 @@ or reanalyzing the translation unit while preserving the C output gate.
 Add focused tests for:
 
 - [x] Forward declarations and typedef aliases.
-- [ ] Anonymous structs/unions.
-- [ ] Qualified pointers and arrays.
-- [ ] Function pointers and callbacks.
-- [ ] Static-inline declarations.
+- [x] Anonymous structs/unions.
+- [x] Qualified pointers and arrays.
+- [x] Function pointers and callbacks.
+- [x] Static-inline declarations.
 - [ ] Widget inheritance and method ownership.
 - [ ] Enum nesting and aliases.
 - [ ] Duplicate export detection.
