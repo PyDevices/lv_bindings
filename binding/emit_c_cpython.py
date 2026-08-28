@@ -56,6 +56,8 @@ from .emit_backend import (
     callback_return_conversion_available,
     callback_return_lowering,
     function_return_lowering,
+    failed_generation,
+    object_generation_order,
     require_target_lowering,
     resolve_emitter_headers,
     struct_pointer_helpers_source,
@@ -479,23 +481,15 @@ def emit_c(ctx):
 
 
             def gen_func_error(method, exp):
-                funcs = list(runtime.get("funcs"))
-                print(
-                    """
-/*
- * Function NOT generated:
- * {problem}
- * {method}
- */
-    """.format(
-                        method=gen.visit(method) if isinstance(method, c_ast.Node) else method,
-                        problem=exp,
-                    )
+                diagnostic, funcs = failed_generation(
+                    method=method,
+                    problem=exp,
+                    funcs=runtime.get("funcs"),
+                    render_method=lambda value: (
+                        gen.visit(value) if isinstance(value, c_ast.Node) else value
+                    ),
                 )
-                try:
-                    funcs.remove(method)
-                except:
-                    pass
+                print(diagnostic)
                 runtime.set_("funcs", funcs)
 
 
@@ -531,25 +525,9 @@ def emit_c(ctx):
             bind_emit_helpers(locals())
 
             generated_obj_names = collections.OrderedDict()
-            for obj_name in obj_names:
-                # eprint("--> %s [%s]" % (obj_name, ", ".join([name for name in generated_obj_names])))
-                parent_obj_name = (
-                    parent_obj_names[obj_name] if obj_name in parent_obj_names else None
-                )
-
-                while parent_obj_name != None and parent_obj_name not in generated_obj_names:
-                    gen_obj(parent_obj_name)
-                    generated_obj_names[parent_obj_name] = True
-                    parent_obj_name = (
-                        parent_obj_names[parent_obj_name]
-                        if parent_obj_name in parent_obj_names
-                        else None
-                    )
-
-                if obj_name not in generated_obj_names:
-                    # eprint("--> gen obj %s" % obj_name)
-                    gen_obj(obj_name)
-                    generated_obj_names[obj_name] = True
+            for obj_name in object_generation_order(obj_names, parent_obj_names):
+                gen_obj(obj_name)
+                generated_obj_names[obj_name] = True
 
             from .emit_cpython_native import bound_helper
 
@@ -595,23 +573,15 @@ def emit_c(ctx):
 
 
     def gen_func_error(method, exp):
-        funcs = list(runtime.get("funcs"))
-        print(
-            """
-/*
- * Function NOT generated:
- * {problem}
- * {method}
- */
-    """.format(
-                method=gen.visit(method) if isinstance(method, c_ast.Node) else method,
-                problem=exp,
-            )
+        diagnostic, funcs = failed_generation(
+            method=method,
+            problem=exp,
+            funcs=runtime.get("funcs"),
+            render_method=lambda value: (
+                gen.visit(value) if isinstance(value, c_ast.Node) else value
+            ),
         )
-        try:
-            funcs.remove(method)
-        except:
-            pass
+        print(diagnostic)
         runtime.set_("funcs", funcs)
 
     def _emit_cpython_struct_methods(struct_list=None):

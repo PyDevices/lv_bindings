@@ -474,6 +474,11 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   native array and function-pointer C emission hooks. Focused tests enforce use
   by both orchestrators and the common enum conversion-map policy. Validation:
   117 repository tests and binding.generate --check passed; generated artifacts
+  remain unchanged. Twenty-fourth migration slice: parent-first object
+  inheritance order and failed-generation diagnostics/removal now use shared
+  backend policy. Focused tests cover deterministic parent ordering, cycle
+  rejection, diagnostic rendering, and declaration removal. Validation: 119
+  repository tests and binding.generate --check passed; generated artifacts
   remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections

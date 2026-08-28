@@ -27,8 +27,10 @@ from binding.emit_backend import (
     enum_namespace_plan,
     function_reuse_allowed,
     function_return_lowering,
+    failed_generation,
     module_registration_plan,
     mp_obj_get_ull_to_bytes_source,
+    object_generation_order,
     prepare_target_lowering,
     require_one_of_target_lowerings,
     require_target_lowering,
@@ -266,6 +268,30 @@ def test_type_discovery_shares_enum_conversion_policy():
     assert mp_to_lv["lv_test_t *"] == "to_int_ptr"
     assert lv_to_mp["lv_test_t *"] == "from_int_ptr"
     assert lv_mp_type["lv_test_t *"] == "int*"
+
+
+def test_object_generation_order_is_parent_first_and_rejects_cycles():
+    assert object_generation_order(
+        ("button", "obj", "label"),
+        {"obj": None, "button": "obj", "label": "obj"},
+    ) == ("obj", "button", "label")
+
+    with pytest.raises(ValueError, match="object inheritance cycle"):
+        object_generation_order(("a",), {"a": "b", "b": "a"})
+
+
+def test_failed_generation_shares_diagnostic_and_removal_policy():
+    method = object()
+    diagnostic, remaining = failed_generation(
+        method=method,
+        problem="missing conversion",
+        funcs=(method, "other"),
+        render_method=lambda value: "fixture()" if value is method else str(value),
+    )
+
+    assert "missing conversion" in diagnostic
+    assert "fixture()" in diagnostic
+    assert remaining == ["other"]
 
 
 def test_target_lowering_setup_uses_common_defaults():

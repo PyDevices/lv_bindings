@@ -58,7 +58,9 @@ from .emit_backend import (
     conversion_available,
     function_reuse_allowed,
     function_return_lowering,
+    failed_generation,
     mp_obj_get_ull_to_bytes_source,
+    object_generation_order,
     require_one_of_target_lowerings,
     resolve_emitter_headers,
     struct_pointer_helpers_source,
@@ -2325,23 +2327,15 @@ static mp_obj_t mp_{func}(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_fu
 
 
             def gen_func_error(method, exp):
-                funcs = list(runtime.get("funcs"))
-                print(
-                    """
-/*
- * Function NOT generated:
- * {problem}
- * {method}
- */
-    """.format(
-                        method=gen.visit(method) if isinstance(method, c_ast.Node) else method,
-                        problem=exp,
-                    )
+                diagnostic, funcs = failed_generation(
+                    method=method,
+                    problem=exp,
+                    funcs=runtime.get("funcs"),
+                    render_method=lambda value: (
+                        gen.visit(value) if isinstance(value, c_ast.Node) else value
+                    ),
                 )
-                try:
-                    funcs.remove(method)
-                except:
-                    pass
+                print(diagnostic)
                 runtime.set_("funcs", funcs)
 
 
@@ -2529,25 +2523,9 @@ GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_{obj}_type = {{
         if _emit_max_phase is None or _emit_max_phase >= 5:
 
             generated_obj_names = collections.OrderedDict()
-            for obj_name in obj_names:
-                # eprint("--> %s [%s]" % (obj_name, ", ".join([name for name in generated_obj_names])))
-                parent_obj_name = (
-                    parent_obj_names[obj_name] if obj_name in parent_obj_names else None
-                )
-
-                while parent_obj_name != None and parent_obj_name not in generated_obj_names:
-                    gen_obj(parent_obj_name)
-                    generated_obj_names[parent_obj_name] = True
-                    parent_obj_name = (
-                        parent_obj_names[parent_obj_name]
-                        if parent_obj_name in parent_obj_names
-                        else None
-                    )
-
-                if obj_name not in generated_obj_names:
-                    # eprint("--> gen obj %s" % obj_name)
-                    gen_obj(obj_name)
-                    generated_obj_names[obj_name] = True
+            for obj_name in object_generation_order(obj_names, parent_obj_names):
+                gen_obj(obj_name)
+                generated_obj_names[obj_name] = True
 
     #
     # Generate structs which contain function members
@@ -2586,23 +2564,15 @@ GENMPY_UNUSED static const mp_lv_obj_type_t mp_lv_{obj}_type = {{
 
 
     def gen_func_error(method, exp):
-        funcs = list(runtime.get("funcs"))
-        print(
-            """
-/*
- * Function NOT generated:
- * {problem}
- * {method}
- */
-    """.format(
-                method=gen.visit(method) if isinstance(method, c_ast.Node) else method,
-                problem=exp,
-            )
+        diagnostic, funcs = failed_generation(
+            method=method,
+            problem=exp,
+            funcs=runtime.get("funcs"),
+            render_method=lambda value: (
+                gen.visit(value) if isinstance(value, c_ast.Node) else value
+            ),
         )
-        try:
-            funcs.remove(method)
-        except:
-            pass
+        print(diagnostic)
         runtime.set_("funcs", funcs)
 
 

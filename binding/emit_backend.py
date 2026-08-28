@@ -239,6 +239,47 @@ class TypeDiscovery:
                 self.lv_mp_type[type_ptr] = self.lv_mp_type[new_type_ptr]
 
 
+def object_generation_order(obj_names, parent_obj_names):
+    """Return objects once each, with every known parent before its child."""
+    ordered = []
+    emitted = set()
+    visiting = set()
+
+    def add(name):
+        if name is None or name in emitted:
+            return
+        if name in visiting:
+            raise ValueError("object inheritance cycle at %s" % name)
+        visiting.add(name)
+        add(parent_obj_names.get(name))
+        visiting.remove(name)
+        emitted.add(name)
+        ordered.append(name)
+
+    for obj_name in obj_names:
+        add(obj_name)
+    return tuple(ordered)
+
+
+def failed_generation(*, method, problem, funcs, render_method):
+    """Build the common diagnostic and remove one failed declaration."""
+    remaining = list(funcs)
+    try:
+        remaining.remove(method)
+    except ValueError:
+        pass
+    return (
+        """
+/*
+ * Function NOT generated:
+ * {problem}
+ * {method}
+ */
+    """.format(method=render_method(method), problem=problem),
+        remaining,
+    )
+
+
 _TARGET_PROFILES = {
     "micropython": TargetLoweringProfile("micropython", True),
     "circuitpython": TargetLoweringProfile("circuitpython", True),
