@@ -2,108 +2,29 @@
 
 from __future__ import annotations
 
-import json
+import os
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, TextIO, Union
+from typing import Optional, Sequence
 
-from .helpers import export_name
-from .naming import get_naming_style
 from .emit_pyi_canonical import CanonicalPyiEmitter, load_canonical_api
-from .pyi_prototypes import (
-    _CALLBACK_TYPEDEFS,
-    _LEGACY_ENUM_TYPEDEFS,
-    default_pp_path_for_metadata,
-    enrich_ir_metadata,
-    parse_pp_prototypes,
-    strip_receiver_args,
-)
+
+ALL_TARGETS = ("cpython", "micropython", "circuitpython")
 
 _LV_VERSION_DEFINE_RE = re.compile(
     r"^#define\s+(LVGL_VERSION_MAJOR|LVGL_VERSION_MINOR|LVGL_VERSION_PATCH)\s+(\d+)",
     re.MULTILINE,
 )
 
-_PY_KEYWORDS = frozenset(
-    {
-        "False",
-        "None",
-        "True",
-        "and",
-        "as",
-        "assert",
-        "break",
-        "class",
-        "continue",
-        "def",
-        "del",
-        "elif",
-        "else",
-        "except",
-        "finally",
-        "for",
-        "from",
-        "global",
-        "if",
-        "import",
-        "in",
-        "is",
-        "lambda",
-        "nonlocal",
-        "not",
-        "or",
-        "pass",
-        "raise",
-        "return",
-        "try",
-        "while",
-        "with",
-        "yield",
-    }
-)
-
-_OBJ_POINTER_TYPES = frozenset({"lv_obj_t*", "obj*"})
-
-# Structs that have a dedicated helper stub in _emit_helper_types.
-_HELPER_STRUCT_STUBS = frozenset({"C_Pointer"})
-
-# Composite typedefs: bitmask unions of module enums (no dedicated enum type).
-_COMPOSITE_TYPEDEF_ENUMS: Dict[str, tuple[str, ...]] = {
-    "style_selector_t": ("PART", "STATE"),
-}
-
-# C typedefs aliased to module-level enums (members copied from widget nested enums).
-_MODULE_ALIAS_ENUM_TYPEDEFS: Dict[str, str] = {
-    "obj_flag_t": "OBJ_FLAG",
-}
-_MODULE_ALIAS_ENUM_SOURCES: Dict[str, tuple[str, str]] = {
-    "OBJ_FLAG": ("obj", "FLAG"),
-}
-# Module enums are int-backed; parameters accept enum members (typed int) or raw int.
-_ENUM_INT_UNION = True
-
-# Empty struct typedefs suppressed in favor of another exported type.
-_SUPPRESSED_STRUCT_STUBS: Dict[str, str] = {
-    "indev_pointer_t": "indev_t",
-    "indev_keypad_t": "indev_t",
-}
-
-
-def sanitize(name: str) -> str:
-    if name in _PY_KEYWORDS:
-        return f"_{name}"
-    return name.replace(" ", "_").replace("*", "_ptr")
-
-
-def load_metadata(path: Path) -> Dict[str, Any]:
-    with path.open(encoding="utf-8") as handle:
-        return json.load(handle)
-
 
 def read_lvgl_version_major_minor(repo_root: Optional[Path] = None) -> str:
-    """Read LVGL major.minor from the pinned lvgl submodule."""
+    """Read the major/minor version from the pinned LVGL submodule."""
+
     repo_root = (repo_root or Path(__file__).resolve().parent.parent).resolve()
-    for version_file in (repo_root / "lvgl" / "lv_version.h", repo_root / "lvgl" / "lvgl.h"):
+    for version_file in (
+        repo_root / "lvgl" / "lv_version.h",
+        repo_root / "lvgl" / "lvgl.h",
+    ):
         if not version_file.is_file():
             continue
         text = version_file.read_text(encoding="utf-8")
@@ -121,586 +42,27 @@ def read_lvgl_version_major_minor(repo_root: Optional[Path] = None) -> str:
     )
 
 
-class PyiEmitter:
-    def __init__(
-        self,
-        metadata: Mapping[str, Any],
-        *,
-        target: str = "cpython",
-        module_name: str = "lvgl",
-        lvgl_version: Optional[str] = None,
-        naming_style: Optional[str] = None,
-        repo_root: Optional[Path] = None,
-    ) -> None:
-        self.metadata = metadata
-        self.target = target
-        self.module_name = module_name
-        self.lvgl_version = lvgl_version or read_lvgl_version_major_minor(repo_root)
-        self.naming_style = naming_style or get_naming_style()
-        self.known_structs: Set[str] = set(metadata.get("structs", []))
-        self.known_objects: Set[str] = set(metadata.get("objects", {}))
-        self.lines: List[str] = []
-        self.enum_names: Set[str] = set(metadata.get("enums", {}))
-        self.enum_typedefs: Mapping[str, str] = metadata.get(
-            "enum_typedefs", _LEGACY_ENUM_TYPEDEFS
-        )
-        self.callback_typedefs: Mapping[str, Dict[str, Any]] = metadata.get(
-            "callback_typedefs", _CALLBACK_TYPEDEFS
-        )
-        self.type_aliases: Mapping[str, str] = metadata.get("type_aliases", {})
-
-    def emit(self, out: TextIO) -> None:
-        self.lines = []
-        self._header()
-        self._emit_helper_types()
-        self._emit_struct_types()
-        self._emit_module_enums()
-        self._emit_widget_types()
-        self._emit_symbol_namespace()
-        self._emit_module_functions()
-        self._emit_blobs_and_constants()
-        out.write("\n".join(self.lines))
-        if not self.lines[-1].endswith("\n"):
-            out.write("\n")
-
-    def _add(self, line: str = "", indent: int = 0) -> None:
-        if line:
-            self.lines.append(f"{'    ' * indent}{line}")
-        else:
-            self.lines.append("")
-
-    def _header(self) -> None:
-        self._add("# LVGL {}".format(self.lvgl_version))
-        self._add("# Naming style: {}".format(self.naming_style))
-        self._add('"""Type stubs for LVGL Python bindings (auto-generated)."""')
-        self._add("from collections.abc import Callable")
-        self._add("from typing import Any, ClassVar")
-        self._add()
-
-    def _emit_helper_types(self) -> None:
-        self._add("class LvReferenceError(Exception): ...")
-        self._add()
-        self._add("class C_Pointer:")
-        self._add("    ptr_val: Any")
-        self._add("    str_val: str | None")
-        self._add("    int_val: int")
-        self._add("    uint_val: int")
-        self._add()
-        self._add("class Blob:")
-        self._add("    def __dereference__(self) -> Any: ...")
-        self._add()
-        self._add("class _Nesting:")
-        self._add("    value: int")
-        self._add()
-        self._add("class Struct:")
-        self._add("    __SIZE__: ClassVar[int]")
-        self._add(
-            "    def __init__(self, fields: dict[str, Any] | None = None, /, **kwargs: Any) -> None: ..."
-        )
-        self._add("    @classmethod")
-        self._add("    def __cast__(cls, obj: Any) -> Any: ...")
-        self._add("    @classmethod")
-        self._add("    def __cast_instance__(cls, obj: Any) -> Any: ...")
-        self._add("    @classmethod")
-        self._add("    def __dereference__(cls, obj: Any) -> Any: ...")
-        self._add()
-
-    def _emit_struct_types(self) -> None:
-        struct_funcs = self.metadata.get("struct_functions", {})
-        struct_fields = self.metadata.get("struct_fields", {})
-        for struct_name in sorted(self.known_structs):
-            if struct_name in _HELPER_STRUCT_STUBS:
-                continue
-            if struct_name in _SUPPRESSED_STRUCT_STUBS:
-                alias = _SUPPRESSED_STRUCT_STUBS[struct_name]
-                safe = export_name(struct_name, "struct")
-                self._add(f"# {safe}: use {alias} instead.")
-                continue
-            safe = export_name(struct_name, "struct")
-            members = struct_funcs.get(struct_name, {})
-            methods = [
-                (name, info)
-                for name, info in sorted(members.items())
-                if info.get("type") == "function"
-            ]
-            fields = struct_fields.get(struct_name, [])
-            if not methods and not fields:
-                self._add(f"class {safe}(Struct): ...")
-                continue
-            self._add(f"class {safe}(Struct):")
-            emitted_fields: Set[str] = set()
-            for field in fields:
-                field_name = sanitize(field.get("name") or "field")
-                if field_name in emitted_fields:
-                    continue
-                emitted_fields.add(field_name)
-                field_type = self._map_type(str(field.get("type", "Any")))
-                self._add(f"    {field_name}: {field_type}")
-            for method_name, info in methods:
-                if info.get("static"):
-                    sig = self._format_function(
-                        method_name,
-                        info,
-                        instance_method=False,
-                    )
-                    self._add("    @staticmethod")
-                    self._add(f"    def {sig}")
-                else:
-                    sig = self._format_function(
-                        method_name,
-                        info,
-                        instance_method=True,
-                        receiver_struct=struct_name,
-                    )
-                    self._add(f"    def {sig}")
-        self._add()
-
-    def _emit_module_enums(self) -> None:
-        for enum_name in sorted(self.enum_names):
-            members = self.metadata["enums"][enum_name].get("members", {})
-            if not members:
-                continue
-            self._emit_enum_class(enum_name, members)
-        self._emit_module_alias_enums()
-
-    def _emit_module_alias_enums(self) -> None:
-        objects = self.metadata.get("objects", {})
-        for alias_name, (obj_name, nested_enum) in sorted(
-            _MODULE_ALIAS_ENUM_SOURCES.items()
-        ):
-            if alias_name in self.enum_names:
-                continue
-            flag_info = (
-                objects.get(obj_name, {})
-                .get("members", {})
-                .get(nested_enum, {})
-            )
-            members = flag_info.get("members", {})
-            if not members:
-                continue
-            self._emit_enum_class(alias_name, members)
-
-    def _emit_widget_types(self) -> None:
-        objects = self.metadata.get("objects", {})
-        obj_members = objects.get("obj", {}).get("members", {})
-        for obj_name in sorted(objects):
-            members = objects[obj_name].get("members", {})
-            if not members:
-                continue
-            parent = (
-                export_name("obj", "object")
-                if obj_name != "obj"
-                else "Struct"
-            )
-            self._emit_widget_class(
-                obj_name,
-                members,
-                parent=parent,
-                inherited_members=obj_members if obj_name != "obj" else None,
-            )
-
-    def _emit_enum_class(self, name: str, members: Mapping[str, Any]) -> None:
-        safe = export_name(name, "enum")
-        self._add(f"class {safe}:")
-        for member_name in sorted(members):
-            if members[member_name].get("type") != "enum_member":
-                continue
-            self._add(f"    {export_name(member_name, 'enum_member')}: int", indent=0)
-        self._add()
-
-    def _emit_widget_class(
-        self,
-        obj_name: str,
-        members: Mapping[str, Any],
-        *,
-        parent: str,
-        inherited_members: Optional[Mapping[str, Any]] = None,
-    ) -> None:
-        safe = export_name(obj_name, "object")
-        nested_enums: List[tuple[str, Mapping[str, Any]]] = []
-        methods: List[tuple[str, Dict[str, Any]]] = []
-
-        for member_name, info in members.items():
-            member_type = info.get("type")
-            if member_type == "enum_type":
-                enum_members = info.get("members", {})
-                if enum_members:
-                    nested_enums.append((member_name, enum_members))
-            elif member_type == "function":
-                if inherited_members is not None and member_name in inherited_members:
-                    continue
-                methods.append((member_name, info))
-
-        self._add(f"class {safe}({parent}):")
-        if not methods and not nested_enums and obj_name != "obj":
-            self._add("    ...")
-            self._add()
-            return
-        for enum_name, enum_members in sorted(nested_enums, key=lambda item: item[0]):
-            enum_safe = export_name(enum_name, "enum")
-            self._add(f"    class {enum_safe}:")
-            for member_name in sorted(enum_members):
-                if enum_members[member_name].get("type") != "enum_member":
-                    continue
-                self._add(f"        {export_name(member_name, 'enum_member')}: int")
-            self._add(f"    {enum_safe}: ClassVar[type[{enum_safe}]]")
-
-        obj_parent = export_name("obj", "object")
-        self._add(f"    def __init__(self, parent: {obj_parent} | None = ...) -> None: ...")
-        for method_name, info in sorted(methods, key=lambda item: item[0]):
-            sig = self._format_function(
-                method_name,
-                info,
-                instance_method=True,
-                receiver_obj=obj_name,
-            )
-            self._add(f"    def {sig}")
-        self._add()
-
-    def _emit_symbol_namespace(self) -> None:
-        symbol_members = []
-        for blob_name in self.metadata.get("blobs", []):
-            if blob_name.startswith("SYMBOL_"):
-                symbol_members.append(blob_name[len("SYMBOL_") :])
-        if not symbol_members:
-            return
-        self._add("class SYMBOL:")
-        for member in sorted(symbol_members):
-            self._add(f"    {export_name(member, 'enum_member')}: str")
-        self._add()
-
-    def _emit_module_functions(self) -> None:
-        function_names = sorted(self.metadata.get("functions", {}))
-
-        emitted: Set[str] = set()
-        for func_name in function_names:
-            info = self.metadata["functions"].get(func_name, {})
-            if not info or info.get("type") != "function":
-                continue
-            sig = self._format_function(func_name, info, instance_method=False)
-            if sig in emitted:
-                continue
-            emitted.add(sig)
-            self._add(f"def {sig}", indent=0)
-
-    def _emit_blobs_and_constants(self) -> None:
-        for blob_name in sorted(self.metadata.get("blobs", [])):
-            if blob_name.startswith("SYMBOL_"):
-                continue
-            if blob_name == "_nesting":
-                self._add("_nesting: _Nesting")
-                continue
-            self._add(f"{export_name(blob_name, 'blob')}: Any")
-        for const_name in sorted(self.metadata.get("int_constants", [])):
-            self._add(f"{export_name(const_name, 'constant')}: int")
-
-    def _format_function(
-        self,
-        name: str,
-        info: Mapping[str, Any],
-        *,
-        instance_method: bool,
-        receiver_obj: Optional[str] = None,
-        receiver_struct: Optional[str] = None,
-    ) -> str:
-        args = list(info.get("args", []))
-        if instance_method and not info.get("receiver_stripped"):
-            args = strip_receiver_args(
-                args,
-                receiver_obj=receiver_obj,
-                receiver_struct=receiver_struct,
-            )
-        params = self._format_params(args, reserved={"self"} if instance_method else None)
-        if instance_method:
-            params = f"self{', ' + params if params else ''}"
-        return_type = self._format_return_type(
-            info.get("return_type"),
-            instance_method,
-            name,
-        )
-        safe_name = export_name(name, "function")
-        if params:
-            return f"{safe_name}({params}) -> {return_type}: ..."
-        return f"{safe_name}() -> {return_type}: ..."
-
-    def _format_params(
-        self,
-        args: Sequence[Mapping[str, Any]],
-        *,
-        reserved: Optional[Set[str]] = None,
-    ) -> str:
-        parts: List[str] = []
-        used = set(reserved or ())
-        for arg in args:
-            base_name = sanitize(arg.get("name") or "arg")
-            arg_name = base_name
-            suffix = 2
-            while arg_name in used:
-                arg_name = f"{base_name}{suffix}"
-                suffix += 1
-            used.add(arg_name)
-            prefix = "*" if arg.get("type") == "..." else ""
-            parts.append(f"{prefix}{arg_name}: {self._format_arg_type(arg)}")
-        return ", ".join(parts)
-
-    def _format_callback_type(self, func_info: Mapping[str, Any]) -> str:
-        args = func_info.get("args", [])
-        param_types: List[str] = []
-        for arg in args:
-            if isinstance(arg, Mapping):
-                param_types.append(self._format_arg_type(arg))
-            else:
-                param_types.append(self._map_type(str(arg)))
-        ret = func_info.get("return_type")
-        if ret in (None, "NoneType", "void"):
-            ret_str = "None"
-        else:
-            ret_str = self._map_type(str(ret))
-        if not param_types:
-            return "Callable[[], {}]".format(ret_str)
-        return "Callable[[{}], {}]".format(", ".join(param_types), ret_str)
-
-    def _format_arg_type(self, arg: Union[str, Mapping[str, Any], None]) -> str:
-        if isinstance(arg, Mapping):
-            arg_type = arg.get("type", "Any")
-            if arg_type == "callback":
-                func_info = arg.get("function")
-                if isinstance(func_info, Mapping):
-                    return self._format_callback_type(func_info)
-            normalized = str(arg_type)
-            typedef = self.callback_typedefs.get(normalized) or _CALLBACK_TYPEDEFS.get(
-                normalized
-            )
-            if typedef is not None:
-                func_info = typedef.get("function")
-                if isinstance(func_info, Mapping):
-                    return self._format_callback_type(func_info)
-            return self._map_type(normalized)
-        if not arg:
-            return "Any"
-        c_type = str(arg)
-        if c_type in _OBJ_POINTER_TYPES or c_type in {"obj_t"}:
-            return export_name("obj", "object")
-        if c_type.endswith("_obj_t*"):
-            widget = c_type[: -len("_obj_t*")]
-            if widget in self.known_objects:
-                return export_name(widget, "object")
-            return export_name("obj", "object")
-        return self._map_type(c_type)
-
-    def _format_return_type(
-        self,
-        c_type: Optional[str],
-        instance_method: bool,
-        name: str,
-    ) -> str:
-        if not c_type:
-            if name.endswith("_create") or name == "create":
-                return "obj"
-            return "Any"
-        if c_type == "NoneType":
-            return "None"
-        if c_type == "function pointer":
-            return "Callable[..., Any]"
-        if c_type in _OBJ_POINTER_TYPES or c_type in {"obj_t"}:
-            return export_name("obj", "object")
-        if c_type.endswith("_obj_t*"):
-            widget = c_type[: -len("_obj_t*")]
-            if widget in self.known_objects:
-                return export_name(widget, "object")
-            return export_name("obj", "object")
-        if c_type in self.known_structs:
-            return export_name(c_type, "struct")
-        if c_type in self.known_objects:
-            return export_name(c_type, "object")
-        typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
-        if typedef and isinstance(typedef.get("function"), Mapping):
-            return self._format_callback_type(typedef["function"])
-        return self._map_type(c_type)
-
-    def _resolve_enum_typedef(self, c_type: str) -> Optional[str]:
-        enum_name = self.enum_typedefs.get(c_type) or _LEGACY_ENUM_TYPEDEFS.get(c_type)
-        if enum_name and "." in enum_name:
-            obj_name, nested_enum = enum_name.split(".", 1)
-            return "{}.{}".format(
-                export_name(obj_name, "object"),
-                export_name(nested_enum, "enum"),
-            )
-        if enum_name and enum_name in self.enum_names:
-            return export_name(enum_name, "enum")
-        alias_enum = _MODULE_ALIAS_ENUM_TYPEDEFS.get(c_type)
-        if alias_enum is not None:
-            return alias_enum
-        return None
-
-    def _enum_type_with_int(self, enum_type: str) -> str:
-        if not _ENUM_INT_UNION or " | int" in enum_type:
-            return enum_type
-        return f"{enum_type} | int"
-
-    def _normalize_struct_typedef(self, c_type: str) -> str:
-        if c_type.startswith("_lv_") and c_type.endswith("_t"):
-            export = c_type[4:]
-            if export in self.known_structs:
-                return export
-        if c_type.startswith("lv_") and c_type.endswith("_t"):
-            export = c_type[3:]
-            if export in self.known_structs:
-                return export
-        return c_type
-
-    def _map_type(self, c_type: str) -> str:
-        c_type = self._normalize_struct_typedef(c_type)
-        if c_type in {"Any", "None", "int", "bool", "float", "str"}:
-            return c_type
-        if c_type in {
-            "int8_t",
-            "uint8_t",
-            "int16_t",
-            "uint16_t",
-            "int32_t",
-            "uint32_t",
-            "int64_t",
-            "uint64_t",
-            "size_t",
-            "intptr_t",
-            "uintptr_t",
-        }:
-            return "int"
-        if c_type in _OBJ_POINTER_TYPES or c_type == "obj_t":
-            return export_name("obj", "object")
-        composite_enums = _COMPOSITE_TYPEDEF_ENUMS.get(c_type)
-        if composite_enums is not None:
-            exported = [export_name(name, "enum") for name in composite_enums]
-            return " | ".join(["int", *exported])
-        resolved_enum = self._resolve_enum_typedef(c_type)
-        if resolved_enum is not None:
-            return self._enum_type_with_int(resolved_enum)
-        if c_type in self.enum_names:
-            return self._enum_type_with_int(export_name(c_type, "enum"))
-        if c_type in {"char*", "const char*"}:
-            return "str"
-        if c_type in {"void*", "const void*", "const uint8_t*"}:
-            return "Any"
-        if c_type in {"function pointer", "callback"}:
-            typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
-            if typedef and isinstance(typedef.get("function"), Mapping):
-                return self._format_callback_type(typedef["function"])
-            return "Callable[..., Any]"
-        typedef = self.callback_typedefs.get(c_type) or _CALLBACK_TYPEDEFS.get(c_type)
-        if typedef and isinstance(typedef.get("function"), Mapping):
-            return self._format_callback_type(typedef["function"])
-        alias = self.type_aliases.get(c_type)
-        if alias is not None and alias != c_type:
-            return self._map_type(alias)
-        if c_type in self.known_structs:
-            return export_name(c_type, "struct")
-        if c_type in self.known_objects:
-            return export_name(c_type, "object")
-        if c_type.endswith("*"):
-            base = self._normalize_struct_typedef(c_type[:-1])
-            if base in self.known_structs:
-                return export_name(base, "struct")
-            return "Any"
-        if c_type.endswith("_t") and c_type in self.known_structs:
-            return export_name(c_type, "struct")
-        if c_type.endswith("_t"):
-            return sanitize(c_type)
-        return "Any"
-
-
-def struct_prefix_name(struct_name: str) -> str:
-    if struct_name.endswith("_t"):
-        return struct_name[:-2]
-    return struct_name
-
-
 def default_api_path(generated_dir: Path) -> Path:
     return generated_dir.resolve() / "api.json"
 
 
-def default_output_path(generated_dir: Path, target: str = "micropython") -> Path:
-    del target
+def default_output_path(generated_dir: Path) -> Path:
     return generated_dir.resolve() / "lvgl.pyi"
-
-
-ALL_TARGETS = ("cpython", "micropython", "circuitpython")
-
-
-def generate_pyi(
-    generated_dir: Path,
-    *,
-    api_path: Optional[Path] = None,
-    output_path: Optional[Path] = None,
-    module_name: str = "lvgl",
-) -> Path:
-    api_path = api_path or default_api_path(generated_dir)
-    output_path = output_path or default_output_path(generated_dir)
-
-    if not api_path.is_file():
-        raise FileNotFoundError(f"canonical API file not found: {api_path}")
-
-    write_pyi(
-        api_path,
-        output_path,
-        target="all",
-        module_name=module_name,
-    )
-    return output_path
-
-
-def generate_all_pyis(
-    generated_dir: Path,
-    *,
-    api_path: Optional[Path] = None,
-    module_name: str = "lvgl",
-) -> List[Path]:
-    return [generate_pyi(generated_dir, api_path=api_path, module_name=module_name)]
-
-
-def generate_pyi_for_target(
-    generated_dir: Path,
-    target: str,
-    *,
-    api_path: Optional[Path] = None,
-    output_path: Optional[Path] = None,
-    module_name: str = "lvgl",
-) -> Path:
-    api_path = api_path or default_api_path(generated_dir)
-    output_path = output_path or default_output_path(generated_dir)
-    if not api_path.is_file():
-        raise FileNotFoundError(f"canonical API file not found: {api_path}")
-    write_pyi(
-        api_path,
-        output_path,
-        target=target,
-        module_name=module_name,
-    )
-    return output_path
-
-
-def load_and_enrich_metadata(metadata_path: Path) -> Dict[str, Any]:
-    metadata = load_metadata(metadata_path)
-    pp_path = default_pp_path_for_metadata(metadata_path)
-    if pp_path is None:
-        return metadata
-    pp_index = parse_pp_prototypes(pp_path)
-    return enrich_ir_metadata(metadata, pp_index, pp_path=pp_path)
 
 
 def write_pyi(
     api_path: Path,
     output_path: Path,
     *,
-    target: str = "cpython",
-    module_name: str = "lvgl",
+    target: str = "all",
     lvgl_version: Optional[str] = None,
     naming_style: Optional[str] = None,
     repo_root: Optional[Path] = None,
 ) -> None:
+    """Render one common or target-specific stub from ``api.json``."""
+
     data = load_canonical_api(api_path)
     repo_root = repo_root or api_path.resolve().parent.parent
-
     emitter = CanonicalPyiEmitter(
         data,
         target=target,
@@ -712,11 +74,45 @@ def write_pyi(
         emitter.emit(handle)
 
 
+def generate_pyi(
+    generated_dir: Path,
+    *,
+    api_path: Optional[Path] = None,
+    output_path: Optional[Path] = None,
+) -> Path:
+    api_path = api_path or default_api_path(generated_dir)
+    output_path = output_path or default_output_path(generated_dir)
+    if not api_path.is_file():
+        raise FileNotFoundError("canonical API file not found: {}".format(api_path))
+    write_pyi(api_path, output_path, target="all")
+    return output_path
+
+
+def generate_all_pyis(
+    generated_dir: Path,
+    *,
+    api_path: Optional[Path] = None,
+) -> list[Path]:
+    return [generate_pyi(generated_dir, api_path=api_path)]
+
+
+def generate_pyi_for_target(
+    generated_dir: Path,
+    target: str,
+    *,
+    api_path: Optional[Path] = None,
+    output_path: Optional[Path] = None,
+) -> Path:
+    api_path = api_path or default_api_path(generated_dir)
+    output_path = output_path or default_output_path(generated_dir)
+    if not api_path.is_file():
+        raise FileNotFoundError("canonical API file not found: {}".format(api_path))
+    write_pyi(api_path, output_path, target=target)
+    return output_path
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     import argparse
-    import os
-
-    from binding.naming import set_naming_style
 
     parser = argparse.ArgumentParser(
         description="Generate lvgl.pyi stubs from the canonical api.json."
@@ -741,40 +137,24 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "--generated-dir",
         type=Path,
         default=Path(__file__).resolve().parent.parent / "generated",
-        help="Directory containing generated JSON artifacts",
+        help="Directory containing canonical API artifacts",
     )
     parser.add_argument(
         "--naming-style",
         choices=["legacy", "pythonic"],
         default=os.environ.get("LV_NAMING_STYLE", "legacy"),
-        help="Python export naming style (default: legacy; env: LV_NAMING_STYLE)",
-    )
-    parser.add_argument(
-        "--pythonic",
-        action="store_const",
-        const="pythonic",
-        dest="naming_style",
-        help="Shorthand for --naming-style pythonic",
+        help="Label the generated stub's naming profile (default: legacy)",
     )
     args = parser.parse_args(argv)
-    set_naming_style(args.naming_style)
-
-    if args.target == "all":
-        output_path = generate_pyi(
-            args.generated_dir,
-            api_path=args.api,
-            output_path=args.output,
-        )
-        print(f"Wrote {output_path}")
-        return 0
-
-    output_path = generate_pyi_for_target(
-        args.generated_dir,
-        args.target,
-        api_path=args.api,
-        output_path=args.output,
+    api_path = args.api or default_api_path(args.generated_dir)
+    output_path = args.output or default_output_path(args.generated_dir)
+    write_pyi(
+        api_path,
+        output_path,
+        target=args.target,
+        naming_style=args.naming_style,
     )
-    print(f"Wrote {output_path}")
+    print("Wrote {}".format(output_path))
     return 0
 
 

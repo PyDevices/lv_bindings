@@ -7,11 +7,8 @@ import hashlib
 import json
 import subprocess
 from collections import Counter
-from io import StringIO
 from pathlib import Path
 
-from binding.emit_pyi import PyiEmitter
-from binding.naming import get_naming_style, set_naming_style
 from binding.pyi_prototypes import (
     build_enum_typedef_map,
     enrich_function_info,
@@ -29,20 +26,6 @@ def _write_complete_c(tmp_path: Path, source: str) -> Path:
     pp_path = tmp_path / "sample.pp"
     pp_path.write_text(source, encoding="utf-8")
     return pp_path
-
-
-def _minimal_metadata(**overrides):
-    metadata = {
-        "structs": [],
-        "objects": {},
-        "enums": {},
-        "functions": {},
-        "struct_functions": {},
-        "blobs": [],
-        "int_constants": [],
-    }
-    metadata.update(overrides)
-    return metadata
 
 
 def test_ast_prototypes_ignore_inline_calls_and_keep_array_names(tmp_path: Path):
@@ -153,55 +136,6 @@ def test_widget_enum_typedefs_resolve_to_nested_types():
     assert mapping["menu_mode_header_t"] == "menu.HEADER"
 
 
-def test_composite_typedef_uses_the_selected_naming_style():
-    previous = get_naming_style()
-    try:
-        set_naming_style("pythonic")
-        emitter = PyiEmitter(
-            _minimal_metadata(
-                enums={"PART": {"members": {}}, "STATE": {"members": {}}}
-            )
-        )
-        assert emitter._map_type("style_selector_t") == "int | Part | State"
-    finally:
-        set_naming_style(previous)
-
-
-def test_emitter_resolves_aliases_callbacks_nested_enums_and_duplicate_names():
-    callback = {
-        "type": "callback",
-        "function": {
-            "args": [{"type": "Any", "name": "left"}],
-            "return_type": "int",
-        },
-    }
-    metadata = _minimal_metadata(
-        objects={"arc": {"members": {"MODE": {"type": "enum_type", "members": {}}}}},
-        enum_typedefs={"arc_mode_t": "arc.MODE"},
-        type_aliases={"value_precise_t": "float"},
-        callback_typedefs={"rb_compare_t": callback},
-    )
-    emitter = PyiEmitter(metadata)
-    info = {
-        "type": "function",
-        "args": [
-            {"type": "value_precise_t", "name": "arg"},
-            {"type": "arc_mode_t", "name": "arg"},
-            {"type": "rb_compare_t", "name": "self"},
-        ],
-        "return_type": "NoneType",
-    }
-
-    signature = emitter._format_function(
-        "configure", info, instance_method=True, receiver_obj="arc"
-    )
-
-    assert signature == (
-        "configure(self, arg: float, arg2: arc.MODE | int, "
-        "self2: Callable[[Any], int]) -> None: ..."
-    )
-
-
 def test_enriched_receivers_are_removed_exactly_once():
     area_proto = {
         "type": "function",
@@ -219,16 +153,6 @@ def test_enriched_receivers_are_removed_exactly_once():
     )
     assert area_info["receiver_stripped"] is True
 
-    area_emitter = PyiEmitter(
-        _minimal_metadata(structs=["area_t"], struct_functions={"area_t": {}})
-    )
-    assert (
-        area_emitter._format_function(
-            "copy", area_info, instance_method=True, receiver_struct="area_t"
-        )
-        == "copy(self, src: area_t) -> None: ..."
-    )
-
     swap_proto = {
         "type": "function",
         "args": [
@@ -240,13 +164,7 @@ def test_enriched_receivers_are_removed_exactly_once():
     swap_info = enrich_function_info(
         "swap", swap_proto, {"lv_obj_swap": swap_proto}, obj_name="obj"
     )
-    obj_emitter = PyiEmitter(_minimal_metadata(objects={"obj": {}}))
-    assert (
-        obj_emitter._format_function(
-            "swap", swap_info, instance_method=True, receiver_obj="obj"
-        )
-        == "swap(self, obj2: obj) -> None: ..."
-    )
+    assert swap_info["receiver_stripped"] is True
 
 
 def test_static_struct_enrichment_keeps_explicit_receiver_argument():
@@ -413,21 +331,3 @@ def test_regenerate_help_documents_pyi_only():
         text=True,
     )
     assert "--pyi-only" in result.stdout
-
-
-def test_emitter_deduplicates_struct_fields():
-    emitter = PyiEmitter(
-        _minimal_metadata(
-            structs=["sample_t"],
-            struct_fields={
-                "sample_t": [
-                    {"name": "value", "type": "int"},
-                    {"name": "value", "type": "float"},
-                ],
-            },
-        )
-    )
-    output = StringIO()
-    emitter.emit(output)
-    sample_block = output.getvalue().split("class sample_t(Struct):", 1)[1]
-    assert sample_block.count("    value:") == 1
