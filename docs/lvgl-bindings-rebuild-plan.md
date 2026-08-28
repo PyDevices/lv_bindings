@@ -133,7 +133,7 @@ and machine-checked without changing the shared canonical API contract.
   locations in the declaration IR.
 - [x] Parse the preprocessed translation unit once in the unified all-target
   command and pass one immutable declaration IR to each target context.
-- [ ] Remove target conditions from parsing and analysis.
+- [x] Remove target conditions from parsing and analysis.
 
 Progress note: target lowering still uses the legacy AST-facing analysis
 surface. The next structural step is to migrate those decisions to the
@@ -156,6 +156,11 @@ content hash; the legacy ``lvgl.json`` file remains the C-generator
 introspection artifact while the canonical model becomes the source of truth
 for Python-facing outputs.
 
+Parsing, declaration analysis, and API-model construction contain no
+target-specific branches. Target availability is represented as data in the
+policy/model layer, and the remaining target branches are confined to backend
+lowering in the emitters.
+
 - [x] Add a read-only declaration index for alias resolution, first-argument
   relationships, and struct-function classification. The index is used by
   legacy-facing queries with an AST fallback for synthetic helper declarations.
@@ -170,7 +175,7 @@ for Python-facing outputs.
 
 - Commit SHA: `________________`
 - Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests/test_generation_tools.py`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`
-- Notes: `All three backend entry points receive the same frozen DeclarationIR and canonical API model. The regression test makes a target-side analyze() call fail, so the one parse/analysis boundary cannot silently regress. Target-condition removal from analysis remains the next unfinished Checkpoint 2 work item.`
+- Notes: `All three backend entry points receive the same frozen DeclarationIR and canonical API model. The regression test makes a target-side analyze() call fail, so the one parse/analysis boundary cannot silently regress. Parsing, analysis, and API-model construction are target-neutral; target availability is policy data and target branching begins only in backend lowering.`
 
 ## Checkpoint 3 — Canonical public API model and policy
 
