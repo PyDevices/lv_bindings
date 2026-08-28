@@ -247,8 +247,8 @@ API hash after this increment is
 - [x] Accurately represent concrete widgets, structs, enums, callbacks,
   inheritance, and optional constructor parent pointers.
 - [x] Accurately represent fixed C arrays as nested ``Sequence[...]`` views.
-- [ ] Represent overloads where the runtime exposes distinct callable forms.
-- [ ] Use private underscored types for generic blob/struct internals.
+- [x] Represent overloads where the runtime exposes distinct callable forms.
+- [x] Use private underscored types for generic blob/struct internals.
 - [x] Exclude explicitly unavailable symbols.
 - [x] Replace regex-only namespace checks with manifest-based qualified export
   verification.
@@ -268,6 +268,13 @@ are represented as nested ``Sequence[...]`` views, class-local private
 the runtime helper classes include their actual inheritance and method binding;
 ``Struct.__cast_instance__`` is an instance method, while ``__dereference__``
 accepts the runtime's optional size argument on both ``Struct`` and ``Blob``.
+``Struct.__cast__`` is a generic class method taking a target type and pointer;
+``Blob.__cast__`` has overloads for raw and typed casts. Its private generic
+type variables are explicit verifier allow-list entries, while any other
+private top-level declaration is rejected. Both dereference helpers return a
+``memoryview | None`` to represent the common all-target contract when a size
+cannot be derived. The CPython smoke probe exercises both ``Blob.__cast__``
+forms from a valid display flush callback.
 Incompatible LVGL widget overrides carry narrowly targeted mypy override
 notes. The generated stub parses cleanly and has regression coverage for
 signatures, target filtering, duplicate declarations, arrays, aliases, and

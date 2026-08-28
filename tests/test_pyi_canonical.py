@@ -171,8 +171,37 @@ def test_canonical_emitter_describes_runtime_helper_types():
     assert [d.id for d in methods["__cast__"].decorator_list] == ["classmethod"]
     assert methods["__cast_instance__"].decorator_list == []
     assert methods["__dereference__"].decorator_list == []
-    assert len(methods["__dereference__"].args.args) == 2
+    cast_args = methods["__cast__"].args
+    assert [argument.arg for argument in cast_args.args] == []
+    assert [argument.arg for argument in cast_args.posonlyargs] == ["cls", "target_type", "pointer"]
+    assert ast.unparse(cast_args.posonlyargs[1].annotation) == "type[_StructT]"
+    assert ast.unparse(methods["__cast__"].returns) == "_StructT"
+    assert ast.unparse(methods["__cast_instance__"].returns) == "_StructT"
+    assert ast.unparse(methods["__dereference__"].returns) == "memoryview | None"
+    assert len(methods["__dereference__"].args.args) == 0
     assert len(methods["__dereference__"].args.defaults) == 1
+    assert len(methods["__dereference__"].args.posonlyargs) == 2
+
+    blob_casts = [
+        child
+        for child in blob.body
+        if isinstance(child, ast.FunctionDef) and child.name == "__cast__"
+    ]
+    assert len(blob_casts) == 2
+    assert all(
+        any(isinstance(decorator, ast.Name) and decorator.id == "overload" for decorator in cast.decorator_list)
+        for cast in blob_casts
+    )
+    assert [ast.unparse(cast.returns) for cast in blob_casts] == ["Any", "_BlobT"]
+
+    private_types = {
+        target.id
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        for target in node.targets
+        if isinstance(target, ast.Name)
+    }
+    assert {"_BlobT", "_StructT"} <= private_types
 
 
 def test_canonical_emitter_can_emit_target_specific_exceptions():

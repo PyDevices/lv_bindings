@@ -169,7 +169,12 @@ class CanonicalPyiEmitter:
         self._add('"""Type stubs for LVGL Python bindings (auto-generated)."""')
         self._add("from __future__ import annotations")
         self._add("from collections.abc import Callable, Sequence")
-        self._add("from typing import Any, ClassVar, TypeAlias")
+        self._add("from typing import Any, ClassVar, TypeAlias, TypeVar, overload")
+        self._add()
+        # These intentionally stay private: they describe only the generic
+        # runtime helpers below, not LVGL declarations in the public API.
+        self._add('_StructT = TypeVar("_StructT", bound="Struct")')
+        self._add('_BlobT = TypeVar("_BlobT")')
         self._add()
 
     def _emit_helpers(self) -> None:
@@ -182,9 +187,18 @@ class CanonicalPyiEmitter:
             1,
         )
         self._add("@classmethod", 1)
-        self._add("def __cast__(cls, obj: Any) -> Any: ...", 1)
-        self._add("def __cast_instance__(self, obj: Any) -> Any: ...", 1)
-        self._add("def __dereference__(self, size: int | None = ...) -> Any: ...", 1)
+        self._add(
+            "def __cast__(cls, target_type: type[_StructT], pointer: Any, /) -> _StructT: ...",
+            1,
+        )
+        self._add(
+            "def __cast_instance__(self: _StructT, pointer: Any, /) -> _StructT: ...",
+            1,
+        )
+        self._add(
+            "def __dereference__(self, size: int | None = ..., /) -> memoryview | None: ...",
+            1,
+        )
         self._add()
         self._add("class C_Pointer(Struct):")
         self._add("__SIZE__: ClassVar[int]", 1)
@@ -194,9 +208,15 @@ class CanonicalPyiEmitter:
         self._add("uint_val: int", 1)
         self._add()
         self._add("class Blob:")
-        self._add("def __dereference__(self, size: int | None = ...) -> Any: ...", 1)
         self._add(
-            "def __cast__(self, target_type: type[Any] | None = ...) -> Any: ...",
+            "def __dereference__(self, size: int | None = ..., /) -> memoryview | None: ...",
+            1,
+        )
+        self._add("@overload", 1)
+        self._add("def __cast__(self, /) -> Any: ...", 1)
+        self._add("@overload", 1)
+        self._add(
+            "def __cast__(self, target_type: type[_BlobT], /) -> _BlobT: ...",
             1,
         )
         self._add()

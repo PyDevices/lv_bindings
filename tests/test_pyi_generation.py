@@ -6,7 +6,6 @@ import ast
 import hashlib
 import json
 import subprocess
-from collections import Counter
 from pathlib import Path
 
 from binding.pyi_prototypes import (
@@ -198,13 +197,25 @@ def test_generated_stub_is_valid_and_has_no_duplicate_members():
             names.extend(arg.arg for arg in node.args.kwonlyargs)
             assert len(names) == len(set(names)), f"duplicate parameter in {node.name}"
         if isinstance(node, ast.ClassDef):
-            members = []
+            members = {}
             for child in node.body:
                 if isinstance(child, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
-                    members.append(child.name)
+                    members.setdefault(child.name, []).append(child)
                 elif isinstance(child, ast.AnnAssign) and isinstance(child.target, ast.Name):
-                    members.append(child.target.id)
-            duplicates = [name for name, count in Counter(members).items() if count > 1]
+                    members.setdefault(child.target.id, []).append(child)
+            duplicates = [
+                name
+                for name, declarations in members.items()
+                if len(declarations) > 1
+                and not all(
+                    isinstance(declaration, (ast.FunctionDef, ast.AsyncFunctionDef))
+                    and any(
+                        isinstance(decorator, ast.Name) and decorator.id == "overload"
+                        for decorator in declaration.decorator_list
+                    )
+                    for declaration in declarations
+                )
+            ]
             assert not duplicates, f"duplicate member in {node.name}: {duplicates}"
 
 
@@ -222,7 +233,14 @@ def test_generated_stub_annotations_reference_declared_names():
         for node in tree.body
         if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
     )
-    declared.update({"Any", "Callable", "ClassVar", "None", "Sequence", "TypeAlias", "bool", "bytes", "dict", "float", "int", "list", "set", "str", "tuple", "type"})
+    declared.update(
+        target.id
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        for target in node.targets
+        if isinstance(target, ast.Name)
+    )
+    declared.update({"Any", "Callable", "ClassVar", "None", "Sequence", "TypeAlias", "bool", "bytes", "dict", "float", "int", "list", "memoryview", "set", "str", "tuple", "type"})
     declared.update(
         child.target.id
         for node in ast.walk(tree)

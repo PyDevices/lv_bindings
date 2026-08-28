@@ -32,6 +32,15 @@ def test_pyi_manifest_verifier_reports_target_leakage():
     assert "unexpected top-level export: target_only" in errors
 
 
+def test_pyi_manifest_verifier_allows_only_known_private_helper_types():
+    data = _validated_data()
+    source = _render(data) + "\n_leaked_runtime_type: object\n"
+
+    errors = validate_pyi_data(data, source)
+
+    assert "unexpected top-level export: _leaked_runtime_type" in errors
+
+
 def test_pyi_manifest_verifier_reports_signature_drift():
     data = _validated_data()
     source = _render(data).replace(

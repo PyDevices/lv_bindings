@@ -415,6 +415,12 @@ def test_blob_dereference(lv, main_disp=None):
         width = area.x2 - area.x1 + 1
         height = area.y2 - area.y1 + 1
         data = color_p.__dereference__(width * height * 2)
+        raw_pointer = color_p.__cast__()
+        typed_pointer = color_p.__cast__(_lv_export(lv, "color_t"))
+        if not isinstance(raw_pointer, int):
+            _fail("Blob.__cast__() did not return a pointer-sized integer")
+        if not isinstance(typed_pointer, _lv_export(lv, "color_t")):
+            _fail("Blob.__cast__(type) did not return the requested type")
         seen.append(len(data))
         d.flush_ready()
 
