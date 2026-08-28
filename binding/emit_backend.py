@@ -147,6 +147,20 @@ def callback_return_lowering(*, return_type, mp_to_lv):
     )
 
 
+def callback_return_conversion_available(*, return_type, mp_to_lv, generate_type):
+    """Ensure the conversion used by a callback return is available.
+
+    The recursive type-generation hook remains supplied by the emitter, but
+    both native backends follow the same policy: ``void`` needs no conversion;
+    every other missing mapping gets exactly one generation attempt before the
+    caller reports its existing target-neutral diagnostic.
+    """
+    if return_type == "void" or mp_to_lv.get(return_type):
+        return True
+    generate_type()
+    return bool(mp_to_lv.get(return_type))
+
+
 def struct_pointer_helpers_source(
     *,
     accept_none,

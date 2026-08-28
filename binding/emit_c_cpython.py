@@ -52,6 +52,7 @@ from .parse import (
 )
 from . import runtime
 from .emit_backend import (
+    callback_return_conversion_available,
     callback_return_lowering,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
@@ -2095,14 +2096,14 @@ typedef union {
                             "Callback: user_data NOT FOUND! %s" % (gen.visit(func))
                         )
                 return_type = get_type(func.type, remove_quals=False)
-                if return_type != "void" and (
-                    return_type not in mp_to_lv or not mp_to_lv[return_type]
+                if not callback_return_conversion_available(
+                    return_type=return_type,
+                    mp_to_lv=mp_to_lv,
+                    generate_type=lambda: try_generate_type(func.type),
                 ):
-                    try_generate_type(func.type)
-                    if return_type not in mp_to_lv or not mp_to_lv[return_type]:
-                        raise MissingConversionException(
-                            "Callback return value: Missing conversion to %s" % return_type
-                        )
+                    raise MissingConversionException(
+                        "Callback return value: Missing conversion to %s" % return_type
+                    )
 
                 callback_metadata[func_name]["return_type"] = lv_mp_type[return_type]
                 return_lowering = callback_return_lowering(

@@ -376,7 +376,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   a shared typed contract for void callbacks and resolved MP-to-LVGL
   conversions; recursive conversion discovery remains emitter-owned.
   Validation: 103 repository tests passed; binding.generate --check passed;
-  generated artifacts remain unchanged.`
+  generated artifacts remain unchanged. Eighth migration slice: callback
+  return conversion availability now follows one tested policy: no lookup for
+  void, no regeneration for an existing conversion, and exactly one recursive
+  generation attempt for a missing conversion before retaining the existing
+  diagnostic. Validation: 104 repository tests passed; binding.generate
+  --check passed; generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

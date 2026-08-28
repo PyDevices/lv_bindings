@@ -18,6 +18,7 @@ from binding.generator import (
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
 from binding.emit_backend import (
+    callback_return_conversion_available,
     callback_return_lowering,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
@@ -267,6 +268,34 @@ def test_callback_return_lowering_preserves_void_and_conversion_policy():
     assert (void.result_assignment, void.return_value) == ("", "")
     assert result.result_assignment == "mp_obj_t callback_result = "
     assert result.return_value == " mp_to_lv_result(callback_result)"
+
+
+def test_callback_return_conversion_attempts_generation_only_when_needed():
+    mappings = {"present_t": "mp_to_lv_present"}
+    generated = []
+
+    assert callback_return_conversion_available(
+        return_type="void", mp_to_lv=mappings, generate_type=lambda: generated.append("void")
+    )
+    assert callback_return_conversion_available(
+        return_type="present_t",
+        mp_to_lv=mappings,
+        generate_type=lambda: generated.append("present"),
+    )
+    assert not callback_return_conversion_available(
+        return_type="missing_t",
+        mp_to_lv=mappings,
+        generate_type=lambda: generated.append("missing"),
+    )
+
+    def generate_resolved():
+        generated.append("resolved")
+        mappings["resolved_t"] = "mp_to_lv_resolved"
+
+    assert callback_return_conversion_available(
+        return_type="resolved_t", mp_to_lv=mappings, generate_type=generate_resolved
+    )
+    assert generated == ["missing", "resolved"]
 
 
 def test_struct_pointer_helpers_preserve_target_null_and_warning_policy():
