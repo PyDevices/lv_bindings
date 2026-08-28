@@ -86,3 +86,42 @@ def mp_obj_get_ull_to_bytes_source():
         "    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);\n"
         "#endif"
     )
+
+
+def struct_pointer_helpers_source(
+    *,
+    accept_none,
+    unused_qualifier,
+    sanitized_struct_name,
+    struct_name,
+    struct_tag,
+):
+    """Return the common struct-pointer wrapper lowering.
+
+    Native emitters expose LVGL structs through the same ``mp_lv_struct_t``
+    representation.  The CPython compatibility fallback accepts ``None`` for
+    nullable write pointers, while MicroPython/CircuitPython retain their
+    historic strict conversion.  ``unused_qualifier`` preserves each VM's C
+    warning policy without duplicating the conversion contract.
+    """
+    none_guard = "    if (self_in == mp_const_none) return NULL;\n" if accept_none else ""
+    return """static inline const mp_obj_type_t *get_mp_{sanitized_struct_name}_type(void);
+
+{unused_qualifier}static inline void* mp_write_ptr_{sanitized_struct_name}(mp_obj_t self_in)
+{{
+{none_guard}    mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_{sanitized_struct_name}_type()));
+    return ({struct_tag}{struct_name}*)self->data;
+}}
+
+#define mp_write_{sanitized_struct_name}(struct_obj) *(({struct_tag}{struct_name}*)mp_write_ptr_{sanitized_struct_name}(struct_obj))
+
+{unused_qualifier}static inline mp_obj_t mp_read_ptr_{sanitized_struct_name}(void *field)
+{{
+    return lv_to_mp_struct(get_mp_{sanitized_struct_name}_type(), field);
+}}""".format(
+        none_guard=none_guard,
+        unused_qualifier=unused_qualifier,
+        sanitized_struct_name=sanitized_struct_name,
+        struct_tag=struct_tag,
+        struct_name=struct_name,
+    )

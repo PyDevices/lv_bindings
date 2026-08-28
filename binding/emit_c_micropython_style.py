@@ -54,6 +54,7 @@ from . import runtime
 from .emit_backend import (
     mp_obj_get_ull_to_bytes_source,
     resolve_emitter_headers,
+    struct_pointer_helpers_source,
     target_banner,
 )
 from .runtime_exports import filter_module_funcs_for_target
@@ -1548,20 +1549,7 @@ MP_ARRAY_CONVERTOR(i64ptr, 8, true)
  * Struct {struct_name}
  */
 
-static inline const mp_obj_type_t *get_mp_{sanitized_struct_name}_type(void);
-
-GENMPY_UNUSED static inline void* mp_write_ptr_{sanitized_struct_name}(mp_obj_t self_in)
-{{
-    mp_lv_struct_t *self = MP_OBJ_TO_PTR(cast(self_in, get_mp_{sanitized_struct_name}_type()));
-    return ({struct_tag}{struct_name}*)self->data;
-}}
-
-#define mp_write_{sanitized_struct_name}(struct_obj) *(({struct_tag}{struct_name}*)mp_write_ptr_{sanitized_struct_name}(struct_obj))
-
-GENMPY_UNUSED static inline mp_obj_t mp_read_ptr_{sanitized_struct_name}(void *field)
-{{
-    return lv_to_mp_struct(get_mp_{sanitized_struct_name}_type(), field);
-}}
+{pointer_helpers}
 
 #define mp_read_{sanitized_struct_name}(field) mp_read_ptr_{sanitized_struct_name}(copy_buffer(&field, sizeof({struct_tag}{struct_name})))
 #define mp_read_byref_{sanitized_struct_name}(field) mp_read_ptr_{sanitized_struct_name}(&field)
@@ -1628,6 +1616,15 @@ static inline const mp_obj_type_t *get_mp_{sanitized_struct_name}_type(void)
                 else "",
                 write_cases=";\n                ".join(write_cases),
                 read_cases=";\n            ".join(read_cases),
+                pointer_helpers=struct_pointer_helpers_source(
+                    accept_none=False,
+                    unused_qualifier="GENMPY_UNUSED ",
+                    sanitized_struct_name=sanitized_struct_name,
+                    struct_name=struct_name,
+                    struct_tag="struct "
+                    if struct_name in structs_without_typedef.keys()
+                    else "",
+                ),
             )
         )
         lv_to_mp[struct_name] = "mp_read_%s" % sanitized_struct_name

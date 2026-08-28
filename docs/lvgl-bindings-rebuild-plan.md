@@ -363,7 +363,11 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   CircuitPython and pre-1.29 compatibility helper while selecting
   MicroPython 1.29+'s renamed API at compile time. Validation: 100 repository
   tests passed; binding.generate --check passed; generated artifacts remain
-  unchanged.`
+  unchanged. Fifth migration slice: the two native emitters now share the
+  struct-pointer wrapper lowering, with explicit policy inputs for nullable
+  CPython fallback pointers and target-specific unused-function annotations.
+  Validation: 101 repository tests passed; binding.generate --check passed;
+  generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

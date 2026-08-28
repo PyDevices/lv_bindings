@@ -225,3 +225,28 @@ def test_mp_64_bit_integer_lowering_is_shared_and_version_safe():
     assert "MICROPY_VERSION_MAJOR" in source
     assert "mp_obj_int_to_bytes(obj, sizeof(val)" in source
     assert source.count("mp_obj_int_to_bytes_impl") == 2
+
+
+def test_struct_pointer_helpers_preserve_target_null_and_warning_policy():
+    from binding.emit_backend import struct_pointer_helpers_source
+
+    mpy = struct_pointer_helpers_source(
+        accept_none=False,
+        unused_qualifier="GENMPY_UNUSED ",
+        sanitized_struct_name="lv_point_t",
+        struct_name="lv_point_t",
+        struct_tag="",
+    )
+    cpython = struct_pointer_helpers_source(
+        accept_none=True,
+        unused_qualifier="",
+        sanitized_struct_name="lv_point_t",
+        struct_name="lv_point_t",
+        struct_tag="",
+    )
+
+    assert "GENMPY_UNUSED static inline void*" in mpy
+    assert "if (self_in == mp_const_none) return NULL;" not in mpy
+    assert "GENMPY_UNUSED" not in cpython
+    assert "if (self_in == mp_const_none) return NULL;" in cpython
+    assert "mp_write_ptr_lv_point_t" in mpy
