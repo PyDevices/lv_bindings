@@ -9,6 +9,7 @@ from types import SimpleNamespace
 from binding.artifacts import compare_manifests, manifest_for_directory
 from binding.cli import _stable_command_line
 from binding.generate import _extract_circuitpython_header, _normalized_for_check, generate
+from binding.generator import analysis_snapshot, prepare_analysis, run_micropython
 from binding.preprocess import _preprocessor_command
 
 
@@ -105,3 +106,29 @@ def test_unified_generator_help():
     assert result.returncode == 0
     assert "--pyi-only" in result.stdout
     assert "--check" in result.stdout
+
+
+def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypatch):
+    import io
+
+    from pycparser import c_parser
+
+    source = "typedef struct fixture { int value; } fixture_t; void lv_init(void);"
+    calls = []
+    original_parse = c_parser.CParser.parse
+
+    def recording_parse(parser, text, *args, **kwargs):
+        calls.append(text)
+        return original_parse(parser, text, *args, **kwargs)
+
+    monkeypatch.setattr(c_parser.CParser, "parse", recording_parse)
+    args = SimpleNamespace(module_name="lvgl", module_prefix="lv", json=None, input=["fixture.h"])
+    prepared = prepare_analysis(args, source, "pp", "cmd", lambda *a, **k: None)
+    state = analysis_snapshot(prepared)
+    output = io.StringIO()
+    _result, namespace = run_micropython(
+        args, source, "pp", output, "cmd", analysis_state=state
+    )
+
+    assert calls.count(source) == 1
+    assert namespace["declaration_ir"] is prepared.declaration_ir

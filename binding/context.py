@@ -30,7 +30,9 @@ class BindingContext:
         "func_prototypes",
         "parser",
         "gen",
+        "parsed_ast",
         "ast",
+        "declaration_ir",
         "lvgl_json",
         "forward_struct_decls",
         "typedefs",
@@ -87,6 +89,8 @@ class BindingContext:
         )
         self.base_obj_name = "obj"
         self.base_obj_type = None
+        self.parsed_ast = None
+        self.declaration_ir = None
         self.headers = list(args.input)
 
     def init_patterns(self):

@@ -126,13 +126,21 @@ and machine-checked without changing the shared canonical API contract.
 
 - [ ] Replace global mutable analyzer state with pure typed intermediate
   representations.
-- [ ] Represent primitive, qualified, pointer, array, function-pointer, enum,
-  struct, union, and typedef types.
+- [x] Represent primitive, qualified, pointer, array, function-pointer, enum,
+  struct, union, and typedef types in `binding/ir.py`.
 - [ ] Represent function declarations, parameters, struct fields, anonymous and
   forward declarations, callbacks, static-inline prototypes, and source
   locations.
-- [ ] Parse and normalize exactly once per generation.
+- [x] Represent function declarations, parameters, struct fields, callbacks,
+  static-inline prototypes, and source locations in the declaration IR.
+- [x] Parse the preprocessed translation unit once in the unified all-target
+  command and pass one immutable declaration IR to each target context.
 - [ ] Remove target conditions from parsing and analysis.
+
+Progress note: target lowering still uses the legacy AST-facing analysis
+surface. The next structural step is to migrate those decisions to the
+declaration IR; the current shared snapshot prevents a target from reparsing
+or reanalyzing the translation unit while preserving the C output gate.
 
 ### Gate
 

@@ -62,7 +62,7 @@ def emit_c():
     global enum_referenced, generated_obj_names, generated_globals
     global module_funcs, functions_not_generated, enums
 
-    headers = args.input
+    headers = list(args.input)
     for header in headers:
         if "lvgl.h" in header:
             path, _ = os.path.split(header)

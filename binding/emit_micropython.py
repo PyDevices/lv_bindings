@@ -14,8 +14,9 @@ def run(ctx):
     ctx.init_patterns()
     runtime.sync_from_ctx(ctx)
     try:
-        analyze()
-        runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
+        if not getattr(ctx, "_analysis_ready", False):
+            analyze()
+            runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
         runtime.publish(__import__("sys").modules)
         emit_c_mod.emit_c()
     finally:

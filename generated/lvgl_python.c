@@ -29,7 +29,6 @@
 
 #include "lvgl/lvgl.h"
 #include "lvgl/src/lvgl_private.h"
-#include "lvgl/src/lvgl_private.h"
 
 
 #define LV_OBJ_T lv_obj_t

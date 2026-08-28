@@ -9,6 +9,8 @@ _CONSUMER_MODULES = (
     "binding.emit_c_micropython_style",
     "binding.emit_c_cpython",
     "binding.emit_cpython_native",
+    "binding.emit_circuitpython_glue",
+    "binding.emit_cpython_glue",
     "binding.helpers",
     "binding.parse",
 )
@@ -58,6 +60,26 @@ def sync_to_ctx(ctx):
     for name in ctx.export_names():
         if name in globals():
             setattr(ctx, name, globals()[name])
+
+
+def reset():
+    """Clear mirrored generation state before starting an in-process run."""
+    import sys
+
+    from .util import clear_memoized
+
+    clear_memoized()
+
+    for name in export_names():
+        globals().pop(name, None)
+    globals().pop("print", None)
+    for mod_name in _CONSUMER_MODULES:
+        mod = sys.modules.get(mod_name)
+        if mod is None:
+            continue
+        for name in export_names():
+            mod.__dict__.pop(name, None)
+        mod.__dict__.pop("print", None)
 
 
 def publish(modules, names=None):

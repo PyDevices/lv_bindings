@@ -198,9 +198,11 @@ def analyze():
 
     func_prototypes = {}
 
-    parser = c_parser.CParser()
-    gen = c_generator.CGenerator()
-    ast = parser.parse(s, filename="<none>")
+    parser = runtime.get("parser", None) or c_parser.CParser()
+    gen = runtime.get("gen", None) or c_generator.CGenerator()
+    ast = runtime.get("parsed_ast", None)
+    if ast is None:
+        ast = parser.parse(s, filename="<none>")
 
     if args.json is not None:
         with open(args.json, "r") as f:

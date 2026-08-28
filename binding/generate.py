@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import shutil
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -13,6 +13,14 @@ from types import SimpleNamespace
 
 from .artifacts import manifest_for_directory
 from .emit_pyi import write_pyi
+from .generator import (
+    analysis_snapshot,
+    prepare_analysis,
+    run_circuitpython,
+    run_cpython,
+    run_micropython,
+)
+from .metadata import save_bindings_ir
 from .preprocess import preprocess
 
 
@@ -35,68 +43,43 @@ def _relative_or_absolute(path, root):
         return str(Path(path).resolve())
 
 
-def _run_target(root, output_dir, target, naming_style, *, keep_output=True):
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    c_path = output_dir / TARGET_OUTPUTS[target]
-    command = [
-        sys.executable,
-        "binding/gen_binding.py",
-        "--target",
-        target,
-        "-M",
-        "lvgl",
-        "-MP",
-        "lv",
-        "--naming-style",
-        naming_style,
-        "--read-only-ir",
-        "--ir",
-        _relative_or_absolute(output_dir / "lvgl.json", root),
-        "-E",
-        _relative_or_absolute(output_dir / "lvgl.pp", root),
-        "lvgl/lvgl.h",
-    ]
-    result = subprocess.run(
-        command,
-        cwd=root,
-        check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
+def _target_command_line(root, output_dir, target, naming_style):
+    return " ".join(
+        [
+            "gen_binding.py",
+            "--target",
+            target,
+            "-M",
+            "lvgl",
+            "-MP",
+            "lv",
+            "--naming-style",
+            naming_style,
+            "--read-only-ir",
+            "--ir",
+            _relative_or_absolute(output_dir / "lvgl.json", root),
+            "-E",
+            _relative_or_absolute(output_dir / "lvgl.pp", root),
+            "lvgl/lvgl.h",
+        ]
     )
-    if keep_output:
-        c_path.write_text(result.stdout, encoding="utf-8")
-    return result.stdout
 
 
-def _run_ir(root, output_dir, naming_style):
-    command = [
-        sys.executable,
-        "binding/gen_binding.py",
-        "--target",
-        "micropython",
-        "--mode",
-        "ir",
-        "-M",
-        "lvgl",
-        "-MP",
-        "lv",
-        "--naming-style",
-        naming_style,
-        "--ir",
-        _relative_or_absolute(output_dir / "lvgl.json", root),
-        "-E",
-        _relative_or_absolute(output_dir / "lvgl.pp", root),
-        "lvgl/lvgl.h",
-    ]
-    subprocess.run(
-        command,
-        cwd=root,
-        check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        text=True,
+def _generation_args(root, output_dir, naming_style):
+    return SimpleNamespace(
+        target="micropython",
+        include=[str(root / "fake_libc_include")],
+        define=[],
+        ep=str(output_dir / "lvgl.pp"),
+        json=None,
+        module_name="lvgl",
+        module_prefix="lv",
+        metadata=None,
+        ir=str(output_dir / "lvgl.json"),
+        mode="emit",
+        read_only_ir=True,
+        naming_style=naming_style,
+        input=["lvgl/lvgl.h"],
     )
 
 
@@ -159,21 +142,66 @@ def generate(
     _preprocess_to(output_dir, root)
     selected = TARGETS if target == "all" else (target,)
 
-    # The existing IR is produced by the MicroPython analysis path and is the
-    # shared input for all targets until the target-neutral IR lands.
-    _run_ir(root, output_dir, naming_style)
+    args = _generation_args(root, output_dir, naming_style)
+    source = pp_path.read_text(encoding="utf-8")
+    prepared = prepare_analysis(
+        args,
+        source,
+        "Preprocessing was disabled.",
+        _target_command_line(root, output_dir, "micropython", naming_style),
+        lambda *unused_args, **unused_kwargs: None,
+    )
+    shared_analysis = analysis_snapshot(prepared)
 
+    # The metadata schema is still the legacy public API schema.  Until the
+    # canonical Python API model lands, it is emitted once from the shared
+    # analysis and then consumed read-only by every target.
+    metadata_output = io.StringIO()
+    _result, metadata_namespace = run_micropython(
+        args,
+        source,
+        "Preprocessing was disabled.",
+        metadata_output,
+        _target_command_line(root, output_dir, "micropython", naming_style),
+        analysis_state=shared_analysis,
+    )
     if "micropython" in selected:
-        _run_target(root, output_dir, "micropython", naming_style)
+        (output_dir / TARGET_OUTPUTS["micropython"]).write_text(
+            metadata_output.getvalue(), encoding="utf-8"
+        )
+    save_bindings_ir(metadata_namespace, metadata_path)
 
     if "circuitpython" in selected:
-        source = _run_target(root, output_dir, "circuitpython", naming_style)
+        output = io.StringIO()
+        run_circuitpython(
+            args,
+            source,
+            "Preprocessing was disabled.",
+            output,
+            _target_command_line(root, output_dir, "circuitpython", naming_style),
+            analysis_state=shared_analysis,
+        )
+        circuitpython_source = output.getvalue()
         (output_dir / "lvgl_circuitpython.h").write_text(
-            _extract_circuitpython_header(source), encoding="utf-8"
+            _extract_circuitpython_header(circuitpython_source), encoding="utf-8"
+        )
+        (output_dir / TARGET_OUTPUTS["circuitpython"]).write_text(
+            circuitpython_source, encoding="utf-8"
         )
 
     if "cpython" in selected:
-        _run_target(root, output_dir, "cpython", naming_style)
+        output = io.StringIO()
+        run_cpython(
+            args,
+            source,
+            "Preprocessing was disabled.",
+            output,
+            _target_command_line(root, output_dir, "cpython", naming_style),
+            analysis_state=shared_analysis,
+        )
+        (output_dir / TARGET_OUTPUTS["cpython"]).write_text(
+            output.getvalue(), encoding="utf-8"
+        )
 
     write_pyi(
         metadata_path,

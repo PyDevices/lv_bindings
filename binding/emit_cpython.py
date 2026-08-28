@@ -60,7 +60,8 @@ def emit_cpython(ctx):
         "emit_options",
         {"target": "cpython", "max_phase": 7},
     )
-    analyze()
+    if not getattr(ctx, "_analysis_ready", False):
+        analyze()
     _init_emit_defaults(ctx)
     runtime.absorb_from(__import__("binding.analyze", fromlist=["analyze"]))
     runtime.publish(__import__("sys").modules)
