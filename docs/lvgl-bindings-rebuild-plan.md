@@ -413,6 +413,11 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   `runtime.py`-mirrored `_py_helpers` dictionary. The legacy CPython emitter
   reads that binding through a narrow native-backend query, and the backend
   clears it after every run. Validation: 108 repository tests and
+  binding.generate --check passed; generated artifacts remain unchanged.
+  Thirteenth migration slice: enum namespace discovery is now a shared,
+  ordered backend plan for members, nested enums, and widget-scoped references.
+  CircuitPython and CPython retain their distinct C namespace emitters while
+  sharing the public nesting policy. Validation: 109 repository tests and
   binding.generate --check passed; generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections

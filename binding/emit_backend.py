@@ -52,6 +52,16 @@ class TargetLoweringProfile:
     supports_dynamic_function_pointer: bool
 
 
+@dataclass(frozen=True)
+class EnumNamespacePlan:
+    """Target-neutral contents and nesting for one exported enum namespace."""
+
+    name: str
+    members: tuple[str, ...]
+    nested_names: tuple[str, ...]
+    widget_scoped_nested_names: tuple[str, ...]
+
+
 _TARGET_PROFILES = {
     "micropython": TargetLoweringProfile("micropython", True),
     "circuitpython": TargetLoweringProfile("circuitpython", True),
@@ -102,6 +112,32 @@ def resolve_emitter_headers(inputs):
 def target_banner(target, *, include):
     """Return the optional target marker for a generated-file banner."""
     return " *\n * Target: {target}\n".format(target=target) if include else ""
+
+
+def enum_namespace_plan(*, enums, get_enum_members, is_method_of, is_widget_scoped):
+    """Build the common enum namespace relationship plan in declaration order.
+
+    The three targets choose different C representations for enum namespaces,
+    but their public nesting and widget-scoped-reference policy is identical.
+    Keeping this discovery here makes that contract explicit without imposing a
+    VM-specific emitted C shape.
+    """
+    enum_names = tuple(enums)
+    return tuple(
+        EnumNamespacePlan(
+            name=enum_name,
+            members=tuple(get_enum_members(enum_name)),
+            nested_names=tuple(
+                other for other in enum_names if is_method_of(other, enum_name)
+            ),
+            widget_scoped_nested_names=tuple(
+                other
+                for other in enum_names
+                if is_method_of(other, enum_name) and is_widget_scoped(other)
+            ),
+        )
+        for enum_name in enum_names
+    )
 
 
 def mp_obj_get_ull_to_bytes_source():

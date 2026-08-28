@@ -4,6 +4,7 @@ from __future__ import print_function
 import collections
 
 from . import runtime
+from .emit_backend import enum_namespace_plan
 
 
 # This module owns no mirrored emitter globals; generated output is routed
@@ -198,7 +199,13 @@ def emit_phase2_enums():
 """
     )
 
-    for obj_name in list(enums.keys()):
+    for enum_plan in enum_namespace_plan(
+        enums=enums,
+        get_enum_members=get_enum_members,
+        is_method_of=is_method_of,
+        is_widget_scoped=is_widget_scoped_only_enum,
+    ):
+        obj_name = enum_plan.name
         obj_metadata[obj_name] = {"members": collections.OrderedDict()}
 
         enum_members = [
@@ -206,18 +213,16 @@ def emit_phase2_enums():
                 enum_member=export_name(enum_member_name, "enum_member"),
                 enum_member_value=get_enum_value(obj_name, enum_member_name),
             )
-            for enum_member_name in get_enum_members(obj_name)
+            for enum_member_name in enum_plan.members
         ]
         obj_metadata[obj_name]["members"].update(
             {
                 get_enum_member_name(enum_member_name): {"type": "enum_member"}
-                for enum_member_name in get_enum_members(obj_name)
+                for enum_member_name in enum_plan.members
             }
         )
 
-        obj_enums = [
-            enum_name for enum_name in enums.keys() if is_method_of(enum_name, obj_name)
-        ]
+        obj_enums = enum_plan.nested_names
         enum_types = [
             "{{ MP_ROM_QSTR(MP_QSTR_{name}), MP_ROM_PTR(&mp_lv_{enum}_type_base) }}".format(
                 name=export_name(method_name_from_func_name(enum_name), "enum"),
@@ -236,7 +241,7 @@ def emit_phase2_enums():
                 obj_metadata[obj_name]["members"][
                     method_name_from_func_name(enum_name)
                 ].update(obj_metadata[enum_name])
-            if is_widget_scoped_only_enum(enum_name):
+            if enum_name in enum_plan.widget_scoped_nested_names:
                 enum_referenced[enum_name] = True
 
         locals_dict_entries = ",\n    ".join(enum_members + enum_types)

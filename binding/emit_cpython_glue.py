@@ -4,6 +4,7 @@ from __future__ import print_function
 import collections
 
 from . import runtime
+from .emit_backend import enum_namespace_plan
 
 
 # This module owns no mirrored emitter globals; generated output is routed
@@ -40,7 +41,13 @@ def emit_phase2_enums_cpython():
 """
     )
 
-    for enum_name in list(enums.keys()):
+    for enum_plan in enum_namespace_plan(
+        enums=enums,
+        get_enum_members=get_enum_members,
+        is_method_of=is_method_of,
+        is_widget_scoped=is_widget_scoped_only_enum,
+    ):
+        enum_name = enum_plan.name
         members = enums[enum_name]
         if not members:
             continue
@@ -48,12 +55,10 @@ def emit_phase2_enums_cpython():
         obj_metadata[enum_name]["members"].update(
             {
                 get_enum_member_name(enum_member_name): {"type": "enum_member"}
-                for enum_member_name in get_enum_members(enum_name)
+                for enum_member_name in enum_plan.members
             }
         )
-        obj_enums = [
-            other for other in enums.keys() if is_method_of(other, enum_name)
-        ]
+        obj_enums = enum_plan.nested_names
         obj_metadata[enum_name]["members"].update(
             {
                 method_name_from_func_name(other): {"type": "enum_type"}
@@ -65,7 +70,7 @@ def emit_phase2_enums_cpython():
                 obj_metadata[enum_name]["members"][
                     method_name_from_func_name(other)
                 ].update(obj_metadata[other])
-            if is_widget_scoped_only_enum(other):
+            if other in enum_plan.widget_scoped_nested_names:
                 enum_referenced[other] = True
         safe = sanitize(enum_name)
         py_name = export_name(enum_name, "enum")

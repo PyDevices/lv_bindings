@@ -21,6 +21,7 @@ from binding.emit_backend import (
     callback_return_conversion_available,
     callback_return_lowering,
     conversion_available,
+    enum_namespace_plan,
     function_reuse_allowed,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
@@ -222,6 +223,23 @@ def test_target_lowering_header_and_banner_policy_is_shared():
     ]
     assert resolve_emitter_headers(["lvgl.h"]) == ["lvgl.h", "src/lvgl_private.h"]
     assert target_banner("cpython", include=True) == " *\n * Target: cpython\n"
+
+
+def test_enum_namespace_plan_preserves_member_nesting_and_widget_policy():
+    enums = {"lv_obj_flag_t": {"LV_OBJ_FLAG_HIDDEN": "1"}, "lv_obj_flag_x_t": {}}
+    plan = enum_namespace_plan(
+        enums=enums,
+        get_enum_members=lambda name: tuple(enums[name]),
+        is_method_of=lambda child, parent: child != parent
+        and child.startswith(parent.removesuffix("_t")),
+        is_widget_scoped=lambda name: name.endswith("_x_t"),
+    )
+
+    assert [(item.name, item.members, item.nested_names) for item in plan] == [
+        ("lv_obj_flag_t", ("LV_OBJ_FLAG_HIDDEN",), ("lv_obj_flag_x_t",)),
+        ("lv_obj_flag_x_t", (), ()),
+    ]
+    assert plan[0].widget_scoped_nested_names == ("lv_obj_flag_x_t",)
 
 
 def test_native_glue_uses_explicit_runtime_output_not_global_mirroring():
