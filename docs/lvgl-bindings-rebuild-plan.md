@@ -367,7 +367,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   struct-pointer wrapper lowering, with explicit policy inputs for nullable
   CPython fallback pointers and target-specific unused-function annotations.
   Validation: 101 repository tests passed; binding.generate --check passed;
-  generated artifacts remain unchanged.`
+  generated artifacts remain unchanged. Sixth migration slice: native function
+  result lowering now has a shared, typed result contract for void values,
+  pointer const-discard casts, conversion wrappers, and API metadata. Recursive
+  conversion discovery remains owned by each emitter. Validation: 102
+  repository tests passed; binding.generate --check passed; generated artifacts
+  remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 

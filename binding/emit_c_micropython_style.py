@@ -52,6 +52,7 @@ from .parse import (
 )
 from . import runtime
 from .emit_backend import (
+    function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     resolve_emitter_headers,
     struct_pointer_helpers_source,
@@ -2300,25 +2301,25 @@ static {builtin_macro}(mp_{func_obj_name}_mpobj, {param_count}, mp_{func_name}, 
                 ):
                     try_generate_array_type(func.type.type)
                 # print('/* --> return_type = %s, qualified_return_type = %s\n%s */' % (return_type, qualified_return_type, func.type.type))
-                if return_type == "void":
-                    build_result = ""
-                    build_return_value = "mp_const_none"
-                    func_metadata[func.name]["return_type"] = "NoneType"
-                else:
+                if return_type != "void":
                     if return_type not in lv_to_mp or not lv_to_mp[return_type]:
                         try_generate_type(func.type.type)
                         if return_type not in lv_to_mp or not lv_to_mp[return_type]:
                             raise MissingConversionException(
                                 "Missing conversion from %s" % return_type
                             )
-                    build_result = "%s _res = " % qualified_return_type
-                    cast = (
-                        "(void*)" if isinstance(func.type.type, c_ast.PtrDecl) else ""
-                    )  # needed when field is const. casting to void overrides it
-                    build_return_value = "{type}({cast}_res)".format(
-                        type=lv_to_mp[return_type], cast=cast
-                    )
-                    func_metadata[func.name]["return_type"] = lv_mp_type[return_type]
+                return_lowering = function_return_lowering(
+                    return_type=return_type,
+                    qualified_return_type=qualified_return_type,
+                    is_pointer=isinstance(func.type.type, c_ast.PtrDecl),
+                    lv_to_mp=lv_to_mp,
+                    lv_mp_type=lv_mp_type,
+                )
+                build_result = return_lowering.build_result
+                build_return_value = return_lowering.build_return_value
+                func_metadata[func.name]["return_type"] = (
+                    return_lowering.metadata_return_type
+                )
                 if func.name == "lv_draw_buf_destroy" and _emit_target == "circuitpython":
                     print(
                         """

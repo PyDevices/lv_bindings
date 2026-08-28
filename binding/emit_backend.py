@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import collections
 import os
+from dataclasses import dataclass
 
 from . import runtime
 
@@ -24,6 +25,15 @@ _EMIT_DEFAULTS = (
     "module_funcs",
     "functions_not_generated",
 )
+
+
+@dataclass(frozen=True)
+class FunctionReturnLowering:
+    """C and metadata fragments for one exported function return value."""
+
+    build_result: str
+    build_return_value: str
+    metadata_return_type: str
 
 
 def prepare_target_lowering(ctx, *, target, max_phase):
@@ -85,6 +95,33 @@ def mp_obj_get_ull_to_bytes_source():
         "#else\n"
         "    mp_obj_int_to_bytes_impl(obj, big_endian, sizeof(val), (byte*)&val);\n"
         "#endif"
+    )
+
+
+def function_return_lowering(
+    *,
+    return_type,
+    qualified_return_type,
+    is_pointer,
+    lv_to_mp,
+    lv_mp_type,
+):
+    """Lower a resolved LVGL function return through the shared MP surface.
+
+    All three targets present function results through the common ``mp_obj_t``
+    compatibility surface, including CPython's native backend.  Conversion
+    lookup remains emitter-owned because it may trigger recursive type
+    lowering; once available, this rule owns the identical void, pointer-cast,
+    and API-metadata behavior.
+    """
+    if return_type == "void":
+        return FunctionReturnLowering("", "mp_const_none", "NoneType")
+    return FunctionReturnLowering(
+        "%s _res = " % qualified_return_type,
+        "{type}({cast}_res)".format(
+            type=lv_to_mp[return_type], cast="(void*)" if is_pointer else ""
+        ),
+        lv_mp_type[return_type],
     )
 
 

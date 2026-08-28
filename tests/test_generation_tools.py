@@ -18,6 +18,7 @@ from binding.generator import (
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
 from binding.emit_backend import (
+    function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
     resolve_emitter_headers,
@@ -225,6 +226,35 @@ def test_mp_64_bit_integer_lowering_is_shared_and_version_safe():
     assert "MICROPY_VERSION_MAJOR" in source
     assert "mp_obj_int_to_bytes(obj, sizeof(val)" in source
     assert source.count("mp_obj_int_to_bytes_impl") == 2
+
+
+def test_function_return_lowering_preserves_void_and_pointer_conversion_policy():
+    mappings = {"lv_obj_t *": "lv_to_mp_obj"}
+    type_metadata = {"lv_obj_t *": "lv.obj"}
+
+    void = function_return_lowering(
+        return_type="void",
+        qualified_return_type="void",
+        is_pointer=False,
+        lv_to_mp=mappings,
+        lv_mp_type=type_metadata,
+    )
+    pointer = function_return_lowering(
+        return_type="lv_obj_t *",
+        qualified_return_type="lv_obj_t *",
+        is_pointer=True,
+        lv_to_mp=mappings,
+        lv_mp_type=type_metadata,
+    )
+
+    assert (void.build_result, void.build_return_value, void.metadata_return_type) == (
+        "",
+        "mp_const_none",
+        "NoneType",
+    )
+    assert pointer.build_result == "lv_obj_t * _res = "
+    assert pointer.build_return_value == "lv_to_mp_obj((void*)_res)"
+    assert pointer.metadata_return_type == "lv.obj"
 
 
 def test_struct_pointer_helpers_preserve_target_null_and_warning_policy():
