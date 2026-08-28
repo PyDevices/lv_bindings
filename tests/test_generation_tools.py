@@ -29,6 +29,7 @@ from binding.emit_backend import (
     module_registration_plan,
     mp_obj_get_ull_to_bytes_source,
     prepare_target_lowering,
+    require_one_of_target_lowerings,
     require_target_lowering,
     resolve_emitter_headers,
     target_banner,
@@ -230,6 +231,25 @@ def test_target_lowering_contract_rejects_a_cross_target_native_emitter():
         match="cpython emitter requires target='cpython'; got 'micropython'",
     ):
         require_target_lowering("cpython")
+
+
+def test_shared_target_lowering_contract_requires_explicit_supported_target():
+    from binding import runtime
+
+    runtime.reset()
+    runtime.set_("emit_options", {"target": "cpython", "max_phase": 7})
+
+    with pytest.raises(
+        RuntimeError,
+        match=r"shared emitter requires one of \('micropython', 'circuitpython'\); got 'cpython'",
+    ):
+        require_one_of_target_lowerings("micropython", "circuitpython")
+
+    runtime.set_("emit_options", {"target": "circuitpython", "max_phase": 7})
+    assert require_one_of_target_lowerings("micropython", "circuitpython") == (
+        "circuitpython",
+        7,
+    )
 
 
 def test_target_lowering_header_and_banner_policy_is_shared():

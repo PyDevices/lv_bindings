@@ -126,6 +126,27 @@ def require_target_lowering(target):
     return emit_options.get("max_phase")
 
 
+def require_one_of_target_lowerings(*targets):
+    """Return configured target and phase, constrained to shared emitters.
+
+    Some C-lowering code is intentionally shared by multiple VM backends.
+    That code must still require an explicitly configured target; it may not
+    quietly fall back to one target when setup is missing.
+    """
+    if not targets:
+        raise ValueError("at least one target is required")
+    emit_options = runtime.get("emit_options", {})
+    actual_target = emit_options.get("target")
+    if actual_target not in targets:
+        expected = ", ".join(repr(target) for target in targets)
+        raise RuntimeError(
+            "shared emitter requires one of ({expected}); got {actual!r}".format(
+                expected=expected, actual=actual_target
+            )
+        )
+    return actual_target, emit_options.get("max_phase")
+
+
 def resolve_emitter_headers(inputs):
     """Return the public headers plus LVGL's private declarations.
 

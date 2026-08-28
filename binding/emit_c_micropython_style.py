@@ -58,6 +58,7 @@ from .emit_backend import (
     function_reuse_allowed,
     function_return_lowering,
     mp_obj_get_ull_to_bytes_source,
+    require_one_of_target_lowerings,
     resolve_emitter_headers,
     struct_pointer_helpers_source,
     target_banner,
@@ -74,9 +75,9 @@ def emit_c():
 
     headers = resolve_emitter_headers(args.input)
 
-    emit_options = runtime.get("emit_options", {})
-    _emit_target = emit_options.get("target", "micropython")
-    _emit_max_phase = emit_options.get("max_phase")
+    _emit_target, _emit_max_phase = require_one_of_target_lowerings(
+        "micropython", "circuitpython"
+    )
     _target_banner = target_banner(
         _emit_target, include=_emit_target != "micropython"
     )

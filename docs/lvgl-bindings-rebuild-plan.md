@@ -430,7 +430,12 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   rejects a cross-target invocation instead of retaining its historical
   MicroPython fallback default, making its backend ownership safe to narrow
   further. Validation: 111 repository tests and binding.generate --check
-  passed; generated artifacts remain unchanged.`
+  passed; generated artifacts remain unchanged. Sixteenth migration slice:
+  the intentionally shared MP-style emitter now requires an explicit
+  `micropython` or `circuitpython` lowering target rather than silently
+  defaulting to MicroPython. This makes its two-backend scope explicit without
+  changing either target's C output. Validation: 112 repository tests and
+  binding.generate --check passed; generated artifacts remain unchanged.`
 
 ## Checkpoint 6 — Semantic and API corrections
 
