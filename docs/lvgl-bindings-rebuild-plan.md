@@ -68,23 +68,25 @@ and machine-checked without changing the shared canonical API contract.
 
 ### Work
 
-- [ ] Pin the upstream reference to `gen_mpy.py` commit
+- [x] Pin the upstream reference to `gen_mpy.py` commit
   `60dfbd41f99c2757d1fe3bffab246c818afebcc4`.
-- [ ] Record the LVGL submodule SHA, `lv_conf.h` hash, compiler flags, parser
+- [x] Record the LVGL submodule SHA, `lv_conf.h` hash, compiler flags, parser
   version, and fake-libc hash.
-- [ ] Add a scratch-only upstream baseline reproducer.
-- [ ] Produce a normalized upstream API manifest and comparison report for all
+- [x] Add a scratch-only upstream baseline reproducer.
+- [x] Produce a normalized upstream API manifest and comparison report for all
   three current targets.
-- [ ] Record known differences: `OBJ_FLAG`, private `global_t`, CPython
+- [x] Record known differences: `OBJ_FLAG`, private `global_t`, CPython
   struct aliases, lifecycle dunders, TJPGD, and GC helpers.
+- [ ] Record lifecycle dunders separately from the metadata baseline; they are
+  runtime exports rather than metadata entries.
 - [ ] Plan removal of the large duplicated historical baseline artifacts after
   the new oracle is stable.
 
 ### Gate
 
-- [ ] The pinned upstream generator runs against the current LVGL checkout.
-- [ ] Current generated artifacts remain unchanged.
-- [ ] The report contains no unexplained current-target differences.
+- [x] The pinned upstream generator runs against the current LVGL checkout.
+- [x] Current generated artifacts remain unchanged.
+- [x] The report contains no unexplained current-target differences.
 
 ### Handoff
 
