@@ -89,15 +89,17 @@ generates into a temporary directory and never changes the working tree.
 Use `--naming-style pythonic` only when deliberately testing the alternate
 profile; release generation remains on the legacy upstream-compatible names.
 
-The shared stub is generated from `generated/lvgl.json` and `generated/lvgl.pp`.
-Use `--pyi-only` when changing typing enrichment so the C bindings, API model,
-and their IR inputs are not regenerated.
+The shared stub is generated exclusively from the canonical
+`generated/api.json` model. Use `--pyi-only` when changing typing emission so
+the C bindings, shared declaration IR, and preprocessed input are not
+regenerated. The legacy `generated/lvgl.json` file remains a C-generator
+introspection artifact; it is not a typings source.
 
 `binding.api_report` validates the canonical model and reports qualified export
 counts, target availability exceptions, inheritance-expanded object APIs, and
 the current diagnostic projection against the historical baseline. The
-baseline projection is informational until canonical lowering replaces the
-legacy metadata/stub path.
+baseline projection remains informational while canonical lowering replaces
+the legacy C backend paths.
 
 ```bash
 ./scripts/verify_bindings.sh  # Read-only checks

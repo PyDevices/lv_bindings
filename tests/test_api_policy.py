@@ -33,6 +33,18 @@ def test_private_global_struct_is_not_public():
     assert structs["obj_t"].visibility == "public"
 
 
+def test_internal_callback_hooks_are_not_public():
+    ir = parse_source(
+        "typedef unsigned int uint32_t; "
+        "extern int (*lv_text_encoded_next)(const char *, uint32_t *);"
+    )
+    model = build_api_model(ir)
+    variable = next(
+        item for item in model.variables if item.c_name == "lv_text_encoded_next"
+    )
+    assert variable.visibility == "private"
+
+
 def test_tjpgd_exception_is_target_specific():
     ir = parse_source(
         "void lv_tjpgd_init(void); void lv_tjpgd_deinit(void);"
@@ -62,6 +74,8 @@ def test_policy_records_have_reason_and_test_references():
     for record in policy.private_functions.values():
         assert record.reason and record.test
     for record in policy.private_structs.values():
+        assert record.reason and record.test
+    for record in policy.private_variables.values():
         assert record.reason and record.test
     for record in policy.target_exceptions.values():
         assert record.reason and record.test

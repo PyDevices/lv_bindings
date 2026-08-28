@@ -24,9 +24,8 @@ from .ir import (
     SourceLocation,
 )
 
-
 TARGETS = ("micropython", "circuitpython", "cpython")
-API_SCHEMA_VERSION = 2
+API_SCHEMA_VERSION = 3
 
 
 # These are the established public spellings used by the upstream-compatible
@@ -246,6 +245,7 @@ class ApiEnum:
     c_name: Optional[str]
     python_name: str
     members: Tuple[Tuple[str, Optional[str]], ...]
+    member_type: str = "int"
     typedef_names: Tuple[str, ...] = ()
     complete: bool = False
     available_on: Tuple[str, ...] = TARGETS
@@ -262,6 +262,7 @@ class ApiEnum:
             "members": [
                 {"name": name, "value": value} for name, value in self.members
             ],
+            "member_type": self.member_type,
             "typedef_names": list(self.typedef_names),
             "complete": self.complete,
             "available_on": list(self.available_on),
@@ -538,7 +539,10 @@ def _python_type_name(name: str, module_prefix: str) -> str:
     """Return the legacy Python spelling for an LVGL typedef/tag name."""
 
     name = name.removeprefix("_" + module_prefix + "_")
-    return name.removeprefix(module_prefix + "_")
+    name = name.removeprefix(module_prefix + "_")
+    if name and name[0].isdigit():
+        return "_" + name
+    return name
 
 
 def _python_enum_name(name: Optional[str], module_prefix: str) -> str:
@@ -639,6 +643,8 @@ def _enum_exports(
     if widget_override is not None:
         owner, nested_name = widget_override
         return None, ((owner, nested_name),), stem
+    if stem == "STR_SYMBOL":
+        return "SYMBOL", (), stem
 
     object_names = tuple(sorted(object_names, key=len, reverse=True))
     for object_name in object_names:
@@ -704,9 +710,29 @@ def _build_type_view_resolver(
 ):
     """Create a target-neutral C-to-Python type-view resolver."""
 
-    object_by_c = {item.c_type: item.python_name for item in objects}
+    def is_hidden_implementation(item) -> bool:
+        """Exclude declarations deliberately hidden by API policy.
+
+        Declarations outside the LVGL prefix are still useful as boundary
+        types when a public LVGL function uses them.  A non-default policy
+        reason, however, is an explicit decision that the implementation type
+        must not appear in public annotations (for example ``global_t``).
+        """
+
+        return (
+            item.visibility == "private"
+            and item.policy_reason not in {None, "outside module prefix"}
+        )
+
+    object_by_c = {
+        item.c_type: item.python_name
+        for item in objects
+        if not is_hidden_implementation(item)
+    }
     struct_by_c = {}
     for item in structs:
+        if is_hidden_implementation(item):
+            continue
         if item.c_name:
             struct_by_c[item.c_name] = item.python_name
         for alias in item.typedef_names:
@@ -727,6 +753,8 @@ def _build_type_view_resolver(
                     object_by_c[alias] = object_name
     enum_by_c = {}
     for item in enums:
+        if is_hidden_implementation(item):
+            continue
         if item.module_name is not None:
             python_type = item.module_name
         elif item.owners:
@@ -1003,6 +1031,7 @@ def build_api_model(
         )
     )
     enums = []
+    symbol_members = None
     object_names = tuple(constructors)
     for enum in sorted(
         declarations.enums,
@@ -1025,19 +1054,20 @@ def build_api_model(
             object_names=object_names,
         )
         decision = policy.enum((enum.name,) + tuple(enum.typedef_names))
+        members = tuple(
+            (
+                _python_enum_member_name(member, enum_stem, module_prefix),
+                value,
+            )
+            for member, value in (
+                enum.values or tuple((member, None) for member in enum.members)
+            )
+        )
         enums.append(
             ApiEnum(
                 c_name=enum.name,
                 python_name=enum_name,
-                members=tuple(
-                    (
-                        _python_enum_member_name(member, enum_stem, module_prefix),
-                        value,
-                    )
-                    for member, value in (
-                        enum.values or tuple((member, None) for member in enum.members)
-                    )
-                ),
+                members=members,
                 typedef_names=enum.typedef_names,
                 complete=enum.complete,
                 visibility=decision.visibility,
@@ -1045,6 +1075,24 @@ def build_api_model(
                 location=enum.location,
                 module_name=module_name,
                 owners=owners,
+            )
+        )
+        if enum_stem == "STR_SYMBOL":
+            symbol_members = members
+    if symbol_members:
+        enums.append(
+            ApiEnum(
+                c_name=None,
+                python_name="SYMBOL",
+                members=symbol_members,
+                member_type="str",
+                complete=True,
+                location=next(
+                    enum.location
+                    for enum in enums
+                    if enum.python_name == "STR_SYMBOL_ID"
+                ),
+                module_name="SYMBOL",
             )
         )
     typedefs = tuple(
@@ -1059,7 +1107,7 @@ def build_api_model(
         )
         for typedef in declarations.typedefs
     )
-    variables = tuple(
+    variables = list(
         ApiVariable(
             c_name=variable.name,
             type=variable.type,
@@ -1070,7 +1118,16 @@ def build_api_model(
             location=variable.location,
         )
         for variable in declarations.variables
-        if not variable.name.startswith("_")
+    )
+    variables.append(
+        ApiVariable(
+            c_name="_nesting",
+            type=CType(kind="primitive", name="int"),
+            python_name="_nesting",
+            storage=("static",),
+            visibility="private",
+            policy_reason="Binding re-entrancy guard; not a user-facing LVGL symbol.",
+        )
     )
     constants = []
     anonymous_groups = {}

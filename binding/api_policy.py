@@ -46,14 +46,17 @@ class ApiPolicy:
         module_prefix: str = "lv",
         private_functions: Sequence[PolicyRecord] = (),
         private_structs: Sequence[PolicyRecord] = (),
+        private_variables: Sequence[PolicyRecord] = (),
         target_exceptions: Sequence[TargetException] = (),
     ) -> None:
         self.module_prefix = module_prefix
         private_functions = tuple(private_functions)
         private_structs = tuple(private_structs)
+        private_variables = tuple(private_variables)
         target_exceptions = tuple(target_exceptions)
         self.private_functions = {record.name: record for record in private_functions}
         self.private_structs = {record.name: record for record in private_structs}
+        self.private_variables = {record.name: record for record in private_variables}
         self.target_exceptions = {
             (record.name, record.target): record
             for record in target_exceptions
@@ -62,6 +65,8 @@ class ApiPolicy:
             raise ValueError("duplicate private function in API policy")
         if len(self.private_structs) != len(private_structs):
             raise ValueError("duplicate private struct in API policy")
+        if len(self.private_variables) != len(private_variables):
+            raise ValueError("duplicate private variable in API policy")
         if len(self.target_exceptions) != len(target_exceptions):
             raise ValueError("duplicate target exception in API policy")
         self._validate()
@@ -96,6 +101,7 @@ class ApiPolicy:
             module_prefix=module_prefix,
             private_functions=records("private_functions"),
             private_structs=records("private_structs"),
+            private_variables=records("private_variables"),
             target_exceptions=exceptions,
         )
 
@@ -114,7 +120,7 @@ class ApiPolicy:
                 raise ValueError("unknown API policy target: %s" % target)
         for record in tuple(self.private_functions.values()) + tuple(
             self.private_structs.values()
-        ):
+        ) + tuple(self.private_variables.values()):
             if not record.reason or not record.test:
                 raise ValueError("API policy records require reason and test: %s" % record.name)
         for record in self.target_exceptions.values():
@@ -162,6 +168,9 @@ class ApiPolicy:
         return PolicyDecision("private", reason="outside module prefix")
 
     def variable(self, name: str) -> PolicyDecision:
+        private = self.private_variables.get(name)
+        if private is not None:
+            return PolicyDecision("private", reason=private.reason)
         if name.startswith(self.module_prefix + "_"):
             return PolicyDecision("public")
         return PolicyDecision("private", reason="outside module prefix")
@@ -192,6 +201,10 @@ def validate_policy_against_declarations(policy: ApiPolicy, declarations: Any) -
     for name in policy.private_structs:
         if name not in struct_names:
             missing.append("struct " + name)
+    variable_names = {variable.name for variable in declarations.variables}
+    for name in policy.private_variables:
+        if name not in variable_names:
+            missing.append("variable " + name)
     for name, _target in policy.target_exceptions:
         if name not in function_names:
             missing.append("function " + name)

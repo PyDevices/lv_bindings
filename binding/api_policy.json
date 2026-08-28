@@ -24,6 +24,48 @@
       "test": "tests/test_api_policy.py::test_private_global_struct_is_not_public"
     }
   ],
+  "private_variables": [
+    {
+      "name": "lv_text_encoded_conv_wc",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    },
+    {
+      "name": "lv_text_encoded_get_byte_id",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    },
+    {
+      "name": "lv_text_encoded_get_char_id",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    },
+    {
+      "name": "lv_text_encoded_next",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    },
+    {
+      "name": "lv_text_encoded_prev",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    },
+    {
+      "name": "lv_text_encoded_size",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    },
+    {
+      "name": "lv_text_get_encoded_length",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    },
+    {
+      "name": "lv_text_unicode_to_encoded",
+      "reason": "Internal text codec callback hook; the binding does not export callback globals.",
+      "test": "tests/test_api_policy.py::test_internal_callback_hooks_are_not_public"
+    }
+  ],
   "target_exceptions": [
     {
       "name": "lv_tjpgd_deinit",

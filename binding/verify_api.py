@@ -98,6 +98,11 @@ def validate_api_data(data):
         "constants",
     ):
         for item in data.get(section, ()):
+            if section == "enums" and item.get("member_type") not in {"int", "str"}:
+                errors.append(
+                    "enum %s has an unsupported member type"
+                    % (item.get("python_name") or item.get("c_name"))
+                )
             if section == "structs":
                 fields = item.get("fields")
                 if isinstance(fields, list):

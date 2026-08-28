@@ -110,6 +110,25 @@ def test_api_model_uses_typedef_and_member_stems_for_singleton_enums():
     assert enum.members == (("MAIN", None),)
 
 
+def test_api_model_exposes_string_symbol_namespace_with_string_members():
+    declarations = parse_source(
+        "enum _lv_str_symbol_id_t { LV_STR_SYMBOL_OK, LV_STR_SYMBOL_CANCEL };",
+        filename="symbols.h",
+    )
+
+    model = build_api_model(declarations)
+    symbol = next(
+        enum
+        for enum in model.enums
+        if enum.python_name == "SYMBOL" and enum.visibility == "public"
+    )
+
+    assert symbol.python_name == "SYMBOL"
+    assert symbol.visibility == "public"
+    assert symbol.member_type == "str"
+    assert symbol.members == (("OK", None), ("CANCEL", None))
+
+
 def test_api_model_records_target_neutral_python_type_views():
     declarations = parse_source(
         "typedef struct _lv_obj_t lv_obj_t; "
@@ -160,6 +179,22 @@ def test_api_model_records_target_neutral_python_type_views():
     assert unsupported.python_type == "Any"
     assert unsupported.category == "unknown"
     assert unsupported.conversion == "unsupported"
+
+
+def test_api_model_does_not_reference_private_structs_in_public_views():
+    declarations = parse_source(
+        "typedef struct _lv_global_t { int state; } lv_global_t; "
+        "lv_global_t *lv_global_default(void);",
+        filename="private-type.h",
+    )
+
+    model = build_api_model(declarations)
+    global_struct = next(item for item in model.structs if item.python_name == "global_t")
+    function = next(item for item in model.functions if item.c_name == "lv_global_default")
+
+    assert global_struct.visibility == "private"
+    assert function.return_view.python_type == "Any"
+    assert function.return_view.category == "struct_pointer"
 
 
 def test_api_model_detects_duplicate_exports():

@@ -129,14 +129,14 @@ def generate(
     pyi_path = output_dir / "lvgl.pyi"
 
     if pyi_only:
-        if not metadata_path.is_file() or not pp_path.is_file():
+        if not api_path.is_file():
             raise FileNotFoundError(
-                "pyi-only requires existing %s and %s" % (metadata_path, pp_path)
+                "pyi-only requires existing %s" % api_path
             )
         write_pyi(
-            metadata_path,
+            api_path,
             pyi_path,
-            target="micropython",
+            target="all",
             naming_style=naming_style,
             repo_root=root,
         )
@@ -215,9 +215,9 @@ def generate(
         )
 
     write_pyi(
-        metadata_path,
+        api_path,
         pyi_path,
-        target="micropython",
+        target="all",
         naming_style=naming_style,
         repo_root=root,
     )
@@ -331,7 +331,7 @@ def main(argv=None):
     with tempfile.TemporaryDirectory(prefix="lvgl-bindings-check-") as temporary:
         temporary_dir = Path(temporary)
         if args.pyi_only:
-            for filename in ("lvgl.json", "lvgl.pp"):
+            for filename in ("api.json",):
                 shutil.copy2(output_dir / filename, temporary_dir / filename)
         generate(
             root=root,

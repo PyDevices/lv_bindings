@@ -4,7 +4,7 @@ from binding.verify_api import validate_api_data
 
 def test_api_validator_requires_canonical_type_views():
     data = {
-        "schema_version": 2,
+        "schema_version": 3,
         "module_prefix": "lv",
         "functions": [
             {
@@ -41,7 +41,7 @@ def test_api_validator_requires_canonical_type_views():
 
 def test_api_validator_checks_view_shapes():
     data = {
-        "schema_version": 2,
+        "schema_version": 3,
         "module_prefix": "lv",
         "functions": [],
         "objects": [],

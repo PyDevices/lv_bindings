@@ -1,4 +1,4 @@
-"""Generate lvgl.pyi from lvgl.json (all targets; run after regenerate)."""
+"""Generate the shared lvgl.pyi from the canonical API model."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, TextIO, Un
 
 from .helpers import export_name
 from .naming import get_naming_style
+from .emit_pyi_canonical import CanonicalPyiEmitter, load_canonical_api
 from .pyi_prototypes import (
     _CALLBACK_TYPEDEFS,
     _LEGACY_ENUM_TYPEDEFS,
@@ -614,9 +615,8 @@ def struct_prefix_name(struct_name: str) -> str:
     return struct_name
 
 
-def default_metadata_path(generated_dir: Path, target: str = "micropython") -> Path:
-    del target
-    return generated_dir.resolve() / "lvgl.json"
+def default_api_path(generated_dir: Path) -> Path:
+    return generated_dir.resolve() / "api.json"
 
 
 def default_output_path(generated_dir: Path, target: str = "micropython") -> Path:
@@ -630,20 +630,20 @@ ALL_TARGETS = ("cpython", "micropython", "circuitpython")
 def generate_pyi(
     generated_dir: Path,
     *,
-    metadata_path: Optional[Path] = None,
+    api_path: Optional[Path] = None,
     output_path: Optional[Path] = None,
     module_name: str = "lvgl",
 ) -> Path:
-    metadata_path = metadata_path or default_metadata_path(generated_dir)
+    api_path = api_path or default_api_path(generated_dir)
     output_path = output_path or default_output_path(generated_dir)
 
-    if not metadata_path.is_file():
-        raise FileNotFoundError(f"metadata file not found: {metadata_path}")
+    if not api_path.is_file():
+        raise FileNotFoundError(f"canonical API file not found: {api_path}")
 
     write_pyi(
-        metadata_path,
+        api_path,
         output_path,
-        target="micropython",
+        target="all",
         module_name=module_name,
     )
     return output_path
@@ -652,27 +652,31 @@ def generate_pyi(
 def generate_all_pyis(
     generated_dir: Path,
     *,
-    metadata_path: Optional[Path] = None,
+    api_path: Optional[Path] = None,
     module_name: str = "lvgl",
 ) -> List[Path]:
-    return [generate_pyi(generated_dir, metadata_path=metadata_path, module_name=module_name)]
+    return [generate_pyi(generated_dir, api_path=api_path, module_name=module_name)]
 
 
 def generate_pyi_for_target(
     generated_dir: Path,
     target: str,
     *,
-    metadata_path: Optional[Path] = None,
+    api_path: Optional[Path] = None,
     output_path: Optional[Path] = None,
     module_name: str = "lvgl",
 ) -> Path:
-    del target
-    return generate_pyi(
-        generated_dir,
-        metadata_path=metadata_path,
-        output_path=output_path,
+    api_path = api_path or default_api_path(generated_dir)
+    output_path = output_path or default_output_path(generated_dir)
+    if not api_path.is_file():
+        raise FileNotFoundError(f"canonical API file not found: {api_path}")
+    write_pyi(
+        api_path,
+        output_path,
+        target=target,
         module_name=module_name,
     )
+    return output_path
 
 
 def load_and_enrich_metadata(metadata_path: Path) -> Dict[str, Any]:
@@ -685,7 +689,7 @@ def load_and_enrich_metadata(metadata_path: Path) -> Dict[str, Any]:
 
 
 def write_pyi(
-    metadata_path: Path,
+    api_path: Path,
     output_path: Path,
     *,
     target: str = "cpython",
@@ -694,16 +698,14 @@ def write_pyi(
     naming_style: Optional[str] = None,
     repo_root: Optional[Path] = None,
 ) -> None:
-    metadata = load_and_enrich_metadata(metadata_path)
-    repo_root = repo_root or metadata_path.resolve().parent.parent
+    data = load_canonical_api(api_path)
+    repo_root = repo_root or api_path.resolve().parent.parent
 
-    emitter = PyiEmitter(
-        metadata,
+    emitter = CanonicalPyiEmitter(
+        data,
         target=target,
-        module_name=module_name,
-        lvgl_version=lvgl_version,
-        naming_style=naming_style,
-        repo_root=repo_root,
+        lvgl_version=lvgl_version or read_lvgl_version_major_minor(repo_root),
+        naming_style=naming_style or "legacy",
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as handle:
@@ -717,18 +719,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     from binding.naming import set_naming_style
 
     parser = argparse.ArgumentParser(
-        description="Generate lvgl.pyi stubs from lvgl.json."
+        description="Generate lvgl.pyi stubs from the canonical api.json."
     )
     parser.add_argument(
         "--target",
         choices=list(ALL_TARGETS) + ["all"],
         default="all",
-        help="Ignored (kept for compatibility); always writes generated/lvgl.pyi",
+        help="Emit the common API or one target's available symbols",
     )
     parser.add_argument(
-        "--metadata",
+        "--api",
         type=Path,
-        help="Metadata JSON (default: generated/lvgl.json)",
+        help="Canonical API JSON (default: generated/api.json)",
     )
     parser.add_argument(
         "--output",
@@ -760,15 +762,16 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.target == "all":
         output_path = generate_pyi(
             args.generated_dir,
-            metadata_path=args.metadata,
+            api_path=args.api,
             output_path=args.output,
         )
         print(f"Wrote {output_path}")
         return 0
 
-    output_path = generate_pyi(
+    output_path = generate_pyi_for_target(
         args.generated_dir,
-        metadata_path=args.metadata,
+        args.target,
+        api_path=args.api,
         output_path=args.output,
     )
     print(f"Wrote {output_path}")

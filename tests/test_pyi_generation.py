@@ -6,11 +6,11 @@ import ast
 import hashlib
 import json
 import subprocess
+from collections import Counter
 from io import StringIO
 from pathlib import Path
 
 from binding.emit_pyi import PyiEmitter
-from binding.helpers import export_name
 from binding.naming import get_naming_style, set_naming_style
 from binding.pyi_prototypes import (
     build_enum_typedef_map,
@@ -280,18 +280,52 @@ def test_generated_stub_is_valid_and_has_no_duplicate_members():
             names.extend(arg.arg for arg in node.args.kwonlyargs)
             assert len(names) == len(set(names)), f"duplicate parameter in {node.name}"
         if isinstance(node, ast.ClassDef):
-            fields = [
-                child.target.id
-                for child in node.body
-                if isinstance(child, ast.AnnAssign)
-                and isinstance(child.target, ast.Name)
-            ]
-            assert len(fields) == len(set(fields)), f"duplicate field in {node.name}"
+            members = []
+            for child in node.body:
+                if isinstance(child, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+                    members.append(child.name)
+                elif isinstance(child, ast.AnnAssign) and isinstance(child.target, ast.Name):
+                    members.append(child.target.id)
+            duplicates = [name for name, count in Counter(members).items() if count > 1]
+            assert not duplicates, f"duplicate member in {node.name}: {duplicates}"
+
+
+def test_generated_stub_annotations_reference_declared_names():
+    tree = ast.parse(
+        (REPO_ROOT / "generated" / "lvgl.pyi").read_text(encoding="utf-8")
+    )
+    declared = {
+        node.name
+        for node in tree.body
+        if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+    declared.update(
+        node.target.id
+        for node in tree.body
+        if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name)
+    )
+    declared.update({"Any", "Callable", "ClassVar", "None", "bool", "bytes", "dict", "float", "int", "list", "set", "str", "tuple"})
+
+    annotation_names = set()
+    for node in ast.walk(tree):
+        annotations = []
+        if isinstance(node, ast.arg) and node.annotation is not None:
+            annotations.append(node.annotation)
+        elif isinstance(node, ast.AnnAssign) and node.annotation is not None:
+            annotations.append(node.annotation)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.returns is not None:
+            annotations.append(node.returns)
+        for annotation in annotations:
+            annotation_names.update(
+                child.id for child in ast.walk(annotation) if isinstance(child, ast.Name)
+            )
+
+    assert annotation_names <= declared
 
 
 def test_generated_stub_covers_the_shared_ir_namespace():
-    metadata = json.loads(
-        (REPO_ROOT / "generated" / "lvgl.json").read_text(encoding="utf-8")
+    api = json.loads(
+        (REPO_ROOT / "generated" / "api.json").read_text(encoding="utf-8")
     )
     tree = ast.parse((REPO_ROOT / "generated" / "lvgl.pyi").read_text(encoding="utf-8"))
     top_level = {
@@ -306,28 +340,41 @@ def test_generated_stub_covers_the_shared_ir_namespace():
     )
 
     expected = {
-        export_name(name, "function")
-        for name, info in metadata.get("functions", {}).items()
-        if info.get("type") == "function"
+        function["python_name"]
+        for function in api["functions"]
+        if function["visibility"] == "public"
+        and function["role"] == "module"
+        and set(function["available_on"]) == {
+            "micropython",
+            "circuitpython",
+            "cpython",
+        }
     }
-    expected.update(export_name(name, "object") for name in metadata.get("objects", {}))
     expected.update(
-        export_name(name, "struct")
-        for name in metadata.get("structs", [])
-        if name not in {"C_Pointer", "indev_pointer_t", "indev_keypad_t"}
+        object_["python_name"]
+        for object_ in api["objects"]
+        if object_["visibility"] == "public"
     )
     expected.update(
-        export_name(name, "enum")
-        for name, info in metadata.get("enums", {}).items()
-        if info.get("members")
+        struct["python_name"]
+        for struct in api["structs"]
+        if struct["visibility"] == "public"
     )
     expected.update(
-        export_name(name, "blob")
-        for name in metadata.get("blobs", [])
-        if not name.startswith("SYMBOL_")
+        enum["module_name"]
+        for enum in api["enums"]
+        if enum["visibility"] == "public" and enum.get("module_name")
     )
     expected.update(
-        export_name(name, "constant") for name in metadata.get("int_constants", [])
+        variable["python_name"]
+        for variable in api["variables"]
+        if variable["visibility"] == "public"
+    )
+    expected.add("_nesting")
+    expected.update(
+        constant["python_name"]
+        for constant in api["constants"]
+        if constant["visibility"] == "public"
     )
 
     assert expected <= top_level
@@ -341,6 +388,7 @@ def test_pyi_only_flag_preserves_c_and_ir_artifacts():
         REPO_ROOT / "generated" / "lvgl_python.c",
         REPO_ROOT / "generated" / "lvgl.json",
         REPO_ROOT / "generated" / "lvgl.pp",
+        REPO_ROOT / "generated" / "api.json",
     ]
 
     before = {path: hashlib.sha256(path.read_bytes()).digest() for path in protected}

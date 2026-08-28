@@ -149,12 +149,12 @@ clean.
 The declaration IR now normalizes C ``(void)`` parameter lists, preserves
 function specifiers such as ``static inline``, and has focused coverage for
 qualified pointers, arrays, callbacks, anonymous records, unions, and forward
-aliases. A target-neutral API-model library has been started, but it is not
-yet the generated metadata or typings source of truth; policy, reachability,
-and backend lowering remain in Checkpoint 3 and later. The shared generator
-now materializes that model as ``generated/api.json`` with a content hash;
-the legacy ``lvgl.json``/``lvgl.pyi`` path remains in place until the model is
-complete enough to replace it.
+aliases. A target-neutral API-model library has been started, but policy,
+reachability, and backend lowering remain in Checkpoint 3 and later. The
+shared generator now materializes that model as ``generated/api.json`` with a
+content hash; the legacy ``lvgl.json`` file remains the C-generator
+introspection artifact while the canonical model becomes the source of truth
+for Python-facing outputs.
 
 - [x] Add a read-only declaration index for alias resolution, first-argument
   relationships, and struct-function classification. The index is used by
@@ -201,12 +201,14 @@ conversion categories and Python type views now cover function parameters and
 returns, struct fields, typedefs, and variables. The model records explicit
 callback, object-handle, struct, enum, string, typed-buffer, array,
 opaque-pointer, pointer, scalar, void, and unsupported conversions;
-``generated/api.json`` is schema version 2 and its validator requires every
+``generated/api.json`` is schema version 3 and its validator requires every
 boundary type to carry a view. Object typedefs resolve to their public wrapper
 types, including opaque ``struct _lv_*_t`` definitions, and anonymous
-typedef-backed records resolve through their alias. Lifetime/nullability,
-reachability, backend lowering, and acceptance of the compatibility score are
-still pending; the legacy metadata/stub path remains active.
+typedef-backed records resolve through their alias. Explicitly hidden
+implementation structs are prevented from leaking into public annotations;
+the canonical pyi emitter lowers those views to ``Any`` where necessary.
+Lifetime/nullability, reachability, backend lowering, and acceptance of the
+compatibility score are still pending.
 
 Interim safe checkpoint: the current model reports 22,997 MicroPython
 qualified exports and 22,995 CircuitPython/CPython exports, with two explicit
@@ -219,7 +221,7 @@ Enum ownership is now explicit in the model: module-level exports, nested
 widget exports, duplex aliases such as ``OBJ_FLAG``/``obj.FLAG``, and normalized
 members are recorded independently of the C emitters. The current generated
 API hash after this increment is
-``e4135a6f3645caa6a271b0ba2698271e70f626fcb89eae7686f2996bb40a1268``.
+``78110522b6ed489d18f30b5b89e42125aac3a107b7780badadad5632c74d19c4``.
 
 ### Gate
 
@@ -240,22 +242,34 @@ API hash after this increment is
 
 ### Work
 
-- [ ] Generate `generated/lvgl.pyi` only from the canonical API model.
-- [ ] Keep legacy names only.
-- [ ] Accurately represent concrete widgets, structs, enums, callbacks,
-  inheritance, optional pointers, arrays, and overloads.
+- [x] Generate `generated/lvgl.pyi` only from the canonical API model.
+- [x] Keep legacy names only.
+- [x] Accurately represent concrete widgets, structs, enums, callbacks,
+  inheritance, and optional constructor parent pointers.
+- [ ] Accurately represent arrays and overloads.
 - [ ] Use private underscored types for generic blob/struct internals.
-- [ ] Exclude explicitly unavailable symbols.
+- [x] Exclude explicitly unavailable symbols.
 - [ ] Replace regex-only namespace checks with manifest-based qualified export
   verification.
 - [ ] Verify module exports, type/member exports, enum ownership/values,
   signatures, exceptions, and private helper leakage.
 
+Progress note: ``binding/emit_pyi_canonical.py`` renders the shared stub from
+``generated/api.json`` and validates the model before pyi-only generation.
+Common-target emission filters target-only declarations; nested enum classes
+are emitted once, struct field/method collisions follow the generated runtime
+attribute precedence, string symbols use ``str`` members, and explicit private
+implementation types do not appear as undefined annotations. The generated
+stub parses cleanly and has regression coverage for signatures, target
+filtering, duplicate declarations, and annotation references. A static type
+checker and runtime probes remain future gates.
+
 ### Gate
 
-- [ ] Typings unit tests pass.
-- [ ] The stub parses and passes static type checking.
-- [ ] No duplicate declarations or overloads remain.
+- [x] Typings unit tests pass.
+- [x] The stub parses.
+- [ ] The stub passes static type checking.
+- [x] No duplicate declarations remain.
 - [ ] Runtime namespace probes pass for all three targets.
 
 ### Handoff
@@ -410,7 +424,7 @@ Add focused tests for:
 - [x] Unsupported conversions.
 - [x] Target exception validation.
 - [x] Deterministic JSON/API hashes.
-- [ ] Typing signatures and duplicate declarations.
+- [x] Typing signatures and duplicate declarations.
 - [ ] Callback GC/lifetime behavior.
 - [ ] Struct field reads/writes and buffer views.
 - [ ] `None` handling for optional pointers.

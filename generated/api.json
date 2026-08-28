@@ -1,5 +1,5 @@
 {
-  "api_hash": "e4135a6f3645caa6a271b0ba2698271e70f626fcb89eae7686f2996bb40a1268",
+  "api_hash": "78110522b6ed489d18f30b5b89e42125aac3a107b7780badadad5632c74d19c4",
   "constants": [
     {
       "available_on": [
@@ -464,6 +464,7 @@
         "file": "<none>",
         "line": 700
       },
+      "member_type": "int",
       "members": [
         {
           "name": "DEFAULT",
@@ -575,6 +576,7 @@
         "file": "<none>",
         "line": 4142
       },
+      "member_type": "int",
       "members": [
         {
           "name": "MAIN",
@@ -602,6 +604,7 @@
         "file": "<none>",
         "line": 4196
       },
+      "member_type": "int",
       "members": [
         {
           "name": "CLOCKWISE",
@@ -638,6 +641,7 @@
         "file": "<none>",
         "line": 4206
       },
+      "member_type": "int",
       "members": [
         {
           "name": "VISIBLE",
@@ -678,6 +682,7 @@
         "file": "<none>",
         "line": 4200
       },
+      "member_type": "int",
       "members": [
         {
           "name": "DEFAULT",
@@ -722,6 +727,7 @@
         "file": "<none>",
         "line": 4161
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NORMAL",
@@ -762,6 +768,7 @@
         "file": "<none>",
         "line": 4924
       },
+      "member_type": "int",
       "members": [
         {
           "name": "GS1",
@@ -798,6 +805,7 @@
         "file": "<none>",
         "line": 4271
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NORMAL",
@@ -838,6 +846,7 @@
         "file": "<none>",
         "line": 4276
       },
+      "member_type": "int",
       "members": [
         {
           "name": "AUTO",
@@ -878,6 +887,7 @@
         "file": "<none>",
         "line": 1307
       },
+      "member_type": "int",
       "members": [
         {
           "name": "LTR",
@@ -921,6 +931,7 @@
         "file": "<none>",
         "line": 1428
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NORMAL",
@@ -964,6 +975,7 @@
         "file": "<none>",
         "line": 1449
       },
+      "member_type": "int",
       "members": [
         {
           "name": "AUTO",
@@ -999,6 +1011,7 @@
         "file": "<none>",
         "line": 1440
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -1050,6 +1063,7 @@
         "file": "<none>",
         "line": 4301
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -1190,6 +1204,7 @@
         "file": "<none>",
         "line": 5246
       },
+      "member_type": "int",
       "members": [
         {
           "name": "OK",
@@ -1229,6 +1244,7 @@
         "file": "<none>",
         "line": 4405
       },
+      "member_type": "int",
       "members": [
         {
           "name": "PRIMARY_Y",
@@ -1277,6 +1293,7 @@
         "file": "<none>",
         "line": 4393
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -1329,6 +1346,7 @@
         "file": "<none>",
         "line": 4401
       },
+      "member_type": "int",
       "members": [
         {
           "name": "SHIFT",
@@ -1365,6 +1383,7 @@
         "file": "<none>",
         "line": 807
       },
+      "member_type": "int",
       "members": [
         {
           "name": "UNKNOWN",
@@ -1568,6 +1587,7 @@
         "file": "<none>",
         "line": 761
       },
+      "member_type": "int",
       "members": [
         {
           "name": "MAX",
@@ -1597,6 +1617,7 @@
         "file": "<none>",
         "line": 3771
       },
+      "member_type": "int",
       "members": [
         {
           "name": "COVER",
@@ -1632,6 +1653,7 @@
         "file": "<none>",
         "line": 724
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -1687,6 +1709,7 @@
         "file": "<none>",
         "line": 1957
       },
+      "member_type": "int",
       "members": [
         {
           "name": "PARTIAL",
@@ -1722,6 +1745,7 @@
         "file": "<none>",
         "line": 1951
       },
+      "member_type": "int",
       "members": [
         {
           "name": "0",
@@ -1761,6 +1785,7 @@
         "file": "<none>",
         "line": 5043
       },
+      "member_type": "int",
       "members": [
         {
           "name": "LEFT",
@@ -1800,6 +1825,7 @@
         "file": "<none>",
         "line": 5030
       },
+      "member_type": "int",
       "members": [
         {
           "name": "TRANSP",
@@ -1839,6 +1865,7 @@
         "file": "<none>",
         "line": 5036
       },
+      "member_type": "int",
       "members": [
         {
           "name": "LINE",
@@ -1882,6 +1909,7 @@
         "file": "<none>",
         "line": 3317
       },
+      "member_type": "int",
       "members": [
         {
           "name": "BLOCKED",
@@ -1925,6 +1953,7 @@
         "file": "<none>",
         "line": 3301
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -2004,6 +2033,7 @@
         "file": "<none>",
         "line": 1852
       },
+      "member_type": "int",
       "members": [
         {
           "name": "ALL",
@@ -2315,6 +2345,7 @@
         "file": "<none>",
         "line": 1387
       },
+      "member_type": "int",
       "members": [
         {
           "name": "START",
@@ -2362,6 +2393,7 @@
         "file": "<none>",
         "line": 1395
       },
+      "member_type": "int",
       "members": [
         {
           "name": "ROW",
@@ -2417,6 +2449,7 @@
         "file": "<none>",
         "line": 4061
       },
+      "member_type": "int",
       "members": [
         {
           "name": "PLAIN",
@@ -2452,6 +2485,7 @@
         "file": "<none>",
         "line": 4033
       },
+      "member_type": "int",
       "members": [
         {
           "name": "FORMAT0_FULL",
@@ -2491,6 +2525,7 @@
         "file": "<none>",
         "line": 1205
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -2554,6 +2589,7 @@
         "file": "<none>",
         "line": 1242
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NORMAL",
@@ -2585,6 +2621,7 @@
         "file": "<none>",
         "line": 1236
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -2624,6 +2661,7 @@
         "file": "<none>",
         "line": 3205
       },
+      "member_type": "int",
       "members": [
         {
           "name": "WR",
@@ -2655,6 +2693,7 @@
         "file": "<none>",
         "line": 3189
       },
+      "member_type": "int",
       "members": [
         {
           "name": "OK",
@@ -2734,6 +2773,7 @@
         "file": "<none>",
         "line": 3209
       },
+      "member_type": "int",
       "members": [
         {
           "name": "SET",
@@ -2769,6 +2809,7 @@
         "file": "<none>",
         "line": 1320
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -2816,6 +2857,7 @@
         "file": "<none>",
         "line": 1328
       },
+      "member_type": "int",
       "members": [
         {
           "name": "PAD",
@@ -2851,6 +2893,7 @@
         "file": "<none>",
         "line": 1412
       },
+      "member_type": "int",
       "members": [
         {
           "name": "START",
@@ -2902,6 +2945,7 @@
         "file": "<none>",
         "line": 3647
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NEXT",
@@ -2933,6 +2977,7 @@
         "file": "<none>",
         "line": 4508
       },
+      "member_type": "int",
       "members": [
         {
           "name": "RELEASED",
@@ -2989,6 +3034,7 @@
         "file": "<none>",
         "line": 4092
       },
+      "member_type": "int",
       "members": [
         {
           "name": "DEFAULT",
@@ -3077,6 +3123,7 @@
         "file": "<none>",
         "line": 953
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -3117,6 +3164,7 @@
         "file": "<none>",
         "line": 938
       },
+      "member_type": "int",
       "members": [
         {
           "name": "PREMULTIPLIED",
@@ -3197,6 +3245,7 @@
         "file": "<none>",
         "line": 3270
       },
+      "member_type": "int",
       "members": [
         {
           "name": "VARIABLE",
@@ -3241,6 +3290,7 @@
         "file": "<none>",
         "line": 3966
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -3284,6 +3334,7 @@
         "file": "<none>",
         "line": 3696
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -3335,6 +3386,7 @@
         "file": "<none>",
         "line": 3691
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -3370,6 +3422,7 @@
         "file": "<none>",
         "line": 3687
       },
+      "member_type": "int",
       "members": [
         {
           "name": "RELEASED",
@@ -3401,6 +3454,7 @@
         "file": "<none>",
         "line": 3680
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -3444,6 +3498,7 @@
         "file": "<none>",
         "line": 3631
       },
+      "member_type": "int",
       "members": [
         {
           "name": "UP",
@@ -3515,6 +3570,7 @@
         "file": "<none>",
         "line": 4529
       },
+      "member_type": "int",
       "members": [
         {
           "name": "TEXT_LOWER",
@@ -3575,6 +3631,7 @@
         "file": "<none>",
         "line": 4243
       },
+      "member_type": "int",
       "members": [
         {
           "name": "WRAP",
@@ -3623,6 +3680,7 @@
         "file": "<none>",
         "line": 3599
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -3658,6 +3716,7 @@
         "file": "<none>",
         "line": 1379
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -3697,6 +3756,7 @@
         "file": "<none>",
         "line": 414
       },
+      "member_type": "int",
       "members": [
         {
           "name": "TRACE",
@@ -3742,6 +3802,7 @@
         "file": "<none>",
         "line": 204
       },
+      "member_type": "int",
       "members": [
         {
           "name": "memory_order_relaxed",
@@ -3790,6 +3851,7 @@
         "file": "<none>",
         "line": 4580
       },
+      "member_type": "int",
       "members": [
         {
           "name": "TOP_FIXED",
@@ -3830,6 +3892,7 @@
         "file": "<none>",
         "line": 4585
       },
+      "member_type": "int",
       "members": [
         {
           "name": "DISABLED",
@@ -3866,6 +3929,7 @@
         "file": "<none>",
         "line": 3612
       },
+      "member_type": "int",
       "members": [
         {
           "name": "INHERIT",
@@ -3906,6 +3970,7 @@
         "file": "<none>",
         "line": 3617
       },
+      "member_type": "int",
       "members": [
         {
           "name": "INHERIT",
@@ -3946,6 +4011,7 @@
         "file": "<none>",
         "line": 3622
       },
+      "member_type": "int",
       "members": [
         {
           "name": "FALSE",
@@ -3982,6 +4048,7 @@
         "file": "<none>",
         "line": 3800
       },
+      "member_type": "int",
       "members": [
         {
           "name": "HIDDEN",
@@ -4142,6 +4209,7 @@
         "file": "<none>",
         "line": 2094
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -4186,6 +4254,7 @@
         "file": "<none>",
         "line": 2065
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NEXT",
@@ -4226,6 +4295,7 @@
         "file": "<none>",
         "line": 767
       },
+      "member_type": "int",
       "members": [
         {
           "name": "TRANSP",
@@ -4300,6 +4370,7 @@
         "file": "<none>",
         "line": 898
       },
+      "member_type": "int",
       "members": [
         {
           "name": "RED",
@@ -4407,6 +4478,7 @@
         "file": "<none>",
         "line": 2217
       },
+      "member_type": "int",
       "members": [
         {
           "name": "MAIN",
@@ -4466,6 +4538,7 @@
         "file": "<none>",
         "line": 668
       },
+      "member_type": "int",
       "members": [
         {
           "name": "RED",
@@ -4497,6 +4570,7 @@
         "file": "<none>",
         "line": 212
       },
+      "member_type": "int",
       "members": [
         {
           "name": "INVALID",
@@ -4528,6 +4602,7 @@
         "file": "<none>",
         "line": 4640
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NORMAL",
@@ -4564,6 +4639,7 @@
         "file": "<none>",
         "line": 4659
       },
+      "member_type": "int",
       "members": [
         {
           "name": "HORIZONTAL_TOP",
@@ -4620,6 +4696,7 @@
         "file": "<none>",
         "line": 1962
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -4707,6 +4784,7 @@
         "file": "<none>",
         "line": 2160
       },
+      "member_type": "int",
       "members": [
         {
           "name": "OFF",
@@ -4746,6 +4824,7 @@
         "file": "<none>",
         "line": 2166
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -4785,6 +4864,7 @@
         "file": "<none>",
         "line": 4707
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NORMAL",
@@ -4825,6 +4905,7 @@
         "file": "<none>",
         "line": 4712
       },
+      "member_type": "int",
       "members": [
         {
           "name": "AUTO",
@@ -4865,6 +4946,7 @@
         "file": "<none>",
         "line": 4740
       },
+      "member_type": "int",
       "members": [
         {
           "name": "FIXED",
@@ -4904,6 +4986,7 @@
         "file": "<none>",
         "line": 4735
       },
+      "member_type": "int",
       "members": [
         {
           "name": "CLIP",
@@ -4939,6 +5022,7 @@
         "file": "<none>",
         "line": 2200
       },
+      "member_type": "int",
       "members": [
         {
           "name": "DEFAULT",
@@ -5022,6 +5106,7 @@
         "file": "<none>",
         "line": 1141
       },
+      "member_type": "int",
       "members": [
         {
           "name": "BULLET",
@@ -5272,7 +5357,7 @@
           "value": null
         }
       ],
-      "module_name": "STR_SYMBOL",
+      "module_name": "SYMBOL",
       "owners": [],
       "policy_reason": "outside module prefix",
       "python_name": "STR_SYMBOL_ID",
@@ -5292,6 +5377,7 @@
         "file": "<none>",
         "line": 1463
       },
+      "member_type": "int",
       "members": [
         {
           "name": "PROP_INV",
@@ -5846,6 +5932,7 @@
         "file": "<none>",
         "line": 1598
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NOT_FOUND",
@@ -5877,6 +5964,7 @@
         "file": "<none>",
         "line": 2228
       },
+      "member_type": "int",
       "members": [
         {
           "name": "SAME",
@@ -5916,6 +6004,7 @@
         "file": "<none>",
         "line": 3867
       },
+      "member_type": "int",
       "members": [
         {
           "name": "INVALID",
@@ -5971,6 +6060,7 @@
         "file": "<none>",
         "line": 4861
       },
+      "member_type": "int",
       "members": [
         {
           "name": "AUTO",
@@ -6007,10 +6097,281 @@
       "c_name": null,
       "complete": true,
       "location": {
+        "column": 1,
+        "file": "<none>",
+        "line": 1141
+      },
+      "member_type": "str",
+      "members": [
+        {
+          "name": "BULLET",
+          "value": null
+        },
+        {
+          "name": "AUDIO",
+          "value": null
+        },
+        {
+          "name": "VIDEO",
+          "value": null
+        },
+        {
+          "name": "LIST",
+          "value": null
+        },
+        {
+          "name": "OK",
+          "value": null
+        },
+        {
+          "name": "CLOSE",
+          "value": null
+        },
+        {
+          "name": "POWER",
+          "value": null
+        },
+        {
+          "name": "SETTINGS",
+          "value": null
+        },
+        {
+          "name": "HOME",
+          "value": null
+        },
+        {
+          "name": "DOWNLOAD",
+          "value": null
+        },
+        {
+          "name": "DRIVE",
+          "value": null
+        },
+        {
+          "name": "REFRESH",
+          "value": null
+        },
+        {
+          "name": "MUTE",
+          "value": null
+        },
+        {
+          "name": "VOLUME_MID",
+          "value": null
+        },
+        {
+          "name": "VOLUME_MAX",
+          "value": null
+        },
+        {
+          "name": "IMAGE",
+          "value": null
+        },
+        {
+          "name": "TINT",
+          "value": null
+        },
+        {
+          "name": "PREV",
+          "value": null
+        },
+        {
+          "name": "PLAY",
+          "value": null
+        },
+        {
+          "name": "PAUSE",
+          "value": null
+        },
+        {
+          "name": "STOP",
+          "value": null
+        },
+        {
+          "name": "NEXT",
+          "value": null
+        },
+        {
+          "name": "EJECT",
+          "value": null
+        },
+        {
+          "name": "LEFT",
+          "value": null
+        },
+        {
+          "name": "RIGHT",
+          "value": null
+        },
+        {
+          "name": "PLUS",
+          "value": null
+        },
+        {
+          "name": "MINUS",
+          "value": null
+        },
+        {
+          "name": "EYE_OPEN",
+          "value": null
+        },
+        {
+          "name": "EYE_CLOSE",
+          "value": null
+        },
+        {
+          "name": "WARNING",
+          "value": null
+        },
+        {
+          "name": "SHUFFLE",
+          "value": null
+        },
+        {
+          "name": "UP",
+          "value": null
+        },
+        {
+          "name": "DOWN",
+          "value": null
+        },
+        {
+          "name": "LOOP",
+          "value": null
+        },
+        {
+          "name": "DIRECTORY",
+          "value": null
+        },
+        {
+          "name": "UPLOAD",
+          "value": null
+        },
+        {
+          "name": "CALL",
+          "value": null
+        },
+        {
+          "name": "CUT",
+          "value": null
+        },
+        {
+          "name": "COPY",
+          "value": null
+        },
+        {
+          "name": "SAVE",
+          "value": null
+        },
+        {
+          "name": "BARS",
+          "value": null
+        },
+        {
+          "name": "ENVELOPE",
+          "value": null
+        },
+        {
+          "name": "CHARGE",
+          "value": null
+        },
+        {
+          "name": "PASTE",
+          "value": null
+        },
+        {
+          "name": "BELL",
+          "value": null
+        },
+        {
+          "name": "KEYBOARD",
+          "value": null
+        },
+        {
+          "name": "GPS",
+          "value": null
+        },
+        {
+          "name": "FILE",
+          "value": null
+        },
+        {
+          "name": "WIFI",
+          "value": null
+        },
+        {
+          "name": "BATTERY_FULL",
+          "value": null
+        },
+        {
+          "name": "BATTERY_3",
+          "value": null
+        },
+        {
+          "name": "BATTERY_2",
+          "value": null
+        },
+        {
+          "name": "BATTERY_1",
+          "value": null
+        },
+        {
+          "name": "BATTERY_EMPTY",
+          "value": null
+        },
+        {
+          "name": "USB",
+          "value": null
+        },
+        {
+          "name": "BLUETOOTH",
+          "value": null
+        },
+        {
+          "name": "TRASH",
+          "value": null
+        },
+        {
+          "name": "EDIT",
+          "value": null
+        },
+        {
+          "name": "BACKSPACE",
+          "value": null
+        },
+        {
+          "name": "SD_CARD",
+          "value": null
+        },
+        {
+          "name": "NEW_LINE",
+          "value": null
+        },
+        {
+          "name": "DUMMY",
+          "value": null
+        }
+      ],
+      "module_name": "SYMBOL",
+      "owners": [],
+      "python_name": "SYMBOL",
+      "typedef_names": [],
+      "visibility": "public"
+    },
+    {
+      "available_on": [
+        "micropython",
+        "circuitpython",
+        "cpython"
+      ],
+      "c_name": null,
+      "complete": true,
+      "location": {
         "column": 9,
         "file": "<none>",
         "line": 4870
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -6067,6 +6428,7 @@
         "file": "<none>",
         "line": 1299
       },
+      "member_type": "int",
       "members": [
         {
           "name": "AUTO",
@@ -6106,6 +6468,7 @@
         "file": "<none>",
         "line": 5640
       },
+      "member_type": "int",
       "members": [
         {
           "name": "WAIT",
@@ -6141,6 +6504,7 @@
         "file": "<none>",
         "line": 1435
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -6176,6 +6540,7 @@
         "file": "<none>",
         "line": 1292
       },
+      "member_type": "int",
       "members": [
         {
           "name": "NONE",
@@ -6219,6 +6584,7 @@
         "file": "<none>",
         "line": 5109
       },
+      "member_type": "int",
       "members": [
         {
           "name": "LOWEST",
@@ -6262,6 +6628,7 @@
         "file": "<none>",
         "line": 1120
       },
+      "member_type": "int",
       "members": [
         {
           "name": "PRE_ORDER",
@@ -59127,7 +59494,7 @@
       "return_view": {
         "category": "struct_pointer",
         "conversion": "struct_pointer",
-        "python_type": "global_t"
+        "python_type": "Any"
       },
       "role": "module",
       "static": false,
@@ -159477,30 +159844,8 @@
       "visibility": "public"
     }
   ],
-  "schema_version": 2,
+  "schema_version": 3,
   "structs": [
-    {
-      "available_on": [
-        "micropython",
-        "circuitpython",
-        "cpython"
-      ],
-      "c_name": "_lv_3dtexture_t",
-      "complete": false,
-      "fields": [],
-      "kind": "struct",
-      "location": {
-        "column": 16,
-        "file": "<none>",
-        "line": 309
-      },
-      "methods": [],
-      "python_name": "3dtexture_t",
-      "typedef_names": [
-        "lv_3dtexture_t"
-      ],
-      "visibility": "public"
-    },
     {
       "available_on": [
         "micropython",
@@ -159707,6 +160052,28 @@
         "MirSurfaceSpec"
       ],
       "visibility": "private"
+    },
+    {
+      "available_on": [
+        "micropython",
+        "circuitpython",
+        "cpython"
+      ],
+      "c_name": "_lv_3dtexture_t",
+      "complete": false,
+      "fields": [],
+      "kind": "struct",
+      "location": {
+        "column": 16,
+        "file": "<none>",
+        "line": 309
+      },
+      "methods": [],
+      "python_name": "_3dtexture_t",
+      "typedef_names": [
+        "lv_3dtexture_t"
+      ],
+      "visibility": "public"
     },
     {
       "available_on": [
@@ -183193,31 +183560,6 @@
         "circuitpython",
         "cpython"
       ],
-      "c_name": "lv_3dtexture_t",
-      "callback": false,
-      "location": {
-        "column": 32,
-        "file": "<none>",
-        "line": 309
-      },
-      "name": "3dtexture_t",
-      "type": {
-        "kind": "struct",
-        "name": "_lv_3dtexture_t"
-      },
-      "view": {
-        "category": "struct",
-        "conversion": "struct_value",
-        "python_type": "3dtexture_t"
-      },
-      "visibility": "public"
-    },
-    {
-      "available_on": [
-        "micropython",
-        "circuitpython",
-        "cpython"
-      ],
       "c_name": "DIR",
       "callback": false,
       "location": {
@@ -183558,6 +183900,31 @@
         "python_type": "MirSurfaceSpec"
       },
       "visibility": "private"
+    },
+    {
+      "available_on": [
+        "micropython",
+        "circuitpython",
+        "cpython"
+      ],
+      "c_name": "lv_3dtexture_t",
+      "callback": false,
+      "location": {
+        "column": 32,
+        "file": "<none>",
+        "line": 309
+      },
+      "name": "_3dtexture_t",
+      "type": {
+        "kind": "struct",
+        "name": "_lv_3dtexture_t"
+      },
+      "view": {
+        "category": "struct",
+        "conversion": "struct_value",
+        "python_type": "_3dtexture_t"
+      },
+      "visibility": "public"
     },
     {
       "available_on": [
@@ -192676,7 +193043,7 @@
       "view": {
         "category": "struct",
         "conversion": "struct_value",
-        "python_type": "global_t"
+        "python_type": "Any"
       },
       "visibility": "public"
     },
@@ -200976,6 +201343,29 @@
         "circuitpython",
         "cpython"
       ],
+      "c_name": "_nesting",
+      "policy_reason": "Binding re-entrancy guard; not a user-facing LVGL symbol.",
+      "python_name": "_nesting",
+      "storage": [
+        "static"
+      ],
+      "type": {
+        "kind": "primitive",
+        "name": "int"
+      },
+      "view": {
+        "category": "scalar",
+        "conversion": "integer",
+        "python_type": "int"
+      },
+      "visibility": "private"
+    },
+    {
+      "available_on": [
+        "micropython",
+        "circuitpython",
+        "cpython"
+      ],
       "c_name": "lv_animimg_class",
       "location": {
         "column": 30,
@@ -202962,6 +203352,7 @@
         "file": "<none>",
         "line": 5720
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_encoded_conv_wc",
       "storage": [
         "extern"
@@ -202998,7 +203389,7 @@
         "conversion": "callback",
         "python_type": "Callable[[int], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -203012,6 +203403,7 @@
         "file": "<none>",
         "line": 5723
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_encoded_get_byte_id",
       "storage": [
         "extern"
@@ -203066,7 +203458,7 @@
         "conversion": "callback",
         "python_type": "Callable[[str, int], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -203080,6 +203472,7 @@
         "file": "<none>",
         "line": 5724
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_encoded_get_char_id",
       "storage": [
         "extern"
@@ -203134,7 +203527,7 @@
         "conversion": "callback",
         "python_type": "Callable[[str, int], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -203148,6 +203541,7 @@
         "file": "<none>",
         "line": 5721
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_encoded_next",
       "storage": [
         "extern"
@@ -203205,7 +203599,7 @@
         "conversion": "callback",
         "python_type": "Callable[[str, Any], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -203219,6 +203613,7 @@
         "file": "<none>",
         "line": 5722
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_encoded_prev",
       "storage": [
         "extern"
@@ -203276,7 +203671,7 @@
         "conversion": "callback",
         "python_type": "Callable[[str, Any], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -203290,6 +203685,7 @@
         "file": "<none>",
         "line": 5718
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_encoded_size",
       "storage": [
         "extern"
@@ -203332,7 +203728,7 @@
         "conversion": "callback",
         "python_type": "Callable[[str], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -203346,6 +203742,7 @@
         "file": "<none>",
         "line": 5725
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_get_encoded_length",
       "storage": [
         "extern"
@@ -203388,7 +203785,7 @@
         "conversion": "callback",
         "python_type": "Callable[[str], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [
@@ -203402,6 +203799,7 @@
         "file": "<none>",
         "line": 5719
       },
+      "policy_reason": "Internal text codec callback hook; the binding does not export callback globals.",
       "python_name": "text_unicode_to_encoded",
       "storage": [
         "extern"
@@ -203438,7 +203836,7 @@
         "conversion": "callback",
         "python_type": "Callable[[int], int]"
       },
-      "visibility": "public"
+      "visibility": "private"
     },
     {
       "available_on": [

@@ -80,8 +80,7 @@ def test_check_normalizes_generated_command_banner():
 
 def test_pyi_only_generation_uses_existing_inputs(tmp_path):
     generated = REPO_ROOT / "generated"
-    shutil.copy2(generated / "lvgl.json", tmp_path / "lvgl.json")
-    shutil.copy2(generated / "lvgl.pp", tmp_path / "lvgl.pp")
+    shutil.copy2(generated / "api.json", tmp_path / "api.json")
 
     manifest = generate(
         root=REPO_ROOT,

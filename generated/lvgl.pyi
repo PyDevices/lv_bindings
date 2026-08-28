@@ -1,6 +1,7 @@
 # LVGL 9.5
 # Naming style: legacy
 """Type stubs for LVGL Python bindings (auto-generated)."""
+from __future__ import annotations
 from collections.abc import Callable
 from typing import Any, ClassVar
 
@@ -28,30 +29,728 @@ class Struct:
     @classmethod
     def __dereference__(cls, obj: Any) -> Any: ...
 
-class _lv_mp_int_wrapper(Struct): ...
+class ALIGN:
+    DEFAULT: int
+    TOP_LEFT: int
+    TOP_MID: int
+    TOP_RIGHT: int
+    BOTTOM_LEFT: int
+    BOTTOM_MID: int
+    BOTTOM_RIGHT: int
+    LEFT_MID: int
+    RIGHT_MID: int
+    CENTER: int
+    OUT_TOP_LEFT: int
+    OUT_TOP_MID: int
+    OUT_TOP_RIGHT: int
+    OUT_BOTTOM_LEFT: int
+    OUT_BOTTOM_MID: int
+    OUT_BOTTOM_RIGHT: int
+    OUT_LEFT_TOP: int
+    OUT_LEFT_MID: int
+    OUT_LEFT_BOTTOM: int
+    OUT_RIGHT_TOP: int
+    OUT_RIGHT_MID: int
+    OUT_RIGHT_BOTTOM: int
+
+class ANIM_IMAGE_PART:
+    MAIN: int
+
+class BASE_DIR:
+    LTR: int
+    RTL: int
+    AUTO: int
+    NEUTRAL: int
+    WEAK: int
+
+class BLEND_MODE:
+    NORMAL: int
+    ADDITIVE: int
+    SUBTRACTIVE: int
+    MULTIPLY: int
+    DIFFERENCE: int
+
+class BLUR_QUALITY:
+    AUTO: int
+    SPEED: int
+    PRECISION: int
+
+class BORDER_SIDE:
+    NONE: int
+    BOTTOM: int
+    TOP: int
+    LEFT: int
+    RIGHT: int
+    FULL: int
+    INTERNAL: int
+
+class CACHE_RESERVE_COND:
+    OK: int
+    TOO_LARGE: int
+    NEED_VICTIM: int
+    ERROR: int
+
+class COLOR_FORMAT:
+    UNKNOWN: int
+    RAW: int
+    RAW_ALPHA: int
+    L8: int
+    I1: int
+    I2: int
+    I4: int
+    I8: int
+    A8: int
+    RGB565: int
+    ARGB8565: int
+    RGB565A8: int
+    AL88: int
+    RGB565_SWAPPED: int
+    RGB888: int
+    ARGB8888: int
+    XRGB8888: int
+    ARGB8888_PREMULTIPLIED: int
+    A1: int
+    A2: int
+    A4: int
+    ARGB1555: int
+    ARGB4444: int
+    ARGB2222: int
+    YUV_START: int
+    I420: int
+    I422: int
+    I444: int
+    I400: int
+    NV21: int
+    NV12: int
+    YUY2: int
+    UYVY: int
+    YUV_END: int
+    PROPRIETARY_START: int
+    NEMA_TSC_START: int
+    NEMA_TSC4: int
+    NEMA_TSC6: int
+    NEMA_TSC6A: int
+    NEMA_TSC6AP: int
+    NEMA_TSC12: int
+    NEMA_TSC12A: int
+    NEMA_TSC_END: int
+    NATIVE: int
+    NATIVE_WITH_ALPHA: int
+
+class COORD:
+    MAX: int
+    MIN: int
+
+class COVER_RES:
+    COVER: int
+    NOT_COVER: int
+    MASKED: int
+
+class DIR:
+    NONE: int
+    LEFT: int
+    RIGHT: int
+    TOP: int
+    BOTTOM: int
+    HOR: int
+    VER: int
+    ALL: int
+
+class DISPLAY_RENDER_MODE:
+    PARTIAL: int
+    DIRECT: int
+    FULL: int
+
+class DISPLAY_ROTATION:
+    _0: int
+    _90: int
+    _180: int
+    _270: int
+
+class DRAW_SW_MASK_LINE_SIDE:
+    LEFT: int
+    RIGHT: int
+    TOP: int
+    BOTTOM: int
+
+class DRAW_SW_MASK_RES:
+    TRANSP: int
+    FULL_COVER: int
+    CHANGED: int
+    UNKNOWN: int
+
+class DRAW_SW_MASK_TYPE:
+    LINE: int
+    ANGLE: int
+    RADIUS: int
+    FADE: int
+    MAP: int
+
+class DRAW_TASK_STATE:
+    BLOCKED: int
+    WAITING: int
+    QUEUED: int
+    IN_PROGRESS: int
+    FINISHED: int
+
+class DRAW_TASK_TYPE:
+    NONE: int
+    FILL: int
+    BORDER: int
+    BOX_SHADOW: int
+    LETTER: int
+    LABEL: int
+    IMAGE: int
+    LAYER: int
+    LINE: int
+    ARC: int
+    TRIANGLE: int
+    MASK_RECTANGLE: int
+    MASK_BITMAP: int
+    BLUR: int
+
+class EVENT:
+    ALL: int
+    PRESSED: int
+    PRESSING: int
+    PRESS_LOST: int
+    SHORT_CLICKED: int
+    SINGLE_CLICKED: int
+    DOUBLE_CLICKED: int
+    TRIPLE_CLICKED: int
+    LONG_PRESSED: int
+    LONG_PRESSED_REPEAT: int
+    CLICKED: int
+    RELEASED: int
+    SCROLL_BEGIN: int
+    SCROLL_THROW_BEGIN: int
+    SCROLL_END: int
+    SCROLL: int
+    GESTURE: int
+    KEY: int
+    ROTARY: int
+    FOCUSED: int
+    DEFOCUSED: int
+    LEAVE: int
+    HIT_TEST: int
+    INDEV_RESET: int
+    HOVER_OVER: int
+    HOVER_LEAVE: int
+    COVER_CHECK: int
+    REFR_EXT_DRAW_SIZE: int
+    DRAW_MAIN_BEGIN: int
+    DRAW_MAIN: int
+    DRAW_MAIN_END: int
+    DRAW_POST_BEGIN: int
+    DRAW_POST: int
+    DRAW_POST_END: int
+    DRAW_TASK_ADDED: int
+    VALUE_CHANGED: int
+    INSERT: int
+    REFRESH: int
+    READY: int
+    CANCEL: int
+    STATE_CHANGED: int
+    CREATE: int
+    DELETE: int
+    CHILD_CHANGED: int
+    CHILD_CREATED: int
+    CHILD_DELETED: int
+    SCREEN_UNLOAD_START: int
+    SCREEN_LOAD_START: int
+    SCREEN_LOADED: int
+    SCREEN_UNLOADED: int
+    SIZE_CHANGED: int
+    STYLE_CHANGED: int
+    LAYOUT_CHANGED: int
+    GET_SELF_SIZE: int
+    INVALIDATE_AREA: int
+    RESOLUTION_CHANGED: int
+    COLOR_FORMAT_CHANGED: int
+    REFR_REQUEST: int
+    REFR_START: int
+    REFR_READY: int
+    RENDER_START: int
+    RENDER_READY: int
+    FLUSH_START: int
+    FLUSH_FINISH: int
+    FLUSH_WAIT_START: int
+    FLUSH_WAIT_FINISH: int
+    UPDATE_LAYOUT_COMPLETED: int
+    VSYNC: int
+    VSYNC_REQUEST: int
+    LAST: int
+    PREPROCESS: int
+    MARKED_DELETING: int
+
+class FLEX_ALIGN:
+    START: int
+    END: int
+    CENTER: int
+    SPACE_EVENLY: int
+    SPACE_AROUND: int
+    SPACE_BETWEEN: int
+
+class FLEX_FLOW:
+    ROW: int
+    COLUMN: int
+    ROW_WRAP: int
+    ROW_REVERSE: int
+    ROW_WRAP_REVERSE: int
+    COLUMN_WRAP: int
+    COLUMN_REVERSE: int
+    COLUMN_WRAP_REVERSE: int
+
+class FONT_FMT_TXT_BITMAP_FORMAT:
+    PLAIN: int
+    COMPRESSED: int
+    COMPRESSED_NO_PREFILTER: int
+
+class FONT_FMT_TXT_CMAP_TYPE:
+    FORMAT0_FULL: int
+    SPARSE_FULL: int
+    FORMAT0_TINY: int
+    SPARSE_TINY: int
+
+class FONT_GLYPH_FORMAT:
+    NONE: int
+    A1: int
+    A2: int
+    A3: int
+    A4: int
+    A8: int
+    IMAGE: int
+    VECTOR: int
+    SVG: int
+    CUSTOM: int
+
+class FONT_KERNING:
+    NORMAL: int
+    NONE: int
+
+class FONT_SUBPX:
+    NONE: int
+    HOR: int
+    VER: int
+    BOTH: int
+
+class FS_MODE:
+    WR: int
+    RD: int
+
+class FS_RES:
+    OK: int
+    HW_ERR: int
+    FS_ERR: int
+    NOT_EX: int
+    FULL: int
+    LOCKED: int
+    DENIED: int
+    BUSY: int
+    TOUT: int
+    NOT_IMP: int
+    OUT_OF_MEM: int
+    INV_PARAM: int
+    DRIVE_LETTER_ALREADY_USED: int
+    UNKNOWN: int
+
+class FS_WHENCE:
+    SET: int
+    CUR: int
+    END: int
+
+class GRAD_DIR:
+    NONE: int
+    VER: int
+    HOR: int
+    LINEAR: int
+    RADIAL: int
+    CONICAL: int
+
+class GRAD_EXTEND:
+    PAD: int
+    REPEAT: int
+    REFLECT: int
+
+class GRID_ALIGN:
+    START: int
+    CENTER: int
+    END: int
+    STRETCH: int
+    SPACE_EVENLY: int
+    SPACE_AROUND: int
+    SPACE_BETWEEN: int
+
+class GROUP_REFOCUS_POLICY:
+    NEXT: int
+    PREV: int
+
+class INDEV_GESTURE:
+    NONE: int
+    PINCH: int
+    SWIPE: int
+    ROTATE: int
+    TWO_FINGERS_SWIPE: int
+    SCROLL: int
+    CNT: int
+
+class INDEV_GESTURE_STATE:
+    NONE: int
+    ONGOING: int
+    RECOGNIZED: int
+    ENDED: int
+    CANCELED: int
+
+class INDEV_MODE:
+    NONE: int
+    TIMER: int
+    EVENT: int
+
+class INDEV_STATE:
+    RELEASED: int
+    PRESSED: int
+
+class INDEV_TYPE:
+    NONE: int
+    POINTER: int
+    KEYPAD: int
+    BUTTON: int
+    ENCODER: int
+
+class KEY:
+    UP: int
+    DOWN: int
+    RIGHT: int
+    LEFT: int
+    ESC: int
+    DEL: int
+    BACKSPACE: int
+    ENTER: int
+    NEXT: int
+    PREV: int
+    HOME: int
+    END: int
+
+class LAYER_TYPE:
+    NONE: int
+    SIMPLE: int
+    TRANSFORM: int
+
+class LAYOUT:
+    NONE: int
+    FLEX: int
+    GRID: int
+    LAST: int
+
+class LOG_LEVEL:
+    TRACE: int
+    INFO: int
+    WARN: int
+    ERROR: int
+    USER: int
+    NONE: int
+
+class OBJ_FLAG:
+    HIDDEN: int
+    CLICKABLE: int
+    CLICK_FOCUSABLE: int
+    CHECKABLE: int
+    SCROLLABLE: int
+    SCROLL_ELASTIC: int
+    SCROLL_MOMENTUM: int
+    SCROLL_ONE: int
+    SCROLL_CHAIN_HOR: int
+    SCROLL_CHAIN_VER: int
+    SCROLL_CHAIN: int
+    SCROLL_ON_FOCUS: int
+    SCROLL_WITH_ARROW: int
+    SNAPPABLE: int
+    PRESS_LOCK: int
+    EVENT_BUBBLE: int
+    GESTURE_BUBBLE: int
+    ADV_HITTEST: int
+    IGNORE_LAYOUT: int
+    FLOATING: int
+    SEND_DRAW_TASK_EVENTS: int
+    OVERFLOW_VISIBLE: int
+    EVENT_TRICKLE: int
+    STATE_TRICKLE: int
+    LAYOUT_1: int
+    LAYOUT_2: int
+    FLEX_IN_NEW_TRACK: int
+    WIDGET_1: int
+    WIDGET_2: int
+    USER_1: int
+    USER_2: int
+    USER_3: int
+    USER_4: int
+
+class PALETTE:
+    RED: int
+    PINK: int
+    PURPLE: int
+    DEEP_PURPLE: int
+    INDIGO: int
+    BLUE: int
+    LIGHT_BLUE: int
+    CYAN: int
+    TEAL: int
+    GREEN: int
+    LIGHT_GREEN: int
+    LIME: int
+    YELLOW: int
+    AMBER: int
+    ORANGE: int
+    DEEP_ORANGE: int
+    BROWN: int
+    BLUE_GREY: int
+    GREY: int
+    LAST: int
+    NONE: int
+
+class PART:
+    MAIN: int
+    SCROLLBAR: int
+    INDICATOR: int
+    KNOB: int
+    SELECTED: int
+    ITEMS: int
+    CURSOR: int
+    CUSTOM_FIRST: int
+    ANY: int
+
+class RB_COLOR:
+    RED: int
+    BLACK: int
+
+class RESULT:
+    INVALID: int
+    OK: int
+
+class SCREEN_LOAD_ANIM:
+    NONE: int
+    OVER_LEFT: int
+    OVER_RIGHT: int
+    OVER_TOP: int
+    OVER_BOTTOM: int
+    MOVE_LEFT: int
+    MOVE_RIGHT: int
+    MOVE_TOP: int
+    MOVE_BOTTOM: int
+    FADE_IN: int
+    FADE_ON: int
+    FADE_OUT: int
+    OUT_LEFT: int
+    OUT_RIGHT: int
+    OUT_TOP: int
+    OUT_BOTTOM: int
+
+class SCROLLBAR_MODE:
+    OFF: int
+    ON: int
+    ACTIVE: int
+    AUTO: int
+
+class SCROLL_SNAP:
+    NONE: int
+    START: int
+    END: int
+    CENTER: int
+
+class SPAN_MODE:
+    FIXED: int
+    EXPAND: int
+    BREAK: int
+    LAST: int
+
+class SPAN_OVERFLOW:
+    CLIP: int
+    ELLIPSIS: int
+    LAST: int
+
+class STATE:
+    DEFAULT: int
+    ALT: int
+    CHECKED: int
+    FOCUSED: int
+    FOCUS_KEY: int
+    EDITED: int
+    HOVERED: int
+    PRESSED: int
+    SCROLLED: int
+    DISABLED: int
+    USER_1: int
+    USER_2: int
+    USER_3: int
+    USER_4: int
+    ANY: int
+
+class STYLE_RES:
+    NOT_FOUND: int
+    FOUND: int
+
+class STYLE_STATE_CMP:
+    SAME: int
+    DIFF_REDRAW: int
+    DIFF_DRAW_PAD: int
+    DIFF_LAYOUT: int
+
+class SUBJECT_TYPE:
+    INVALID: int
+    NONE: int
+    INT: int
+    FLOAT: int
+    POINTER: int
+    COLOR: int
+    GROUP: int
+    STRING: int
+
+class SYMBOL:
+    BULLET: str
+    AUDIO: str
+    VIDEO: str
+    LIST: str
+    OK: str
+    CLOSE: str
+    POWER: str
+    SETTINGS: str
+    HOME: str
+    DOWNLOAD: str
+    DRIVE: str
+    REFRESH: str
+    MUTE: str
+    VOLUME_MID: str
+    VOLUME_MAX: str
+    IMAGE: str
+    TINT: str
+    PREV: str
+    PLAY: str
+    PAUSE: str
+    STOP: str
+    NEXT: str
+    EJECT: str
+    LEFT: str
+    RIGHT: str
+    PLUS: str
+    MINUS: str
+    EYE_OPEN: str
+    EYE_CLOSE: str
+    WARNING: str
+    SHUFFLE: str
+    UP: str
+    DOWN: str
+    LOOP: str
+    DIRECTORY: str
+    UPLOAD: str
+    CALL: str
+    CUT: str
+    COPY: str
+    SAVE: str
+    BARS: str
+    ENVELOPE: str
+    CHARGE: str
+    PASTE: str
+    BELL: str
+    KEYBOARD: str
+    GPS: str
+    FILE: str
+    WIFI: str
+    BATTERY_FULL: str
+    BATTERY_3: str
+    BATTERY_2: str
+    BATTERY_1: str
+    BATTERY_EMPTY: str
+    USB: str
+    BLUETOOTH: str
+    TRASH: str
+    EDIT: str
+    BACKSPACE: str
+    SD_CARD: str
+    NEW_LINE: str
+    DUMMY: str
+
+class TEXT_ALIGN:
+    AUTO: int
+    LEFT: int
+    CENTER: int
+    RIGHT: int
+
+class TEXT_CMD_STATE:
+    WAIT: int
+    PAR: int
+    IN: int
+
+class TEXT_DECOR:
+    NONE: int
+    UNDERLINE: int
+    STRIKETHROUGH: int
+
+class TEXT_FLAG:
+    NONE: int
+    EXPAND: int
+    FIT: int
+    BREAK_ALL: int
+    RECOLOR: int
+
+class THREAD_PRIO:
+    LOWEST: int
+    LOW: int
+    MID: int
+    HIGH: int
+    HIGHEST: int
+
+class _3dtexture_t(Struct):
+    ...
+
 class anim_bezier3_para_t(Struct):
     x1: int
     y1: int
     x2: int
     y2: int
-class anim_parameter_t(Struct): ...
+
 class anim_state_t(Struct):
-    anim_list_changed: bool
-    anim_run_round: bool
-    anim_vsync_registered: bool
+    anim_list_changed: int
+    anim_run_round: int
+    anim_vsync_registered: int
     timer: timer_t
     anim_ll: ll_t
+
 class anim_t(Struct):
-    def custom_delete(self, exec_cb: Callable[[anim_t, int], None]) -> bool: ...
+    var: Any
+    exec_cb: Callable[[Any, int], None]
+    custom_exec_cb: Callable[[anim_t, int], None]
+    start_cb: Callable[[anim_t], None]
+    completed_cb: Callable[[anim_t], None]
+    deleted_cb: Callable[[anim_t], None]
+    get_value_cb: Callable[[anim_t], int]
+    user_data: Any
+    path_cb: Callable[[anim_t], int]
+    start_value: int
+    current_value: int
+    end_value: int
+    duration: int
+    act_time: int
+    reverse_delay: int
+    reverse_duration: int
+    repeat_delay: int
+    repeat_cnt: int
+    parameter: Any
+    last_timer_run: int
+    pause_time: int
+    pause_duration: int
+    is_paused: int
+    reverse_play_in_progress: int
+    run_round: int
+    start_cb_called: int
+    early_apply: int
+    def custom_delete(self, exec_cb: Callable[[anim_t, int], None]) -> int: ...
     def custom_get(self, exec_cb: Callable[[anim_t, int], None]) -> anim_t: ...
     def get_delay(self) -> int: ...
     def get_playtime(self) -> int: ...
     def get_repeat_count(self) -> int: ...
     def get_time(self) -> int: ...
     def get_user_data(self) -> Any: ...
-    def init(self, arg: Any) -> None: ...
-    @staticmethod
-    def is_paused(a: anim_t) -> bool: ...
+    def init(self) -> None: ...
     def path_bounce(self) -> int: ...
     def path_custom_bezier3(self) -> int: ...
     def path_ease_in(self) -> int: ...
@@ -60,17 +759,17 @@ class anim_t(Struct):
     def path_linear(self) -> int: ...
     def path_overshoot(self) -> int: ...
     def path_step(self) -> int: ...
-    def pause(self, arg: Any) -> None: ...
+    def pause(self) -> None: ...
     def pause_for(self, ms: int) -> None: ...
-    def resume(self, arg: Any) -> None: ...
+    def resume(self) -> None: ...
     def set_bezier3_param(self, x1: int, y1: int, x2: int, y2: int) -> None: ...
     def set_completed_cb(self, completed_cb: Callable[[anim_t], None]) -> None: ...
     def set_custom_exec_cb(self, exec_cb: Callable[[anim_t, int], None]) -> None: ...
     def set_delay(self, delay: int) -> None: ...
     def set_deleted_cb(self, deleted_cb: Callable[[anim_t], None]) -> None: ...
     def set_duration(self, duration: int) -> None: ...
-    def set_early_apply(self, en: bool) -> None: ...
-    def set_exec_cb(self, exec_cb: Callable[[anim_t, int], None]) -> None: ...
+    def set_early_apply(self, en: int) -> None: ...
+    def set_exec_cb(self, exec_cb: Callable[[Any, int], None]) -> None: ...
     def set_get_value_cb(self, get_value_cb: Callable[[anim_t], int]) -> None: ...
     def set_path_cb(self, path_cb: Callable[[anim_t], int]) -> None: ...
     def set_repeat_count(self, cnt: int) -> None: ...
@@ -83,12 +782,22 @@ class anim_t(Struct):
     def set_values(self, start: int, end: int) -> None: ...
     def set_var(self, var: Any) -> None: ...
     def start(self) -> anim_t: ...
+
 class anim_timeline_dsc_t(Struct):
     anim: anim_t
     start_time: int
     is_started: int
     is_completed: int
+
 class anim_timeline_t(Struct):
+    anim_dsc: anim_timeline_dsc_t
+    anim_dsc_cnt: int
+    act_time: int
+    reverse: int
+    delay: int
+    repeat_count: int
+    repeat_delay: int
+    user_data: Any
     def add(self, start_time: int, a: anim_t) -> None: ...
     def delete(self) -> None: ...
     def get_delay(self) -> int: ...
@@ -96,7 +805,7 @@ class anim_timeline_t(Struct):
     def get_progress(self) -> int: ...
     def get_repeat_count(self) -> int: ...
     def get_repeat_delay(self) -> int: ...
-    def get_reverse(self) -> bool: ...
+    def get_reverse(self) -> int: ...
     def get_user_data(self) -> Any: ...
     def merge(self, src: anim_timeline_t, delay: int) -> None: ...
     def pause(self) -> None: ...
@@ -104,9 +813,38 @@ class anim_timeline_t(Struct):
     def set_progress(self, progress: int) -> None: ...
     def set_repeat_count(self, cnt: int) -> None: ...
     def set_repeat_delay(self, delay: int) -> None: ...
-    def set_reverse(self, reverse: bool) -> None: ...
+    def set_reverse(self, reverse: int) -> None: ...
     def set_user_data(self, user_data: Any) -> None: ...
     def start(self) -> int: ...
+
+class animimg_t(Struct):
+    img: image
+    anim: anim_t
+    dsc: Any
+    pic_count: int
+
+class arc_t(Struct):
+    obj: obj
+    rotation: int
+    indic_angle_start: float
+    indic_angle_end: float
+    bg_angle_start: float
+    bg_angle_end: float
+    value: int
+    min_value: int
+    max_value: int
+    dragging: int
+    _type: int
+    min_close: int
+    in_out: int
+    chg_rate: int
+    last_tick: int
+    last_angle: float
+    knob_offset: int
+
+class arclabel_t(Struct):
+    ...
+
 class area_t(Struct):
     x1: int
     y1: int
@@ -114,54 +852,120 @@ class area_t(Struct):
     y2: int
     def align(self, to_align: area_t, align: ALIGN | int, ofs_x: int, ofs_y: int) -> None: ...
     def copy(self, src: area_t) -> None: ...
-    def diff(self, res_p: Any, a1_p: area_t, a2_p: area_t) -> int: ...
+    def diff(self, a1_p: area_t, a2_p: area_t) -> int: ...
     def get_height(self) -> int: ...
     def get_size(self) -> int: ...
     def get_width(self) -> int: ...
     def increase(self, w_extra: int, h_extra: int) -> None: ...
-    def intersect(self, a1_p: area_t, a2_p: area_t) -> bool: ...
-    @staticmethod
-    def is_equal(a: area_t, b: area_t) -> bool: ...
-    @staticmethod
-    def is_in(ain_p: area_t, aholder_p: area_t, radius: int) -> bool: ...
-    @staticmethod
-    def is_on(a1_p: area_t, a2_p: area_t) -> bool: ...
-    @staticmethod
-    def is_out(aout_p: area_t, aholder_p: area_t, radius: int) -> bool: ...
-    @staticmethod
-    def is_point_on(a_p: area_t, p_p: point_t, radius: int) -> bool: ...
+    def intersect(self, a1_p: area_t, a2_p: area_t) -> int: ...
+    def is_equal(self, b: area_t) -> int: ...
+    def is_in(self, aholder_p: area_t, radius: int) -> int: ...
+    def is_on(self, a2_p: area_t) -> int: ...
+    def is_out(self, aholder_p: area_t, radius: int) -> int: ...
+    def is_point_on(self, p_p: point_t, radius: int) -> int: ...
     def join(self, a1_p: area_t, a2_p: area_t) -> None: ...
     def move(self, x_ofs: int, y_ofs: int) -> None: ...
     def set(self, x1: int, y1: int, x2: int, y2: int) -> None: ...
     def set_height(self, h: int) -> None: ...
     def set_pos(self, x: int, y: int) -> None: ...
     def set_width(self, w: int) -> None: ...
+
 class array_t(Struct):
-    def assign(self, index: int, value: Any) -> int: ...
+    data: Any
+    size: int
+    capacity: int
+    element_size: int
+    inner_alloc: int
+    def assign(self, index: int, value: Any) -> RESULT | int: ...
     def at(self, index: int) -> Any: ...
     def back(self) -> Any: ...
-    def capacity(self) -> int: ...
     def clear(self) -> None: ...
-    def concat(self, other: array_t) -> int: ...
+    def concat(self, other: array_t) -> RESULT | int: ...
     def copy(self, source: array_t) -> None: ...
     def deinit(self) -> None: ...
-    def erase(self, start: int, end: int) -> int: ...
+    def erase(self, start: int, end: int) -> RESULT | int: ...
     def front(self) -> Any: ...
     def init(self, capacity: int, element_size: int) -> None: ...
     def init_from_buf(self, buf: Any, capacity: int, element_size: int) -> None: ...
-    @staticmethod
-    def is_empty(array: array_t) -> bool: ...
-    @staticmethod
-    def is_full(array: array_t) -> bool: ...
-    def push_back(self, element: Any) -> int: ...
-    def remove(self, index: int) -> int: ...
-    def remove_unordered(self, index: int) -> int: ...
-    def resize(self, new_capacity: int) -> bool: ...
+    def is_empty(self) -> int: ...
+    def is_full(self) -> int: ...
+    def push_back(self, element: Any) -> RESULT | int: ...
+    def remove(self, index: int) -> RESULT | int: ...
+    def remove_unordered(self, index: int) -> RESULT | int: ...
+    def resize(self, new_capacity: int) -> int: ...
     def shrink(self) -> None: ...
-    def size(self) -> int: ...
+
+class bar_anim_t(Struct):
+    bar: obj
+    anim_start: int
+    anim_end: int
+    anim_state: int
+
+class bar_t(Struct):
+    obj: obj
+    cur_value: int
+    min_value: int
+    max_value: int
+    start_value: int
+    indic_area: area_t
+    val_reversed: int
+    cur_value_anim: bar_anim_t
+    start_value_anim: bar_anim_t
+    mode: bar.MODE | int
+    orientation: bar.ORIENTATION | int
+
+class barcode_t(Struct):
+    canvas: canvas
+    dark_color: color_t
+    light_color: color_t
+    scale: int
+    direction: DIR | int
+    tiled: int
+    encoding: barcode.ENCODING_CODE128 | int
+
+class binfont_font_src_t(Struct):
+    font_size: int
+    path: str
+    buffer: Any
+    buffer_size: int
+
+class builtin_font_src_t(Struct):
+    font_p: font_t
+    size: int
+
+class button_t(Struct):
+    obj: obj
+
+class buttonmatrix_t(Struct):
+    obj: obj
+    map_p: Any
+    button_areas: area_t
+    ctrl_bits: buttonmatrix.CTRL | int
+    btn_cnt: int
+    row_cnt: int
+    btn_id_sel: int
+    one_check: int
+    auto_free_map: int
+
 class cache_class_t(Struct):
-    def create(self, node_size: int, max_size: int, ops: cache_ops_t) -> cache_t: ...
+    alloc_cb: Callable[[], Any]
+    init_cb: Callable[[cache_t], int]
+    destroy_cb: Callable[[cache_t, Any], None]
+    get_cb: Callable[[cache_t, Any, Any], cache_entry_t]
+    add_cb: Callable[[cache_t, Any, Any], cache_entry_t]
+    remove_cb: Callable[[cache_t, cache_entry_t, Any], None]
+    drop_cb: Callable[[cache_t, Any, Any], None]
+    drop_all_cb: Callable[[cache_t, Any], None]
+    get_victim_cb: Callable[[cache_t, Any], cache_entry_t]
+    reserve_cond_cb: Callable[[cache_t, Any, int, Any], CACHE_RESERVE_COND | int]
+    iter_create_cb: Callable[[cache_t], iter_t]
+    def cache_create(self, node_size: int, max_size: int, ops: cache_ops_t) -> cache_t: ...
+
 class cache_entry_t(Struct):
+    cache: cache_t
+    ref_cnt: int
+    node_size: int
+    flags: int
     def acquire_data(self) -> Any: ...
     def dec_ref(self) -> None: ...
     def delete(self) -> None: ...
@@ -169,124 +973,253 @@ class cache_entry_t(Struct):
     def get_data(self) -> Any: ...
     def get_node_size(self) -> int: ...
     def get_ref(self) -> int: ...
-    def has_flag(self, flags: int) -> bool: ...
+    def has_flag(self, flags: int) -> int: ...
     def inc_ref(self) -> None: ...
     def init(self, cache: cache_t, node_size: int) -> None: ...
-    @staticmethod
-    def is_invalid(entry: cache_entry_t) -> bool: ...
+    def is_invalid(self) -> int: ...
     def release_data(self, user_data: Any) -> None: ...
     def remove_flag(self, flags: int) -> None: ...
     def reset_ref(self) -> None: ...
     def set_cache(self, cache: cache_t) -> None: ...
     def set_flag(self, flags: int) -> None: ...
     def set_node_size(self, node_size: int) -> None: ...
-class cache_ops_t(Struct): ...
-class cache_slot_size_t(Struct): ...
+
+class cache_ops_t(Struct):
+    compare_cb: Callable[[Any, Any], int]
+    create_cb: Callable[[Any, Any], int]
+    free_cb: Callable[[Any, Any], None]
+
+class cache_slot_size_t(Struct):
+    size: int
+
 class cache_t(Struct):
-    def acquire(self, key: Any, user_data: Any) -> Any: ...
-    def acquire_or_create(self, key: Any, user_data: Any) -> Any: ...
-    def add(self, key: Any, user_data: Any) -> Any: ...
+    clz: cache_class_t
+    node_size: int
+    max_size: int
+    size: int
+    ops: cache_ops_t
+    lock: int
+    name: str
+    def acquire(self, key: Any, user_data: Any) -> cache_entry_t: ...
+    def acquire_or_create(self, key: Any, user_data: Any) -> cache_entry_t: ...
+    def add(self, key: Any, user_data: Any) -> cache_entry_t: ...
     def destroy(self, user_data: Any) -> None: ...
     def drop(self, key: Any, user_data: Any) -> None: ...
     def drop_all(self, user_data: Any) -> None: ...
-    def evict_one(self, user_data: Any) -> bool: ...
+    def evict_one(self, user_data: Any) -> int: ...
     def get_free_size(self, user_data: Any) -> int: ...
     def get_max_size(self, user_data: Any) -> int: ...
     def get_name(self) -> str: ...
     def get_size(self, user_data: Any) -> int: ...
-    def is_enabled(self, cache: Any) -> bool: ...
-    def iter_create(self, cache: Any) -> iter_t: ...
+    def is_enabled(self) -> int: ...
+    def iter_create(self) -> iter_t: ...
     def release(self, entry: cache_entry_t, user_data: Any) -> None: ...
     def reserve(self, reserved_size: int, user_data: Any) -> None: ...
     def set_compare_cb(self, compare_cb: Callable[[Any, Any], int], user_data: Any) -> None: ...
-    def set_create_cb(self, alloc_cb: Callable[[Any, Any], bool], user_data: Any) -> None: ...
+    def set_create_cb(self, alloc_cb: Callable[[Any, Any], int], user_data: Any) -> None: ...
     def set_free_cb(self, free_cb: Callable[[Any, Any], None], user_data: Any) -> None: ...
     def set_max_size(self, max_size: int, user_data: Any) -> None: ...
     def set_name(self, name: str) -> None: ...
+
 class calendar_date_t(Struct):
     year: int
     month: int
     day: int
-class chart_cursor_t(Struct): ...
-class chart_series_t(Struct): ...
+
+class calendar_t(Struct):
+    obj: obj
+    btnm: obj
+    today: calendar_date_t
+    showed_date: calendar_date_t
+    highlighted_dates: calendar_date_t
+    highlighted_dates_num: int
+    map: Any
+    use_chinese_calendar: int
+    nums: Any
+
+class canvas_t(Struct):
+    img: image
+    draw_buf: draw_buf_t
+    static_buf: draw_buf_t
+
+class chart_cursor_t(Struct):
+    pos: point_t
+    point_id: int
+    color: color_t
+    ser: chart_series_t
+    dir: DIR | int
+    pos_set: int
+
+class chart_series_t(Struct):
+    x_points: Any
+    y_points: Any
+    color: color_t
+    start_point: int
+    hidden: int
+    x_ext_buf_assigned: int
+    y_ext_buf_assigned: int
+    x_axis_sec: int
+    y_axis_sec: int
+
+class chart_t(Struct):
+    obj: obj
+    series_ll: ll_t
+    cursor_ll: ll_t
+    ymin: Any
+    ymax: Any
+    xmin: Any
+    xmax: Any
+    pressed_point_id: int
+    hdiv_cnt: int
+    vdiv_cnt: int
+    point_cnt: int
+    _type: chart.TYPE | int
+    update_mode: chart.UPDATE_MODE | int
+
+class checkbox_t(Struct):
+    obj: obj
+    txt: str
+    static_txt: int
+
 class circle_buf_t(Struct):
     def capacity(self) -> int: ...
     def destroy(self) -> None: ...
-    def fill(self, count: int, fill_cb: Callable[[Any, int, int, Any], bool], user_data: Any) -> int: ...
+    def fill(self, count: int, fill_cb: Callable[[Any, int, int, Any], int], user_data: Any) -> int: ...
     def head(self) -> Any: ...
-    @staticmethod
-    def is_empty(circle_buf: circle_buf_t) -> bool: ...
-    @staticmethod
-    def is_full(circle_buf: circle_buf_t) -> bool: ...
-    def peek(self, data: Any) -> int: ...
-    def peek_at(self, index: int, data: Any) -> int: ...
-    def read(self, data: Any) -> int: ...
+    def is_empty(self) -> int: ...
+    def is_full(self) -> int: ...
+    def peek(self, data: Any) -> RESULT | int: ...
+    def peek_at(self, index: int, data: Any) -> RESULT | int: ...
+    def read(self, data: Any) -> RESULT | int: ...
     def remain(self) -> int: ...
     def reset(self) -> None: ...
-    def resize(self, capacity: int) -> int: ...
+    def resize(self, capacity: int) -> RESULT | int: ...
     def size(self) -> int: ...
-    def skip(self) -> int: ...
+    def skip(self) -> RESULT | int: ...
     def tail(self) -> Any: ...
-    def write(self, data: Any) -> int: ...
+    def write(self, data: Any) -> RESULT | int: ...
+
 class color16_t(Struct):
     blue: int
     green: int
     red: int
     def luminance(self) -> int: ...
-    def premultiply(self, a: OPA | int) -> None: ...
+    def premultiply(self, a: int) -> None: ...
     def to_color(self) -> color_t: ...
+
+class color16a_t(Struct):
+    lumi: int
+    alpha: int
+
 class color32_t(Struct):
     blue: int
     green: int
     red: int
     alpha: int
-    @staticmethod
-    def color_mix32(fg: color32_t, bg: color32_t) -> color32_t: ...
-    @staticmethod
-    def color_mix32_premultiplied(fg: color32_t, bg: color32_t) -> color32_t: ...
-    @staticmethod
-    def color_over32(fg: color32_t, bg: color32_t) -> color32_t: ...
-    @staticmethod
-    def color_premultiply(c: color32_t) -> None: ...
-    def eq(self, c2: color32_t) -> bool: ...
+    def color_mix32(self, bg: color32_t) -> color32_t: ...
+    def color_mix32_premultiplied(self, bg: color32_t) -> color32_t: ...
+    def color_over32(self, bg: color32_t) -> color32_t: ...
+    def color_premultiply(self) -> None: ...
+    def eq(self, c2: color32_t) -> int: ...
     def luminance(self) -> int: ...
+
 class color_filter_dsc_t(Struct):
-    def init(self, cb: Callable[[color_filter_dsc_t, color_t, OPA | int], color_t]) -> None: ...
+    filter_cb: Callable[[color_filter_dsc_t, color_t, int], color_t]
+    user_data: Any
+    def init(self, cb: Callable[[color_filter_dsc_t, color_t, int], color_t]) -> None: ...
+
 class color_hsv_t(Struct):
     h: int
     s: int
     v: int
+
 class color_t(Struct):
     blue: int
     green: int
     red: int
     def brightness(self) -> int: ...
-    def darken(self, lvl: OPA | int) -> color_t: ...
-    def eq(self, c2: color_t) -> bool: ...
-    @staticmethod
-    def is_in_range(color: color_t, l_color: color_t, h_color: color_t) -> bool: ...
-    def lighten(self, lvl: OPA | int) -> color_t: ...
+    def darken(self, lvl: int) -> color_t: ...
+    def eq(self, c2: color_t) -> int: ...
+    def is_in_range(self, l_color: color_t, h_color: color_t) -> int: ...
+    def lighten(self, lvl: int) -> color_t: ...
     def luminance(self) -> int: ...
     def mix(self, c2: color_t, mix: int) -> color_t: ...
-    def to_32(self, opa: OPA | int) -> color32_t: ...
+    def to_32(self, opa: int) -> color32_t: ...
     def to_hsv(self) -> color_hsv_t: ...
     def to_int(self) -> int: ...
     def to_u16(self) -> int: ...
     def to_u32(self) -> int: ...
+
+class cover_check_info_t(Struct):
+    res: COVER_RES | int
+    area: area_t
+
 class display_t(Struct):
+    hor_res: int
+    ver_res: int
+    physical_hor_res: int
+    physical_ver_res: int
+    offset_x: int
+    offset_y: int
+    dpi: int
+    buf_1: draw_buf_t
+    buf_2: draw_buf_t
+    buf_3: draw_buf_t
+    buf_act: draw_buf_t
+    flush_cb: Callable[[display_t, area_t, Any], None]
+    flush_wait_cb: Callable[[display_t], None]
+    flushing: int
+    flushing_last: int
+    last_area: int
+    last_part: int
+    render_mode: DISPLAY_RENDER_MODE | int
+    antialiasing: int
+    tile_cnt: int
+    stride_is_auto: int
+    rendering_in_progress: int
+    color_format: COLOR_FORMAT | int
+    inv_areas: Any
+    inv_area_joined: Any
+    inv_p: int
+    inv_en_cnt: int
+    sync_areas: ll_t
+    _static_buf1: draw_buf_t
+    _static_buf2: draw_buf_t
+    layer_head: layer_t
+    layer_init: Callable[[display_t, layer_t], None]
+    layer_deinit: Callable[[display_t, layer_t], None]
+    screens: Any
+    sys_layer: obj
+    top_layer: obj
+    act_scr: obj
+    bottom_layer: obj
+    prev_scr: obj
+    scr_to_load: obj
+    screen_cnt: int
+    draw_prev_over_act: int
+    del_prev: int
+    driver_data: Any
+    user_data: Any
+    event_list: event_list_t
+    rotation: int
+    matrix_rotation: int
+    theme: theme_t
+    refr_timer: timer_t
+    last_activity_time: int
+    refreshed_area: area_t
+    vsync_count: int
     def add_event_cb(self, event_cb: Callable[[event_t], None], filter: EVENT | int, user_data: Any) -> None: ...
-    def delete(self, disp: Any) -> None: ...
-    def delete_event(self, index: int) -> bool: ...
-    def delete_refr_timer(self, disp: Any) -> None: ...
+    def delete(self) -> None: ...
+    def delete_event(self, index: int) -> int: ...
+    def delete_refr_timer(self) -> None: ...
     def dpx(self, n: int) -> int: ...
-    @staticmethod
-    def draw_dispatch_layer(disp: display_t, layer: layer_t) -> bool: ...
-    def enable_invalidation(self, en: bool) -> None: ...
-    def flush_is_last(self) -> bool: ...
-    def flush_ready(self, disp: Any) -> None: ...
-    def get_antialiasing(self) -> bool: ...
+    def draw_dispatch_layer(self, layer: layer_t) -> int: ...
+    def enable_invalidation(self, en: int) -> None: ...
+    def flush_is_last(self) -> int: ...
+    def flush_ready(self) -> None: ...
+    def get_antialiasing(self) -> int: ...
     def get_buf_active(self) -> draw_buf_t: ...
-    def get_color_format(self) -> int: ...
+    def get_color_format(self) -> COLOR_FORMAT | int: ...
     def get_dpi(self) -> int: ...
     def get_draw_buf_size(self) -> int: ...
     def get_driver_data(self) -> Any: ...
@@ -298,7 +1231,7 @@ class display_t(Struct):
     def get_layer_bottom(self) -> obj: ...
     def get_layer_sys(self) -> obj: ...
     def get_layer_top(self) -> obj: ...
-    def get_matrix_rotation(self) -> bool: ...
+    def get_matrix_rotation(self) -> int: ...
     def get_next(self) -> display_t: ...
     def get_offset_x(self) -> int: ...
     def get_offset_y(self) -> int: ...
@@ -307,8 +1240,8 @@ class display_t(Struct):
     def get_physical_horizontal_resolution(self) -> int: ...
     def get_physical_vertical_resolution(self) -> int: ...
     def get_refr_timer(self) -> timer_t: ...
-    def get_render_mode(self) -> int: ...
-    def get_rotation(self) -> int: ...
+    def get_render_mode(self) -> DISPLAY_RENDER_MODE | int: ...
+    def get_rotation(self) -> DISPLAY_ROTATION | int: ...
     def get_screen_active(self) -> obj: ...
     def get_screen_loading(self) -> obj: ...
     def get_screen_prev(self) -> obj: ...
@@ -316,28 +1249,26 @@ class display_t(Struct):
     def get_tile_cnt(self) -> int: ...
     def get_user_data(self) -> Any: ...
     def get_vertical_resolution(self) -> int: ...
-    @staticmethod
-    def is_double_buffered(disp: display_t) -> bool: ...
-    @staticmethod
-    def is_invalidation_enabled(disp: display_t) -> bool: ...
-    def register_vsync_event(self, event_cb: Callable[[event_t], None], user_data: Any) -> bool: ...
+    def is_double_buffered(self) -> int: ...
+    def is_invalidation_enabled(self) -> int: ...
+    def register_vsync_event(self, event_cb: Callable[[event_t], None], user_data: Any) -> int: ...
     def remove_event_cb_with_user_data(self, event_cb: Callable[[event_t], None], user_data: Any) -> int: ...
     def rotate_area(self, area: area_t) -> None: ...
     def rotate_point(self, point: point_t) -> None: ...
-    def send_event(self, code: EVENT | int, param: Any) -> int: ...
-    def send_vsync_event(self, param: Any) -> int: ...
+    def send_event(self, code: EVENT | int, param: Any) -> RESULT | int: ...
+    def send_vsync_event(self, param: Any) -> RESULT | int: ...
     def set_3rd_draw_buffer(self, buf3: draw_buf_t) -> None: ...
-    def set_antialiasing(self, en: bool) -> None: ...
+    def set_antialiasing(self, en: int) -> None: ...
     def set_buffers(self, buf1: Any, buf2: Any, buf_size: int, render_mode: DISPLAY_RENDER_MODE | int) -> None: ...
     def set_buffers_with_stride(self, buf1: Any, buf2: Any, buf_size: int, stride: int, render_mode: DISPLAY_RENDER_MODE | int) -> None: ...
     def set_color_format(self, color_format: COLOR_FORMAT | int) -> None: ...
-    def set_default(self, disp: Any) -> None: ...
+    def set_default(self) -> None: ...
     def set_dpi(self, dpi: int) -> None: ...
     def set_draw_buffers(self, buf1: draw_buf_t, buf2: draw_buf_t) -> None: ...
     def set_driver_data(self, driver_data: Any) -> None: ...
     def set_flush_cb(self, flush_cb: Callable[[display_t, area_t, Any], None]) -> None: ...
     def set_flush_wait_cb(self, wait_cb: Callable[[display_t], None]) -> None: ...
-    def set_matrix_rotation(self, enable: bool) -> None: ...
+    def set_matrix_rotation(self, enable: int) -> None: ...
     def set_offset(self, x: int, y: int) -> None: ...
     def set_physical_resolution(self, hor_res: int, ver_res: int) -> None: ...
     def set_render_mode(self, render_mode: DISPLAY_RENDER_MODE | int) -> None: ...
@@ -346,8 +1277,9 @@ class display_t(Struct):
     def set_theme(self, th: theme_t) -> None: ...
     def set_tile_cnt(self, tile_cnt: int) -> None: ...
     def set_user_data(self, user_data: Any) -> None: ...
-    def trigger_activity(self, disp: Any) -> None: ...
-    def unregister_vsync_event(self, event_cb: Callable[[event_t], None], user_data: Any) -> bool: ...
+    def trigger_activity(self) -> None: ...
+    def unregister_vsync_event(self, event_cb: Callable[[event_t], None], user_data: Any) -> int: ...
+
 class draw_arc_dsc_t(Struct):
     base: draw_dsc_base_t
     color: color_t
@@ -357,23 +1289,26 @@ class draw_arc_dsc_t(Struct):
     center: point_t
     img_src: Any
     radius: int
-    opa: OPA | int
+    opa: int
     rounded: int
     def init(self) -> None: ...
+
 class draw_blur_dsc_t(Struct):
     base: draw_dsc_base_t
     blur_radius: int
     corner_radius: int
     quality: BLUR_QUALITY | int
     def init(self) -> None: ...
+
 class draw_border_dsc_t(Struct):
     base: draw_dsc_base_t
     radius: int
     color: color_t
     width: int
-    opa: OPA | int
+    opa: int
     side: BORDER_SIDE | int
     def init(self) -> None: ...
+
 class draw_box_shadow_dsc_t(Struct):
     base: draw_dsc_base_t
     radius: int
@@ -382,36 +1317,50 @@ class draw_box_shadow_dsc_t(Struct):
     spread: int
     ofs_x: int
     ofs_y: int
-    opa: OPA | int
+    opa: int
     bg_cover: int
     def init(self) -> None: ...
+
 class draw_buf_handlers_t(Struct):
-    def align_ex(self, buf: Any, color_format: int) -> Any: ...
-    def create_ex(self, w: int, h: int, cf: int, stride: int) -> draw_buf_t: ...
-    def dup_ex(self, draw_buf: draw_buf_t) -> draw_buf_t: ...
+    buf_malloc_cb: Callable[[int, COLOR_FORMAT | int], Any]
+    buf_free_cb: Callable[[Any], None]
+    buf_copy_cb: Callable[[draw_buf_t, area_t, draw_buf_t, area_t], None]
+    align_pointer_cb: Callable[[Any, COLOR_FORMAT | int], Any]
+    invalidate_cache_cb: Callable[[draw_buf_t, area_t], None]
+    flush_cache_cb: Callable[[draw_buf_t, area_t], None]
+    width_to_stride_cb: Callable[[int, COLOR_FORMAT | int], int]
+    def draw_buf_align_ex(self, buf: Any, color_format: COLOR_FORMAT | int) -> Any: ...
+    def draw_buf_create_ex(self, w: int, h: int, cf: COLOR_FORMAT | int, stride: int) -> draw_buf_t: ...
+    def draw_buf_dup_ex(self, draw_buf: draw_buf_t) -> draw_buf_t: ...
+    def draw_buf_init_with_default_handlers(self) -> None: ...
+    def draw_buf_width_to_stride_ex(self, w: int, color_format: COLOR_FORMAT | int) -> int: ...
     def init(self, buf_malloc_cb: Callable[[int, COLOR_FORMAT | int], Any], buf_free_cb: Callable[[Any], None], buf_copy_cb: Callable[[draw_buf_t, area_t, draw_buf_t, area_t], None], align_pointer_cb: Callable[[Any, COLOR_FORMAT | int], Any], invalidate_cache_cb: Callable[[draw_buf_t, area_t], None], flush_cache_cb: Callable[[draw_buf_t, area_t], None], width_to_stride_cb: Callable[[int, COLOR_FORMAT | int], int]) -> None: ...
-    def init_with_default_handlers(self) -> None: ...
-    def width_to_stride_ex(self, w: int, color_format: int) -> int: ...
+
 class draw_buf_t(Struct):
-    def adjust_stride(self, stride: int) -> int: ...
+    header: image_header_t
+    data_size: int
+    data: Any
+    unaligned_data: Any
+    handlers: draw_buf_handlers_t
+    def adjust_stride(self, stride: int) -> RESULT | int: ...
     def clear(self, a: area_t) -> None: ...
     def clear_flag(self, flag: image.FLAGS | int) -> None: ...
     def copy(self, dest_area: area_t, src: draw_buf_t, src_area: area_t) -> None: ...
     def destroy(self) -> None: ...
     def dup(self) -> draw_buf_t: ...
     def flush_cache(self, area: area_t) -> None: ...
-    @staticmethod
-    def from_image(buf: draw_buf_t, img: image_dsc_t) -> int: ...
+    def from_image(self, img: image_dsc_t) -> RESULT | int: ...
     def goto_xy(self, x: int, y: int) -> Any: ...
-    def has_flag(self, flag: image.FLAGS | int) -> bool: ...
-    def init(self, w: int, h: int, cf: COLOR_FORMAT | int, stride: int, data: Any, data_size: int) -> int: ...
+    def has_flag(self, flag: image.FLAGS | int) -> int: ...
+    def init(self, w: int, h: int, cf: COLOR_FORMAT | int, stride: int, data: Any, data_size: int) -> RESULT | int: ...
     def invalidate_cache(self, area: area_t) -> None: ...
-    def premultiply(self) -> int: ...
+    def premultiply(self) -> RESULT | int: ...
     def reshape(self, cf: COLOR_FORMAT | int, w: int, h: int, stride: int) -> draw_buf_t: ...
-    def save_to_file(self, path: str) -> int: ...
+    def save_to_file(self, path: str) -> RESULT | int: ...
     def set_flag(self, flag: image.FLAGS | int) -> None: ...
     def set_palette(self, index: int, color: color32_t) -> None: ...
     def to_image(self, img: image_dsc_t) -> None: ...
+
 class draw_dsc_base_t(Struct):
     obj: obj
     part: int
@@ -421,30 +1370,72 @@ class draw_dsc_base_t(Struct):
     drop_shadow_ofs_x: int
     drop_shadow_ofs_y: int
     drop_shadow_color: color_t
-    drop_shadow_opa: OPA | int
+    drop_shadow_opa: int
     drop_shadow_blur_radius: int
     drop_shadow_quality: BLUR_QUALITY | int
     dsc_size: int
     user_data: Any
+
 class draw_fill_dsc_t(Struct):
     base: draw_dsc_base_t
     radius: int
-    opa: OPA | int
+    opa: int
     color: color_t
     grad: grad_dsc_t
     def init(self) -> None: ...
+
 class draw_global_info_t(Struct):
     unit_head: draw_unit_t
     unit_cnt: int
     used_memory_for_layers: int
     dispatch_req: int
     circle_cache_mutex: int
-    task_running: bool
+    task_running: int
+
 class draw_glyph_dsc_t(Struct):
+    glyph_data: Any
+    format: FONT_GLYPH_FORMAT | int
+    letter_coords: area_t
+    bg_coords: area_t
+    g: font_glyph_dsc_t
+    color: color_t
+    opa: int
+    outline_stroke_color: color_t
+    outline_stroke_opa: int
+    outline_stroke_width: int
+    rotation: int
+    pivot: point_t
+    _draw_buf: draw_buf_t
     def init(self) -> None: ...
+
 class draw_image_dsc_t(Struct):
+    base: draw_dsc_base_t
+    src: Any
+    header: image_header_t
+    clip_radius: int
+    rotation: int
+    scale_x: int
+    scale_y: int
+    skew_x: int
+    skew_y: int
+    pivot: point_t
+    recolor: color_t
+    recolor_opa: int
+    opa: int
+    blend_mode: BLEND_MODE | int
+    antialias: int
+    tile: int
+    colorkey: image_colorkey_t
+    sup: draw_image_sup_t
+    image_area: area_t
+    bitmap_mask_src: image_dsc_t
     def init(self) -> None: ...
-class draw_image_sup_t(Struct): ...
+
+class draw_image_sup_t(Struct):
+    alpha_color: color_t
+    palette: color32_t
+    palette_size: int
+
 class draw_label_dsc_t(Struct):
     base: draw_dsc_base_t
     text: str
@@ -463,8 +1454,8 @@ class draw_label_dsc_t(Struct):
     text_length: int
     align: TEXT_ALIGN | int
     bidi_dir: BASE_DIR | int
-    opa: OPA | int
-    outline_stroke_opa: OPA | int
+    opa: int
+    outline_stroke_opa: int
     decor: TEXT_DECOR | int
     flag: TEXT_FLAG | int
     text_local: int
@@ -474,7 +1465,12 @@ class draw_label_dsc_t(Struct):
     outline_stroke_color: color_t
     outline_stroke_width: int
     def init(self) -> None: ...
-class draw_label_hint_t(Struct): ...
+
+class draw_label_hint_t(Struct):
+    line_start: int
+    y: int
+    coord_y: int
+
 class draw_letter_dsc_t(Struct):
     base: draw_dsc_base_t
     unicode: int
@@ -486,13 +1482,14 @@ class draw_letter_dsc_t(Struct):
     skew_x: int
     skew_y: int
     pivot: point_t
-    opa: OPA | int
+    opa: int
     decor: TEXT_DECOR | int
     blend_mode: BLEND_MODE | int
-    outline_stroke_opa: OPA | int
+    outline_stroke_opa: int
     outline_stroke_width: int
     outline_stroke_color: color_t
     def init(self) -> None: ...
+
 class draw_line_dsc_t(Struct):
     base: draw_dsc_base_t
     p1: point_precise_t
@@ -503,26 +1500,35 @@ class draw_line_dsc_t(Struct):
     width: int
     dash_width: int
     dash_gap: int
-    opa: OPA | int
+    opa: int
     round_start: int
     round_end: int
     raw_end: int
     def init(self) -> None: ...
+
 class draw_mask_rect_dsc_t(Struct):
+    base: draw_dsc_base_t
+    area: area_t
+    radius: int
+    keep_outside: int
     def init(self) -> None: ...
+
+class draw_mask_t(Struct):
+    user_data: Any
+
 class draw_rect_dsc_t(Struct):
     base: draw_dsc_base_t
     radius: int
     bg_image_src: Any
     bg_image_symbol_font: Any
     bg_image_recolor: color_t
-    bg_image_opa: OPA | int
-    bg_image_recolor_opa: OPA | int
+    bg_image_opa: int
+    bg_image_recolor_opa: int
     bg_image_tiled: int
-    bg_opa: OPA | int
-    border_opa: OPA | int
-    outline_opa: OPA | int
-    shadow_opa: OPA | int
+    bg_opa: int
+    border_opa: int
+    outline_opa: int
+    shadow_opa: int
     bg_color: color_t
     bg_grad: grad_dsc_t
     bg_image_colorkey: image_colorkey_t
@@ -539,47 +1545,153 @@ class draw_rect_dsc_t(Struct):
     shadow_offset_y: int
     shadow_spread: int
     def init(self) -> None: ...
-class draw_sw_blend_dsc_t(Struct): ...
+
+class draw_sw_blend_dsc_t(Struct):
+    blend_area: area_t
+    src_buf: Any
+    src_stride: int
+    src_color_format: COLOR_FORMAT | int
+    src_area: area_t
+    opa: int
+    color: color_t
+    mask_buf: Any
+    mask_res: DRAW_SW_MASK_RES | int
+    mask_area: area_t
+    mask_stride: int
+    blend_mode: BLEND_MODE | int
+
+class draw_sw_blend_fill_dsc_t(Struct):
+    dest_buf: Any
+    dest_w: int
+    dest_h: int
+    dest_stride: int
+    mask_buf: Any
+    mask_stride: int
+    color: color_t
+    opa: int
+    relative_area: area_t
+
+class draw_sw_blend_image_dsc_t(Struct):
+    dest_buf: Any
+    dest_w: int
+    dest_h: int
+    dest_stride: int
+    mask_buf: Any
+    mask_stride: int
+    src_buf: Any
+    src_stride: int
+    src_color_format: COLOR_FORMAT | int
+    opa: int
+    blend_mode: BLEND_MODE | int
+    relative_area: area_t
+    src_area: area_t
+
 class draw_sw_custom_blend_handler_t(Struct):
     dest_cf: COLOR_FORMAT | int
     handler: Callable[[draw_task_t, draw_sw_blend_dsc_t], None]
-    def register_blend_handler(self) -> bool: ...
-class draw_sw_mask_angle_param_cfg_t(Struct): ...
+    def draw_sw_register_blend_handler(self) -> int: ...
+
 class draw_sw_mask_angle_param_t(Struct):
-    @staticmethod
-    def init(param: draw_sw_mask_angle_param_t, vertex_x: int, vertex_y: int, start_angle: int, end_angle: int) -> None: ...
-class draw_sw_mask_common_dsc_t(Struct): ...
-class draw_sw_mask_fade_param_cfg_t(Struct): ...
+    dsc: draw_sw_mask_common_dsc_t
+    cfg: Any
+    start_line: draw_sw_mask_line_param_t
+    end_line: draw_sw_mask_line_param_t
+    delta_deg: int
+    def draw_sw_mask_angle_init(self, vertex_x: int, vertex_y: int, start_angle: int, end_angle: int) -> None: ...
+
+class draw_sw_mask_common_dsc_t(Struct):
+    cb: Callable[[Any, int, int, int, Any], DRAW_SW_MASK_RES | int]
+    _type: DRAW_SW_MASK_TYPE | int
+
 class draw_sw_mask_fade_param_t(Struct):
-    @staticmethod
-    def init(param: draw_sw_mask_fade_param_t, coords: area_t, opa_top: int, y_top: int, opa_bottom: int, y_bottom: int) -> None: ...
-class draw_sw_mask_line_param_cfg_t(Struct): ...
+    dsc: draw_sw_mask_common_dsc_t
+    cfg: Any
+    def draw_sw_mask_fade_init(self, coords: area_t, opa_top: int, y_top: int, opa_bottom: int, y_bottom: int) -> None: ...
+
 class draw_sw_mask_line_param_t(Struct):
-    def angle_init(self, px: int, py: int, angle: int, side: int) -> None: ...
-    def points_init(self, p1x: int, p1y: int, p2x: int, p2y: int, side: int) -> None: ...
-class draw_sw_mask_map_param_cfg_t(Struct): ...
+    dsc: draw_sw_mask_common_dsc_t
+    cfg: Any
+    origo: point_t
+    xy_steep: int
+    yx_steep: int
+    steep: int
+    spx: int
+    flat: int
+    inv: int
+    def draw_sw_mask_line_angle_init(self, px: int, py: int, angle: int, side: DRAW_SW_MASK_LINE_SIDE | int) -> None: ...
+    def draw_sw_mask_line_points_init(self, p1x: int, p1y: int, p2x: int, p2y: int, side: DRAW_SW_MASK_LINE_SIDE | int) -> None: ...
+
 class draw_sw_mask_map_param_t(Struct):
-    @staticmethod
-    def init(param: draw_sw_mask_map_param_t, coords: area_t, map: Any) -> None: ...
+    dsc: draw_sw_mask_common_dsc_t
+    cfg: Any
+    def draw_sw_mask_map_init(self, coords: area_t, map: Any) -> None: ...
+
 class draw_sw_mask_radius_circle_dsc_t(Struct):
     buf: Any
-    cir_opa: OPA | int
+    cir_opa: Any
     x_start_on_y: Any
     opa_start_on_y: Any
     life: int
     used_cnt: int
     radius: int
-class draw_sw_mask_radius_param_cfg_t(Struct): ...
+
 class draw_sw_mask_radius_param_t(Struct):
-    @staticmethod
-    def init(param: draw_sw_mask_radius_param_t, rect: area_t, radius: int, inv: bool) -> None: ...
+    dsc: draw_sw_mask_common_dsc_t
+    cfg: Any
+    circle: draw_sw_mask_radius_circle_dsc_t
+    def draw_sw_mask_radius_init(self, rect: area_t, radius: int, inv: int) -> None: ...
+
+class draw_sw_thread_dsc_t(Struct):
+    task_act: draw_task_t
+    thread: int
+    sync: int
+    draw_unit: draw_unit_t
+    idx: int
+    inited: int
+    exit_status: int
+
+class draw_sw_unit_t(Struct):
+    base_unit: draw_unit_t
+    task_act: draw_task_t
+
 class draw_task_t(Struct):
+    next: draw_task_t
+    _type: DRAW_TASK_TYPE | int
+    area: area_t
+    _real_area: area_t
+    clip_area_original: area_t
+    clip_area: area_t
+    target_layer: layer_t
+    draw_unit: draw_unit_t
+    state: int
+    draw_dsc: Any
+    opa: int
+    preferred_draw_unit_id: int
+    preference_score: int
+    def draw_get_dependent_count(self) -> int: ...
+    def draw_image_normal_helper(self, draw_dsc: draw_image_dsc_t, coords: area_t, draw_core_cb: Callable[[draw_task_t, draw_image_dsc_t, image_decoder_dsc_t, draw_image_sup_t, area_t, area_t], None], decoder_args: image_decoder_args_t) -> None: ...
+    def draw_image_tiled_helper(self, draw_dsc: draw_image_dsc_t, coords: area_t, draw_core_cb: Callable[[draw_task_t, draw_image_dsc_t, image_decoder_dsc_t, draw_image_sup_t, area_t, area_t], None], decoder_args: image_decoder_args_t) -> None: ...
+    def draw_label_iterate_characters(self, dsc: draw_label_dsc_t, coords: area_t, cb: Callable[[draw_task_t, draw_glyph_dsc_t, draw_fill_dsc_t, area_t], None]) -> None: ...
+    def draw_line_iterate(self, dsc: draw_line_dsc_t, draw_line_cb: Callable[[draw_task_t, draw_line_dsc_t], None]) -> None: ...
+    def draw_sw_arc(self, dsc: draw_arc_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_blend(self, dsc: draw_sw_blend_dsc_t) -> None: ...
+    def draw_sw_blur(self, dsc: draw_blur_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_border(self, dsc: draw_border_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_box_shadow(self, dsc: draw_box_shadow_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_fill(self, dsc: draw_fill_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_image(self, draw_dsc: draw_image_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_label(self, dsc: draw_label_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_layer(self, draw_dsc: draw_image_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_letter(self, dsc: draw_letter_dsc_t, coords: area_t) -> None: ...
+    def draw_sw_line(self, dsc: draw_line_dsc_t) -> None: ...
+    def draw_sw_mask_rect(self, dsc: draw_mask_rect_dsc_t) -> None: ...
+    def draw_sw_triangle(self, dsc: draw_triangle_dsc_t) -> None: ...
+    def draw_unit_draw_letter(self, dsc: draw_glyph_dsc_t, pos: point_t, font: font_t, letter: int, cb: Callable[[draw_task_t, draw_glyph_dsc_t, draw_fill_dsc_t, area_t], None]) -> None: ...
     def get_arc_dsc(self) -> draw_arc_dsc_t: ...
     def get_area(self, area: area_t) -> None: ...
     def get_blur_dsc(self) -> draw_blur_dsc_t: ...
     def get_border_dsc(self) -> draw_border_dsc_t: ...
     def get_box_shadow_dsc(self) -> draw_box_shadow_dsc_t: ...
-    def get_dependent_count(self) -> int: ...
     def get_draw_dsc(self) -> Any: ...
     def get_fill_dsc(self) -> draw_fill_dsc_t: ...
     def get_image_dsc(self) -> draw_image_dsc_t: ...
@@ -587,57 +1699,87 @@ class draw_task_t(Struct):
     def get_line_dsc(self) -> draw_line_dsc_t: ...
     def get_mask_rect_dsc(self) -> draw_mask_rect_dsc_t: ...
     def get_triangle_dsc(self) -> draw_triangle_dsc_t: ...
-    def get_type(self) -> int: ...
-    def image_normal_helper(self, draw_dsc: draw_image_dsc_t, coords: area_t, draw_core_cb: Callable[..., Any], decoder_args: image_decoder_args_t) -> None: ...
-    def image_tiled_helper(self, draw_dsc: draw_image_dsc_t, coords: area_t, draw_core_cb: Callable[..., Any], decoder_args: image_decoder_args_t) -> None: ...
-    def label_iterate_characters(self, dsc: draw_label_dsc_t, coords: area_t, cb: Callable[..., Any]) -> None: ...
-    def line_iterate(self, dsc: draw_line_dsc_t, draw_line_cb: Callable[..., Any]) -> None: ...
-    def sw_arc(self, dsc: draw_arc_dsc_t, coords: area_t) -> None: ...
-    def sw_blend(self, dsc: draw_sw_blend_dsc_t) -> None: ...
-    def sw_blur(self, dsc: draw_blur_dsc_t, coords: area_t) -> None: ...
-    def sw_border(self, dsc: draw_border_dsc_t, coords: area_t) -> None: ...
-    def sw_box_shadow(self, dsc: draw_box_shadow_dsc_t, coords: area_t) -> None: ...
-    def sw_fill(self, dsc: draw_fill_dsc_t, coords: area_t) -> None: ...
-    def sw_image(self, draw_dsc: draw_image_dsc_t, coords: area_t) -> None: ...
-    def sw_label(self, dsc: draw_label_dsc_t, coords: area_t) -> None: ...
-    def sw_layer(self, draw_dsc: draw_image_dsc_t, coords: area_t) -> None: ...
-    def sw_letter(self, dsc: draw_letter_dsc_t, coords: area_t) -> None: ...
-    def sw_line(self, dsc: draw_line_dsc_t) -> None: ...
-    def sw_mask_rect(self, dsc: draw_mask_rect_dsc_t) -> None: ...
-    def sw_triangle(self, dsc: draw_triangle_dsc_t) -> None: ...
-    def unit_draw_letter(self, dsc: draw_glyph_dsc_t, pos: point_t, font: font_t, letter: int, cb: Callable[..., Any]) -> None: ...
+    def get_type(self) -> DRAW_TASK_TYPE | int: ...
+
 class draw_triangle_dsc_t(Struct):
     base: draw_dsc_base_t
     p: Any
     color: color_t
-    opa: OPA | int
+    opa: int
     grad: grad_dsc_t
     def init(self) -> None: ...
-class draw_unit_t(Struct): ...
+
+class draw_unit_t(Struct):
+    next: draw_unit_t
+    name: str
+    idx: int
+    dispatch_cb: Callable[[draw_unit_t, layer_t], int]
+    evaluate_cb: Callable[[draw_unit_t, draw_task_t], int]
+    wait_for_finish_cb: Callable[[draw_unit_t], int]
+    delete_cb: Callable[[draw_unit_t], int]
+    event_cb: Callable[[event_t], None]
+
+class draw_vector_dsc_t(Struct):
+    ...
+
+class dropdown_list_t(Struct):
+    obj: obj
+    dropdown: obj
+
+class dropdown_t(Struct):
+    obj: obj
+    list: obj
+    text: str
+    symbol: Any
+    options: str
+    option_cnt: int
+    sel_opt_id: int
+    sel_opt_id_orig: int
+    pr_opt_id: int
+    dir: int
+    static_options: int
+    selected_highlight: int
+    static_text: int
+
 class event_dsc_t(Struct):
+    cb: Callable[[event_t], None]
+    user_data: Any
+    filter: int
     def get_cb(self) -> Callable[[event_t], None]: ...
     def get_user_data(self) -> Any: ...
+
 class event_list_t(Struct):
     array: array_t
     is_traversing: int
     has_marked_deleting: int
-    def add(self, user_data: Any, cb: Callable[[event_t], None], filter: int, list: event_list_t) -> event_dsc_t: ...
-    def get_count(self) -> int: ...
-    def get_dsc(self, index: int) -> event_dsc_t: ...
-    def push_and_send(self, code: int, original_target: Any, param: Any) -> int: ...
-    def remove(self, index: int) -> bool: ...
-    def remove_all(self) -> None: ...
-    def remove_dsc(self, dsc: event_dsc_t) -> bool: ...
-    def send(self, e: event_t, preprocess: bool) -> int: ...
+    def event_add(self, cb: Callable[[event_t], None], filter: EVENT | int, user_data: Any) -> event_dsc_t: ...
+    def event_get_count(self) -> int: ...
+    def event_get_dsc(self, index: int) -> event_dsc_t: ...
+    def event_push_and_send(self, code: EVENT | int, original_target: Any, param: Any) -> RESULT | int: ...
+    def event_remove(self, index: int) -> int: ...
+    def event_remove_all(self) -> None: ...
+    def event_remove_dsc(self, dsc: event_dsc_t) -> int: ...
+    def event_send(self, e: event_t, preprocess: int) -> RESULT | int: ...
+
 class event_t(Struct):
+    current_target: Any
+    original_target: Any
+    code: EVENT | int
+    user_data: Any
+    param: Any
+    prev: event_t
+    deleted: int
+    stop_processing: int
+    stop_bubbling: int
+    stop_trickling: int
     def free_user_data_cb(self) -> None: ...
-    def get_code(self) -> int: ...
+    def get_code(self) -> EVENT | int: ...
     def get_cover_area(self) -> area_t: ...
     def get_current_target(self) -> Any: ...
     def get_current_target_obj(self) -> obj: ...
     def get_draw_task(self) -> draw_task_t: ...
-    def get_gesture_state(self, type: INDEV_GESTURE | int) -> int: ...
-    def get_gesture_type(self) -> int: ...
+    def get_gesture_state(self, _type: INDEV_GESTURE | int) -> INDEV_GESTURE_STATE | int: ...
+    def get_gesture_type(self) -> INDEV_GESTURE | int: ...
     def get_hit_test_info(self) -> hit_test_info_t: ...
     def get_indev(self) -> indev_t: ...
     def get_invalidated_area(self) -> area_t: ...
@@ -646,25 +1788,75 @@ class event_t(Struct):
     def get_old_size(self) -> area_t: ...
     def get_param(self) -> Any: ...
     def get_pinch_scale(self) -> float: ...
-    def get_prev_state(self) -> int: ...
+    def get_prev_state(self) -> STATE | int: ...
     def get_rotary_diff(self) -> int: ...
     def get_rotation(self) -> float: ...
     def get_scroll_anim(self) -> anim_t: ...
     def get_self_size_info(self) -> point_t: ...
     def get_target(self) -> Any: ...
     def get_target_obj(self) -> obj: ...
-    def get_two_fingers_swipe_dir(self) -> int: ...
+    def get_two_fingers_swipe_dir(self) -> DIR | int: ...
     def get_two_fingers_swipe_distance(self) -> float: ...
     def get_user_data(self) -> Any: ...
     def pop(self) -> None: ...
     def push(self) -> None: ...
     def set_cover_res(self, res: COVER_RES | int) -> None: ...
     def set_ext_draw_size(self, size: int) -> None: ...
-    def stop_bubbling(self) -> None: ...
-    def stop_processing(self) -> None: ...
-    def stop_trickling(self) -> None: ...
-class font_class_t(Struct): ...
-class font_glyph_dsc_gid_t(Struct): ...
+
+class ffmpeg_player_t(Struct):
+    ...
+
+class file_explorer_t(Struct):
+    ...
+
+class font_class_t(Struct):
+    create_cb: Callable[[font_info_t, Any], font_t]
+    delete_cb: Callable[[font_t], None]
+    dup_src_cb: Callable[[Any], Any]
+    free_src_cb: Callable[[Any], None]
+
+class font_fmt_txt_cmap_t(Struct):
+    range_start: int
+    range_length: int
+    glyph_id_start: int
+    unicode_list: Any
+    glyph_id_ofs_list: Any
+    list_length: int
+    _type: FONT_FMT_TXT_CMAP_TYPE | int
+
+class font_fmt_txt_dsc_t(Struct):
+    glyph_bitmap: Any
+    glyph_dsc: font_fmt_txt_glyph_dsc_t
+    cmaps: font_fmt_txt_cmap_t
+    kern_dsc: Any
+    kern_scale: int
+    cmap_num: int
+    bpp: int
+    kern_classes: int
+    bitmap_format: int
+    stride: int
+
+class font_fmt_txt_glyph_dsc_t(Struct):
+    bitmap_index: int
+    adv_w: int
+    box_w: int
+    box_h: int
+    ofs_x: int
+    ofs_y: int
+
+class font_fmt_txt_kern_classes_t(Struct):
+    class_pair_values: Any
+    left_class_mapping: Any
+    right_class_mapping: Any
+    left_class_cnt: int
+    right_class_cnt: int
+
+class font_fmt_txt_kern_pair_t(Struct):
+    glyph_ids: Any
+    values: Any
+    pair_cnt: int
+    glyph_ids_size: int
+
 class font_glyph_dsc_t(Struct):
     resolved_font: font_t
     adv_w: int
@@ -677,117 +1869,240 @@ class font_glyph_dsc_t(Struct):
     is_placeholder: int
     req_raw_bitmap: int
     outline_stroke_width: int
+    gid: Any
     entry: cache_entry_t
-    def get_bitmap_fmt_txt(self, arg: draw_buf_t) -> Any: ...
-    def get_glyph_bitmap(self, arg: draw_buf_t) -> Any: ...
-    def get_glyph_static_bitmap(self) -> Any: ...
-    def release_draw_data(self) -> None: ...
+    def font_get_bitmap_fmt_txt(self, draw_buf: draw_buf_t) -> Any: ...
+    def font_get_glyph_bitmap(self, draw_buf: draw_buf_t) -> Any: ...
+    def font_get_glyph_static_bitmap(self) -> Any: ...
+    def font_glyph_release_draw_data(self) -> None: ...
+
 class font_info_t(Struct):
-    @staticmethod
-    def is_equal(ft_info_1: font_info_t, ft_info_2: font_info_t) -> bool: ...
+    name: str
+    class_p: font_class_t
+    size: int
+    render_mode: int
+    style: int
+    kerning: FONT_KERNING | int
+    def is_equal(self, ft_info_2: font_info_t) -> int: ...
+
+class font_manager_t(Struct):
+    ...
+
 class font_t(Struct):
-    def get_glyph_dsc(self, dsc_out: font_glyph_dsc_t, letter: int, letter_next: int) -> bool: ...
-    def get_glyph_dsc_fmt_txt(self, dsc_out: font_glyph_dsc_t, unicode_letter: int, unicode_letter_next: int) -> bool: ...
+    get_glyph_dsc: Callable[[font_t, font_glyph_dsc_t, int, int], int]
+    get_glyph_bitmap: Callable[[font_glyph_dsc_t, draw_buf_t], Any]
+    release_glyph: Callable[[font_t, font_glyph_dsc_t], None]
+    line_height: int
+    base_line: int
+    subpx: int
+    kerning: int
+    static_bitmap: int
+    underline_position: int
+    underline_thickness: int
+    dsc: Any
+    fallback: font_t
+    user_data: Any
+    def get_glyph_dsc_fmt_txt(self, dsc_out: font_glyph_dsc_t, unicode_letter: int, unicode_letter_next: int) -> int: ...
     def get_glyph_width(self, letter: int, letter_next: int) -> int: ...
     def get_line_height(self) -> int: ...
-    def has_static_bitmap(self) -> bool: ...
+    def has_static_bitmap(self) -> int: ...
     def set_kerning(self, kerning: FONT_KERNING | int) -> None: ...
+
+class fpoint_t(Struct):
+    ...
+
+class fragment_class_t(Struct):
+    ...
+
+class fragment_managed_states_t(Struct):
+    ...
+
+class fragment_t(Struct):
+    ...
+
+class freetype_outline_event_param_t(Struct):
+    ...
+
+class freetype_outline_vector_t(Struct):
+    ...
+
 class fs_dir_t(Struct):
     dir_d: Any
     drv: fs_drv_t
-    def close(self) -> int: ...
-    def open(self, path: str) -> int: ...
-    def read(self, fn: str, fn_len: int) -> int: ...
+    def close(self) -> FS_RES | int: ...
+    def open(self, path: str) -> FS_RES | int: ...
+    def read(self, fn: str, fn_len: int) -> FS_RES | int: ...
+
 class fs_drv_t(Struct):
-    def init(self, drv: Any) -> None: ...
-    def register(self, drv: Any) -> None: ...
-class fs_file_cache_t(Struct): ...
+    letter: int
+    cache_size: int
+    ready_cb: Callable[[fs_drv_t], int]
+    remove_cb: Callable[[fs_drv_t], None]
+    open_cb: Callable[[fs_drv_t, str, FS_MODE | int], Any]
+    close_cb: Callable[[fs_drv_t, Any], FS_RES | int]
+    read_cb: Callable[[fs_drv_t, Any, Any, int, Any], FS_RES | int]
+    write_cb: Callable[[fs_drv_t, Any, Any, int, Any], FS_RES | int]
+    seek_cb: Callable[[fs_drv_t, Any, int, FS_WHENCE | int], FS_RES | int]
+    tell_cb: Callable[[fs_drv_t, Any, Any], FS_RES | int]
+    dir_open_cb: Callable[[fs_drv_t, str], Any]
+    dir_read_cb: Callable[[fs_drv_t, Any, str, int], FS_RES | int]
+    dir_close_cb: Callable[[fs_drv_t, Any], FS_RES | int]
+    user_data: Any
+    def init(self) -> None: ...
+    def register(self) -> None: ...
+
+class fs_file_cache_t(Struct):
+    start: int
+    end: int
+    file_position: int
+    buffer: Any
+
 class fs_file_t(Struct):
     file_d: Any
     drv: fs_drv_t
     cache: fs_file_cache_t
-    def close(self) -> int: ...
-    def get_size(self, pos: Any) -> int: ...
-    def open(self, path: str, mode: int) -> int: ...
-    def read(self, buf: Any, btr: int, br: Any) -> int: ...
-    def seek(self, pos: int, whence: int) -> int: ...
-    def tell(self, pos: Any) -> int: ...
-    def write(self, buf: Any, btw: int, bw: Any) -> int: ...
+    def fs_close(self) -> FS_RES | int: ...
+    def fs_get_size(self, size_res: Any) -> FS_RES | int: ...
+    def fs_open(self, path: str, mode: FS_MODE | int) -> FS_RES | int: ...
+    def fs_read(self, buf: Any, btr: int, br: Any) -> FS_RES | int: ...
+    def fs_seek(self, pos: int, whence: FS_WHENCE | int) -> FS_RES | int: ...
+    def fs_tell(self, pos: Any) -> FS_RES | int: ...
+    def fs_write(self, buf: Any, btw: int, bw: Any) -> FS_RES | int: ...
+
 class fs_path_ex_t(Struct):
     path: Any
-    def get_buffer_from_path(self, buffer: Any, size: Any) -> int: ...
-    def make_path_from_buffer(self, letter: int, buf: Any, size: int, ext: str) -> None: ...
-class grad_dsc_params_conical_t(Struct): ...
-class grad_dsc_params_linear_t(Struct): ...
-class grad_dsc_params_radial_t(Struct): ...
-class grad_dsc_params_t(Struct): ...
+    def fs_get_buffer_from_path(self, buffer: Any, size: Any) -> RESULT | int: ...
+    def fs_make_path_from_buffer(self, letter: int, buf: Any, size: int, ext: str) -> None: ...
+
+class gltf_environment_t(Struct):
+    ...
+
+class gltf_ibl_sampler_t(Struct):
+    ...
+
+class gltf_model_node_t(Struct):
+    ...
+
+class gltf_model_t(Struct):
+    ...
+
+class gltf_t(Struct):
+    ...
+
 class grad_dsc_t(Struct):
     stops: Any
     stops_count: int
     dir: GRAD_DIR | int
     extend: GRAD_EXTEND | int
+    params: Any
     state: Any
-    def conical_init(self, from_x: int, from_y: int, to_x: int, to_y: int, extend: int) -> None: ...
-    def horizontal_init(self) -> None: ...
-    def init_stops(self, colors: Any, opa: Any, fracs: Any, num_stops: int) -> None: ...
-    def linear_init(self, from_x: int, from_y: int, to_x: int, to_y: int, extend: int) -> None: ...
-    def radial_init(self, from_x: int, from_y: int, to_x: int, to_y: int, extend: int) -> None: ...
-    def radial_set_focal(self, center_x: int, center_y: int, radius: int) -> None: ...
-    def vertical_init(self) -> None: ...
+    def grad_conical_init(self, center_x: int, center_y: int, start_angle: int, end_angle: int, extend: GRAD_EXTEND | int) -> None: ...
+    def grad_horizontal_init(self) -> None: ...
+    def grad_init_stops(self, colors: Any, opa: Any, fracs: Any, num_stops: int) -> None: ...
+    def grad_linear_init(self, from_x: int, from_y: int, to_x: int, to_y: int, extend: GRAD_EXTEND | int) -> None: ...
+    def grad_radial_init(self, center_x: int, center_y: int, to_x: int, to_y: int, extend: GRAD_EXTEND | int) -> None: ...
+    def grad_radial_set_focal(self, center_x: int, center_y: int, radius: int) -> None: ...
+    def grad_vertical_init(self) -> None: ...
+
 class grad_stop_t(Struct):
     color: color_t
-    opa: OPA | int
+    opa: int
     frac: int
+
 class group_t(Struct):
+    obj_ll: ll_t
+    obj_focus: Any
+    focus_cb: Callable[[group_t], None]
+    edge_cb: Callable[[group_t, int], None]
+    user_data: Any
+    frozen: int
+    editing: int
+    refocus_policy: int
+    wrap: int
     def add_obj(self, obj: obj) -> None: ...
-    def delete(self, arg: Any) -> None: ...
-    def focus_freeze(self, en: bool) -> None: ...
-    def focus_next(self, arg: Any) -> None: ...
-    def focus_prev(self, arg: Any) -> None: ...
-    def get_edge_cb(self) -> Callable[[group_t, bool], None]: ...
-    def get_editing(self) -> bool: ...
+    def delete(self) -> None: ...
+    def focus_freeze(self, en: int) -> None: ...
+    def focus_next(self) -> None: ...
+    def focus_prev(self) -> None: ...
+    def get_edge_cb(self) -> Callable[[group_t, int], None]: ...
+    def get_editing(self) -> int: ...
     def get_focus_cb(self) -> Callable[[group_t], None]: ...
     def get_focused(self) -> obj: ...
     def get_obj_by_index(self, index: int) -> obj: ...
     def get_obj_count(self) -> int: ...
     def get_user_data(self) -> Any: ...
-    def get_wrap(self) -> bool: ...
-    def remove_all_objs(self, arg: Any) -> None: ...
-    def send_data(self, c: int) -> int: ...
-    def set_default(self, arg: Any) -> None: ...
-    def set_edge_cb(self, edge_cb: Callable[[group_t, bool], None]) -> None: ...
-    def set_editing(self, edit: bool) -> None: ...
+    def get_wrap(self) -> int: ...
+    def remove_all_objs(self) -> None: ...
+    def send_data(self, c: int) -> RESULT | int: ...
+    def set_default(self) -> None: ...
+    def set_edge_cb(self, edge_cb: Callable[[group_t, int], None]) -> None: ...
+    def set_editing(self, edit: int) -> None: ...
     def set_focus_cb(self, focus_cb: Callable[[group_t], None]) -> None: ...
     def set_refocus_policy(self, policy: GROUP_REFOCUS_POLICY | int) -> None: ...
     def set_user_data(self, user_data: Any) -> None: ...
-    def set_wrap(self, en: bool) -> None: ...
-class hit_test_info_t(Struct): ...
-class image_cache_data_t(Struct): ...
+    def set_wrap(self, en: int) -> None: ...
+
+class hit_test_info_t(Struct):
+    point: point_t
+    res: int
+
+class image_cache_data_t(Struct):
+    slot: cache_slot_size_t
+    src: Any
+    src_type: image.SRC | int
+    decoded: draw_buf_t
+    decoder: image_decoder_t
+    user_data: Any
+
 class image_colorkey_t(Struct):
     low: color_t
     high: color_t
-class image_decoder_args_t(Struct): ...
+
+class image_decoder_args_t(Struct):
+    stride_align: int
+    premultiply: int
+    no_cache: int
+    use_indexed: int
+    flush_cache: int
+
 class image_decoder_dsc_t(Struct):
-    def close(self) -> None: ...
-    def get_area(self, full_area: area_t, decoded_area: area_t) -> int: ...
-    def open(self, src: Any, args: image_decoder_args_t) -> int: ...
-    def post_process(self, decoded: draw_buf_t) -> draw_buf_t: ...
+    decoder: image_decoder_t
+    args: image_decoder_args_t
+    src: Any
+    src_type: image.SRC | int
+    file: fs_file_t
+    header: image_header_t
+    decoded: draw_buf_t
+    palette: color32_t
+    palette_size: int
+    time_to_open: int
+    error_msg: str
+    cache: cache_t
+    cache_entry: cache_entry_t
+    user_data: Any
+
 class image_decoder_t(Struct):
-    def add_to_cache(self, search_key: image_cache_data_t, decoded: draw_buf_t, user_data: Any) -> cache_entry_t: ...
-    def delete(self) -> None: ...
-    def get_next(self) -> image_decoder_t: ...
-    def set_close_cb(self, close_cb: Callable[[image_decoder_t, image_decoder_dsc_t], None]) -> None: ...
-    def set_get_area_cb(self, read_line_cb: Callable[[image_decoder_t, image_decoder_dsc_t, area_t, area_t], RESULT | int]) -> None: ...
-    def set_info_cb(self, info_cb: Callable[[image_decoder_t, image_decoder_dsc_t, image_header_t], RESULT | int]) -> None: ...
-    def set_open_cb(self, open_cb: Callable[[image_decoder_t, image_decoder_dsc_t], RESULT | int]) -> None: ...
+    info_cb: Callable[[image_decoder_t, image_decoder_dsc_t, image_header_t], RESULT | int]
+    open_cb: Callable[[image_decoder_t, image_decoder_dsc_t], RESULT | int]
+    get_area_cb: Callable[[image_decoder_t, image_decoder_dsc_t, area_t, area_t], RESULT | int]
+    close_cb: Callable[[image_decoder_t, image_decoder_dsc_t], None]
+    custom_draw_cb: Callable[[layer_t, image_decoder_dsc_t, area_t, draw_image_dsc_t, area_t], None]
+    name: str
+    user_data: Any
+
 class image_dsc_t(Struct):
     header: image_header_t
     data_size: int
     data: Any
     reserved: Any
     reserved_2: Any
-    def buf_free(self) -> None: ...
-    def buf_set_palette(self, id: int, c: color32_t) -> None: ...
+
+class image_header_cache_data_t(Struct):
+    src: Any
+    src_type: image.SRC | int
+    header: image_header_t
+    decoder: image_decoder_t
+
 class image_header_t(Struct):
     magic: int
     cf: int
@@ -796,6 +2111,37 @@ class image_header_t(Struct):
     h: int
     stride: int
     reserved_2: int
+
+class image_t(Struct):
+    obj: obj
+    src: Any
+    bitmap_mask_src: image_dsc_t
+    offset: point_t
+    w: int
+    h: int
+    rotation: int
+    scale_x: int
+    scale_y: int
+    pivot: point_t
+    src_type: int
+    cf: int
+    antialias: int
+    align: int
+    blend_mode: int
+
+class imagebutton_src_info_t(Struct):
+    img_src: Any
+    header: image_header_t
+
+class imagebutton_t(Struct):
+    obj: obj
+    src_mid: Any
+    src_left: Any
+    src_right: Any
+
+class ime_pinyin_t(Struct):
+    ...
+
 class indev_data_t(Struct):
     gesture_type: Any
     gesture_data: Any
@@ -805,23 +2151,73 @@ class indev_data_t(Struct):
     btn_id: int
     enc_diff: int
     timestamp: int
-    continue_reading: bool
-    def set_gesture_data(self, recognizer: indev_gesture_recognizer_t, type: int) -> None: ...
-class indev_gesture_configuration_t(Struct): ...
+    continue_reading: int
+    def indev_set_gesture_data(self, recognizer: indev_gesture_recognizer_t, _type: INDEV_GESTURE | int) -> None: ...
+
+class indev_gesture_configuration_t(Struct):
+    ...
+
 class indev_gesture_recognizer_t(Struct):
-    def detect_pinch(self, arg: Any, arg2: indev_touch_data_t, arg3: int) -> None: ...
-    def detect_rotation(self, arg: Any, arg2: indev_touch_data_t, arg3: int) -> None: ...
-    def detect_two_fingers_swipe(self, arg: Any, arg2: indev_touch_data_t, arg3: int) -> None: ...
-    def get_gesture_center_point(self, point: point_t) -> None: ...
-    def get_gesture_primary_point(self, point: point_t) -> None: ...
-    def recognizer_is_active(self) -> bool: ...
-class indev_gesture_t(Struct): ...
-# indev_keypad_t: use indev_t instead.
-# indev_pointer_t: use indev_t instead.
+    _type: INDEV_GESTURE | int
+    state: INDEV_GESTURE_STATE | int
+    info: indev_gesture_t
+    scale: float
+    rotation: float
+    distance: float
+    speed: float
+    two_fingers_swipe_dir: DIR | int
+    config: indev_gesture_configuration_t
+    recog_fn: Callable[[indev_gesture_recognizer_t, indev_touch_data_t, int], None]
+    def indev_gesture_detect_pinch(self, touches: indev_touch_data_t, touch_cnt: int) -> None: ...
+    def indev_gesture_detect_rotation(self, touches: indev_touch_data_t, touch_cnt: int) -> None: ...
+    def indev_gesture_detect_two_fingers_swipe(self, touches: indev_touch_data_t, touch_cnt: int) -> None: ...
+    def indev_get_gesture_center_point(self, point: point_t) -> None: ...
+    def indev_get_gesture_primary_point(self, point: point_t) -> None: ...
+    def indev_recognizer_is_active(self) -> int: ...
+
+class indev_gesture_t(Struct):
+    ...
+
 class indev_t(Struct):
+    _type: INDEV_TYPE | int
+    read_cb: Callable[[indev_t, indev_data_t], None]
+    state: INDEV_STATE | int
+    prev_state: INDEV_STATE | int
+    mode: INDEV_MODE | int
+    long_pr_sent: int
+    reset_query: int
+    enabled: int
+    wait_until_release: int
+    stop_processing_query: int
+    timestamp: int
+    pr_timestamp: int
+    longpr_rep_timestamp: int
+    driver_data: Any
+    user_data: Any
+    disp: display_t
+    read_timer: timer_t
+    scroll_limit: int
+    scroll_throw: int
+    gesture_min_velocity: int
+    gesture_min_distance: int
+    long_press_time: int
+    long_press_repeat_time: int
+    rotary_sensitivity: int
+    pointer: Any
+    keypad: Any
+    cursor: obj
+    group: group_t
+    btn_points: point_t
+    event_list: event_list_t
+    scroll_throw_anim: anim_t
+    key_remap_cb: Callable[[indev_t, KEY | int], KEY | int]
+    recognizers: Any
+    cur_gesture: INDEV_GESTURE | int
+    gesture_data: Any
+    gesture_type: Any
     def add_event_cb(self, event_cb: Callable[[event_t], None], filter: EVENT | int, user_data: Any) -> None: ...
     def delete(self) -> None: ...
-    def enable(self, enable: bool) -> None: ...
+    def enable(self, enable: int) -> None: ...
     def find_scroll_obj(self) -> obj: ...
     def gesture_init(self) -> None: ...
     def gesture_recognizers_set_data(self, data: indev_data_t) -> None: ...
@@ -831,31 +2227,31 @@ class indev_t(Struct):
     def get_driver_data(self) -> Any: ...
     def get_event_count(self) -> int: ...
     def get_event_dsc(self, index: int) -> event_dsc_t: ...
-    def get_gesture_dir(self) -> int: ...
+    def get_gesture_dir(self) -> DIR | int: ...
     def get_group(self) -> group_t: ...
     def get_key(self) -> int: ...
-    def get_mode(self) -> int: ...
+    def get_mode(self) -> INDEV_MODE | int: ...
     def get_next(self) -> indev_t: ...
     def get_point(self, point: point_t) -> None: ...
-    def get_press_moved(self) -> bool: ...
+    def get_press_moved(self) -> int: ...
     def get_read_cb(self) -> Callable[[indev_t, indev_data_t], None]: ...
     def get_read_timer(self) -> timer_t: ...
-    def get_scroll_dir(self) -> int: ...
+    def get_scroll_dir(self) -> DIR | int: ...
     def get_scroll_obj(self) -> obj: ...
     def get_short_click_streak(self) -> int: ...
-    def get_state(self) -> int: ...
-    def get_type(self) -> int: ...
+    def get_state(self) -> INDEV_STATE | int: ...
+    def get_type(self) -> INDEV_TYPE | int: ...
     def get_user_data(self) -> Any: ...
     def get_vect(self, point: point_t) -> None: ...
     def read(self) -> None: ...
-    def remove_event(self, index: int) -> bool: ...
+    def remove_event(self, index: int) -> int: ...
     def remove_event_cb_with_user_data(self, event_cb: Callable[[event_t], None], user_data: Any) -> int: ...
     def reset(self, obj: obj) -> None: ...
     def reset_long_press(self) -> None: ...
     def scroll_handler(self) -> None: ...
     def scroll_throw_handler(self) -> None: ...
     def scroll_throw_predict(self, dir: DIR | int) -> int: ...
-    def send_event(self, code: EVENT | int, param: Any) -> int: ...
+    def send_event(self, code: EVENT | int, param: Any) -> RESULT | int: ...
     def set_button_points(self, points: Any) -> None: ...
     def set_cursor(self, cur_obj: obj) -> None: ...
     def set_display(self, disp: display_t) -> None: ...
@@ -877,33 +2273,102 @@ class indev_t(Struct):
     def set_user_data(self, user_data: Any) -> None: ...
     def stop_processing(self) -> None: ...
     def wait_release(self) -> None: ...
-class indev_touch_data_t(Struct): ...
+
+class indev_touch_data_t(Struct):
+    point: point_t
+    state: INDEV_STATE | int
+    id: int
+    timestamp: int
+
 class iter_t(Struct):
     def destroy(self) -> None: ...
     def get_context(self) -> Any: ...
     def inspect(self, inspect_cb: Callable[[Any], None]) -> None: ...
     def make_peekable(self, capacity: int) -> None: ...
-    def next(self, elem: Any) -> int: ...
-    def peek(self, elem: Any) -> int: ...
-    def peek_advance(self) -> int: ...
-    def peek_reset(self) -> int: ...
+    def next(self, elem: Any) -> RESULT | int: ...
+    def peek(self, elem: Any) -> RESULT | int: ...
+    def peek_advance(self) -> RESULT | int: ...
+    def peek_reset(self) -> RESULT | int: ...
+
+class keyboard_t(Struct):
+    btnm: buttonmatrix
+    ta: obj
+    mode: keyboard.MODE | int
+    popovers: int
+
+class label_t(Struct):
+    obj: obj
+    text: str
+    dot: Any
+    dot_begin: int
+    hint: draw_label_hint_t
+    sel_start: int
+    sel_end: int
+    size_cache: point_t
+    offset: point_t
+    long_mode: label.LONG_MODE | int
+    static_txt: int
+    recolor: int
+    expand: int
+    invalid_size_cache: int
+    need_refr_text: int
+    text_size: point_t
+
 class layer_t(Struct):
+    draw_buf: draw_buf_t
+    draw_task_head: draw_task_t
+    parent: layer_t
+    next: layer_t
+    user_data: Any
+    buf_area: area_t
+    phy_clip_area: area_t
+    _clip_area: area_t
+    partial_y_offset: int
+    recolor: color32_t
+    color_format: COLOR_FORMAT | int
+    all_tasks_added: int
+    opa: int
     def init(self) -> None: ...
     def reset(self) -> None: ...
+
 class layout_callbacks_t(Struct):
     layout_update_cb: Callable[[obj, Any], None]
-    get_min_size_cb: Callable[[obj, Any, bool, Any], bool]
-    def create(self, user_data: Any, callbacks: layout_callbacks_t) -> int: ...
+    get_min_size_cb: Callable[[obj, Any, int, Any], int]
+    def layout_create(self, user_data: Any) -> int: ...
+
 class layout_dsc_t(Struct):
     callbacks: layout_callbacks_t
     user_data: Any
+
+class led_t(Struct):
+    obj: obj
+    color: color_t
+    bright: int
+
+class libinput_event_t(Struct):
+    ...
+
+class libinput_t(Struct):
+    ...
+
+class line_t(Struct):
+    obj: obj
+    point_array: Any
+    point_num: int
+    y_inv: int
+    point_array_is_mutable: int
+
+class linux_proc_stat_t(Struct):
+    fields: Any
+    buffer: Any
+
 class ll_t(Struct):
     n_size: int
-    head: int
-    tail: int
-    def chg_list(self, ll_new_p: ll_t, node: Any, head: bool) -> None: ...
+    head: Any
+    tail: Any
+    def chg_list(self, ll_new_p: ll_t, node: Any, head: int) -> None: ...
     def clear(self) -> None: ...
-    def clear_custom(self, cleanup: Callable[..., Any]) -> None: ...
+    def clear_custom(self, cleanup: Callable[[Any], None]) -> None: ...
     def get_head(self) -> Any: ...
     def get_len(self) -> int: ...
     def get_next(self, n_act: Any) -> Any: ...
@@ -913,11 +2378,13 @@ class ll_t(Struct):
     def ins_head(self) -> Any: ...
     def ins_prev(self, n_act: Any) -> Any: ...
     def ins_tail(self) -> Any: ...
-    @staticmethod
-    def is_empty(ll_p: ll_t) -> bool: ...
+    def is_empty(self) -> int: ...
     def move_before(self, n_act: Any, n_after: Any) -> None: ...
     def remove(self, node_p: Any) -> None: ...
-class matrix_t(Struct): ...
+
+class matrix_t(Struct):
+    ...
+
 class mem_monitor_t(Struct):
     total_size: int
     free_cnt: int
@@ -928,116 +2395,350 @@ class mem_monitor_t(Struct):
     used_pct: int
     frag_pct: int
     def core(self) -> None: ...
-    def monitor(self) -> None: ...
+    def mem_monitor(self) -> None: ...
+
+class menu_history_t(Struct):
+    page: obj
+
+class menu_load_page_event_data_t(Struct):
+    menu: obj
+    page: obj
+
+class menu_page_t(Struct):
+    obj: obj
+    title: str
+    static_title: int
+
+class menu_t(Struct):
+    obj: obj
+    storage: obj
+    main: obj
+    main_page: obj
+    main_header: obj
+    main_header_back_btn: obj
+    main_header_title: obj
+    sidebar: obj
+    sidebar_page: obj
+    sidebar_header: obj
+    sidebar_header_back_btn: obj
+    sidebar_header_title: obj
+    selected_tab: obj
+    history_ll: ll_t
+    cur_depth: int
+    prev_depth: int
+    sidebar_generated: int
+    mode_header: menu.HEADER | int
+    mode_root_back_btn: menu.ROOT_BACK_BUTTON | int
+
+class monkey_config_t(Struct):
+    ...
+
+class msgbox_t(Struct):
+    obj: obj
+    header: obj
+    content: obj
+    footer: obj
+    title: obj
+
 class obj_class_t(Struct):
-    def create_obj(self, parent: obj) -> obj: ...
-    def event_base(self, e: event_t) -> int: ...
-class obj_style_transition_dsc_t(Struct): ...
+    base_class: obj_class_t
+    constructor_cb: Callable[[obj_class_t, obj], None]
+    destructor_cb: Callable[[obj_class_t, obj], None]
+    event_cb: Callable[[obj_class_t, event_t], None]
+    user_data: Any
+    name: str
+    width_def: int
+    height_def: int
+    editable: int
+    group_def: int
+    instance_size: int
+    theme_inheritable: int
+
+class obj_spec_attr_t(Struct):
+    children: Any
+    group_p: group_t
+    event_list: event_list_t
+    scroll: point_t
+    ext_click_pad: int
+    ext_draw_size: int
+    child_cnt: int
+    scrollbar_mode: int
+    scroll_snap_x: int
+    scroll_snap_y: int
+    scroll_dir: int
+    layer_type: int
+    name_static: int
+
+class obj_style_t(Struct):
+    style: style_t
+    selector: int
+    is_local: int
+    is_trans: int
+    is_disabled: int
+    is_theme: int
+
+class obj_style_transition_dsc_t(Struct):
+    time: int
+    delay: int
+    selector: int
+    prop: int
+    path_cb: Callable[[anim_t], int]
+    user_data: Any
+
+class obj_t(Struct):
+    class_p: obj_class_t
+    parent: obj
+    spec_attr: obj_spec_attr_t
+    styles: obj_style_t
+    style_main_prop_is_set: int
+    style_other_prop_is_set: int
+    user_data: Any
+    coords: area_t
+    flags: OBJ_FLAG | int
+    state: int
+    layout_inv: int
+    readjust_scroll_after_layout: int
+    scr_layout_inv: int
+    skip_trans: int
+    style_cnt: int
+    h_layout: int
+    w_layout: int
+    h_ignore_size: int
+    w_ignore_size: int
+    is_deleting: int
+    radio_button: int
+    rendered: int
+
 class observer_t(Struct):
+    subject: subject_t
+    cb: Callable[[observer_t, subject_t], None]
+    target: Any
+    user_data: Any
+    auto_free_user_data: int
+    notified: int
+    for_obj: int
     def get_target(self) -> Any: ...
     def get_target_obj(self) -> obj: ...
     def get_user_data(self) -> Any: ...
     def remove(self) -> None: ...
+
+class opengles_window_t(Struct):
+    ...
+
+class opengles_window_texture_t(Struct):
+    ...
+
 class point_precise_t(Struct):
     x: float
     y: float
-    @staticmethod
-    def from_precise(p: point_precise_t) -> point_t: ...
+    def point_from_precise(self) -> point_t: ...
     def set(self, x: float, y: float) -> None: ...
     def swap(self, p2: point_precise_t) -> None: ...
+
 class point_t(Struct):
     x: int
     y: int
-    def array_transform(self, count: int, angle: int, scale_x: int, scale_y: int, pivot: point_t, zoom_first: bool) -> None: ...
+    def array_transform(self, count: int, angle: int, scale_x: int, scale_y: int, pivot: point_t, zoom_first: int) -> None: ...
     def set(self, x: int, y: int) -> None: ...
     def swap(self, p2: point_t) -> None: ...
     def to_precise(self) -> point_precise_t: ...
-    def transform(self, angle: int, scale_x: int, scale_y: int, pivot: point_t, zoom_first: bool) -> None: ...
+    def transform(self, angle: int, scale_x: int, scale_y: int, pivot: point_t, zoom_first: int) -> None: ...
+
+class profiler_builtin_config_t(Struct):
+    ...
+
+class qrcode_t(Struct):
+    canvas: canvas
+    dark_color: color_t
+    light_color: color_t
+    quiet_zone: int
+
 class rb_node_t(Struct):
-    def maximum_from(self) -> rb_node_t: ...
-    def minimum_from(self) -> rb_node_t: ...
+    parent: rb_node_t
+    left: rb_node_t
+    right: rb_node_t
+    color: RB_COLOR | int
+    data: Any
+    def rb_maximum_from(self) -> rb_node_t: ...
+    def rb_minimum_from(self) -> rb_node_t: ...
+
 class rb_t(Struct):
+    root: rb_node_t
+    compare: Callable[[Any, Any], int]
+    size: int
     def destroy(self) -> None: ...
-    def drop(self, key: Any) -> bool: ...
-    def drop_node(self, node: rb_node_t) -> bool: ...
+    def drop(self, key: Any) -> int: ...
+    def drop_node(self, node: rb_node_t) -> int: ...
     def find(self, key: Any) -> rb_node_t: ...
-    def init(self, compare: Callable[[Any, Any], int], node_size: int) -> bool: ...
+    def init(self, compare: Callable[[Any, Any], int], node_size: int) -> int: ...
     def insert(self, key: Any) -> rb_node_t: ...
     def maximum(self) -> rb_node_t: ...
     def minimum(self) -> rb_node_t: ...
     def remove(self, key: Any) -> Any: ...
     def remove_node(self, node: rb_node_t) -> Any: ...
+
+class rlottie_t(Struct):
+    ...
+
+class roller_t(Struct):
+    obj: obj
+    option_cnt: int
+    sel_opt_id: int
+    sel_opt_id_ori: int
+    inf_page_cnt: int
+    mode: roller.MODE | int
+    moved: int
+
+class scale_needle_t(Struct):
+    obj: obj
+    value: int
+    length: int
+
 class scale_section_t(Struct):
-    def set_range(self, min: int, max: int) -> None: ...
-    def set_style(self, part: PART | int, section_part_style: style_t) -> None: ...
+    main_style: style_t
+    indicator_style: style_t
+    items_style: style_t
+    range_min: int
+    range_max: int
+    first_tick_idx_in_section: int
+    last_tick_idx_in_section: int
+    first_tick_in_section_width: int
+    last_tick_in_section_width: int
+    first_tick_in_section: point_t
+    last_tick_in_section: point_t
+    first_tick_idx_is_major: int
+    last_tick_idx_is_major: int
+
+class scale_t(Struct):
+    obj: obj
+    section_ll: ll_t
+    txt_src: Any
+    mode: scale.MODE | int
+    range_min: int
+    range_max: int
+    total_tick_count: int
+    major_tick_every: int
+    label_enabled: int
+    post_draw: int
+    draw_ticks_on_top: int
+    angle_range: int
+    rotation: int
+    custom_label_cnt: int
+    last_tick_width: int
+    first_tick_width: int
+    needles: array_t
+
+class slider_t(Struct):
+    bar: bar
+    left_knob_area: area_t
+    right_knob_area: area_t
+    pressed_point: point_t
+    value_to_set: Any
+    dragging: int
+    left_knob_focus: int
+
 class span_coords_t(Struct):
     heading: area_t
     middle: area_t
     trailing: area_t
+
 class span_t(Struct):
+    txt: str
+    style: style_t
+    static_flag: int
+    trailing_pos: point_t
+    trailing_height: int
     def get_style(self) -> style_t: ...
     def get_text(self) -> str: ...
     def set_text(self, text: str) -> None: ...
     def set_text_fmt(self, fmt: str, *args: Any) -> None: ...
     def set_text_static(self, text: str) -> None: ...
+
+class spangroup_t(Struct):
+    obj: obj
+    lines: int
+    indent: int
+    cache_w: int
+    cache_h: int
+    child_ll: ll_t
+    overflow: int
+    refresh: int
+
+class spinbox_t(Struct):
+    ta: textarea
+    value: int
+    range_max: int
+    range_min: int
+    step: int
+    digit_count: int
+    dec_point_pos: int
+    rollover: int
+    digit_step_dir: int
+
+class spinner_t(Struct):
+    ...
+
 class sqrt_res_t(Struct):
     i: int
     f: int
+
+class style_const_prop_t(Struct):
+    prop: int
+    value: style_value_t
+
 class style_t(Struct):
     values_and_props: Any
     has_group: int
     prop_cnt: int
     def copy(self, src: style_t) -> None: ...
-    def get_prop(self, prop: int, value: style_value_t) -> int: ...
-    def get_prop_inlined(self, prop: int, value: style_value_t) -> int: ...
+    def get_prop(self, prop: int, value: style_value_t) -> STYLE_RES | int: ...
+    def get_prop_inlined(self, prop: int, value: style_value_t) -> STYLE_RES | int: ...
     def init(self) -> None: ...
-    @staticmethod
-    def is_const(style: style_t) -> bool: ...
-    @staticmethod
-    def is_empty(style: style_t) -> bool: ...
+    def is_const(self) -> int: ...
+    def is_empty(self) -> int: ...
     def merge(self, src: style_t) -> None: ...
-    def remove_prop(self, prop: int) -> bool: ...
+    def remove_prop(self, prop: int) -> int: ...
     def reset(self) -> None: ...
     def set_align(self, value: ALIGN | int) -> None: ...
     def set_anim(self, value: anim_t) -> None: ...
     def set_anim_duration(self, value: int) -> None: ...
     def set_arc_color(self, value: color_t) -> None: ...
     def set_arc_image_src(self, value: Any) -> None: ...
-    def set_arc_opa(self, value: OPA | int) -> None: ...
-    def set_arc_rounded(self, value: bool) -> None: ...
+    def set_arc_opa(self, value: int) -> None: ...
+    def set_arc_rounded(self, value: int) -> None: ...
     def set_arc_width(self, value: int) -> None: ...
     def set_base_dir(self, value: BASE_DIR | int) -> None: ...
     def set_bg_color(self, value: color_t) -> None: ...
     def set_bg_grad(self, value: grad_dsc_t) -> None: ...
     def set_bg_grad_color(self, value: color_t) -> None: ...
     def set_bg_grad_dir(self, value: GRAD_DIR | int) -> None: ...
-    def set_bg_grad_opa(self, value: OPA | int) -> None: ...
+    def set_bg_grad_opa(self, value: int) -> None: ...
     def set_bg_grad_stop(self, value: int) -> None: ...
-    def set_bg_image_opa(self, value: OPA | int) -> None: ...
+    def set_bg_image_opa(self, value: int) -> None: ...
     def set_bg_image_recolor(self, value: color_t) -> None: ...
-    def set_bg_image_recolor_opa(self, value: OPA | int) -> None: ...
+    def set_bg_image_recolor_opa(self, value: int) -> None: ...
     def set_bg_image_src(self, value: Any) -> None: ...
-    def set_bg_image_tiled(self, value: bool) -> None: ...
-    def set_bg_main_opa(self, value: OPA | int) -> None: ...
+    def set_bg_image_tiled(self, value: int) -> None: ...
+    def set_bg_main_opa(self, value: int) -> None: ...
     def set_bg_main_stop(self, value: int) -> None: ...
-    def set_bg_opa(self, value: OPA | int) -> None: ...
+    def set_bg_opa(self, value: int) -> None: ...
     def set_bitmap_mask_src(self, value: Any) -> None: ...
     def set_blend_mode(self, value: BLEND_MODE | int) -> None: ...
-    def set_blur_backdrop(self, value: bool) -> None: ...
+    def set_blur_backdrop(self, value: int) -> None: ...
     def set_blur_quality(self, value: BLUR_QUALITY | int) -> None: ...
     def set_blur_radius(self, value: int) -> None: ...
     def set_border_color(self, value: color_t) -> None: ...
-    def set_border_opa(self, value: OPA | int) -> None: ...
-    def set_border_post(self, value: bool) -> None: ...
+    def set_border_opa(self, value: int) -> None: ...
+    def set_border_post(self, value: int) -> None: ...
     def set_border_side(self, value: BORDER_SIDE | int) -> None: ...
     def set_border_width(self, value: int) -> None: ...
-    def set_clip_corner(self, value: bool) -> None: ...
+    def set_clip_corner(self, value: int) -> None: ...
     def set_color_filter_dsc(self, value: color_filter_dsc_t) -> None: ...
-    def set_color_filter_opa(self, value: OPA | int) -> None: ...
+    def set_color_filter_opa(self, value: int) -> None: ...
     def set_drop_shadow_color(self, value: color_t) -> None: ...
     def set_drop_shadow_offset_x(self, value: int) -> None: ...
     def set_drop_shadow_offset_y(self, value: int) -> None: ...
-    def set_drop_shadow_opa(self, value: OPA | int) -> None: ...
+    def set_drop_shadow_opa(self, value: int) -> None: ...
     def set_drop_shadow_quality(self, value: BLUR_QUALITY | int) -> None: ...
     def set_drop_shadow_radius(self, value: int) -> None: ...
     def set_flex_cross_place(self, value: FLEX_ALIGN | int) -> None: ...
@@ -1057,16 +2758,16 @@ class style_t(Struct):
     def set_grid_row_dsc_array(self, value: Any) -> None: ...
     def set_height(self, value: int) -> None: ...
     def set_image_colorkey(self, value: image_colorkey_t) -> None: ...
-    def set_image_opa(self, value: OPA | int) -> None: ...
+    def set_image_opa(self, value: int) -> None: ...
     def set_image_recolor(self, value: color_t) -> None: ...
-    def set_image_recolor_opa(self, value: OPA | int) -> None: ...
+    def set_image_recolor_opa(self, value: int) -> None: ...
     def set_layout(self, value: int) -> None: ...
     def set_length(self, value: int) -> None: ...
     def set_line_color(self, value: color_t) -> None: ...
     def set_line_dash_gap(self, value: int) -> None: ...
     def set_line_dash_width(self, value: int) -> None: ...
-    def set_line_opa(self, value: OPA | int) -> None: ...
-    def set_line_rounded(self, value: bool) -> None: ...
+    def set_line_opa(self, value: int) -> None: ...
+    def set_line_rounded(self, value: int) -> None: ...
     def set_line_width(self, value: int) -> None: ...
     def set_margin_all(self, value: int) -> None: ...
     def set_margin_bottom(self, value: int) -> None: ...
@@ -1079,10 +2780,10 @@ class style_t(Struct):
     def set_max_width(self, value: int) -> None: ...
     def set_min_height(self, value: int) -> None: ...
     def set_min_width(self, value: int) -> None: ...
-    def set_opa(self, value: OPA | int) -> None: ...
-    def set_opa_layered(self, value: OPA | int) -> None: ...
+    def set_opa(self, value: int) -> None: ...
+    def set_opa_layered(self, value: int) -> None: ...
     def set_outline_color(self, value: color_t) -> None: ...
-    def set_outline_opa(self, value: OPA | int) -> None: ...
+    def set_outline_opa(self, value: int) -> None: ...
     def set_outline_pad(self, value: int) -> None: ...
     def set_outline_width(self, value: int) -> None: ...
     def set_pad_all(self, value: int) -> None: ...
@@ -1100,12 +2801,12 @@ class style_t(Struct):
     def set_radial_offset(self, value: int) -> None: ...
     def set_radius(self, value: int) -> None: ...
     def set_recolor(self, value: color_t) -> None: ...
-    def set_recolor_opa(self, value: OPA | int) -> None: ...
+    def set_recolor_opa(self, value: int) -> None: ...
     def set_rotary_sensitivity(self, value: int) -> None: ...
     def set_shadow_color(self, value: color_t) -> None: ...
     def set_shadow_offset_x(self, value: int) -> None: ...
     def set_shadow_offset_y(self, value: int) -> None: ...
-    def set_shadow_opa(self, value: OPA | int) -> None: ...
+    def set_shadow_opa(self, value: int) -> None: ...
     def set_shadow_spread(self, value: int) -> None: ...
     def set_shadow_width(self, value: int) -> None: ...
     def set_size(self, width: int, height: int) -> None: ...
@@ -1115,9 +2816,9 @@ class style_t(Struct):
     def set_text_font(self, value: font_t) -> None: ...
     def set_text_letter_space(self, value: int) -> None: ...
     def set_text_line_space(self, value: int) -> None: ...
-    def set_text_opa(self, value: OPA | int) -> None: ...
+    def set_text_opa(self, value: int) -> None: ...
     def set_text_outline_stroke_color(self, value: color_t) -> None: ...
-    def set_text_outline_stroke_opa(self, value: OPA | int) -> None: ...
+    def set_text_outline_stroke_opa(self, value: int) -> None: ...
     def set_text_outline_stroke_width(self, value: int) -> None: ...
     def set_transform_height(self, value: int) -> None: ...
     def set_transform_pivot_x(self, value: int) -> None: ...
@@ -1136,16 +2837,37 @@ class style_t(Struct):
     def set_width(self, value: int) -> None: ...
     def set_x(self, value: int) -> None: ...
     def set_y(self, value: int) -> None: ...
+
 class style_transition_dsc_t(Struct):
-    props: int
+    props: Any
     user_data: Any
     path_xcb: Callable[[anim_t], int]
     time: int
     delay: int
     def init(self, props: Any, path_cb: Callable[[anim_t], int], time: int, delay: int, user_data: Any) -> None: ...
-class style_value_t(Struct): ...
-class subject_increment_dsc_t(Struct): ...
+
+class style_value_t(Struct):
+    num: int
+    ptr: Any
+    color: color_t
+
+class subject_increment_dsc_t(Struct):
+    subject: subject_t
+    step: int
+    rollover: int
+    min_value: int
+    max_value: int
+
 class subject_t(Struct):
+    subs_ll: ll_t
+    value: subject_value_t
+    prev_value: subject_value_t
+    min_value: subject_value_t
+    max_value: subject_value_t
+    user_data: Any
+    _type: int
+    size: int
+    notify_restart_query: int
     def add_observer(self, observer_cb: Callable[[observer_t, subject_t], None], user_data: Any) -> observer_t: ...
     def add_observer_obj(self, observer_cb: Callable[[observer_t, subject_t], None], obj: obj, user_data: Any) -> observer_t: ...
     def add_observer_with_target(self, observer_cb: Callable[[observer_t, subject_t], None], target: Any, user_data: Any) -> observer_t: ...
@@ -1178,1010 +2900,184 @@ class subject_t(Struct):
     def set_min_value_int(self, min_value: int) -> None: ...
     def set_pointer(self, ptr: Any) -> None: ...
     def snprintf(self, format: str, *args: Any) -> None: ...
-class subject_value_t(Struct): ...
+
+class subject_value_t(Struct):
+    num: int
+    pointer: Any
+    color: color_t
+    float_v: float
+
+class switch_t(Struct):
+    obj: obj
+    anim_state: int
+    orientation: switch.ORIENTATION | int
+
+class table_cell_t(Struct):
+    ctrl: table.CELL_CTRL | int
+    user_data: Any
+    txt: Any
+
+class table_t(Struct):
+    obj: obj
+    col_cnt: int
+    row_cnt: int
+    cell_data: Any
+    row_h: Any
+    col_w: Any
+    col_act: int
+    row_act: int
+
+class tabview_t(Struct):
+    obj: obj
+    tab_cur: int
+    tab_pos: DIR | int
+    tab_bar_size: int
+
 class text_attributes_t(Struct):
     letter_space: int
     line_space: int
     max_width: int
     text_flags: TEXT_FLAG | int
     def init(self) -> None: ...
+
+class textarea_t(Struct):
+    obj: obj
+    label: obj
+    placeholder_txt: str
+    pwd_tmp: str
+    pwd_bullet: str
+    accepted_chars: str
+    max_length: int
+    pwd_show_time: int
+    cursor: Any
+    sel_start: int
+    sel_end: int
+    text_sel_in_prog: int
+    text_sel_en: int
+    pwd_mode: int
+    one_line: int
+    static_accepted_chars: int
+
 class theme_t(Struct):
+    apply_cb: Callable[[theme_t, obj], None]
+    parent: theme_t
+    user_data: Any
+    disp: display_t
+    color_primary: color_t
+    color_secondary: color_t
+    font_small: font_t
+    font_normal: font_t
+    font_large: font_t
+    flags: int
     def copy(self, src: theme_t) -> None: ...
     def delete(self) -> None: ...
     def set_apply_cb(self, apply_cb: Callable[[theme_t, obj], None]) -> None: ...
     def set_parent(self, parent: theme_t) -> None: ...
+
 class tick_state_t(Struct):
     sys_time: int
     sys_irq_flag: int
     tick_get_cb: Callable[[], int]
     delay_cb: Callable[[int], None]
+
+class tileview_t(Struct):
+    obj: obj
+    tile_act: obj
+
+class tileview_tile_t(Struct):
+    obj: obj
+    dir: DIR | int
+
 class timer_state_t(Struct):
     timer_ll: ll_t
-    lv_timer_run: bool
+    lv_timer_run: int
     idle_last: int
-    timer_deleted: bool
-    timer_created: bool
+    timer_deleted: int
+    timer_created: int
     timer_time_until_next: int
-    already_running: bool
+    already_running: int
     periodic_last_tick: int
     busy_time: int
     idle_period_start: int
     run_cnt: int
     resume_cb: Callable[[Any], None]
     resume_data: Any
+
 class timer_t(Struct):
-    def delete(self, arg: Any) -> None: ...
+    period: int
+    last_run: int
+    timer_cb: Callable[[timer_t], None]
+    user_data: Any
+    repeat_count: int
+    paused: int
+    auto_delete: int
+    def delete(self) -> None: ...
     def get_next(self) -> timer_t: ...
-    def get_paused(self) -> bool: ...
+    def get_paused(self) -> int: ...
     def get_user_data(self) -> Any: ...
-    def pause(self, arg: Any) -> None: ...
-    def ready(self, arg: Any) -> None: ...
-    def reset(self, arg: Any) -> None: ...
-    def resume(self, arg: Any) -> None: ...
-    def set_auto_delete(self, auto_delete: bool) -> None: ...
+    def pause(self) -> None: ...
+    def ready(self) -> None: ...
+    def reset(self) -> None: ...
+    def resume(self) -> None: ...
+    def set_auto_delete(self, auto_delete: int) -> None: ...
     def set_cb(self, timer_cb: Callable[[timer_t], None]) -> None: ...
     def set_period(self, period: int) -> None: ...
     def set_repeat_count(self, repeat_count: int) -> None: ...
     def set_user_data(self, user_data: Any) -> None: ...
+
 class tree_class_t(Struct):
-    def node_create(self, parent: tree_node_t) -> tree_node_t: ...
+    base_class: tree_class_t
+    instance_size: int
+    constructor_cb: Callable[[tree_class_t, tree_node_t], None]
+    destructor_cb: Callable[[tree_class_t, tree_node_t], None]
+    def tree_node_create(self, parent: tree_node_t) -> tree_node_t: ...
+
 class tree_node_t(Struct):
+    parent: tree_node_t
+    children: Any
+    child_cnt: int
+    child_cap: int
+    class_p: tree_class_t
     def delete(self) -> None: ...
-    def walk(self, user_data: Any, mode: int, cb: Callable[[tree_node_t, Any], bool], bcb: Callable[[tree_node_t, Any], bool], acb: Callable[[tree_node_t, Any], None], node: tree_node_t) -> bool: ...
+    def tree_walk(self, mode: int, cb: Callable[[tree_node_t, Any], int], bcb: Callable[[tree_node_t, Any], int], acb: Callable[[tree_node_t, Any], None], user_data: Any) -> int: ...
 
-class ALIGN:
-    BOTTOM_LEFT: int
-    BOTTOM_MID: int
-    BOTTOM_RIGHT: int
-    CENTER: int
-    DEFAULT: int
-    LEFT_MID: int
-    OUT_BOTTOM_LEFT: int
-    OUT_BOTTOM_MID: int
-    OUT_BOTTOM_RIGHT: int
-    OUT_LEFT_BOTTOM: int
-    OUT_LEFT_MID: int
-    OUT_LEFT_TOP: int
-    OUT_RIGHT_BOTTOM: int
-    OUT_RIGHT_MID: int
-    OUT_RIGHT_TOP: int
-    OUT_TOP_LEFT: int
-    OUT_TOP_MID: int
-    OUT_TOP_RIGHT: int
-    RIGHT_MID: int
-    TOP_LEFT: int
-    TOP_MID: int
-    TOP_RIGHT: int
+class vector_fill_dsc_t(Struct):
+    ...
 
-class ANIM_IMAGE_PART:
-    MAIN: int
+class vector_gradient_t(Struct):
+    ...
 
-class BASE_DIR:
-    AUTO: int
-    LTR: int
-    NEUTRAL: int
-    RTL: int
-    WEAK: int
+class vector_path_ctx_t(Struct):
+    ...
 
-class BLEND_MODE:
-    ADDITIVE: int
-    DIFFERENCE: int
-    MULTIPLY: int
-    NORMAL: int
-    SUBTRACTIVE: int
+class vector_path_t(Struct):
+    ...
 
-class BLUR_QUALITY:
-    AUTO: int
-    PRECISION: int
-    SPEED: int
+class vector_stroke_dsc_t(Struct):
+    ...
 
-class BORDER_SIDE:
-    BOTTOM: int
-    FULL: int
-    INTERNAL: int
-    LEFT: int
-    NONE: int
-    RIGHT: int
-    TOP: int
+class win_t(Struct):
+    obj: obj
 
-class CACHE_RESERVE_COND:
-    ERROR: int
-    NEED_VICTIM: int
-    OK: int
-    TOO_LARGE: int
+class xkb_t(Struct):
+    ...
 
-class COLOR_FORMAT:
-    A1: int
-    A2: int
-    A4: int
-    A8: int
-    AL88: int
-    ARGB1555: int
-    ARGB2222: int
-    ARGB4444: int
-    ARGB8565: int
-    ARGB8888: int
-    ARGB8888_PREMULTIPLIED: int
-    I1: int
-    I2: int
-    I4: int
-    I400: int
-    I420: int
-    I422: int
-    I444: int
-    I8: int
-    L8: int
-    NATIVE: int
-    NATIVE_WITH_ALPHA: int
-    NEMA_TSC12: int
-    NEMA_TSC12A: int
-    NEMA_TSC4: int
-    NEMA_TSC6: int
-    NEMA_TSC6A: int
-    NEMA_TSC6AP: int
-    NEMA_TSC_END: int
-    NEMA_TSC_START: int
-    NV12: int
-    NV21: int
-    PROPRIETARY_START: int
-    RAW: int
-    RAW_ALPHA: int
-    RGB565: int
-    RGB565A8: int
-    RGB565_SWAPPED: int
-    RGB888: int
-    UNKNOWN: int
-    UYVY: int
-    XRGB8888: int
-    YUV_END: int
-    YUV_START: int
-    YUY2: int
+class yuv_buf_t(Struct):
+    yuv: yuv_plane_t
+    planar: Any
+    semi_planar: Any
 
-class COORD:
-    MAX: int
-    MIN: int
-
-class COVER_RES:
-    COVER: int
-    MASKED: int
-    NOT_COVER: int
-
-class DIR:
-    ALL: int
-    BOTTOM: int
-    HOR: int
-    LEFT: int
-    NONE: int
-    RIGHT: int
-    TOP: int
-    VER: int
-
-class DISPLAY_RENDER_MODE:
-    DIRECT: int
-    FULL: int
-    PARTIAL: int
-
-class DISPLAY_ROTATION:
-    _0: int
-    _180: int
-    _270: int
-    _90: int
-
-class DRAW_SW_MASK_LINE_SIDE:
-    BOTTOM: int
-    LEFT: int
-    RIGHT: int
-    TOP: int
-
-class DRAW_SW_MASK_RES:
-    CHANGED: int
-    FULL_COVER: int
-    TRANSP: int
-    UNKNOWN: int
-
-class DRAW_SW_MASK_TYPE:
-    ANGLE: int
-    FADE: int
-    LINE: int
-    MAP: int
-    RADIUS: int
-
-class DRAW_TASK_STATE:
-    BLOCKED: int
-    FINISHED: int
-    IN_PROGRESS: int
-    QUEUED: int
-    WAITING: int
-
-class DRAW_TASK_TYPE:
-    ARC: int
-    BLUR: int
-    BORDER: int
-    BOX_SHADOW: int
-    FILL: int
-    IMAGE: int
-    LABEL: int
-    LAYER: int
-    LETTER: int
-    LINE: int
-    MASK_BITMAP: int
-    MASK_RECTANGLE: int
-    NONE: int
-    TRIANGLE: int
-
-class EVENT:
-    ALL: int
-    CANCEL: int
-    CHILD_CHANGED: int
-    CHILD_CREATED: int
-    CHILD_DELETED: int
-    CLICKED: int
-    COLOR_FORMAT_CHANGED: int
-    COVER_CHECK: int
-    CREATE: int
-    DEFOCUSED: int
-    DELETE: int
-    DOUBLE_CLICKED: int
-    DRAW_MAIN: int
-    DRAW_MAIN_BEGIN: int
-    DRAW_MAIN_END: int
-    DRAW_POST: int
-    DRAW_POST_BEGIN: int
-    DRAW_POST_END: int
-    DRAW_TASK_ADDED: int
-    FLUSH_FINISH: int
-    FLUSH_START: int
-    FLUSH_WAIT_FINISH: int
-    FLUSH_WAIT_START: int
-    FOCUSED: int
-    GESTURE: int
-    GET_SELF_SIZE: int
-    HIT_TEST: int
-    HOVER_LEAVE: int
-    HOVER_OVER: int
-    INDEV_RESET: int
-    INSERT: int
-    INVALIDATE_AREA: int
-    KEY: int
-    LAST: int
-    LAYOUT_CHANGED: int
-    LEAVE: int
-    LONG_PRESSED: int
-    LONG_PRESSED_REPEAT: int
-    MARKED_DELETING: int
-    PREPROCESS: int
-    PRESSED: int
-    PRESSING: int
-    PRESS_LOST: int
-    READY: int
-    REFRESH: int
-    REFR_EXT_DRAW_SIZE: int
-    REFR_READY: int
-    REFR_REQUEST: int
-    REFR_START: int
-    RELEASED: int
-    RENDER_READY: int
-    RENDER_START: int
-    RESOLUTION_CHANGED: int
-    ROTARY: int
-    SCREEN_LOADED: int
-    SCREEN_LOAD_START: int
-    SCREEN_UNLOADED: int
-    SCREEN_UNLOAD_START: int
-    SCROLL: int
-    SCROLL_BEGIN: int
-    SCROLL_END: int
-    SCROLL_THROW_BEGIN: int
-    SHORT_CLICKED: int
-    SINGLE_CLICKED: int
-    SIZE_CHANGED: int
-    STATE_CHANGED: int
-    STYLE_CHANGED: int
-    TRIPLE_CLICKED: int
-    UPDATE_LAYOUT_COMPLETED: int
-    VALUE_CHANGED: int
-    VSYNC: int
-    VSYNC_REQUEST: int
-
-class FLEX_ALIGN:
-    CENTER: int
-    END: int
-    SPACE_AROUND: int
-    SPACE_BETWEEN: int
-    SPACE_EVENLY: int
-    START: int
-
-class FLEX_FLOW:
-    COLUMN: int
-    COLUMN_REVERSE: int
-    COLUMN_WRAP: int
-    COLUMN_WRAP_REVERSE: int
-    ROW: int
-    ROW_REVERSE: int
-    ROW_WRAP: int
-    ROW_WRAP_REVERSE: int
-
-class FONT_FMT_TXT:
-    COMPRESSED: int
-    COMPRESSED_NO_PREFILTER: int
-    PLAIN: int
-
-class FONT_FMT_TXT_CMAP:
-    FORMAT0_FULL: int
-    FORMAT0_TINY: int
-    SPARSE_FULL: int
-    SPARSE_TINY: int
-
-class FONT_GLYPH_FORMAT:
-    A1: int
-    A2: int
-    A3: int
-    A4: int
-    A8: int
-    CUSTOM: int
-    IMAGE: int
-    NONE: int
-    SVG: int
-    VECTOR: int
-
-class FONT_KERNING:
-    NONE: int
-    NORMAL: int
-
-class FONT_SUBPX:
-    BOTH: int
-    HOR: int
-    NONE: int
-    VER: int
-
-class FS_MODE:
-    RD: int
-    WR: int
-
-class FS_RES:
-    BUSY: int
-    DENIED: int
-    DRIVE_LETTER_ALREADY_USED: int
-    FS_ERR: int
-    FULL: int
-    HW_ERR: int
-    INV_PARAM: int
-    LOCKED: int
-    NOT_EX: int
-    NOT_IMP: int
-    OK: int
-    OUT_OF_MEM: int
-    TOUT: int
-    UNKNOWN: int
-
-class FS_SEEK:
-    CUR: int
-    END: int
-    SET: int
-
-class GRAD_DIR:
-    CONICAL: int
-    HOR: int
-    LINEAR: int
-    NONE: int
-    RADIAL: int
-    VER: int
-
-class GRAD_EXTEND:
-    PAD: int
-    REFLECT: int
-    REPEAT: int
-
-class GRID_ALIGN:
-    CENTER: int
-    END: int
-    SPACE_AROUND: int
-    SPACE_BETWEEN: int
-    SPACE_EVENLY: int
-    START: int
-    STRETCH: int
-
-class GROUP_REFOCUS_POLICY:
-    NEXT: int
-    PREV: int
-
-class INDEV_GESTURE:
-    CNT: int
-    NONE: int
-    PINCH: int
-    ROTATE: int
-    SCROLL: int
-    SWIPE: int
-    TWO_FINGERS_SWIPE: int
-
-class INDEV_GESTURE_STATE:
-    CANCELED: int
-    ENDED: int
-    NONE: int
-    ONGOING: int
-    RECOGNIZED: int
-
-class INDEV_MODE:
-    EVENT: int
-    NONE: int
-    TIMER: int
-
-class INDEV_STATE:
-    PRESSED: int
-    RELEASED: int
-
-class INDEV_TYPE:
-    BUTTON: int
-    ENCODER: int
-    KEYPAD: int
-    NONE: int
-    POINTER: int
-
-class KEY:
-    BACKSPACE: int
-    DEL: int
-    DOWN: int
-    END: int
-    ENTER: int
-    ESC: int
-    HOME: int
-    LEFT: int
-    NEXT: int
-    PREV: int
-    RIGHT: int
-    UP: int
-
-class LAYER_TYPE:
-    NONE: int
-    SIMPLE: int
-    TRANSFORM: int
-
-class LAYOUT:
-    FLEX: int
-    GRID: int
-    LAST: int
-    NONE: int
-
-class LOG_LEVEL:
-    ERROR: int
-    INFO: int
-    NONE: int
-    TRACE: int
-    USER: int
-    WARN: int
-
-class OBJ_FLAG:
-    ADV_HITTEST: int
-    CHECKABLE: int
-    CLICKABLE: int
-    CLICK_FOCUSABLE: int
-    EVENT_BUBBLE: int
-    EVENT_TRICKLE: int
-    FLEX_IN_NEW_TRACK: int
-    FLOATING: int
-    GESTURE_BUBBLE: int
-    HIDDEN: int
-    IGNORE_LAYOUT: int
-    LAYOUT_1: int
-    LAYOUT_2: int
-    OVERFLOW_VISIBLE: int
-    PRESS_LOCK: int
-    SCROLLABLE: int
-    SCROLL_CHAIN: int
-    SCROLL_CHAIN_HOR: int
-    SCROLL_CHAIN_VER: int
-    SCROLL_ELASTIC: int
-    SCROLL_MOMENTUM: int
-    SCROLL_ONE: int
-    SCROLL_ON_FOCUS: int
-    SCROLL_WITH_ARROW: int
-    SEND_DRAW_TASK_EVENTS: int
-    SNAPPABLE: int
-    STATE_TRICKLE: int
-    USER_1: int
-    USER_2: int
-    USER_3: int
-    USER_4: int
-    WIDGET_1: int
-    WIDGET_2: int
-
-class OPA:
-    COVER: int
-    TRANSP: int
-    _0: int
-    _10: int
-    _100: int
-    _20: int
-    _30: int
-    _40: int
-    _50: int
-    _60: int
-    _70: int
-    _80: int
-    _90: int
-
-class PALETTE:
-    AMBER: int
-    BLUE: int
-    BLUE_GREY: int
-    BROWN: int
-    CYAN: int
-    DEEP_ORANGE: int
-    DEEP_PURPLE: int
-    GREEN: int
-    GREY: int
-    INDIGO: int
-    LAST: int
-    LIGHT_BLUE: int
-    LIGHT_GREEN: int
-    LIME: int
-    NONE: int
-    ORANGE: int
-    PINK: int
-    PURPLE: int
-    RED: int
-    TEAL: int
-    YELLOW: int
-
-class PART:
-    ANY: int
-    CURSOR: int
-    CUSTOM_FIRST: int
-    INDICATOR: int
-    ITEMS: int
-    KNOB: int
-    MAIN: int
-    SCROLLBAR: int
-    SELECTED: int
-
-class RB_COLOR:
-    BLACK: int
-    RED: int
-
-class RESULT:
-    INVALID: int
-    OK: int
-
-class SCREEN_LOAD_ANIM:
-    FADE_IN: int
-    FADE_ON: int
-    FADE_OUT: int
-    MOVE_BOTTOM: int
-    MOVE_LEFT: int
-    MOVE_RIGHT: int
-    MOVE_TOP: int
-    NONE: int
-    OUT_BOTTOM: int
-    OUT_LEFT: int
-    OUT_RIGHT: int
-    OUT_TOP: int
-    OVER_BOTTOM: int
-    OVER_LEFT: int
-    OVER_RIGHT: int
-    OVER_TOP: int
-
-class SCROLLBAR_MODE:
-    ACTIVE: int
-    AUTO: int
-    OFF: int
-    ON: int
-
-class SCROLL_SNAP:
-    CENTER: int
-    END: int
-    NONE: int
-    START: int
-
-class SPAN_MODE:
-    BREAK: int
-    EXPAND: int
-    FIXED: int
-    LAST: int
-
-class SPAN_OVERFLOW:
-    CLIP: int
-    ELLIPSIS: int
-    LAST: int
-
-class STATE:
-    ALT: int
-    ANY: int
-    CHECKED: int
-    DEFAULT: int
-    DISABLED: int
-    EDITED: int
-    FOCUSED: int
-    FOCUS_KEY: int
-    HOVERED: int
-    PRESSED: int
-    SCROLLED: int
-    USER_1: int
-    USER_2: int
-    USER_3: int
-    USER_4: int
-
-class STR_SYMBOL:
-    AUDIO: int
-    BACKSPACE: int
-    BARS: int
-    BATTERY_1: int
-    BATTERY_2: int
-    BATTERY_3: int
-    BATTERY_EMPTY: int
-    BATTERY_FULL: int
-    BELL: int
-    BLUETOOTH: int
-    BULLET: int
-    CALL: int
-    CHARGE: int
-    CLOSE: int
-    COPY: int
-    CUT: int
-    DIRECTORY: int
-    DOWN: int
-    DOWNLOAD: int
-    DRIVE: int
-    DUMMY: int
-    EDIT: int
-    EJECT: int
-    ENVELOPE: int
-    EYE_CLOSE: int
-    EYE_OPEN: int
-    FILE: int
-    GPS: int
-    HOME: int
-    IMAGE: int
-    KEYBOARD: int
-    LEFT: int
-    LIST: int
-    LOOP: int
-    MINUS: int
-    MUTE: int
-    NEW_LINE: int
-    NEXT: int
-    OK: int
-    PASTE: int
-    PAUSE: int
-    PLAY: int
-    PLUS: int
-    POWER: int
-    PREV: int
-    REFRESH: int
-    RIGHT: int
-    SAVE: int
-    SD_CARD: int
-    SETTINGS: int
-    SHUFFLE: int
-    STOP: int
-    TINT: int
-    TRASH: int
-    UP: int
-    UPLOAD: int
-    USB: int
-    VIDEO: int
-    VOLUME_MAX: int
-    VOLUME_MID: int
-    WARNING: int
-    WIFI: int
-
-class STYLE:
-    ALIGN: int
-    ANIM: int
-    ANIM_DURATION: int
-    ARC_COLOR: int
-    ARC_IMAGE_SRC: int
-    ARC_OPA: int
-    ARC_ROUNDED: int
-    ARC_WIDTH: int
-    BASE_DIR: int
-    BG_COLOR: int
-    BG_GRAD: int
-    BG_GRAD_COLOR: int
-    BG_GRAD_DIR: int
-    BG_GRAD_OPA: int
-    BG_GRAD_STOP: int
-    BG_IMAGE_OPA: int
-    BG_IMAGE_RECOLOR: int
-    BG_IMAGE_RECOLOR_OPA: int
-    BG_IMAGE_SRC: int
-    BG_IMAGE_TILED: int
-    BG_MAIN_OPA: int
-    BG_MAIN_STOP: int
-    BG_OPA: int
-    BITMAP_MASK_SRC: int
-    BLEND_MODE: int
-    BLUR_BACKDROP: int
-    BLUR_QUALITY: int
-    BLUR_RADIUS: int
-    BORDER_COLOR: int
-    BORDER_OPA: int
-    BORDER_POST: int
-    BORDER_SIDE: int
-    BORDER_WIDTH: int
-    CLIP_CORNER: int
-    COLOR_FILTER_DSC: int
-    COLOR_FILTER_OPA: int
-    DROP_SHADOW_COLOR: int
-    DROP_SHADOW_OFFSET_X: int
-    DROP_SHADOW_OFFSET_Y: int
-    DROP_SHADOW_OPA: int
-    DROP_SHADOW_QUALITY: int
-    DROP_SHADOW_RADIUS: int
-    FLEX_CROSS_PLACE: int
-    FLEX_FLOW: int
-    FLEX_GROW: int
-    FLEX_MAIN_PLACE: int
-    FLEX_TRACK_PLACE: int
-    GRID_CELL_COLUMN_POS: int
-    GRID_CELL_COLUMN_SPAN: int
-    GRID_CELL_ROW_POS: int
-    GRID_CELL_ROW_SPAN: int
-    GRID_CELL_X_ALIGN: int
-    GRID_CELL_Y_ALIGN: int
-    GRID_COLUMN_ALIGN: int
-    GRID_COLUMN_DSC_ARRAY: int
-    GRID_ROW_ALIGN: int
-    GRID_ROW_DSC_ARRAY: int
-    HEIGHT: int
-    IMAGE_COLORKEY: int
-    IMAGE_OPA: int
-    IMAGE_RECOLOR: int
-    IMAGE_RECOLOR_OPA: int
-    LAST_BUILT_IN_PROP: int
-    LAYOUT: int
-    LENGTH: int
-    LINE_COLOR: int
-    LINE_DASH_GAP: int
-    LINE_DASH_WIDTH: int
-    LINE_OPA: int
-    LINE_ROUNDED: int
-    LINE_WIDTH: int
-    MARGIN_BOTTOM: int
-    MARGIN_LEFT: int
-    MARGIN_RIGHT: int
-    MARGIN_TOP: int
-    MAX_HEIGHT: int
-    MAX_WIDTH: int
-    MIN_HEIGHT: int
-    MIN_WIDTH: int
-    NUM_BUILT_IN_PROPS: int
-    OPA: int
-    OPA_LAYERED: int
-    OUTLINE_COLOR: int
-    OUTLINE_OPA: int
-    OUTLINE_PAD: int
-    OUTLINE_WIDTH: int
-    PAD_BOTTOM: int
-    PAD_COLUMN: int
-    PAD_LEFT: int
-    PAD_RADIAL: int
-    PAD_RIGHT: int
-    PAD_ROW: int
-    PAD_TOP: int
-    PROP_ANY: int
-    PROP_CONST: int
-    PROP_INV: int
-    RADIAL_OFFSET: int
-    RADIUS: int
-    RECOLOR: int
-    RECOLOR_OPA: int
-    ROTARY_SENSITIVITY: int
-    SHADOW_COLOR: int
-    SHADOW_OFFSET_X: int
-    SHADOW_OFFSET_Y: int
-    SHADOW_OPA: int
-    SHADOW_SPREAD: int
-    SHADOW_WIDTH: int
-    TEXT_ALIGN: int
-    TEXT_COLOR: int
-    TEXT_DECOR: int
-    TEXT_FONT: int
-    TEXT_LETTER_SPACE: int
-    TEXT_LINE_SPACE: int
-    TEXT_OPA: int
-    TEXT_OUTLINE_STROKE_COLOR: int
-    TEXT_OUTLINE_STROKE_OPA: int
-    TEXT_OUTLINE_STROKE_WIDTH: int
-    TRANSFORM_HEIGHT: int
-    TRANSFORM_PIVOT_X: int
-    TRANSFORM_PIVOT_Y: int
-    TRANSFORM_ROTATION: int
-    TRANSFORM_SCALE_X: int
-    TRANSFORM_SCALE_Y: int
-    TRANSFORM_SKEW_X: int
-    TRANSFORM_SKEW_Y: int
-    TRANSFORM_WIDTH: int
-    TRANSITION: int
-    TRANSLATE_RADIAL: int
-    TRANSLATE_X: int
-    TRANSLATE_Y: int
-    WIDTH: int
-    X: int
-    Y: int
-
-class STYLE_RES:
-    FOUND: int
-    NOT_FOUND: int
-
-class STYLE_STATE_CMP:
-    DIFF_DRAW_PAD: int
-    DIFF_LAYOUT: int
-    DIFF_REDRAW: int
-    SAME: int
-
-class SUBJECT_TYPE:
-    COLOR: int
-    FLOAT: int
-    GROUP: int
-    INT: int
-    INVALID: int
-    NONE: int
-    POINTER: int
-    STRING: int
-
-class SYMBOL:
-    AUDIO: int
-    BACKSPACE: int
-    BARS: int
-    BATTERY_1: int
-    BATTERY_2: int
-    BATTERY_3: int
-    BATTERY_EMPTY: int
-    BATTERY_FULL: int
-    BELL: int
-    BLUETOOTH: int
-    BULLET: int
-    CALL: int
-    CHARGE: int
-    CLOSE: int
-    COPY: int
-    CUT: int
-    DIRECTORY: int
-    DOWN: int
-    DOWNLOAD: int
-    DRIVE: int
-    DUMMY: int
-    EDIT: int
-    EJECT: int
-    ENVELOPE: int
-    EYE_CLOSE: int
-    EYE_OPEN: int
-    FILE: int
-    GPS: int
-    HOME: int
-    IMAGE: int
-    KEYBOARD: int
-    LEFT: int
-    LIST: int
-    LOOP: int
-    MINUS: int
-    MUTE: int
-    NEW_LINE: int
-    NEXT: int
-    OK: int
-    PASTE: int
-    PAUSE: int
-    PLAY: int
-    PLUS: int
-    POWER: int
-    PREV: int
-    REFRESH: int
-    RIGHT: int
-    SAVE: int
-    SD_CARD: int
-    SETTINGS: int
-    SHUFFLE: int
-    STOP: int
-    TINT: int
-    TRASH: int
-    UP: int
-    UPLOAD: int
-    USB: int
-    VIDEO: int
-    VOLUME_MAX: int
-    VOLUME_MID: int
-    WARNING: int
-    WIFI: int
-
-class TEXT_ALIGN:
-    AUTO: int
-    CENTER: int
-    LEFT: int
-    RIGHT: int
-
-class TEXT_CMD_STATE:
-    IN: int
-    PAR: int
-    WAIT: int
-
-class TEXT_DECOR:
-    NONE: int
-    STRIKETHROUGH: int
-    UNDERLINE: int
-
-class TEXT_FLAG:
-    BREAK_ALL: int
-    EXPAND: int
-    FIT: int
-    NONE: int
-    RECOLOR: int
-
-class THREAD_PRIO:
-    HIGH: int
-    HIGHEST: int
-    LOW: int
-    LOWEST: int
-    MID: int
-
-class TREE_WALK:
-    POST_ORDER: int
-    PRE_ORDER: int
+class yuv_plane_t(Struct):
+    buf: Any
+    stride: int
 
 class animimg(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
+    def delete(self) -> int: ...
     def get_anim(self) -> anim_t: ...
     def get_duration(self) -> int: ...
     def get_repeat_count(self) -> int: ...
+    def get_src(self) -> Any: ...
     def get_src_count(self) -> int: ...
     def set_completed_cb(self, completed_cb: Callable[[anim_t], None]) -> None: ...
     def set_duration(self, duration: int) -> None: ...
@@ -2194,71 +3090,10 @@ class animimg(obj):
     def start(self) -> None: ...
 
 class arc(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class MODE:
         NORMAL: int
-        REVERSE: int
         SYMMETRICAL: int
-    MODE: ClassVar[type[MODE]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        REVERSE: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def align_obj_to_angle(self, obj_to_align: obj, r_offset: int) -> None: ...
     def bind_value(self, subject: subject_t) -> observer_t: ...
@@ -2270,7 +3105,7 @@ class arc(obj):
     def get_knob_offset(self) -> int: ...
     def get_max_value(self) -> int: ...
     def get_min_value(self) -> int: ...
-    def get_mode(self) -> int: ...
+    def get_mode(self) -> arc.MODE | int: ...
     def get_rotation(self) -> int: ...
     def get_value(self) -> int: ...
     def rotate_obj_to_angle(self, obj_to_rotate: obj, r_offset: int) -> None: ...
@@ -2283,272 +3118,87 @@ class arc(obj):
     def set_knob_offset(self, offset: int) -> None: ...
     def set_max_value(self, max: int) -> None: ...
     def set_min_value(self, min: int) -> None: ...
-    def set_mode(self, type: arc.MODE | int) -> None: ...
+    def set_mode(self, _type: arc.MODE | int) -> None: ...
     def set_range(self, min: int, max: int) -> None: ...
     def set_rotation(self, rotation: int) -> None: ...
     def set_start_angle(self, start: float) -> None: ...
     def set_value(self, value: int) -> None: ...
 
 class arclabel(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
     class DIR:
         CLOCKWISE: int
         COUNTER_CLOCKWISE: int
-    DIR: ClassVar[type[DIR]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class OVERFLOW:
-        CLIP: int
-        ELLIPSIS: int
         VISIBLE: int
-    OVERFLOW: ClassVar[type[OVERFLOW]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
+        ELLIPSIS: int
+        CLIP: int
     class TEXT_ALIGN:
-        CENTER: int
         DEFAULT: int
         LEADING: int
+        CENTER: int
         TRAILING: int
-    TEXT_ALIGN: ClassVar[type[TEXT_ALIGN]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_angle_size(self) -> float: ...
     def get_angle_start(self) -> float: ...
     def get_center_offset_x(self) -> int: ...
     def get_center_offset_y(self) -> int: ...
-    def get_dir(self) -> int: ...
-    def get_end_overlap(self) -> bool: ...
-    def get_overflow(self) -> int: ...
+    def get_dir(self) -> arclabel.DIR | int: ...
+    def get_end_overlap(self) -> int: ...
+    def get_overflow(self) -> arclabel.OVERFLOW | int: ...
     def get_radius(self) -> int: ...
-    def get_recolor(self) -> bool: ...
+    def get_recolor(self) -> int: ...
     def get_text_angle(self) -> float: ...
-    def get_text_horizontal_align(self) -> int: ...
-    def get_text_vertical_align(self) -> int: ...
+    def get_text_horizontal_align(self) -> arclabel.TEXT_ALIGN | int: ...
+    def get_text_vertical_align(self) -> arclabel.TEXT_ALIGN | int: ...
     def set_angle_size(self, size: float) -> None: ...
     def set_angle_start(self, start: float) -> None: ...
     def set_center_offset_x(self, x: int) -> None: ...
     def set_center_offset_y(self, y: int) -> None: ...
     def set_dir(self, dir: arclabel.DIR | int) -> None: ...
-    def set_end_overlap(self, overlap: bool) -> None: ...
+    def set_end_overlap(self, overlap: int) -> None: ...
     def set_offset(self, offset: int) -> None: ...
     def set_overflow(self, overflow: arclabel.OVERFLOW | int) -> None: ...
     def set_radius(self, radius: int) -> None: ...
-    def set_recolor(self, en: bool) -> None: ...
+    def set_recolor(self, en: int) -> None: ...
     def set_text(self, text: str) -> None: ...
+    def set_text_fmt(self, fmt: str, *args: Any) -> None: ...
     def set_text_horizontal_align(self, align: arclabel.TEXT_ALIGN | int) -> None: ...
     def set_text_static(self, text: str) -> None: ...
     def set_text_vertical_align(self, align: arclabel.TEXT_ALIGN | int) -> None: ...
 
 class bar(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class MODE:
         NORMAL: int
-        RANGE: int
         SYMMETRICAL: int
-    MODE: ClassVar[type[MODE]]
+        RANGE: int
     class ORIENTATION:
         AUTO: int
         HORIZONTAL: int
         VERTICAL: int
-    ORIENTATION: ClassVar[type[ORIENTATION]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def bind_value(self, subject: subject_t) -> observer_t: ...
     def get_max_value(self) -> int: ...
     def get_min_value(self) -> int: ...
-    def get_mode(self) -> int: ...
-    def get_orientation(self) -> int: ...
+    def get_mode(self) -> bar.MODE | int: ...
+    def get_orientation(self) -> bar.ORIENTATION | int: ...
     def get_start_value(self) -> int: ...
     def get_value(self) -> int: ...
-    def is_symmetrical(self) -> bool: ...
+    def is_symmetrical(self) -> int: ...
     def set_max_value(self, max: int) -> None: ...
     def set_min_value(self, min: int) -> None: ...
     def set_mode(self, mode: bar.MODE | int) -> None: ...
     def set_orientation(self, orientation: bar.ORIENTATION | int) -> None: ...
     def set_range(self, min: int, max: int) -> None: ...
-    def set_start_value(self, start_value: int, anim: bool) -> None: ...
-    def set_value(self, value: int, anim: bool) -> None: ...
+    def set_start_value(self, start_value: int, anim: int) -> None: ...
+    def set_value(self, value: int, anim: int) -> None: ...
 
 class barcode(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
     class ENCODING_CODE128:
         GS1: int
         RAW: int
-    ENCODING_CODE128: ClassVar[type[ENCODING_CODE128]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_dark_color(self) -> color_t: ...
-    def get_encoding(self) -> int: ...
+    def get_encoding(self) -> barcode.ENCODING_CODE128 | int: ...
     def get_light_color(self) -> color_t: ...
     def get_scale(self) -> int: ...
     def set_dark_color(self, color: color_t) -> None: ...
@@ -2556,108 +3206,16 @@ class barcode(obj):
     def set_encoding(self, encoding: barcode.ENCODING_CODE128 | int) -> None: ...
     def set_light_color(self, color: color_t) -> None: ...
     def set_scale(self, scale: int) -> None: ...
-    def set_tiled(self, tiled: bool) -> None: ...
-    def update(self, data: str) -> int: ...
+    def set_tiled(self, tiled: int) -> None: ...
+    def update(self, data: str) -> RESULT | int: ...
 
 class button(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
 
 class buttonmatrix(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
     class CTRL:
-        CHECKABLE: int
-        CHECKED: int
-        CLICK_TRIG: int
-        CUSTOM_1: int
-        CUSTOM_2: int
-        DISABLED: int
-        HIDDEN: int
         NONE: int
-        NO_REPEAT: int
-        POPOVER: int
-        RECOLOR: int
-        RESERVED_1: int
-        RESERVED_2: int
         WIDTH_1: int
-        WIDTH_10: int
-        WIDTH_11: int
-        WIDTH_12: int
-        WIDTH_13: int
-        WIDTH_14: int
-        WIDTH_15: int
         WIDTH_2: int
         WIDTH_3: int
         WIDTH_4: int
@@ -2666,139 +3224,51 @@ class buttonmatrix(obj):
         WIDTH_7: int
         WIDTH_8: int
         WIDTH_9: int
-    CTRL: ClassVar[type[CTRL]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
+        WIDTH_10: int
+        WIDTH_11: int
+        WIDTH_12: int
+        WIDTH_13: int
+        WIDTH_14: int
+        WIDTH_15: int
         HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        NO_REPEAT: int
+        DISABLED: int
+        CHECKABLE: int
+        CHECKED: int
+        CLICK_TRIG: int
+        POPOVER: int
+        RECOLOR: int
+        RESERVED_1: int
+        RESERVED_2: int
+        CUSTOM_1: int
+        CUSTOM_2: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def clear_button_ctrl(self, btn_id: int, ctrl: buttonmatrix.CTRL | int) -> None: ...
     def clear_button_ctrl_all(self, ctrl: buttonmatrix.CTRL | int) -> None: ...
     def get_button_text(self, btn_id: int) -> str: ...
-    def get_one_checked(self) -> bool: ...
+    def get_map(self) -> Any: ...
+    def get_one_checked(self) -> int: ...
     def get_selected_button(self) -> int: ...
-    def has_button_ctrl(self, btn_id: int, ctrl: buttonmatrix.CTRL | int) -> bool: ...
+    def has_button_ctrl(self, btn_id: int, ctrl: buttonmatrix.CTRL | int) -> int: ...
     def set_button_ctrl(self, btn_id: int, ctrl: buttonmatrix.CTRL | int) -> None: ...
     def set_button_ctrl_all(self, ctrl: buttonmatrix.CTRL | int) -> None: ...
     def set_button_width(self, btn_id: int, width: int) -> None: ...
     def set_ctrl_map(self, ctrl_map: Any) -> None: ...
     def set_map(self, map: Any) -> None: ...
-    def set_one_checked(self, en: bool) -> None: ...
+    def set_one_checked(self, en: int) -> None: ...
     def set_selected_button(self, btn_id: int) -> None: ...
 
 class calendar(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
-    def add_header_arrow(self, parent: obj) -> obj: ...
-    def add_header_dropdown(self, parent: obj) -> obj: ...
+    def add_header_arrow(self) -> obj: ...
+    def add_header_dropdown(self) -> obj: ...
     def get_btnmatrix(self) -> obj: ...
     def get_highlighted_dates(self) -> calendar_date_t: ...
     def get_highlighted_dates_num(self) -> int: ...
-    def get_pressed_date(self, date: calendar_date_t) -> int: ...
+    def get_pressed_date(self, date: calendar_date_t) -> RESULT | int: ...
     def get_showed_date(self) -> calendar_date_t: ...
     def get_today_date(self) -> calendar_date_t: ...
-    def header_dropdown_set_year_list(self, parent: obj, years_list: str) -> None: ...
+    def header_dropdown_set_year_list(self, years_list: str) -> None: ...
     def set_day_names(self, day_names: Any) -> None: ...
     def set_highlighted_dates(self, highlighted: Any, date_num: int) -> None: ...
     def set_month_shown(self, year: int, month: int) -> None: ...
@@ -2810,70 +3280,11 @@ class calendar(obj):
     def set_today_year(self, year: int) -> None: ...
 
 class canvas(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
-    def buf_size(self, w: int, h: int, bpp: int, stride: int) -> int: ...
+    @staticmethod
+    def buf_size(w: int, h: int, bpp: int, stride: int) -> int: ...
     def copy_buf(self, canvas_area: area_t, src_buf: draw_buf_t, src_area: area_t) -> None: ...
-    def fill_bg(self, color: color_t, opa: OPA | int) -> None: ...
+    def fill_bg(self, color: color_t, opa: int) -> None: ...
     def finish_layer(self, layer: layer_t) -> None: ...
     def get_buf(self) -> Any: ...
     def get_draw_buf(self) -> draw_buf_t: ...
@@ -2883,88 +3294,25 @@ class canvas(obj):
     def set_buffer(self, buf: Any, w: int, h: int, cf: COLOR_FORMAT | int) -> None: ...
     def set_draw_buf(self, draw_buf: draw_buf_t) -> None: ...
     def set_palette(self, index: int, color: color32_t) -> None: ...
-    def set_px(self, x: int, y: int, color: color_t, opa: OPA | int) -> None: ...
+    def set_px(self, x: int, y: int, color: color_t, opa: int) -> None: ...
 
 class chart(obj):
     class AXIS:
-        LAST: int
-        PRIMARY_X: int
         PRIMARY_Y: int
-        SECONDARY_X: int
         SECONDARY_Y: int
-    AXIS: ClassVar[type[AXIS]]
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        PRIMARY_X: int
+        SECONDARY_X: int
+        LAST: int
     class TYPE:
-        BAR: int
-        CURVE: int
-        LINE: int
         NONE: int
-        SCATTER: int
+        LINE: int
+        CURVE: int
+        BAR: int
         STACKED: int
-    TYPE: ClassVar[type[TYPE]]
+        SCATTER: int
     class UPDATE_MODE:
-        CIRCULAR: int
         SHIFT: int
-    UPDATE_MODE: ClassVar[type[UPDATE_MODE]]
+        CIRCULAR: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_cursor(self, color: color_t, dir: DIR | int) -> chart_cursor_t: ...
     def add_series(self, color: color_t, axis: chart.AXIS | int) -> chart_series_t: ...
@@ -2978,11 +3326,11 @@ class chart(obj):
     def get_series_next(self, ser: chart_series_t) -> chart_series_t: ...
     def get_series_x_array(self, ser: chart_series_t) -> Any: ...
     def get_series_y_array(self, ser: chart_series_t) -> Any: ...
-    def get_type(self) -> int: ...
-    def get_update_mode(self) -> int: ...
+    def get_type(self) -> chart.TYPE | int: ...
+    def get_update_mode(self) -> chart.UPDATE_MODE | int: ...
     def get_ver_div_line_count(self) -> int: ...
     def get_x_start_point(self, ser: chart_series_t) -> int: ...
-    def hide_series(self, series: chart_series_t, hide: bool) -> None: ...
+    def hide_series(self, series: chart_series_t, hide: int) -> None: ...
     def refresh(self) -> None: ...
     def remove_cursor(self, cursor: chart_cursor_t) -> None: ...
     def remove_series(self, series: chart_series_t) -> None: ...
@@ -3006,316 +3354,87 @@ class chart(obj):
     def set_series_value_by_id2(self, ser: chart_series_t, id: int, x_value: int, y_value: int) -> None: ...
     def set_series_values(self, ser: chart_series_t, values: Any, values_cnt: int) -> None: ...
     def set_series_values2(self, ser: chart_series_t, x_values: Any, y_values: Any, values_cnt: int) -> None: ...
-    def set_type(self, type: chart.TYPE | int) -> None: ...
+    def set_type(self, _type: chart.TYPE | int) -> None: ...
     def set_update_mode(self, update_mode: chart.UPDATE_MODE | int) -> None: ...
     def set_ver_div_line_count(self, cnt: int) -> None: ...
     def set_x_start_point(self, ser: chart_series_t, id: int) -> None: ...
 
 class checkbox(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_text(self) -> str: ...
     def set_text(self, txt: str) -> None: ...
     def set_text_static(self, txt: str) -> None: ...
 
 class dropdown(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_option(self, option: str, pos: int) -> None: ...
     def bind_value(self, subject: subject_t) -> observer_t: ...
     def clear_options(self) -> None: ...
     def close(self) -> None: ...
-    def get_dir(self) -> int: ...
-    def get_list(self, parent: obj) -> obj: ...
+    def get_dir(self) -> DIR | int: ...
+    def get_list(self) -> obj: ...
     def get_option_count(self) -> int: ...
     def get_option_index(self, option: str) -> int: ...
     def get_options(self) -> str: ...
     def get_selected(self) -> int: ...
-    def get_selected_highlight(self) -> bool: ...
+    def get_selected_highlight(self) -> int: ...
     def get_selected_str(self, buf: str, buf_size: int) -> None: ...
     def get_symbol(self) -> str: ...
     def get_text(self) -> str: ...
-    def is_open(self) -> bool: ...
+    def is_open(self) -> int: ...
     def open(self) -> None: ...
     def set_dir(self, dir: DIR | int) -> None: ...
     def set_options(self, options: str) -> None: ...
     def set_options_static(self, options: str) -> None: ...
     def set_selected(self, sel_opt: int) -> None: ...
-    def set_selected_highlight(self, en: bool) -> None: ...
+    def set_selected_highlight(self, en: int) -> None: ...
     def set_symbol(self, symbol: Any) -> None: ...
     def set_text(self, text: str) -> None: ...
     def set_text_static(self, text: str) -> None: ...
 
 class gif(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_current_frame_index(self) -> int: ...
     def get_frame_count(self) -> int: ...
     def get_loop_count(self) -> int: ...
-    def get_size(self, src: str, w: Any, h: Any) -> bool: ...
-    def is_loaded(self) -> bool: ...
+    @staticmethod
+    def get_size(src: str, w: Any, h: Any) -> int: ...
+    def is_loaded(self) -> int: ...
     def pause(self) -> None: ...
     def restart(self) -> None: ...
     def resume(self) -> None: ...
-    def set_auto_pause_invisible(self, auto_pause: bool) -> None: ...
+    def set_auto_pause_invisible(self, auto_pause: int) -> None: ...
     def set_color_format(self, color_format: COLOR_FORMAT | int) -> None: ...
     def set_loop_count(self, count: int) -> None: ...
     def set_src(self, src: Any) -> None: ...
 
 class image(obj):
     class ALIGN:
-        BOTTOM_LEFT: int
-        BOTTOM_MID: int
-        BOTTOM_RIGHT: int
-        CENTER: int
-        CONTAIN: int
-        COVER: int
         DEFAULT: int
-        LEFT_MID: int
-        RIGHT_MID: int
-        STRETCH: int
-        TILE: int
         TOP_LEFT: int
         TOP_MID: int
         TOP_RIGHT: int
-    ALIGN: ClassVar[type[ALIGN]]
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
+        BOTTOM_LEFT: int
+        BOTTOM_MID: int
+        BOTTOM_RIGHT: int
+        LEFT_MID: int
+        RIGHT_MID: int
+        CENTER: int
+        _LV_IMAGE_ALIGN_AUTO_TRANSFORM: int
+        STRETCH: int
+        TILE: int
+        CONTAIN: int
+        COVER: int
     class COMPRESS:
-        LZ4: int
         NONE: int
         RLE: int
-    COMPRESS: ClassVar[type[COMPRESS]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
+        LZ4: int
     class FLAGS:
-        ALLOCATED: int
-        COMPRESSED: int
-        CUSTOM_DRAW: int
-        MODIFIABLE: int
         PREMULTIPLIED: int
+        COMPRESSED: int
+        ALLOCATED: int
+        MODIFIABLE: int
+        CUSTOM_DRAW: int
         USER1: int
         USER2: int
         USER3: int
@@ -3324,54 +3443,65 @@ class image(obj):
         USER6: int
         USER7: int
         USER8: int
-    FLAGS: ClassVar[type[FLAGS]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
     class SRC:
+        VARIABLE: int
         FILE: int
         SYMBOL: int
         UNKNOWN: int
-        VARIABLE: int
-    SRC: ClassVar[type[SRC]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def bind_src(self, subject: subject_t) -> observer_t: ...
-    def buf_free(self, dsc: image_dsc_t) -> None: ...
-    def buf_get_transformed_area(self, res: area_t, w: int, h: int, angle: int, scale_x: int, scale_y: int, pivot: point_t) -> None: ...
-    def buf_set_palette(self, dsc: image_dsc_t, id: int, c: color32_t) -> None: ...
-    def cache_drop(self, src: Any) -> None: ...
-    def cache_dump(self) -> None: ...
-    def cache_init(self, size: int) -> int: ...
-    def cache_is_enabled(self) -> bool: ...
-    def cache_iter_create(self) -> iter_t: ...
-    def cache_resize(self, new_size: int, evict_now: bool) -> None: ...
-    def decoder_add_to_cache(self, decoder: image_decoder_t, search_key: image_cache_data_t, decoded: draw_buf_t, user_data: Any) -> cache_entry_t: ...
-    def decoder_close(self, dsc: image_decoder_dsc_t) -> None: ...
-    def decoder_create(self) -> image_decoder_t: ...
-    def decoder_deinit(self) -> None: ...
-    def decoder_delete(self, decoder: image_decoder_t) -> None: ...
-    def decoder_get_area(self, dsc: image_decoder_dsc_t, full_area: area_t, decoded_area: area_t) -> int: ...
-    def decoder_get_info(self, src: Any, header: image_header_t) -> int: ...
-    def decoder_get_next(self, decoder: image_decoder_t) -> image_decoder_t: ...
-    def decoder_init(self, image_cache_size: int, image_header_count: int) -> None: ...
-    def decoder_open(self, dsc: image_decoder_dsc_t, src: Any, args: image_decoder_args_t) -> int: ...
-    def decoder_post_process(self, dsc: image_decoder_dsc_t, decoded: draw_buf_t) -> draw_buf_t: ...
-    def decoder_set_close_cb(self, decoder: image_decoder_t, close_cb: Callable[[image_decoder_t, image_decoder_dsc_t], None]) -> None: ...
-    def decoder_set_get_area_cb(self, decoder: image_decoder_t, read_line_cb: Callable[[image_decoder_t, image_decoder_dsc_t, area_t, area_t], RESULT | int]) -> None: ...
-    def decoder_set_info_cb(self, decoder: image_decoder_t, info_cb: Callable[[image_decoder_t, image_decoder_dsc_t, image_header_t], RESULT | int]) -> None: ...
-    def decoder_set_open_cb(self, decoder: image_decoder_t, open_cb: Callable[[image_decoder_t, image_decoder_dsc_t], RESULT | int]) -> None: ...
-    def get_antialias(self) -> bool: ...
+    @staticmethod
+    def buf_free(dsc: image_dsc_t) -> None: ...
+    @staticmethod
+    def buf_get_transformed_area(res: area_t, w: int, h: int, angle: int, scale_x: int, scale_y: int, pivot: point_t) -> None: ...
+    @staticmethod
+    def buf_set_palette(dsc: image_dsc_t, id: int, c: color32_t) -> None: ...
+    @staticmethod
+    def cache_drop(src: Any) -> None: ...
+    @staticmethod
+    def cache_dump() -> None: ...
+    @staticmethod
+    def cache_init(size: int) -> RESULT | int: ...
+    @staticmethod
+    def cache_is_enabled() -> int: ...
+    @staticmethod
+    def cache_iter_create() -> iter_t: ...
+    @staticmethod
+    def cache_resize(new_size: int, evict_now: int) -> None: ...
+    @staticmethod
+    def decoder_add_to_cache(decoder: image_decoder_t, search_key: image_cache_data_t, decoded: draw_buf_t, user_data: Any) -> cache_entry_t: ...
+    @staticmethod
+    def decoder_close(dsc: image_decoder_dsc_t) -> None: ...
+    @staticmethod
+    def decoder_create() -> image_decoder_t: ...
+    @staticmethod
+    def decoder_deinit() -> None: ...
+    @staticmethod
+    def decoder_delete(decoder: image_decoder_t) -> None: ...
+    @staticmethod
+    def decoder_get_area(dsc: image_decoder_dsc_t, full_area: area_t, decoded_area: area_t) -> RESULT | int: ...
+    @staticmethod
+    def decoder_get_info(src: Any, header: image_header_t) -> RESULT | int: ...
+    @staticmethod
+    def decoder_get_next(decoder: image_decoder_t) -> image_decoder_t: ...
+    @staticmethod
+    def decoder_init(image_cache_size: int, image_header_count: int) -> None: ...
+    @staticmethod
+    def decoder_open(dsc: image_decoder_dsc_t, src: Any, args: image_decoder_args_t) -> RESULT | int: ...
+    @staticmethod
+    def decoder_post_process(dsc: image_decoder_dsc_t, decoded: draw_buf_t) -> draw_buf_t: ...
+    @staticmethod
+    def decoder_set_close_cb(decoder: image_decoder_t, close_cb: Callable[[image_decoder_t, image_decoder_dsc_t], None]) -> None: ...
+    @staticmethod
+    def decoder_set_get_area_cb(decoder: image_decoder_t, read_line_cb: Callable[[image_decoder_t, image_decoder_dsc_t, area_t, area_t], RESULT | int]) -> None: ...
+    @staticmethod
+    def decoder_set_info_cb(decoder: image_decoder_t, info_cb: Callable[[image_decoder_t, image_decoder_dsc_t, image_header_t], RESULT | int]) -> None: ...
+    @staticmethod
+    def decoder_set_open_cb(decoder: image_decoder_t, open_cb: Callable[[image_decoder_t, image_decoder_dsc_t], RESULT | int]) -> None: ...
+    def get_antialias(self) -> int: ...
     def get_bitmap_map_src(self) -> image_dsc_t: ...
-    def get_blend_mode(self) -> int: ...
-    def get_inner_align(self) -> int: ...
+    def get_blend_mode(self) -> BLEND_MODE | int: ...
+    def get_inner_align(self) -> image.ALIGN | int: ...
     def get_offset_x(self) -> int: ...
     def get_offset_y(self) -> int: ...
     def get_pivot(self, pivot: point_t) -> None: ...
@@ -3384,13 +3514,19 @@ class image(obj):
     def get_src_width(self) -> int: ...
     def get_transformed_height(self) -> int: ...
     def get_transformed_width(self) -> int: ...
-    def header_cache_drop(self, src: Any) -> None: ...
-    def header_cache_dump(self) -> None: ...
-    def header_cache_init(self, count: int) -> int: ...
-    def header_cache_is_enabled(self) -> bool: ...
-    def header_cache_iter_create(self) -> iter_t: ...
-    def header_cache_resize(self, count: int, evict_now: bool) -> None: ...
-    def set_antialias(self, antialias: bool) -> None: ...
+    @staticmethod
+    def header_cache_drop(src: Any) -> None: ...
+    @staticmethod
+    def header_cache_dump() -> None: ...
+    @staticmethod
+    def header_cache_init(count: int) -> RESULT | int: ...
+    @staticmethod
+    def header_cache_is_enabled() -> int: ...
+    @staticmethod
+    def header_cache_iter_create() -> iter_t: ...
+    @staticmethod
+    def header_cache_resize(count: int, evict_now: int) -> None: ...
+    def set_antialias(self, antialias: int) -> None: ...
     def set_bitmap_map_src(self, src: image_dsc_t) -> None: ...
     def set_blend_mode(self, blend_mode: BLEND_MODE | int) -> None: ...
     def set_inner_align(self, align: image.ALIGN | int) -> None: ...
@@ -3404,78 +3540,18 @@ class image(obj):
     def set_scale_x(self, zoom: int) -> None: ...
     def set_scale_y(self, zoom: int) -> None: ...
     def set_src(self, src: Any) -> None: ...
-    def src_get_type(self, src: Any) -> int: ...
+    @staticmethod
+    def src_get_type(src: Any) -> image.SRC | int: ...
 
 class imagebutton(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
     class STATE:
-        CHECKED_DISABLED: int
-        CHECKED_PRESSED: int
-        CHECKED_RELEASED: int
-        DISABLED: int
-        NUM: int
-        PRESSED: int
         RELEASED: int
-    STATE: ClassVar[type[STATE]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        PRESSED: int
+        DISABLED: int
+        CHECKED_RELEASED: int
+        CHECKED_PRESSED: int
+        CHECKED_DISABLED: int
+        NUM: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_src_left(self, state: imagebutton.STATE | int) -> Any: ...
     def get_src_middle(self, state: imagebutton.STATE | int) -> Any: ...
@@ -3484,238 +3560,61 @@ class imagebutton(obj):
     def set_src_left(self, state: imagebutton.STATE | int, src_left: Any) -> None: ...
     def set_src_mid(self, state: imagebutton.STATE | int, src_mid: Any) -> None: ...
     def set_src_right(self, state: imagebutton.STATE | int, src_right: Any) -> None: ...
+    def set_state(self, state: imagebutton.STATE | int) -> None: ...
 
 class keyboard(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class MODE:
-        NUMBER: int
-        SPECIAL: int
         TEXT_LOWER: int
         TEXT_UPPER: int
+        SPECIAL: int
+        NUMBER: int
         USER_1: int
         USER_2: int
         USER_3: int
         USER_4: int
-    MODE: ClassVar[type[MODE]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
-    def def_event_cb(self, e: event_t) -> None: ...
+    @staticmethod
+    def def_event_cb(e: event_t) -> None: ...
     def get_button_text(self, btn_id: int) -> str: ...
-    def get_mode(self) -> int: ...
-    def get_popovers(self) -> bool: ...
+    def get_map_array(self) -> Any: ...
+    def get_mode(self) -> keyboard.MODE | int: ...
+    def get_popovers(self) -> int: ...
     def get_selected_button(self) -> int: ...
     def get_textarea(self) -> obj: ...
     def set_map(self, mode: keyboard.MODE | int, map: Any, ctrl_map: Any) -> None: ...
     def set_mode(self, mode: keyboard.MODE | int) -> None: ...
-    def set_popovers(self, en: bool) -> None: ...
+    def set_popovers(self, en: int) -> None: ...
     def set_textarea(self, ta: obj) -> None: ...
 
 class label(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class LONG_MODE:
-        CLIP: int
+        WRAP: int
         DOTS: int
         SCROLL: int
         SCROLL_CIRCULAR: int
-        WRAP: int
-    LONG_MODE: ClassVar[type[LONG_MODE]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        CLIP: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def bind_text(self, subject: subject_t, fmt: str) -> observer_t: ...
     def cut_text(self, pos: int, cnt: int) -> None: ...
-    def get_letter_on(self, pos_in: point_t, bidi: bool) -> int: ...
+    def get_letter_on(self, pos_in: point_t, bidi: int) -> int: ...
     def get_letter_pos(self, char_id: int, pos: point_t) -> None: ...
-    def get_long_mode(self) -> int: ...
-    def get_recolor(self) -> bool: ...
+    def get_long_mode(self) -> label.LONG_MODE | int: ...
+    def get_recolor(self) -> int: ...
     def get_text(self) -> str: ...
     def get_text_selection_end(self) -> int: ...
     def get_text_selection_start(self) -> int: ...
     def ins_text(self, pos: int, txt: str) -> None: ...
-    def is_char_under_pos(self, pos: point_t) -> bool: ...
+    def is_char_under_pos(self, pos: point_t) -> int: ...
     def set_long_mode(self, long_mode: label.LONG_MODE | int) -> None: ...
-    def set_recolor(self, en: bool) -> None: ...
+    def set_recolor(self, en: int) -> None: ...
     def set_text(self, text: str) -> None: ...
+    def set_text_fmt(self, fmt: str, *args: Any) -> None: ...
     def set_text_selection_end(self, index: int) -> None: ...
     def set_text_selection_start(self, index: int) -> None: ...
     def set_text_static(self, text: str) -> None: ...
+    def set_text_vfmt(self, fmt: str, args: int) -> None: ...
 
 class led(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_brightness(self) -> int: ...
     def get_color(self) -> color_t: ...
@@ -3726,137 +3625,17 @@ class led(obj):
     def toggle(self) -> None: ...
 
 class line(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_point_count(self) -> int: ...
     def get_points(self) -> point_precise_t: ...
     def get_points_mutable(self) -> point_precise_t: ...
-    def get_y_invert(self) -> bool: ...
-    def is_point_array_mutable(self) -> bool: ...
+    def get_y_invert(self) -> int: ...
+    def is_point_array_mutable(self) -> int: ...
     def set_points(self, points: Any, point_num: int) -> None: ...
     def set_points_mutable(self, points: Any, point_num: int) -> None: ...
-    def set_y_invert(self, en: bool) -> None: ...
+    def set_y_invert(self, en: int) -> None: ...
 
 class list(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_button(self, icon: Any, txt: str) -> obj: ...
     def add_text(self, txt: str) -> obj: ...
@@ -3864,86 +3643,24 @@ class list(obj):
     def set_button_text(self, btn: obj, txt: str) -> None: ...
 
 class menu(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class HEADER:
-        BOTTOM_FIXED: int
         TOP_FIXED: int
         TOP_UNFIXED: int
-    HEADER: ClassVar[type[HEADER]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
+        BOTTOM_FIXED: int
     class ROOT_BACK_BUTTON:
         DISABLED: int
         ENABLED: int
-    ROOT_BACK_BUTTON: ClassVar[type[ROOT_BACK_BUTTON]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
-    def back_button_is_root(self, obj: obj) -> bool: ...
+    def back_button_is_root(self, obj: obj) -> int: ...
     def clear_history(self) -> None: ...
-    def get_cur_main_page(self, parent: obj) -> obj: ...
-    def get_cur_sidebar_page(self, parent: obj) -> obj: ...
-    def get_main_header(self, parent: obj) -> obj: ...
-    def get_main_header_back_button(self, parent: obj) -> obj: ...
-    def get_mode_header(self) -> int: ...
-    def get_mode_root_back_button(self) -> int: ...
-    def get_sidebar_header(self, parent: obj) -> obj: ...
-    def get_sidebar_header_back_button(self, parent: obj) -> obj: ...
+    def get_cur_main_page(self) -> obj: ...
+    def get_cur_sidebar_page(self) -> obj: ...
+    def get_main_header(self) -> obj: ...
+    def get_main_header_back_button(self) -> obj: ...
+    def get_mode_header(self) -> menu.HEADER | int: ...
+    def get_mode_root_back_button(self) -> menu.ROOT_BACK_BUTTON | int: ...
+    def get_sidebar_header(self) -> obj: ...
+    def get_sidebar_header_back_button(self) -> obj: ...
     def set_load_page_event(self, obj: obj, page: obj) -> None: ...
     def set_mode_header(self, mode: menu.HEADER | int) -> None: ...
     def set_mode_root_back_button(self, mode: menu.ROOT_BACK_BUTTON | int) -> None: ...
@@ -3953,400 +3670,95 @@ class menu(obj):
     def set_sidebar_page(self, page: obj) -> None: ...
 
 class menu_cont(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
 
 class menu_page(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
-    def __init__(self, parent: obj | None = ...) -> None: ...
+    def __init__(self, menu: obj, title: str) -> None: ...
 
 class menu_section(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
 
 class menu_separator(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
 
 class msgbox(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
-    def add_close_button(self, parent: obj) -> obj: ...
+    def add_close_button(self) -> obj: ...
     def add_footer_button(self, text: str) -> obj: ...
     def add_header_button(self, icon: Any) -> obj: ...
     def add_text(self, text: str) -> obj: ...
+    def add_text_fmt(self, fmt: str, *args: Any) -> obj: ...
     def add_title(self, title: str) -> obj: ...
     def close(self) -> None: ...
     def close_async(self) -> None: ...
-    def get_content(self, parent: obj) -> obj: ...
-    def get_footer(self, parent: obj) -> obj: ...
-    def get_header(self, parent: obj) -> obj: ...
-    def get_title(self, parent: obj) -> obj: ...
+    def get_content(self) -> obj: ...
+    def get_footer(self) -> obj: ...
+    def get_header(self) -> obj: ...
+    def get_title(self) -> obj: ...
 
 class obj(Struct):
     class CLASS_EDITABLE:
-        FALSE: int
         INHERIT: int
         TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
+        FALSE: int
     class CLASS_GROUP_DEF:
-        FALSE: int
         INHERIT: int
         TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
+        FALSE: int
     class CLASS_THEME_INHERITABLE:
         FALSE: int
         TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
     class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
+        HIDDEN: int
         CLICKABLE: int
         CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
+        CHECKABLE: int
         SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
         SCROLL_ELASTIC: int
         SCROLL_MOMENTUM: int
         SCROLL_ONE: int
+        SCROLL_CHAIN_HOR: int
+        SCROLL_CHAIN_VER: int
+        SCROLL_CHAIN: int
         SCROLL_ON_FOCUS: int
         SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
         SNAPPABLE: int
+        PRESS_LOCK: int
+        EVENT_BUBBLE: int
+        GESTURE_BUBBLE: int
+        ADV_HITTEST: int
+        IGNORE_LAYOUT: int
+        FLOATING: int
+        SEND_DRAW_TASK_EVENTS: int
+        OVERFLOW_VISIBLE: int
+        EVENT_TRICKLE: int
         STATE_TRICKLE: int
+        LAYOUT_1: int
+        LAYOUT_2: int
+        FLEX_IN_NEW_TRACK: int
+        WIDGET_1: int
+        WIDGET_2: int
         USER_1: int
         USER_2: int
         USER_3: int
         USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
         NONE: int
         RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
+        INVERSE: int
+        INVERSE_RECURSIVE: int
     class TREE_WALK:
-        END: int
         NEXT: int
         SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        END: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_event_cb(self, event_cb: Callable[[event_t], None], filter: EVENT | int, user_data: Any) -> event_dsc_t: ...
     def add_flag(self, f: OBJ_FLAG | int) -> None: ...
-    def add_play_timeline_event(self, trigger: EVENT | int, at: anim_timeline_t, delay: int, reverse: bool) -> None: ...
+    def add_play_timeline_event(self, trigger: EVENT | int, at: anim_timeline_t, delay: int, reverse: int) -> None: ...
     def add_screen_create_event(self, trigger: EVENT | int, screen_create_cb: Callable[[], obj], anim_type: SCREEN_LOAD_ANIM | int, duration: int, delay: int) -> None: ...
     def add_screen_load_event(self, trigger: EVENT | int, screen: obj, anim_type: SCREEN_LOAD_ANIM | int, duration: int, delay: int) -> None: ...
     def add_state(self, state: STATE | int) -> None: ...
-    def add_style(self, style: style_t, selector: int | PART | STATE) -> None: ...
+    def add_style(self, style: style_t, selector: int) -> None: ...
     def add_subject_increment_event(self, subject: subject_t, trigger: EVENT | int, step: int) -> subject_increment_dsc_t: ...
     def add_subject_set_float_event(self, subject: subject_t, trigger: EVENT | int, value: float) -> None: ...
     def add_subject_set_int_event(self, subject: subject_t, trigger: EVENT | int, value: int) -> None: ...
@@ -4355,7 +3767,7 @@ class obj(Struct):
     def align(self, align: ALIGN | int, x_ofs: int, y_ofs: int) -> None: ...
     def align_to(self, base: obj, align: ALIGN | int, x_ofs: int, y_ofs: int) -> None: ...
     def allocate_spec_attr(self) -> None: ...
-    def area_is_visible(self, area: area_t) -> bool: ...
+    def area_is_visible(self, area: area_t) -> int: ...
     def bind_checked(self, subject: subject_t) -> observer_t: ...
     def bind_flag_if_eq(self, subject: subject_t, flag: OBJ_FLAG | int, ref_value: int) -> observer_t: ...
     def bind_flag_if_ge(self, subject: subject_t, flag: OBJ_FLAG | int, ref_value: int) -> observer_t: ...
@@ -4369,25 +3781,29 @@ class obj(Struct):
     def bind_state_if_le(self, subject: subject_t, state: STATE | int, ref_value: int) -> observer_t: ...
     def bind_state_if_lt(self, subject: subject_t, state: STATE | int, ref_value: int) -> observer_t: ...
     def bind_state_if_not_eq(self, subject: subject_t, state: STATE | int, ref_value: int) -> observer_t: ...
-    def bind_style(self, style: style_t, selector: int | PART | STATE, subject: subject_t, ref_value: int) -> observer_t: ...
-    def bind_style_prop(self, prop: int, selector: int | PART | STATE, subject: subject_t) -> observer_t: ...
+    def bind_style(self, style: style_t, selector: int, subject: subject_t, ref_value: int) -> observer_t: ...
+    def bind_style_prop(self, prop: int, selector: int, subject: subject_t) -> observer_t: ...
     def calc_dynamic_height(self, prop: int) -> int: ...
     def calc_dynamic_width(self, prop: int) -> int: ...
     def calculate_ext_draw_size(self, part: PART | int) -> int: ...
-    def calculate_style_text_align(self, part: PART | int, txt: str) -> int: ...
+    def calculate_style_text_align(self, part: PART | int, txt: str) -> TEXT_ALIGN | int: ...
     def center(self) -> None: ...
-    def check_type(self, class_p: obj_class_t) -> bool: ...
-    def class_create_obj(self, class_p: obj_class_t, parent: obj) -> obj: ...
+    def check_type(self, class_p: obj_class_t) -> int: ...
+    @staticmethod
+    def class_create_obj(class_p: obj_class_t, parent: obj) -> obj: ...
     def class_init_obj(self) -> None: ...
     def clean(self) -> None: ...
     def delete(self) -> None: ...
-    def delete_anim_completed_cb(self, a: anim_t) -> None: ...
+    @staticmethod
+    def delete_anim_completed_cb(a: anim_t) -> None: ...
     def delete_async(self) -> None: ...
     def delete_delayed(self, delay_ms: int) -> None: ...
     def destruct(self) -> None: ...
     def dump_tree(self) -> None: ...
-    def enable_style_refresh(self, en: bool) -> None: ...
-    def event_base(self, class_p: obj_class_t, e: event_t) -> int: ...
+    @staticmethod
+    def enable_style_refresh(en: int) -> None: ...
+    @staticmethod
+    def event_base(class_p: obj_class_t, e: event_t) -> RESULT | int: ...
     def fade_in(self, time: int, delay: int) -> None: ...
     def fade_out(self, time: int, delay: int) -> None: ...
     def get_child(self, idx: int) -> obj: ...
@@ -4408,43 +3824,43 @@ class obj(Struct):
     def get_height(self) -> int: ...
     def get_index(self) -> int: ...
     def get_index_by_type(self, class_p: obj_class_t) -> int: ...
-    def get_layer_type(self) -> int: ...
-    def get_local_style_prop(self, prop: int, value: style_value_t, selector: int | PART | STATE) -> int: ...
+    def get_layer_type(self) -> LAYER_TYPE | int: ...
+    def get_local_style_prop(self, prop: int, value: style_value_t, selector: int) -> STYLE_RES | int: ...
     def get_parent(self) -> obj: ...
     def get_screen(self) -> obj: ...
     def get_scroll_bottom(self) -> int: ...
-    def get_scroll_dir(self) -> int: ...
+    def get_scroll_dir(self) -> DIR | int: ...
     def get_scroll_end(self, end: point_t) -> None: ...
     def get_scroll_left(self) -> int: ...
     def get_scroll_right(self) -> int: ...
-    def get_scroll_snap_x(self) -> int: ...
-    def get_scroll_snap_y(self) -> int: ...
+    def get_scroll_snap_x(self) -> SCROLL_SNAP | int: ...
+    def get_scroll_snap_y(self) -> SCROLL_SNAP | int: ...
     def get_scroll_top(self) -> int: ...
     def get_scroll_x(self) -> int: ...
     def get_scroll_y(self) -> int: ...
     def get_scrollbar_area(self, hor: area_t, ver: area_t) -> None: ...
-    def get_scrollbar_mode(self) -> int: ...
+    def get_scrollbar_mode(self) -> SCROLLBAR_MODE | int: ...
     def get_self_height(self) -> int: ...
     def get_self_width(self) -> int: ...
     def get_sibling(self, idx: int) -> obj: ...
     def get_sibling_by_type(self, idx: int, class_p: obj_class_t) -> obj: ...
-    def get_state(self) -> int: ...
-    def get_style_align(self, part: PART | int) -> int: ...
+    def get_state(self) -> STATE | int: ...
+    def get_style_align(self, part: PART | int) -> ALIGN | int: ...
     def get_style_anim(self, part: PART | int) -> anim_t: ...
     def get_style_anim_duration(self, part: PART | int) -> int: ...
     def get_style_arc_color(self, part: PART | int) -> color_t: ...
     def get_style_arc_color_filtered(self, part: PART | int) -> color_t: ...
     def get_style_arc_image_src(self, part: PART | int) -> Any: ...
     def get_style_arc_opa(self, part: PART | int) -> int: ...
-    def get_style_arc_rounded(self, part: PART | int) -> bool: ...
+    def get_style_arc_rounded(self, part: PART | int) -> int: ...
     def get_style_arc_width(self, part: PART | int) -> int: ...
-    def get_style_base_dir(self, part: PART | int) -> int: ...
+    def get_style_base_dir(self, part: PART | int) -> BASE_DIR | int: ...
     def get_style_bg_color(self, part: PART | int) -> color_t: ...
     def get_style_bg_color_filtered(self, part: PART | int) -> color_t: ...
     def get_style_bg_grad(self, part: PART | int) -> grad_dsc_t: ...
     def get_style_bg_grad_color(self, part: PART | int) -> color_t: ...
     def get_style_bg_grad_color_filtered(self, part: PART | int) -> color_t: ...
-    def get_style_bg_grad_dir(self, part: PART | int) -> int: ...
+    def get_style_bg_grad_dir(self, part: PART | int) -> GRAD_DIR | int: ...
     def get_style_bg_grad_opa(self, part: PART | int) -> int: ...
     def get_style_bg_grad_stop(self, part: PART | int) -> int: ...
     def get_style_bg_image_opa(self, part: PART | int) -> int: ...
@@ -4452,24 +3868,24 @@ class obj(Struct):
     def get_style_bg_image_recolor_filtered(self, part: PART | int) -> color_t: ...
     def get_style_bg_image_recolor_opa(self, part: PART | int) -> int: ...
     def get_style_bg_image_src(self, part: PART | int) -> Any: ...
-    def get_style_bg_image_tiled(self, part: PART | int) -> bool: ...
+    def get_style_bg_image_tiled(self, part: PART | int) -> int: ...
     def get_style_bg_main_opa(self, part: PART | int) -> int: ...
     def get_style_bg_main_stop(self, part: PART | int) -> int: ...
     def get_style_bg_opa(self, part: PART | int) -> int: ...
     def get_style_bitmap_mask_src(self, part: PART | int) -> Any: ...
-    def get_style_blend_mode(self, part: PART | int) -> int: ...
-    def get_style_blur_backdrop(self, part: PART | int) -> bool: ...
-    def get_style_blur_quality(self, part: PART | int) -> int: ...
+    def get_style_blend_mode(self, part: PART | int) -> BLEND_MODE | int: ...
+    def get_style_blur_backdrop(self, part: PART | int) -> int: ...
+    def get_style_blur_quality(self, part: PART | int) -> BLUR_QUALITY | int: ...
     def get_style_blur_radius(self, part: PART | int) -> int: ...
     def get_style_border_color(self, part: PART | int) -> color_t: ...
     def get_style_border_color_filtered(self, part: PART | int) -> color_t: ...
     def get_style_border_opa(self, part: PART | int) -> int: ...
-    def get_style_border_post(self, part: PART | int) -> bool: ...
-    def get_style_border_side(self, part: PART | int) -> int: ...
+    def get_style_border_post(self, part: PART | int) -> int: ...
+    def get_style_border_side(self, part: PART | int) -> BORDER_SIDE | int: ...
     def get_style_border_width(self, part: PART | int) -> int: ...
     def get_style_clamped_height(self) -> int: ...
     def get_style_clamped_width(self) -> int: ...
-    def get_style_clip_corner(self, part: PART | int) -> bool: ...
+    def get_style_clip_corner(self, part: PART | int) -> int: ...
     def get_style_color_filter_dsc(self, part: PART | int) -> color_filter_dsc_t: ...
     def get_style_color_filter_opa(self, part: PART | int) -> int: ...
     def get_style_drop_shadow_color(self, part: PART | int) -> color_t: ...
@@ -4477,22 +3893,22 @@ class obj(Struct):
     def get_style_drop_shadow_offset_x(self, part: PART | int) -> int: ...
     def get_style_drop_shadow_offset_y(self, part: PART | int) -> int: ...
     def get_style_drop_shadow_opa(self, part: PART | int) -> int: ...
-    def get_style_drop_shadow_quality(self, part: PART | int) -> int: ...
+    def get_style_drop_shadow_quality(self, part: PART | int) -> BLUR_QUALITY | int: ...
     def get_style_drop_shadow_radius(self, part: PART | int) -> int: ...
-    def get_style_flex_cross_place(self, part: PART | int) -> int: ...
-    def get_style_flex_flow(self, part: PART | int) -> int: ...
+    def get_style_flex_cross_place(self, part: PART | int) -> FLEX_ALIGN | int: ...
+    def get_style_flex_flow(self, part: PART | int) -> FLEX_FLOW | int: ...
     def get_style_flex_grow(self, part: PART | int) -> int: ...
-    def get_style_flex_main_place(self, part: PART | int) -> int: ...
-    def get_style_flex_track_place(self, part: PART | int) -> int: ...
+    def get_style_flex_main_place(self, part: PART | int) -> FLEX_ALIGN | int: ...
+    def get_style_flex_track_place(self, part: PART | int) -> FLEX_ALIGN | int: ...
     def get_style_grid_cell_column_pos(self, part: PART | int) -> int: ...
     def get_style_grid_cell_column_span(self, part: PART | int) -> int: ...
     def get_style_grid_cell_row_pos(self, part: PART | int) -> int: ...
     def get_style_grid_cell_row_span(self, part: PART | int) -> int: ...
-    def get_style_grid_cell_x_align(self, part: PART | int) -> int: ...
-    def get_style_grid_cell_y_align(self, part: PART | int) -> int: ...
-    def get_style_grid_column_align(self, part: PART | int) -> int: ...
+    def get_style_grid_cell_x_align(self, part: PART | int) -> GRID_ALIGN | int: ...
+    def get_style_grid_cell_y_align(self, part: PART | int) -> GRID_ALIGN | int: ...
+    def get_style_grid_column_align(self, part: PART | int) -> GRID_ALIGN | int: ...
     def get_style_grid_column_dsc_array(self, part: PART | int) -> Any: ...
-    def get_style_grid_row_align(self, part: PART | int) -> int: ...
+    def get_style_grid_row_align(self, part: PART | int) -> GRID_ALIGN | int: ...
     def get_style_grid_row_dsc_array(self, part: PART | int) -> Any: ...
     def get_style_height(self, part: PART | int) -> int: ...
     def get_style_image_colorkey(self, part: PART | int) -> image_colorkey_t: ...
@@ -4507,7 +3923,7 @@ class obj(Struct):
     def get_style_line_dash_gap(self, part: PART | int) -> int: ...
     def get_style_line_dash_width(self, part: PART | int) -> int: ...
     def get_style_line_opa(self, part: PART | int) -> int: ...
-    def get_style_line_rounded(self, part: PART | int) -> bool: ...
+    def get_style_line_rounded(self, part: PART | int) -> int: ...
     def get_style_line_width(self, part: PART | int) -> int: ...
     def get_style_margin_bottom(self, part: PART | int) -> int: ...
     def get_style_margin_left(self, part: PART | int) -> int: ...
@@ -4550,10 +3966,10 @@ class obj(Struct):
     def get_style_space_left(self, part: PART | int) -> int: ...
     def get_style_space_right(self, part: PART | int) -> int: ...
     def get_style_space_top(self, part: PART | int) -> int: ...
-    def get_style_text_align(self, part: PART | int) -> int: ...
+    def get_style_text_align(self, part: PART | int) -> TEXT_ALIGN | int: ...
     def get_style_text_color(self, part: PART | int) -> color_t: ...
     def get_style_text_color_filtered(self, part: PART | int) -> color_t: ...
-    def get_style_text_decor(self, part: PART | int) -> int: ...
+    def get_style_text_decor(self, part: PART | int) -> TEXT_DECOR | int: ...
     def get_style_text_font(self, part: PART | int) -> font_t: ...
     def get_style_text_letter_space(self, part: PART | int) -> int: ...
     def get_style_text_line_space(self, part: PART | int) -> int: ...
@@ -4590,75 +4006,79 @@ class obj(Struct):
     def get_y(self) -> int: ...
     def get_y2(self) -> int: ...
     def get_y_aligned(self) -> int: ...
-    def has_class(self, class_p: obj_class_t) -> bool: ...
-    def has_flag(self, f: OBJ_FLAG | int) -> bool: ...
-    def has_flag_any(self, f: OBJ_FLAG | int) -> bool: ...
-    def has_state(self, state: STATE | int) -> bool: ...
-    def has_style_prop(self, selector: int | PART | STATE, prop: int) -> bool: ...
-    def hit_test(self, point: point_t) -> bool: ...
+    def has_class(self, class_p: obj_class_t) -> int: ...
+    def has_flag(self, f: OBJ_FLAG | int) -> int: ...
+    def has_flag_any(self, f: OBJ_FLAG | int) -> int: ...
+    def has_state(self, state: STATE | int) -> int: ...
+    def has_style_prop(self, selector: int, prop: int) -> int: ...
+    def hit_test(self, point: point_t) -> int: ...
     def init_draw_arc_dsc(self, part: PART | int, draw_dsc: draw_arc_dsc_t) -> None: ...
     def init_draw_blur_dsc(self, part: PART | int, draw_dsc: draw_blur_dsc_t) -> None: ...
     def init_draw_image_dsc(self, part: PART | int, draw_dsc: draw_image_dsc_t) -> None: ...
     def init_draw_label_dsc(self, part: PART | int, draw_dsc: draw_label_dsc_t) -> None: ...
     def init_draw_line_dsc(self, part: PART | int, draw_dsc: draw_line_dsc_t) -> None: ...
     def init_draw_rect_dsc(self, part: PART | int, draw_dsc: draw_rect_dsc_t) -> None: ...
-    def invalidate(self) -> int: ...
-    def invalidate_area(self, area: area_t) -> int: ...
-    def is_editable(self) -> bool: ...
-    def is_group_def(self) -> bool: ...
-    def is_height_max(self) -> bool: ...
-    def is_height_min(self) -> bool: ...
-    def is_layout_positioned(self) -> bool: ...
-    def is_radio_button(self) -> bool: ...
-    def is_scrolling(self) -> bool: ...
-    def is_valid(self) -> bool: ...
-    def is_visible(self) -> bool: ...
-    def is_width_max(self) -> bool: ...
-    def is_width_min(self) -> bool: ...
+    def invalidate(self) -> RESULT | int: ...
+    def invalidate_area(self, area: area_t) -> RESULT | int: ...
+    def is_editable(self) -> int: ...
+    def is_group_def(self) -> int: ...
+    def is_height_max(self) -> int: ...
+    def is_height_min(self) -> int: ...
+    def is_layout_positioned(self) -> int: ...
+    def is_radio_button(self) -> int: ...
+    def is_scrolling(self) -> int: ...
+    def is_valid(self) -> int: ...
+    def is_visible(self) -> int: ...
+    def is_width_max(self) -> int: ...
+    def is_width_min(self) -> int: ...
     def mark_layout_as_dirty(self) -> None: ...
     def move_background(self) -> None: ...
-    def move_children_by(self, x_diff: int, y_diff: int, ignore_floating: bool) -> None: ...
+    def move_children_by(self, x_diff: int, y_diff: int, ignore_floating: int) -> None: ...
     def move_foreground(self) -> None: ...
     def move_to(self, x: int, y: int) -> None: ...
     def move_to_index(self, index: int) -> None: ...
-    def null_on_delete(self, obj_ptr: Any) -> None: ...
-    def readjust_scroll(self, anim_en: bool) -> None: ...
-    def redraw(self, layer: layer_t) -> None: ...
-    def refr(self, layer: layer_t) -> None: ...
+    @staticmethod
+    def null_on_delete(obj_ptr: Any) -> None: ...
+    def readjust_scroll(self, anim_en: int) -> None: ...
+    @staticmethod
+    def redraw(layer: layer_t, obj: obj) -> None: ...
+    @staticmethod
+    def refr(layer: layer_t, obj: obj) -> None: ...
     def refr_pos(self) -> None: ...
-    def refr_size(self) -> bool: ...
+    def refr_size(self) -> int: ...
     def refresh_ext_draw_size(self) -> None: ...
-    def refresh_self_size(self) -> bool: ...
+    def refresh_self_size(self) -> int: ...
     def refresh_style(self, part: PART | int, prop: int) -> None: ...
-    def remove_event(self, index: int) -> bool: ...
+    def remove_event(self, index: int) -> int: ...
     def remove_event_cb(self, event_cb: Callable[[event_t], None]) -> int: ...
     def remove_event_cb_with_user_data(self, event_cb: Callable[[event_t], None], user_data: Any) -> int: ...
-    def remove_event_dsc(self, dsc: event_dsc_t) -> bool: ...
+    def remove_event_dsc(self, dsc: event_dsc_t) -> int: ...
     def remove_flag(self, f: OBJ_FLAG | int) -> None: ...
     def remove_from_subject(self, subject: subject_t) -> None: ...
-    def remove_local_style_prop(self, prop: int, selector: int | PART | STATE) -> bool: ...
+    def remove_local_style_prop(self, prop: int, selector: int) -> int: ...
     def remove_state(self, state: STATE | int) -> None: ...
-    def remove_style(self, style: style_t, selector: int | PART | STATE) -> None: ...
+    def remove_style(self, style: style_t, selector: int) -> None: ...
     def remove_style_all(self) -> None: ...
-    def remove_theme(self, selector: int | PART | STATE) -> None: ...
-    def replace_style(self, old_style: style_t, new_style: style_t, selector: int | PART | STATE) -> bool: ...
-    def report_style_change(self, style: style_t) -> None: ...
+    def remove_theme(self, selector: int) -> None: ...
+    def replace_style(self, old_style: style_t, new_style: style_t, selector: int) -> int: ...
+    @staticmethod
+    def report_style_change(style: style_t) -> None: ...
     def reset_transform(self) -> None: ...
-    def scroll_by(self, dx: int, dy: int, anim_en: bool) -> None: ...
-    def scroll_by_bounded(self, dx: int, dy: int, anim_en: bool) -> None: ...
-    def scroll_by_raw(self, x: int, y: int) -> int: ...
-    def scroll_to(self, x: int, y: int, anim_en: bool) -> None: ...
-    def scroll_to_view(self, anim_en: bool) -> None: ...
-    def scroll_to_view_recursive(self, anim_en: bool) -> None: ...
-    def scroll_to_x(self, x: int, anim_en: bool) -> None: ...
-    def scroll_to_y(self, y: int, anim_en: bool) -> None: ...
+    def scroll_by(self, dx: int, dy: int, anim_en: int) -> None: ...
+    def scroll_by_bounded(self, dx: int, dy: int, anim_en: int) -> None: ...
+    def scroll_by_raw(self, x: int, y: int) -> RESULT | int: ...
+    def scroll_to(self, x: int, y: int, anim_en: int) -> None: ...
+    def scroll_to_view(self, anim_en: int) -> None: ...
+    def scroll_to_view_recursive(self, anim_en: int) -> None: ...
+    def scroll_to_x(self, x: int, anim_en: int) -> None: ...
+    def scroll_to_y(self, y: int, anim_en: int) -> None: ...
     def scrollbar_invalidate(self) -> None: ...
-    def send_event(self, event_code: EVENT | int, param: Any) -> int: ...
+    def send_event(self, event_code: EVENT | int, param: Any) -> RESULT | int: ...
     def set_align(self, align: ALIGN | int) -> None: ...
     def set_content_height(self, h: int) -> None: ...
     def set_content_width(self, w: int) -> None: ...
     def set_ext_click_area(self, size: int) -> None: ...
-    def set_flag(self, f: OBJ_FLAG | int, v: bool) -> None: ...
+    def set_flag(self, f: OBJ_FLAG | int, v: int) -> None: ...
     def set_flex_align(self, main_place: FLEX_ALIGN | int, cross_place: FLEX_ALIGN | int, track_cross_place: FLEX_ALIGN | int) -> None: ...
     def set_flex_flow(self, flow: FLEX_FLOW | int) -> None: ...
     def set_flex_grow(self, grow: int) -> None: ...
@@ -4667,156 +4087,156 @@ class obj(Struct):
     def set_grid_dsc_array(self, col_dsc: Any, row_dsc: Any) -> None: ...
     def set_height(self, h: int) -> None: ...
     def set_layout(self, layout: int) -> None: ...
-    def set_local_style_prop(self, prop: int, value: style_value_t, selector: int | PART | STATE) -> None: ...
+    def set_local_style_prop(self, prop: int, value: style_value_t, selector: int) -> None: ...
     def set_parent(self, parent: obj) -> None: ...
     def set_pos(self, x: int, y: int) -> None: ...
-    def set_radio_button(self, en: bool) -> None: ...
+    def set_radio_button(self, en: int) -> None: ...
     def set_scroll_dir(self, dir: DIR | int) -> None: ...
     def set_scroll_snap_x(self, align: SCROLL_SNAP | int) -> None: ...
     def set_scroll_snap_y(self, align: SCROLL_SNAP | int) -> None: ...
     def set_scrollbar_mode(self, mode: SCROLLBAR_MODE | int) -> None: ...
     def set_size(self, w: int, h: int) -> None: ...
-    def set_state(self, state: STATE | int, v: bool) -> None: ...
-    def set_style_align(self, value: ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_anim(self, value: anim_t, selector: int | PART | STATE) -> None: ...
-    def set_style_anim_duration(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_arc_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_arc_image_src(self, value: Any, selector: int | PART | STATE) -> None: ...
-    def set_style_arc_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_arc_rounded(self, value: bool, selector: int | PART | STATE) -> None: ...
-    def set_style_arc_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_base_dir(self, value: BASE_DIR | int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_grad(self, value: grad_dsc_t, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_grad_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_grad_dir(self, value: GRAD_DIR | int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_grad_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_grad_stop(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_image_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_image_recolor(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_image_recolor_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_image_src(self, value: Any, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_image_tiled(self, value: bool, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_main_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_main_stop(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_bg_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_bitmap_mask_src(self, value: Any, selector: int | PART | STATE) -> None: ...
-    def set_style_blend_mode(self, value: BLEND_MODE | int, selector: int | PART | STATE) -> None: ...
-    def set_style_blur_backdrop(self, value: bool, selector: int | PART | STATE) -> None: ...
-    def set_style_blur_quality(self, value: BLUR_QUALITY | int, selector: int | PART | STATE) -> None: ...
-    def set_style_blur_radius(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_border_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_border_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_border_post(self, value: bool, selector: int | PART | STATE) -> None: ...
-    def set_style_border_side(self, value: BORDER_SIDE | int, selector: int | PART | STATE) -> None: ...
-    def set_style_border_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_clip_corner(self, value: bool, selector: int | PART | STATE) -> None: ...
-    def set_style_color_filter_dsc(self, value: color_filter_dsc_t, selector: int | PART | STATE) -> None: ...
-    def set_style_color_filter_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_drop_shadow_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_drop_shadow_offset_x(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_drop_shadow_offset_y(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_drop_shadow_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_drop_shadow_quality(self, value: BLUR_QUALITY | int, selector: int | PART | STATE) -> None: ...
-    def set_style_drop_shadow_radius(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_flex_cross_place(self, value: FLEX_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_flex_flow(self, value: FLEX_FLOW | int, selector: int | PART | STATE) -> None: ...
-    def set_style_flex_grow(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_flex_main_place(self, value: FLEX_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_flex_track_place(self, value: FLEX_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_cell_column_pos(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_cell_column_span(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_cell_row_pos(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_cell_row_span(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_cell_x_align(self, value: GRID_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_cell_y_align(self, value: GRID_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_column_align(self, value: GRID_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_column_dsc_array(self, value: Any, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_row_align(self, value: GRID_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_grid_row_dsc_array(self, value: Any, selector: int | PART | STATE) -> None: ...
-    def set_style_height(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_image_colorkey(self, value: image_colorkey_t, selector: int | PART | STATE) -> None: ...
-    def set_style_image_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_image_recolor(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_image_recolor_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_layout(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_length(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_line_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_line_dash_gap(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_line_dash_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_line_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_line_rounded(self, value: bool, selector: int | PART | STATE) -> None: ...
-    def set_style_line_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_margin_all(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_margin_bottom(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_margin_hor(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_margin_left(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_margin_right(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_margin_top(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_margin_ver(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_max_height(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_max_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_min_height(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_min_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_opa_layered(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_outline_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_outline_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_outline_pad(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_outline_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_all(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_bottom(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_column(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_gap(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_hor(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_left(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_radial(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_right(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_row(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_top(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_pad_ver(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_radial_offset(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_radius(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_recolor(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_recolor_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_rotary_sensitivity(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_shadow_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_shadow_offset_x(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_shadow_offset_y(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_shadow_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_shadow_spread(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_shadow_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_size(self, width: int, height: int, selector: int | PART | STATE) -> None: ...
-    def set_style_text_align(self, value: TEXT_ALIGN | int, selector: int | PART | STATE) -> None: ...
-    def set_style_text_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_text_decor(self, value: TEXT_DECOR | int, selector: int | PART | STATE) -> None: ...
-    def set_style_text_font(self, value: font_t, selector: int | PART | STATE) -> None: ...
-    def set_style_text_letter_space(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_text_line_space(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_text_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_text_outline_stroke_color(self, value: color_t, selector: int | PART | STATE) -> None: ...
-    def set_style_text_outline_stroke_opa(self, value: OPA | int, selector: int | PART | STATE) -> None: ...
-    def set_style_text_outline_stroke_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_height(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_pivot_x(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_pivot_y(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_rotation(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_scale(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_scale_x(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_scale_y(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_skew_x(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_skew_y(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transform_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_transition(self, value: style_transition_dsc_t, selector: int | PART | STATE) -> None: ...
-    def set_style_translate_radial(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_translate_x(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_translate_y(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_width(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_x(self, value: int, selector: int | PART | STATE) -> None: ...
-    def set_style_y(self, value: int, selector: int | PART | STATE) -> None: ...
+    def set_state(self, state: STATE | int, v: int) -> None: ...
+    def set_style_align(self, value: ALIGN | int, selector: int) -> None: ...
+    def set_style_anim(self, value: anim_t, selector: int) -> None: ...
+    def set_style_anim_duration(self, value: int, selector: int) -> None: ...
+    def set_style_arc_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_arc_image_src(self, value: Any, selector: int) -> None: ...
+    def set_style_arc_opa(self, value: int, selector: int) -> None: ...
+    def set_style_arc_rounded(self, value: int, selector: int) -> None: ...
+    def set_style_arc_width(self, value: int, selector: int) -> None: ...
+    def set_style_base_dir(self, value: BASE_DIR | int, selector: int) -> None: ...
+    def set_style_bg_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_bg_grad(self, value: grad_dsc_t, selector: int) -> None: ...
+    def set_style_bg_grad_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_bg_grad_dir(self, value: GRAD_DIR | int, selector: int) -> None: ...
+    def set_style_bg_grad_opa(self, value: int, selector: int) -> None: ...
+    def set_style_bg_grad_stop(self, value: int, selector: int) -> None: ...
+    def set_style_bg_image_opa(self, value: int, selector: int) -> None: ...
+    def set_style_bg_image_recolor(self, value: color_t, selector: int) -> None: ...
+    def set_style_bg_image_recolor_opa(self, value: int, selector: int) -> None: ...
+    def set_style_bg_image_src(self, value: Any, selector: int) -> None: ...
+    def set_style_bg_image_tiled(self, value: int, selector: int) -> None: ...
+    def set_style_bg_main_opa(self, value: int, selector: int) -> None: ...
+    def set_style_bg_main_stop(self, value: int, selector: int) -> None: ...
+    def set_style_bg_opa(self, value: int, selector: int) -> None: ...
+    def set_style_bitmap_mask_src(self, value: Any, selector: int) -> None: ...
+    def set_style_blend_mode(self, value: BLEND_MODE | int, selector: int) -> None: ...
+    def set_style_blur_backdrop(self, value: int, selector: int) -> None: ...
+    def set_style_blur_quality(self, value: BLUR_QUALITY | int, selector: int) -> None: ...
+    def set_style_blur_radius(self, value: int, selector: int) -> None: ...
+    def set_style_border_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_border_opa(self, value: int, selector: int) -> None: ...
+    def set_style_border_post(self, value: int, selector: int) -> None: ...
+    def set_style_border_side(self, value: BORDER_SIDE | int, selector: int) -> None: ...
+    def set_style_border_width(self, value: int, selector: int) -> None: ...
+    def set_style_clip_corner(self, value: int, selector: int) -> None: ...
+    def set_style_color_filter_dsc(self, value: color_filter_dsc_t, selector: int) -> None: ...
+    def set_style_color_filter_opa(self, value: int, selector: int) -> None: ...
+    def set_style_drop_shadow_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_drop_shadow_offset_x(self, value: int, selector: int) -> None: ...
+    def set_style_drop_shadow_offset_y(self, value: int, selector: int) -> None: ...
+    def set_style_drop_shadow_opa(self, value: int, selector: int) -> None: ...
+    def set_style_drop_shadow_quality(self, value: BLUR_QUALITY | int, selector: int) -> None: ...
+    def set_style_drop_shadow_radius(self, value: int, selector: int) -> None: ...
+    def set_style_flex_cross_place(self, value: FLEX_ALIGN | int, selector: int) -> None: ...
+    def set_style_flex_flow(self, value: FLEX_FLOW | int, selector: int) -> None: ...
+    def set_style_flex_grow(self, value: int, selector: int) -> None: ...
+    def set_style_flex_main_place(self, value: FLEX_ALIGN | int, selector: int) -> None: ...
+    def set_style_flex_track_place(self, value: FLEX_ALIGN | int, selector: int) -> None: ...
+    def set_style_grid_cell_column_pos(self, value: int, selector: int) -> None: ...
+    def set_style_grid_cell_column_span(self, value: int, selector: int) -> None: ...
+    def set_style_grid_cell_row_pos(self, value: int, selector: int) -> None: ...
+    def set_style_grid_cell_row_span(self, value: int, selector: int) -> None: ...
+    def set_style_grid_cell_x_align(self, value: GRID_ALIGN | int, selector: int) -> None: ...
+    def set_style_grid_cell_y_align(self, value: GRID_ALIGN | int, selector: int) -> None: ...
+    def set_style_grid_column_align(self, value: GRID_ALIGN | int, selector: int) -> None: ...
+    def set_style_grid_column_dsc_array(self, value: Any, selector: int) -> None: ...
+    def set_style_grid_row_align(self, value: GRID_ALIGN | int, selector: int) -> None: ...
+    def set_style_grid_row_dsc_array(self, value: Any, selector: int) -> None: ...
+    def set_style_height(self, value: int, selector: int) -> None: ...
+    def set_style_image_colorkey(self, value: image_colorkey_t, selector: int) -> None: ...
+    def set_style_image_opa(self, value: int, selector: int) -> None: ...
+    def set_style_image_recolor(self, value: color_t, selector: int) -> None: ...
+    def set_style_image_recolor_opa(self, value: int, selector: int) -> None: ...
+    def set_style_layout(self, value: int, selector: int) -> None: ...
+    def set_style_length(self, value: int, selector: int) -> None: ...
+    def set_style_line_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_line_dash_gap(self, value: int, selector: int) -> None: ...
+    def set_style_line_dash_width(self, value: int, selector: int) -> None: ...
+    def set_style_line_opa(self, value: int, selector: int) -> None: ...
+    def set_style_line_rounded(self, value: int, selector: int) -> None: ...
+    def set_style_line_width(self, value: int, selector: int) -> None: ...
+    def set_style_margin_all(self, value: int, selector: int) -> None: ...
+    def set_style_margin_bottom(self, value: int, selector: int) -> None: ...
+    def set_style_margin_hor(self, value: int, selector: int) -> None: ...
+    def set_style_margin_left(self, value: int, selector: int) -> None: ...
+    def set_style_margin_right(self, value: int, selector: int) -> None: ...
+    def set_style_margin_top(self, value: int, selector: int) -> None: ...
+    def set_style_margin_ver(self, value: int, selector: int) -> None: ...
+    def set_style_max_height(self, value: int, selector: int) -> None: ...
+    def set_style_max_width(self, value: int, selector: int) -> None: ...
+    def set_style_min_height(self, value: int, selector: int) -> None: ...
+    def set_style_min_width(self, value: int, selector: int) -> None: ...
+    def set_style_opa(self, value: int, selector: int) -> None: ...
+    def set_style_opa_layered(self, value: int, selector: int) -> None: ...
+    def set_style_outline_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_outline_opa(self, value: int, selector: int) -> None: ...
+    def set_style_outline_pad(self, value: int, selector: int) -> None: ...
+    def set_style_outline_width(self, value: int, selector: int) -> None: ...
+    def set_style_pad_all(self, value: int, selector: int) -> None: ...
+    def set_style_pad_bottom(self, value: int, selector: int) -> None: ...
+    def set_style_pad_column(self, value: int, selector: int) -> None: ...
+    def set_style_pad_gap(self, value: int, selector: int) -> None: ...
+    def set_style_pad_hor(self, value: int, selector: int) -> None: ...
+    def set_style_pad_left(self, value: int, selector: int) -> None: ...
+    def set_style_pad_radial(self, value: int, selector: int) -> None: ...
+    def set_style_pad_right(self, value: int, selector: int) -> None: ...
+    def set_style_pad_row(self, value: int, selector: int) -> None: ...
+    def set_style_pad_top(self, value: int, selector: int) -> None: ...
+    def set_style_pad_ver(self, value: int, selector: int) -> None: ...
+    def set_style_radial_offset(self, value: int, selector: int) -> None: ...
+    def set_style_radius(self, value: int, selector: int) -> None: ...
+    def set_style_recolor(self, value: color_t, selector: int) -> None: ...
+    def set_style_recolor_opa(self, value: int, selector: int) -> None: ...
+    def set_style_rotary_sensitivity(self, value: int, selector: int) -> None: ...
+    def set_style_shadow_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_shadow_offset_x(self, value: int, selector: int) -> None: ...
+    def set_style_shadow_offset_y(self, value: int, selector: int) -> None: ...
+    def set_style_shadow_opa(self, value: int, selector: int) -> None: ...
+    def set_style_shadow_spread(self, value: int, selector: int) -> None: ...
+    def set_style_shadow_width(self, value: int, selector: int) -> None: ...
+    def set_style_size(self, width: int, height: int, selector: int) -> None: ...
+    def set_style_text_align(self, value: TEXT_ALIGN | int, selector: int) -> None: ...
+    def set_style_text_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_text_decor(self, value: TEXT_DECOR | int, selector: int) -> None: ...
+    def set_style_text_font(self, value: font_t, selector: int) -> None: ...
+    def set_style_text_letter_space(self, value: int, selector: int) -> None: ...
+    def set_style_text_line_space(self, value: int, selector: int) -> None: ...
+    def set_style_text_opa(self, value: int, selector: int) -> None: ...
+    def set_style_text_outline_stroke_color(self, value: color_t, selector: int) -> None: ...
+    def set_style_text_outline_stroke_opa(self, value: int, selector: int) -> None: ...
+    def set_style_text_outline_stroke_width(self, value: int, selector: int) -> None: ...
+    def set_style_transform_height(self, value: int, selector: int) -> None: ...
+    def set_style_transform_pivot_x(self, value: int, selector: int) -> None: ...
+    def set_style_transform_pivot_y(self, value: int, selector: int) -> None: ...
+    def set_style_transform_rotation(self, value: int, selector: int) -> None: ...
+    def set_style_transform_scale(self, value: int, selector: int) -> None: ...
+    def set_style_transform_scale_x(self, value: int, selector: int) -> None: ...
+    def set_style_transform_scale_y(self, value: int, selector: int) -> None: ...
+    def set_style_transform_skew_x(self, value: int, selector: int) -> None: ...
+    def set_style_transform_skew_y(self, value: int, selector: int) -> None: ...
+    def set_style_transform_width(self, value: int, selector: int) -> None: ...
+    def set_style_transition(self, value: style_transition_dsc_t, selector: int) -> None: ...
+    def set_style_translate_radial(self, value: int, selector: int) -> None: ...
+    def set_style_translate_x(self, value: int, selector: int) -> None: ...
+    def set_style_translate_y(self, value: int, selector: int) -> None: ...
+    def set_style_width(self, value: int, selector: int) -> None: ...
+    def set_style_x(self, value: int, selector: int) -> None: ...
+    def set_style_y(self, value: int, selector: int) -> None: ...
     def set_subject_increment_event_max_value(self, dsc: subject_increment_dsc_t, max_value: int) -> None: ...
     def set_subject_increment_event_min_value(self, dsc: subject_increment_dsc_t, min_value: int) -> None: ...
-    def set_subject_increment_event_rollover(self, dsc: subject_increment_dsc_t, rollover: bool) -> None: ...
+    def set_subject_increment_event_rollover(self, dsc: subject_increment_dsc_t, rollover: int) -> None: ...
     def set_transform(self, matrix: matrix_t) -> None: ...
     def set_user_data(self, user_data: Any) -> None: ...
     def set_width(self, w: int) -> None: ...
@@ -4826,260 +4246,85 @@ class obj(Struct):
     def style_apply_color_filter(self, part: PART | int, v: style_value_t) -> style_value_t: ...
     def style_apply_recolor(self, part: PART | int, color: color32_t) -> color32_t: ...
     def style_create_transition(self, part: PART | int, prev_state: STATE | int, new_state: STATE | int, tr: obj_style_transition_dsc_t) -> None: ...
-    def style_deinit(self) -> None: ...
-    def style_get_disabled(self, style: style_t, selector: int | PART | STATE) -> bool: ...
-    def style_get_selector_part(self, selector: int | PART | STATE) -> int: ...
-    def style_get_selector_state(self, selector: int | PART | STATE) -> int: ...
-    def style_init(self) -> None: ...
-    def style_set_disabled(self, style: style_t, selector: int | PART | STATE, dis: bool) -> None: ...
-    def style_state_compare(self, state1: STATE | int, state2: STATE | int) -> int: ...
+    @staticmethod
+    def style_deinit() -> None: ...
+    def style_get_disabled(self, style: style_t, selector: int) -> int: ...
+    @staticmethod
+    def style_get_selector_part(selector: int) -> PART | int: ...
+    @staticmethod
+    def style_get_selector_state(selector: int) -> STATE | int: ...
+    @staticmethod
+    def style_init() -> None: ...
+    def style_set_disabled(self, style: style_t, selector: int, dis: int) -> None: ...
+    def style_state_compare(self, state1: STATE | int, state2: STATE | int) -> STYLE_STATE_CMP | int: ...
     def swap(self, obj2: obj) -> None: ...
     def transform_point(self, p: point_t, flags: obj.POINT_TRANSFORM_FLAG | int) -> None: ...
     def transform_point_array(self, points: Any, count: int, flags: obj.POINT_TRANSFORM_FLAG | int) -> None: ...
     def tree_walk(self, cb: Callable[[obj, Any], obj.TREE_WALK | int], user_data: Any) -> None: ...
     def update_layer_type(self) -> None: ...
     def update_layout(self) -> None: ...
-    def update_snap(self, anim_en: bool) -> None: ...
+    def update_snap(self, anim_en: int) -> None: ...
 
 class qrcode(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def set_dark_color(self, color: color_t) -> None: ...
     def set_data(self, data: str) -> None: ...
     def set_light_color(self, color: color_t) -> None: ...
-    def set_quiet_zone(self, enable: bool) -> None: ...
-    def update(self, data: Any, data_len: int) -> int: ...
+    def set_quiet_zone(self, enable: int) -> None: ...
+    def set_size(self, size: int) -> None: ...
+    def update(self, data: Any, data_len: int) -> RESULT | int: ...
 
 class roller(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class MODE:
-        INFINITE: int
         NORMAL: int
-    MODE: ClassVar[type[MODE]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        INFINITE: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def bind_value(self, subject: subject_t) -> observer_t: ...
     def get_option_count(self) -> int: ...
-    def get_option_str(self, option: int, buf: str, buf_size: int) -> int: ...
+    def get_option_str(self, option: int, buf: str, buf_size: int) -> RESULT | int: ...
     def get_options(self) -> str: ...
     def get_selected(self) -> int: ...
     def get_selected_str(self, buf: str, buf_size: int) -> None: ...
     def set_options(self, options: str, mode: roller.MODE | int) -> None: ...
-    def set_selected(self, sel_opt: int, anim: bool) -> None: ...
-    def set_selected_str(self, sel_opt: str, anim: bool) -> bool: ...
+    def set_selected(self, sel_opt: int, anim: int) -> None: ...
+    def set_selected_str(self, sel_opt: str, anim: int) -> int: ...
     def set_visible_row_count(self, row_cnt: int) -> None: ...
 
 class scale(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class MODE:
-        HORIZONTAL_BOTTOM: int
         HORIZONTAL_TOP: int
-        LAST: int
-        ROUND_INNER: int
-        ROUND_OUTER: int
+        HORIZONTAL_BOTTOM: int
         VERTICAL_LEFT: int
         VERTICAL_RIGHT: int
-    MODE: ClassVar[type[MODE]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
+        ROUND_INNER: int
+        ROUND_OUTER: int
+        LAST: int
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_section(self) -> scale_section_t: ...
     def bind_section_max_value(self, section: scale_section_t, subject: subject_t) -> observer_t: ...
     def bind_section_min_value(self, section: scale_section_t, subject: subject_t) -> observer_t: ...
     def get_angle_range(self) -> int: ...
-    def get_label_show(self) -> bool: ...
+    def get_label_show(self) -> int: ...
     def get_major_tick_every(self) -> int: ...
-    def get_mode(self) -> int: ...
+    def get_mode(self) -> scale.MODE | int: ...
     def get_range_max_value(self) -> int: ...
     def get_range_min_value(self) -> int: ...
     def get_rotation(self) -> int: ...
     def get_total_tick_count(self) -> int: ...
-    def section_set_range(self, section: scale_section_t, min: int, max: int) -> None: ...
-    def section_set_style(self, section: scale_section_t, part: PART | int, section_part_style: style_t) -> None: ...
+    @staticmethod
+    def section_set_range(section: scale_section_t, min: int, max: int) -> None: ...
+    @staticmethod
+    def section_set_style(section: scale_section_t, part: PART | int, section_part_style: style_t) -> None: ...
     def set_angle_range(self, angle_range: int) -> None: ...
-    def set_draw_ticks_on_top(self, en: bool) -> None: ...
+    def set_draw_ticks_on_top(self, en: int) -> None: ...
     def set_image_needle_value(self, needle_img: obj, value: int) -> None: ...
-    def set_label_show(self, show_label: bool) -> None: ...
+    def set_label_show(self, show_label: int) -> None: ...
     def set_line_needle_value(self, needle_line: obj, needle_length: int, value: int) -> None: ...
     def set_major_tick_every(self, major_tick_every: int) -> None: ...
     def set_max_value(self, max: int) -> None: ...
     def set_min_value(self, min: int) -> None: ...
     def set_mode(self, mode: scale.MODE | int) -> None: ...
-    def set_post_draw(self, en: bool) -> None: ...
+    def set_post_draw(self, en: int) -> None: ...
     def set_range(self, min: int, max: int) -> None: ...
     def set_rotation(self, rotation: int) -> None: ...
     def set_section_max_value(self, section: scale_section_t, max: int) -> None: ...
@@ -5092,249 +4337,70 @@ class scale(obj):
     def set_total_tick_count(self, total_tick_count: int) -> None: ...
 
 class slider(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class MODE:
         NORMAL: int
-        RANGE: int
         SYMMETRICAL: int
-    MODE: ClassVar[type[MODE]]
+        RANGE: int
     class ORIENTATION:
         AUTO: int
         HORIZONTAL: int
         VERTICAL: int
-    ORIENTATION: ClassVar[type[ORIENTATION]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def bind_value(self, subject: subject_t) -> observer_t: ...
     def get_left_value(self) -> int: ...
     def get_max_value(self) -> int: ...
     def get_min_value(self) -> int: ...
-    def get_mode(self) -> int: ...
-    def get_orientation(self) -> int: ...
+    def get_mode(self) -> slider.MODE | int: ...
+    def get_orientation(self) -> slider.ORIENTATION | int: ...
     def get_value(self) -> int: ...
-    def is_dragged(self) -> bool: ...
-    def is_symmetrical(self) -> bool: ...
+    def is_dragged(self) -> int: ...
+    def is_symmetrical(self) -> int: ...
     def set_max_value(self, max: int) -> None: ...
     def set_min_value(self, min: int) -> None: ...
     def set_mode(self, mode: slider.MODE | int) -> None: ...
     def set_orientation(self, orientation: slider.ORIENTATION | int) -> None: ...
     def set_range(self, min: int, max: int) -> None: ...
-    def set_start_value(self, value: int, anim: bool) -> None: ...
-    def set_value(self, value: int, anim: bool) -> None: ...
+    def set_start_value(self, value: int, anim: int) -> None: ...
+    def set_value(self, value: int, anim: int) -> None: ...
 
 class spangroup(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_span(self) -> span_t: ...
     def bind_span_text(self, span: span_t, subject: subject_t, fmt: str) -> observer_t: ...
     def delete_span(self, span: span_t) -> None: ...
-    def get_align(self) -> int: ...
+    def get_align(self) -> TEXT_ALIGN | int: ...
+    def get_child(self, id: int) -> span_t: ...
     def get_expand_height(self, width: int) -> int: ...
     def get_expand_width(self, max_width: int) -> int: ...
     def get_indent(self) -> int: ...
     def get_max_line_height(self) -> int: ...
     def get_max_lines(self) -> int: ...
-    def get_mode(self) -> int: ...
-    def get_overflow(self) -> int: ...
+    def get_mode(self) -> SPAN_MODE | int: ...
+    def get_overflow(self) -> SPAN_OVERFLOW | int: ...
     def get_span_by_point(self, point: point_t) -> span_t: ...
     def get_span_coords(self, span: span_t) -> span_coords_t: ...
     def get_span_count(self) -> int: ...
     def refresh(self) -> None: ...
+    def set_align(self, align: TEXT_ALIGN | int) -> None: ...
     def set_indent(self, indent: int) -> None: ...
     def set_max_lines(self, lines: int) -> None: ...
     def set_mode(self, mode: SPAN_MODE | int) -> None: ...
     def set_overflow(self, overflow: SPAN_OVERFLOW | int) -> None: ...
     def set_span_style(self, span: span_t, style: style_t) -> None: ...
     def set_span_text(self, span: span_t, text: str) -> None: ...
+    def set_span_text_fmt(self, span: span_t, fmt: str, *args: Any) -> None: ...
     def set_span_text_static(self, span: span_t, text: str) -> None: ...
 
 class spinbox(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def bind_value(self, subject: subject_t) -> observer_t: ...
     def decrement(self) -> None: ...
     def get_dec_point_pos(self) -> int: ...
     def get_digit_count(self) -> int: ...
-    def get_digit_step_direction(self) -> int: ...
+    def get_digit_step_direction(self) -> DIR | int: ...
     def get_max_value(self) -> int: ...
     def get_min_value(self) -> int: ...
-    def get_rollover(self) -> bool: ...
+    def get_rollover(self) -> int: ...
     def get_step(self) -> int: ...
     def get_value(self) -> int: ...
     def increment(self) -> None: ...
@@ -5346,73 +4412,13 @@ class spinbox(obj):
     def set_max_value(self, max_value: int) -> None: ...
     def set_min_value(self, min_value: int) -> None: ...
     def set_range(self, min_value: int, max_value: int) -> None: ...
-    def set_rollover(self, rollover: bool) -> None: ...
+    def set_rollover(self, rollover: int) -> None: ...
     def set_step(self, step: int) -> None: ...
     def set_value(self, v: int) -> None: ...
     def step_next(self) -> None: ...
     def step_prev(self) -> None: ...
 
 class spinner(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def get_anim_duration(self) -> int: ...
     def get_arc_sweep(self) -> int: ...
@@ -5421,145 +4427,23 @@ class spinner(obj):
     def set_arc_sweep(self, angle: int) -> None: ...
 
 class switch(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
     class ORIENTATION:
         AUTO: int
         HORIZONTAL: int
         VERTICAL: int
-    ORIENTATION: ClassVar[type[ORIENTATION]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
-    def get_orientation(self) -> int: ...
+    def get_orientation(self) -> switch.ORIENTATION | int: ...
     def set_orientation(self, orientation: switch.ORIENTATION | int) -> None: ...
 
 class table(obj):
     class CELL_CTRL:
+        NONE: int
+        MERGE_RIGHT: int
+        TEXT_CROP: int
         CUSTOM_1: int
         CUSTOM_2: int
         CUSTOM_3: int
         CUSTOM_4: int
-        MERGE_RIGHT: int
-        NONE: int
-        TEXT_CROP: int
-    CELL_CTRL: ClassVar[type[CELL_CTRL]]
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def clear_cell_ctrl(self, row: int, col: int, ctrl: table.CELL_CTRL | int) -> None: ...
     def get_cell_user_data(self, row: int, col: int) -> Any: ...
@@ -5568,150 +4452,31 @@ class table(obj):
     def get_column_width(self, col: int) -> int: ...
     def get_row_count(self) -> int: ...
     def get_selected_cell(self, row: Any, col: Any) -> None: ...
-    def has_cell_ctrl(self, row: int, col: int, ctrl: table.CELL_CTRL | int) -> bool: ...
+    def has_cell_ctrl(self, row: int, col: int, ctrl: table.CELL_CTRL | int) -> int: ...
     def set_cell_ctrl(self, row: int, col: int, ctrl: table.CELL_CTRL | int) -> None: ...
     def set_cell_user_data(self, row: int, col: int, user_data: Any) -> None: ...
     def set_cell_value(self, row: int, col: int, txt: str) -> None: ...
+    def set_cell_value_fmt(self, row: int, col: int, fmt: str, *args: Any) -> None: ...
     def set_column_count(self, col_cnt: int) -> None: ...
     def set_column_width(self, col_id: int, w: int) -> None: ...
     def set_row_count(self, row_cnt: int) -> None: ...
     def set_selected_cell(self, row: int, col: int) -> None: ...
 
 class tabview(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_tab(self, name: str) -> obj: ...
-    def get_content(self, parent: obj) -> obj: ...
+    def get_content(self) -> obj: ...
     def get_tab_active(self) -> int: ...
-    def get_tab_bar(self, parent: obj) -> obj: ...
-    def get_tab_bar_position(self) -> int: ...
+    def get_tab_bar(self) -> obj: ...
+    def get_tab_bar_position(self) -> DIR | int: ...
     def get_tab_button(self, idx: int) -> obj: ...
     def get_tab_count(self) -> int: ...
-    def set_active(self, idx: int, anim_en: bool) -> None: ...
+    def set_active(self, idx: int, anim_en: int) -> None: ...
     def set_tab_bar_position(self, dir: DIR | int) -> None: ...
     def set_tab_bar_size(self, size: int) -> None: ...
     def set_tab_text(self, idx: int, new_name: str) -> None: ...
 
 class textarea(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_char(self, c: int) -> None: ...
     def add_text(self, txt: str) -> None: ...
@@ -5724,173 +4489,127 @@ class textarea(obj):
     def delete_char_forward(self) -> None: ...
     def get_accepted_chars(self) -> str: ...
     def get_current_char(self) -> int: ...
-    def get_cursor_click_pos(self) -> bool: ...
+    def get_cursor_click_pos(self) -> int: ...
     def get_cursor_pos(self) -> int: ...
     def get_label(self) -> obj: ...
     def get_max_length(self) -> int: ...
-    def get_one_line(self) -> bool: ...
+    def get_one_line(self) -> int: ...
     def get_password_bullet(self) -> str: ...
-    def get_password_mode(self) -> bool: ...
+    def get_password_mode(self) -> int: ...
     def get_password_show_time(self) -> int: ...
     def get_placeholder_text(self) -> str: ...
     def get_text(self) -> str: ...
-    def get_text_selection(self) -> bool: ...
+    def get_text_selection(self) -> int: ...
     def set_accepted_chars(self, list: str) -> None: ...
     def set_accepted_chars_static(self, list: str) -> None: ...
-    def set_cursor_click_pos(self, en: bool) -> None: ...
+    def set_align(self, align: TEXT_ALIGN | int) -> None: ...
+    def set_cursor_click_pos(self, en: int) -> None: ...
     def set_cursor_pos(self, pos: int) -> None: ...
     def set_insert_replace(self, txt: str) -> None: ...
     def set_max_length(self, num: int) -> None: ...
-    def set_one_line(self, en: bool) -> None: ...
+    def set_one_line(self, en: int) -> None: ...
     def set_password_bullet(self, bullet: str) -> None: ...
-    def set_password_mode(self, en: bool) -> None: ...
+    def set_password_mode(self, en: int) -> None: ...
     def set_password_show_time(self, time: int) -> None: ...
     def set_placeholder_text(self, txt: str) -> None: ...
     def set_text(self, txt: str) -> None: ...
-    def set_text_selection(self, en: bool) -> None: ...
-    def text_is_selected(self) -> bool: ...
+    def set_text_selection(self, en: int) -> None: ...
+    def text_is_selected(self) -> int: ...
 
 class tileview(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_tile(self, col_id: int, row_id: int, dir: DIR | int) -> obj: ...
-    def get_tile_active(self, parent: obj) -> obj: ...
-    def set_tile(self, tile_obj: obj, anim_en: bool) -> None: ...
-    def set_tile_by_index(self, col_id: int, row_id: int, anim_en: bool) -> None: ...
+    def get_tile_active(self) -> obj: ...
+    def set_tile(self, tile_obj: obj, anim_en: int) -> None: ...
+    def set_tile_by_index(self, col_id: int, row_id: int, anim_en: int) -> None: ...
 
 class win(obj):
-    class CLASS_EDITABLE:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_EDITABLE: ClassVar[type[CLASS_EDITABLE]]
-    class CLASS_GROUP_DEF:
-        FALSE: int
-        INHERIT: int
-        TRUE: int
-    CLASS_GROUP_DEF: ClassVar[type[CLASS_GROUP_DEF]]
-    class CLASS_THEME_INHERITABLE:
-        FALSE: int
-        TRUE: int
-    CLASS_THEME_INHERITABLE: ClassVar[type[CLASS_THEME_INHERITABLE]]
-    class FLAG:
-        ADV_HITTEST: int
-        CHECKABLE: int
-        CLICKABLE: int
-        CLICK_FOCUSABLE: int
-        EVENT_BUBBLE: int
-        EVENT_TRICKLE: int
-        FLEX_IN_NEW_TRACK: int
-        FLOATING: int
-        GESTURE_BUBBLE: int
-        HIDDEN: int
-        IGNORE_LAYOUT: int
-        LAYOUT_1: int
-        LAYOUT_2: int
-        OVERFLOW_VISIBLE: int
-        PRESS_LOCK: int
-        SCROLLABLE: int
-        SCROLL_CHAIN: int
-        SCROLL_CHAIN_HOR: int
-        SCROLL_CHAIN_VER: int
-        SCROLL_ELASTIC: int
-        SCROLL_MOMENTUM: int
-        SCROLL_ONE: int
-        SCROLL_ON_FOCUS: int
-        SCROLL_WITH_ARROW: int
-        SEND_DRAW_TASK_EVENTS: int
-        SNAPPABLE: int
-        STATE_TRICKLE: int
-        USER_1: int
-        USER_2: int
-        USER_3: int
-        USER_4: int
-        WIDGET_1: int
-        WIDGET_2: int
-    FLAG: ClassVar[type[FLAG]]
-    class POINT_TRANSFORM_FLAG:
-        INVERSE: int
-        INVERSE_RECURSIVE: int
-        NONE: int
-        RECURSIVE: int
-    POINT_TRANSFORM_FLAG: ClassVar[type[POINT_TRANSFORM_FLAG]]
-    class TREE_WALK:
-        END: int
-        NEXT: int
-        SKIP_CHILDREN: int
-    TREE_WALK: ClassVar[type[TREE_WALK]]
     def __init__(self, parent: obj | None = ...) -> None: ...
     def add_button(self, icon: Any, btn_w: int) -> obj: ...
     def add_title(self, txt: str) -> obj: ...
-    def get_content(self, parent: obj) -> obj: ...
-    def get_header(self, parent: obj) -> obj: ...
+    def get_content(self) -> obj: ...
+    def get_header(self) -> obj: ...
+
+animimg_class: obj_class_t
+arc_class: obj_class_t
+arclabel_class: obj_class_t
+bar_class: obj_class_t
+barcode_class: obj_class_t
+binfont_font_class: font_class_t
+builtin_font_class: font_class_t
+button_class: obj_class_t
+buttonmatrix_class: obj_class_t
+cache_class_lru_ll_count: cache_class_t
+cache_class_lru_ll_size: cache_class_t
+cache_class_lru_rb_count: cache_class_t
+cache_class_lru_rb_size: cache_class_t
+cache_class_sc_da: cache_class_t
+calendar_class: obj_class_t
+calendar_header_arrow_class: obj_class_t
+calendar_header_dropdown_class: obj_class_t
+canvas_class: obj_class_t
+chart_class: obj_class_t
+checkbox_class: obj_class_t
+color_filter_shade: color_filter_dsc_t
+dropdown_class: obj_class_t
+dropdownlist_class: obj_class_t
+font_montserrat_14: font_t
+font_montserrat_16: font_t
+font_montserrat_24: font_t
+font_montserrat_32: font_t
+font_montserrat_40: font_t
+gif_class: obj_class_t
+image_class: obj_class_t
+imagebutton_class: obj_class_t
+keyboard_class: obj_class_t
+label_class: obj_class_t
+led_class: obj_class_t
+line_class: obj_class_t
+list_button_class: obj_class_t
+list_class: obj_class_t
+list_text_class: obj_class_t
+menu_class: obj_class_t
+menu_cont_class: obj_class_t
+menu_main_cont_class: obj_class_t
+menu_main_header_cont_class: obj_class_t
+menu_page_class: obj_class_t
+menu_section_class: obj_class_t
+menu_separator_class: obj_class_t
+menu_sidebar_cont_class: obj_class_t
+menu_sidebar_header_cont_class: obj_class_t
+msgbox_backdrop_class: obj_class_t
+msgbox_class: obj_class_t
+msgbox_content_class: obj_class_t
+msgbox_footer_button_class: obj_class_t
+msgbox_footer_class: obj_class_t
+msgbox_header_button_class: obj_class_t
+msgbox_header_class: obj_class_t
+obj_class: obj_class_t
+qrcode_class: obj_class_t
+roller_class: obj_class_t
+scale_class: obj_class_t
+slider_class: obj_class_t
+spangroup_class: obj_class_t
+spinbox_class: obj_class_t
+spinner_class: obj_class_t
+style_const_prop_id_inv: int
+switch_class: obj_class_t
+table_class: obj_class_t
+tabview_class: obj_class_t
+textarea_class: obj_class_t
+tileview_class: obj_class_t
+tileview_tile_class: obj_class_t
+tree_node_class: tree_class_t
+win_class: obj_class_t
+_nesting: _Nesting
 
 def anim_core_deinit() -> None: ...
 def anim_core_init() -> None: ...
 def anim_count_running() -> int: ...
-def anim_delete(var: Any, exec_cb: Callable[[anim_t, int], None]) -> bool: ...
+def anim_delete(var: Any, exec_cb: Callable[[Any, int], None]) -> int: ...
 def anim_delete_all() -> None: ...
-def anim_enable_vsync_mode(enable: bool) -> None: ...
-def anim_get(var: Any, exec_cb: Callable[[anim_t, int], None]) -> anim_t: ...
+def anim_enable_vsync_mode(enable: int) -> None: ...
+def anim_get(var: Any, exec_cb: Callable[[Any, int], None]) -> anim_t: ...
 def anim_get_timer() -> timer_t: ...
 def anim_refr_now() -> None: ...
 def anim_resolve_speed(speed: int, start: int, end: int) -> int: ...
@@ -5898,16 +4617,16 @@ def anim_speed(speed: int) -> int: ...
 def anim_speed_clamped(speed: int, min_time: int, max_time: int) -> int: ...
 def anim_speed_to_time(speed: int, start: int, end: int) -> int: ...
 def anim_timeline_create() -> anim_timeline_t: ...
-def async_call(async_xcb: Callable[[Any], None], user_data: Any) -> int: ...
-def async_call_cancel(async_xcb: Callable[[Any], None], user_data: Any) -> int: ...
+def async_call(async_xcb: Callable[[Any], None], user_data: Any) -> RESULT | int: ...
+def async_call_cancel(async_xcb: Callable[[Any], None], user_data: Any) -> RESULT | int: ...
 def atan2(x: int, y: int) -> int: ...
 def bezier3(t: int, u0: int, u1: int, u2: int, u3: int) -> int: ...
 def bidi_calculate_align(align: TEXT_ALIGN | int, base_dir: BASE_DIR | int, txt: str) -> None: ...
 def bin_decoder_close(decoder: image_decoder_t, dsc: image_decoder_dsc_t) -> None: ...
-def bin_decoder_get_area(decoder: image_decoder_t, dsc: image_decoder_dsc_t, full_area: area_t, decoded_area: area_t) -> int: ...
-def bin_decoder_info(decoder: image_decoder_t, dsc: image_decoder_dsc_t, header: image_header_t) -> int: ...
+def bin_decoder_get_area(decoder: image_decoder_t, dsc: image_decoder_dsc_t, full_area: area_t, decoded_area: area_t) -> RESULT | int: ...
+def bin_decoder_info(decoder: image_decoder_t, dsc: image_decoder_dsc_t, header: image_header_t) -> RESULT | int: ...
 def bin_decoder_init() -> None: ...
-def bin_decoder_open(decoder: image_decoder_t, dsc: image_decoder_dsc_t) -> int: ...
+def bin_decoder_open(decoder: image_decoder_t, dsc: image_decoder_dsc_t) -> RESULT | int: ...
 def binfont_create(path: str) -> font_t: ...
 def binfont_create_from_buffer(buffer: Any, size: int) -> font_t: ...
 def binfont_destroy(font: font_t) -> None: ...
@@ -5926,7 +4645,7 @@ def color_16_16_mix(c1: int, c2: int, mix: int) -> int: ...
 def color_black() -> color_t: ...
 def color_format_get_bpp(cf: COLOR_FORMAT | int) -> int: ...
 def color_format_get_size(cf: COLOR_FORMAT | int) -> int: ...
-def color_format_has_alpha(src_cf: COLOR_FORMAT | int) -> bool: ...
+def color_format_has_alpha(src_cf: COLOR_FORMAT | int) -> int: ...
 def color_hex(c: int) -> color_t: ...
 def color_hex3(c: int) -> color_t: ...
 def color_hsv_to_rgb(h: int, s: int, v: int) -> color_t: ...
@@ -5942,9 +4661,9 @@ def display_create(hor_res: int, ver_res: int) -> display_t: ...
 def display_get_default() -> display_t: ...
 def display_refr_timer(timer: timer_t) -> None: ...
 def dpx(n: int) -> int: ...
-def draw_add_task(layer: layer_t, coords: area_t, type: DRAW_TASK_TYPE | int) -> draw_task_t: ...
+def draw_add_task(layer: layer_t, coords: area_t, _type: DRAW_TASK_TYPE | int) -> draw_task_t: ...
 def draw_arc(layer: layer_t, dsc: draw_arc_dsc_t) -> None: ...
-def draw_arc_get_area(x: int, y: int, radius: int, start_angle: float, end_angle: float, w: int, rounded: bool, area: area_t) -> None: ...
+def draw_arc_get_area(x: int, y: int, radius: int, start_angle: float, end_angle: float, w: int, rounded: int, area: area_t) -> None: ...
 def draw_blur(layer: layer_t, dsc: draw_blur_dsc_t, coords: area_t) -> None: ...
 def draw_border(layer: layer_t, dsc: draw_border_dsc_t, coords: area_t) -> None: ...
 def draw_box_shadow(layer: layer_t, dsc: draw_box_shadow_dsc_t, coords: area_t) -> None: ...
@@ -5982,11 +4701,11 @@ def draw_mask_rect(layer: layer_t, dsc: draw_mask_rect_dsc_t) -> None: ...
 def draw_rect(layer: layer_t, dsc: draw_rect_dsc_t, coords: area_t) -> None: ...
 def draw_sw_deinit() -> None: ...
 def draw_sw_get_blend_handler(dest_cf: COLOR_FORMAT | int) -> Callable[[draw_task_t, draw_sw_blend_dsc_t], None]: ...
-def draw_sw_i1_convert_to_vtiled(buf: Any, buf_size: int, width: int, height: int, out_buf: Any, out_buf_size: int, bit_order_lsb: bool) -> None: ...
+def draw_sw_i1_convert_to_vtiled(buf: Any, buf_size: int, width: int, height: int, out_buf: Any, out_buf_size: int, bit_order_lsb: int) -> None: ...
 def draw_sw_i1_invert(buf: Any, buf_size: int) -> None: ...
 def draw_sw_i1_to_argb8888(buf_i1: Any, buf_argb8888: Any, width: int, height: int, buf_i1_stride: int, buf_argb8888_stride: int, index0_color: int, index1_color: int) -> None: ...
 def draw_sw_init() -> None: ...
-def draw_sw_mask_apply(masks: Any, mask_buf: OPA | int, abs_x: int, abs_y: int, len: int) -> int: ...
+def draw_sw_mask_apply(masks: Any, mask_buf: Any, abs_x: int, abs_y: int, len: int) -> DRAW_SW_MASK_RES | int: ...
 def draw_sw_mask_cleanup() -> None: ...
 def draw_sw_mask_deinit() -> None: ...
 def draw_sw_mask_free_param(p: Any) -> None: ...
@@ -5994,7 +4713,7 @@ def draw_sw_mask_init() -> None: ...
 def draw_sw_rgb565_swap(buf: Any, buf_size_px: int) -> None: ...
 def draw_sw_rotate(src: Any, dest: Any, src_width: int, src_height: int, src_stride: int, dest_stride: int, rotation: DISPLAY_ROTATION | int, color_format: COLOR_FORMAT | int) -> None: ...
 def draw_sw_transform(dest_area: area_t, src_buf: Any, src_w: int, src_h: int, src_stride: int, draw_dsc: draw_image_dsc_t, sup: draw_image_sup_t, cf: COLOR_FORMAT | int, dest_buf: Any) -> None: ...
-def draw_sw_unregister_blend_handler(dest_cf: COLOR_FORMAT | int) -> bool: ...
+def draw_sw_unregister_blend_handler(dest_cf: COLOR_FORMAT | int) -> int: ...
 def draw_triangle(layer: layer_t, draw_dsc: draw_triangle_dsc_t) -> None: ...
 def draw_unit_send_event(name: str, code: EVENT | int, param: Any) -> None: ...
 def draw_wait_for_finish() -> None: ...
@@ -6006,19 +4725,20 @@ def font_get_default() -> font_t: ...
 def free(data: Any) -> None: ...
 def free_core(p: Any) -> None: ...
 def fs_deinit() -> None: ...
-def fs_get_drv(letter: str) -> fs_drv_t: ...
+def fs_get_drv(letter: int) -> fs_drv_t: ...
 def fs_get_ext(fn: str) -> str: ...
 def fs_get_last(path: str) -> str: ...
 def fs_get_letters(buf: str) -> str: ...
 def fs_init() -> None: ...
-def fs_is_ready(letter: str) -> bool: ...
-def fs_load_to_buf(buf: Any, buf_size: int, path: str) -> int: ...
+def fs_is_ready(letter: int) -> int: ...
+def fs_load_to_buf(buf: Any, buf_size: int, path: str) -> FS_RES | int: ...
 def fs_load_with_alloc(path: str, size: Any) -> Any: ...
 def fs_memfs_init() -> None: ...
-def fs_path_get_size(path: str, size_res: Any) -> int: ...
+def fs_path_get_size(path: str, size_res: Any) -> FS_RES | int: ...
 def fs_path_join(buf: str, buf_sz: int, base: str, end: str) -> int: ...
-def fs_remove_drive(letter: str) -> None: ...
+def fs_remove_drive(letter: int) -> None: ...
 def fs_up(path: str) -> str: ...
+def global_default() -> Any: ...
 def grid_fr(x: int) -> int: ...
 def grid_init() -> None: ...
 def group_by_index(index: int) -> group_t: ...
@@ -6039,19 +4759,19 @@ def indev_read_timer_cb(timer: timer_t) -> None: ...
 def indev_scroll_get_snap_dist(obj: obj, p: point_t) -> None: ...
 def indev_search_obj(obj: obj, point: point_t) -> obj: ...
 def init() -> None: ...
-def inv_area(disp: display_t, area_p: area_t) -> int: ...
-def is_initialized() -> bool: ...
+def inv_area(disp: display_t, area_p: area_t) -> RESULT | int: ...
+def is_initialized() -> int: ...
 def iter_create(instance: Any, elem_size: int, context_size: int, next_cb: Callable[[Any, Any, Any], RESULT | int]) -> iter_t: ...
 def layer_bottom() -> obj: ...
 def layer_sys() -> obj: ...
 def layer_top() -> obj: ...
 def layout_apply(obj: obj) -> None: ...
 def layout_deinit() -> None: ...
-def layout_get_min_size(obj: obj, size: Any, width: bool) -> bool: ...
+def layout_get_min_size(obj: obj, size: Any, width: int) -> int: ...
 def layout_init() -> None: ...
 def layout_register(cb: Callable[[obj, Any], None], user_data: Any) -> int: ...
 def lock() -> None: ...
-def lock_isr() -> int: ...
+def lock_isr() -> RESULT | int: ...
 def lodepng_deinit() -> None: ...
 def lodepng_init() -> None: ...
 def malloc(size: int) -> Any: ...
@@ -6062,21 +4782,18 @@ def mem_add_pool(mem: Any, bytes: int) -> Any: ...
 def mem_deinit() -> None: ...
 def mem_init() -> None: ...
 def mem_remove_pool(pool: Any) -> None: ...
-def mem_test() -> int: ...
-def mem_test_core() -> int: ...
+def mem_test() -> RESULT | int: ...
+def mem_test_core() -> RESULT | int: ...
 def memcmp(p1: Any, p2: Any, len: int) -> int: ...
 def memcpy(dst: Any, src: Any, len: int) -> Any: ...
 def memmove(dst: Any, src: Any, len: int) -> Any: ...
 def memset(dst: Any, v: int, len: int) -> None: ...
 def memzero(dst: Any, len: int) -> None: ...
-def mp_lv_deinit_gc() -> None: ...
-def mp_lv_get_roots() -> Any: ...
-def mp_lv_init_gc() -> None: ...
-def mutex_delete(mutex: int) -> int: ...
-def mutex_init(mutex: int) -> int: ...
-def mutex_lock(mutex: int) -> int: ...
-def mutex_lock_isr(mutex: int) -> int: ...
-def mutex_unlock(mutex: int) -> int: ...
+def mutex_delete(mutex: Any) -> RESULT | int: ...
+def mutex_init(mutex: Any) -> RESULT | int: ...
+def mutex_lock(mutex: Any) -> RESULT | int: ...
+def mutex_lock_isr(mutex: Any) -> RESULT | int: ...
+def mutex_unlock(mutex: Any) -> RESULT | int: ...
 def os_get_idle_percent() -> int: ...
 def os_init() -> None: ...
 def palette_darken(p: PALETTE | int, lvl: int) -> color_t: ...
@@ -6098,14 +4815,15 @@ def refr_now(disp: display_t) -> None: ...
 def refr_set_disp_refreshing(disp: display_t) -> None: ...
 def screen_active() -> obj: ...
 def screen_load(scr: obj) -> None: ...
-def screen_load_anim(scr: obj, anim_type: SCREEN_LOAD_ANIM | int, time: int, delay: int, auto_del: bool) -> None: ...
+def screen_load_anim(scr: obj, anim_type: SCREEN_LOAD_ANIM | int, time: int, delay: int, auto_del: int) -> None: ...
 def sleep_ms(ms: int) -> None: ...
 def snapshot_create_draw_buf(obj: obj, cf: COLOR_FORMAT | int) -> draw_buf_t: ...
 def snapshot_free(dsc: image_dsc_t) -> None: ...
-def snapshot_reshape_draw_buf(obj: obj, draw_buf: draw_buf_t) -> int: ...
+def snapshot_reshape_draw_buf(obj: obj, draw_buf: draw_buf_t) -> RESULT | int: ...
 def snapshot_take(obj: obj, cf: COLOR_FORMAT | int) -> draw_buf_t: ...
-def snapshot_take_to_buf(obj: obj, cf: COLOR_FORMAT | int, dsc: image_dsc_t, buf: Any, buf_size: int) -> int: ...
-def snapshot_take_to_draw_buf(obj: obj, cf: COLOR_FORMAT | int, draw_buf: draw_buf_t) -> int: ...
+def snapshot_take_to_buf(obj: obj, cf: COLOR_FORMAT | int, dsc: image_dsc_t, buf: Any, buf_size: int) -> RESULT | int: ...
+def snapshot_take_to_draw_buf(obj: obj, cf: COLOR_FORMAT | int, draw_buf: draw_buf_t) -> RESULT | int: ...
+def snprintf(buffer: str, count: int, format: str, *args: Any) -> int: ...
 def span_stack_deinit() -> None: ...
 def span_stack_init() -> None: ...
 def sqr(x: int) -> int: ...
@@ -6116,7 +4834,7 @@ def strchr(str: str, c: int) -> str: ...
 def strcmp(s1: str, s2: str) -> int: ...
 def strcpy(dst: str, src: str) -> str: ...
 def strdup(src: str) -> str: ...
-def streq(s1: str, s2: str) -> bool: ...
+def streq(s1: str, s2: str) -> int: ...
 def strlcpy(dst: str, src: str, dst_size: int) -> int: ...
 def strlen(str: str) -> int: ...
 def strncat(dst: str, src: str, src_len: int) -> str: ...
@@ -6127,7 +4845,7 @@ def strnlen(str: str, max_len: int) -> int: ...
 def style_get_num_custom_props() -> int: ...
 def style_get_prop_group(prop: int) -> int: ...
 def style_prop_get_default(prop: int) -> style_value_t: ...
-def style_prop_has_flag(prop: int, flag: int) -> bool: ...
+def style_prop_has_flag(prop: int, flag: int) -> int: ...
 def style_prop_lookup_flags(prop: int) -> int: ...
 def style_register_prop(flag: int) -> int: ...
 def swap_bytes_16(x: int) -> int: ...
@@ -6140,29 +4858,30 @@ def text_get_size(size_res: point_t, text: str, font: font_t, letter_space: int,
 def text_get_size_attributes(size_res: point_t, text: str, font: font_t, attributes: text_attributes_t) -> None: ...
 def text_get_width(txt: str, length: int, font: font_t, attributes: text_attributes_t) -> int: ...
 def text_ins(txt_buf: str, pos: int, ins_txt: str) -> None: ...
-def text_is_a_word(letter: int) -> bool: ...
-def text_is_break_char(letter: int) -> bool: ...
-def text_is_cmd(state: TEXT_CMD_STATE | int, c: int) -> bool: ...
-def text_is_marker(letter: int) -> bool: ...
+def text_is_a_word(letter: int) -> int: ...
+def text_is_break_char(letter: int) -> int: ...
+def text_is_cmd(state: TEXT_CMD_STATE | int, c: int) -> int: ...
+def text_is_marker(letter: int) -> int: ...
+def text_set_text_vfmt(fmt: str, ap: int) -> str: ...
 def theme_apply(obj: obj) -> None: ...
 def theme_create() -> theme_t: ...
 def theme_default_deinit() -> None: ...
 def theme_default_get() -> theme_t: ...
-def theme_default_init(disp: display_t, color_primary: color_t, color_secondary: color_t, dark: bool, font: font_t) -> theme_t: ...
-def theme_default_is_inited() -> bool: ...
+def theme_default_init(disp: display_t, color_primary: color_t, color_secondary: color_t, dark: int, font: font_t) -> theme_t: ...
+def theme_default_is_inited() -> int: ...
 def theme_get_color_primary(obj: obj) -> color_t: ...
 def theme_get_color_secondary(obj: obj) -> color_t: ...
 def theme_get_font_large(obj: obj) -> font_t: ...
 def theme_get_font_normal(obj: obj) -> font_t: ...
 def theme_get_font_small(obj: obj) -> font_t: ...
 def theme_get_from_obj(obj: obj) -> theme_t: ...
-def thread_delete(thread: int) -> int: ...
-def thread_init(thread: int, name: str, prio: THREAD_PRIO | int, callback: Callable[[Any], None], stack_size: int, user_data: Any) -> int: ...
-def thread_sync_delete(sync: int) -> int: ...
-def thread_sync_init(sync: int) -> int: ...
-def thread_sync_signal(sync: int) -> int: ...
-def thread_sync_signal_isr(sync: int) -> int: ...
-def thread_sync_wait(sync: int) -> int: ...
+def thread_delete(thread: Any) -> RESULT | int: ...
+def thread_init(thread: Any, name: str, prio: THREAD_PRIO | int, callback: Callable[[Any], None], stack_size: int, user_data: Any) -> RESULT | int: ...
+def thread_sync_delete(sync: Any) -> RESULT | int: ...
+def thread_sync_init(sync: Any) -> RESULT | int: ...
+def thread_sync_signal(sync: Any) -> RESULT | int: ...
+def thread_sync_signal_isr(sync: Any) -> RESULT | int: ...
+def thread_sync_wait(sync: Any) -> RESULT | int: ...
 def tick_diff(tick: int, prev_tick: int) -> int: ...
 def tick_elaps(prev_tick: int) -> int: ...
 def tick_get() -> int: ...
@@ -6173,96 +4892,24 @@ def timer_core_deinit() -> None: ...
 def timer_core_init() -> None: ...
 def timer_create(timer_xcb: Callable[[timer_t], None], period: int, user_data: Any) -> timer_t: ...
 def timer_create_basic() -> timer_t: ...
-def timer_enable(en: bool) -> None: ...
+def timer_enable(en: int) -> None: ...
 def timer_get_idle() -> int: ...
 def timer_get_time_until_next() -> int: ...
 def timer_handler() -> int: ...
 def timer_handler_run_in_period(period: int) -> int: ...
 def timer_handler_set_resume_cb(cb: Callable[[Any], None], data: Any) -> None: ...
 def timer_periodic_handler() -> None: ...
-def tjpgd_deinit() -> None: ...
-def tjpgd_init() -> None: ...
 def trigo_cos(angle: int) -> int: ...
 def trigo_sin(angle: int) -> int: ...
 def unlock() -> None: ...
-def utils_bsearch(key: Any, base: Any, n: int, size: int, cmp: Callable[..., Any]) -> Any: ...
+def utils_bsearch(key: Any, base: Any, n: int, size: int, cmp: Callable[[Any, Any], int]) -> Any: ...
 def version_info() -> str: ...
 def version_major() -> int: ...
 def version_minor() -> int: ...
 def version_patch() -> int: ...
+def vsnprintf(buffer: str, count: int, format: str, va: int) -> int: ...
 def zalloc(size: int) -> Any: ...
-_nesting: _Nesting
-animimg_class: Any
-arc_class: Any
-arclabel_class: Any
-bar_class: Any
-barcode_class: Any
-binfont_font_class: Any
-builtin_font_class: Any
-button_class: Any
-buttonmatrix_class: Any
-cache_class_lru_ll_count: Any
-cache_class_lru_ll_size: Any
-cache_class_lru_rb_count: Any
-cache_class_lru_rb_size: Any
-cache_class_sc_da: Any
-calendar_class: Any
-calendar_header_arrow_class: Any
-calendar_header_dropdown_class: Any
-canvas_class: Any
-chart_class: Any
-checkbox_class: Any
-color_filter_shade: Any
-dropdown_class: Any
-dropdownlist_class: Any
-font_montserrat_14: Any
-font_montserrat_16: Any
-font_montserrat_24: Any
-font_montserrat_32: Any
-font_montserrat_40: Any
-gif_class: Any
-image_class: Any
-imagebutton_class: Any
-keyboard_class: Any
-label_class: Any
-led_class: Any
-line_class: Any
-list_button_class: Any
-list_class: Any
-list_text_class: Any
-menu_class: Any
-menu_cont_class: Any
-menu_main_cont_class: Any
-menu_main_header_cont_class: Any
-menu_page_class: Any
-menu_section_class: Any
-menu_separator_class: Any
-menu_sidebar_cont_class: Any
-menu_sidebar_header_cont_class: Any
-msgbox_backdrop_class: Any
-msgbox_class: Any
-msgbox_content_class: Any
-msgbox_footer_button_class: Any
-msgbox_footer_class: Any
-msgbox_header_button_class: Any
-msgbox_header_class: Any
-obj_class: Any
-qrcode_class: Any
-roller_class: Any
-scale_class: Any
-slider_class: Any
-spangroup_class: Any
-spinbox_class: Any
-spinner_class: Any
-style_const_prop_id_inv: Any
-switch_class: Any
-table_class: Any
-tabview_class: Any
-textarea_class: Any
-tileview_class: Any
-tileview_tile_class: Any
-tree_node_class: Any
-win_class: Any
+
 ANIM_PLAYTIME_INFINITE: int
 ANIM_REPEAT_INFINITE: int
 BUTTONMATRIX_BUTTON_NONE: int
