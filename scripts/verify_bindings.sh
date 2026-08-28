@@ -40,6 +40,11 @@ fi
 echo "OK: generated/lvgl.pyi present"
 echo
 
+echo "==> Validate generated/lvgl.pyi against canonical API manifest"
+PYTHONPATH="$LV_BINDINGS_DIR" "$PYTHON" -m binding.verify_pyi \
+    "$GENERATED/api.json" "$GENERATED/lvgl.pyi"
+echo
+
 echo "==> Validate generated/lvgl_circuitpython.c"
 "$PYTHON" - "$LVCP_C" "$LVIR_JSON" <<'PY'
 import json
