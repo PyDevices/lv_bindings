@@ -42,7 +42,16 @@ def test_parse_source_preserves_arrays_and_variadic_functions():
     assert ir.typedefs_by_name["values_t"].type.canonical() == "int[4]"
     function = ir.functions_by_name["format"]
     assert function.variadic
+    assert function.signature == "int format(const char *, ...)"
     assert function.parameters[0].type.canonical() == "const char *"
+
+
+def test_parse_source_preserves_pointer_qualifiers():
+    ir = parse_source("int read(char *const buffer);", filename="qualifiers.h")
+
+    assert ir.functions_by_name["read"].parameters[0].type.canonical() == (
+        "char * const"
+    )
 
 
 def test_declaration_index_resolves_aliases_and_struct_methods():

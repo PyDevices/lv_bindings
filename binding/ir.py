@@ -52,7 +52,12 @@ class CType:
         if self.kind in {"struct", "union", "enum"}:
             return prefix + self.kind + " " + (self.name or "<anonymous>")
         if self.kind == "pointer":
-            return self.target.canonical() + " *" if self.target else "void *"
+            target = self.target.canonical() if self.target else "void"
+            pointer_qualifiers = " ".join(self.qualifiers)
+            suffix = " *"
+            if pointer_qualifiers:
+                suffix += " " + pointer_qualifiers
+            return target + suffix
         if self.kind == "array":
             suffix = "".join("[" + dimension + "]" for dimension in self.dimensions)
             return (self.element.canonical() if self.element else "<unknown>") + suffix
@@ -390,8 +395,13 @@ class _Converter:
     def parameters(self, node: Any) -> Tuple[Tuple[CParameter, ...], bool]:
         if node is None or not node.params:
             return (), False
-        parameters = tuple(self.parameter(parameter) for parameter in node.params)
-        return parameters, any(parameter.type.kind == "ellipsis" for parameter in parameters)
+        variadic = any(isinstance(parameter, c_ast.EllipsisParam) for parameter in node.params)
+        parameters = tuple(
+            self.parameter(parameter)
+            for parameter in node.params
+            if not isinstance(parameter, c_ast.EllipsisParam)
+        )
+        return parameters, variadic
 
     def fields(self, node: Any) -> Tuple[CField, ...]:
         if not node.decls:
