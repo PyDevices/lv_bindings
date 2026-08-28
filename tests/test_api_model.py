@@ -71,6 +71,45 @@ def test_api_model_groups_preprocessor_enum_families_and_constants():
     assert constants["LIMIT"].value == "4"
 
 
+def test_api_model_records_module_and_widget_enum_ownership():
+    declarations = parse_source(
+        "typedef struct _lv_obj_t lv_obj_t; "
+        "lv_obj_t *lv_obj_create(lv_obj_t *parent); "
+        "lv_obj_t *lv_bar_create(lv_obj_t *parent); "
+        "typedef enum { LV_BAR_MODE_NORMAL = 0, LV_BAR_MODE_RANGE = 1 } lv_bar_mode_t; "
+        "typedef enum { LV_EVENT_NONE = 0, LV_EVENT_CLICKED = 1 } lv_event_code_t; "
+        "typedef enum { LV_OBJ_FLAG_HIDDEN = 1, LV_OBJ_FLAG_CLICKABLE = 2 } lv_obj_flag_t;",
+        filename="enum-ownership.h",
+    )
+
+    model = build_api_model(declarations)
+    enums = {enum.typedef_names[0]: enum for enum in model.enums if enum.typedef_names}
+
+    assert enums["lv_bar_mode_t"].module_name is None
+    assert enums["lv_bar_mode_t"].owners == (("bar", "MODE"),)
+    assert [member[0] for member in enums["lv_bar_mode_t"].members] == [
+        "NORMAL",
+        "RANGE",
+    ]
+    assert enums["lv_event_code_t"].module_name == "EVENT"
+    assert enums["lv_event_code_t"].owners == ()
+    assert enums["lv_obj_flag_t"].module_name == "OBJ_FLAG"
+    assert enums["lv_obj_flag_t"].owners == (("obj", "FLAG"),)
+
+
+def test_api_model_uses_typedef_and_member_stems_for_singleton_enums():
+    declarations = parse_source(
+        "typedef enum { LV_ANIMIMG_PART_MAIN } lv_animimg_part_t;",
+        filename="singleton-enum.h",
+    )
+
+    model = build_api_model(declarations)
+    enum = next(item for item in model.enums if item.typedef_names)
+
+    assert enum.module_name == "ANIM_IMAGE_PART"
+    assert enum.members == (("MAIN", None),)
+
+
 def test_api_model_detects_duplicate_exports():
     from dataclasses import replace
 

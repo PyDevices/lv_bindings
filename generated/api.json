@@ -1,5 +1,5 @@
 {
-  "api_hash": "b6dd36b5a5e8a05e7d260d6243ed796b11db044398bb692d0634723843980505",
+  "api_hash": "e8aca31d23ca8545cd1233d5618022b1c82663dd6bdc5075672d52b81fd26d21",
   "constants": [
     {
       "available_on": [
@@ -554,6 +554,8 @@
           "value": null
         }
       ],
+      "module_name": "ALIGN",
+      "owners": [],
       "python_name": "ALIGN",
       "typedef_names": [
         "lv_align_t"
@@ -575,10 +577,12 @@
       },
       "members": [
         {
-          "name": "LV_ANIM_IMAGE_PART_MAIN",
+          "name": "MAIN",
           "value": null
         }
       ],
+      "module_name": "ANIM_IMAGE_PART",
+      "owners": [],
       "python_name": "ANIMIMG_PART",
       "typedef_names": [
         "lv_animimg_part_t"
@@ -606,6 +610,13 @@
         {
           "name": "COUNTER_CLOCKWISE",
           "value": "1"
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "DIR",
+          "object": "arclabel"
         }
       ],
       "python_name": "ARCLABEL_DIR",
@@ -639,6 +650,13 @@
         {
           "name": "CLIP",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "OVERFLOW",
+          "object": "arclabel"
         }
       ],
       "python_name": "ARCLABEL_OVERFLOW",
@@ -678,6 +696,13 @@
           "value": "3"
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "TEXT_ALIGN",
+          "object": "arclabel"
+        }
+      ],
       "python_name": "ARCLABEL_TEXT_ALIGN",
       "typedef_names": [
         "lv_arclabel_text_align_t"
@@ -711,6 +736,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "MODE",
+          "object": "arc"
+        }
+      ],
       "python_name": "ARC_MODE",
       "typedef_names": [
         "lv_arc_mode_t"
@@ -732,12 +764,19 @@
       },
       "members": [
         {
-          "name": "CODE128_GS1",
+          "name": "GS1",
           "value": null
         },
         {
-          "name": "CODE128_RAW",
+          "name": "RAW",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "ENCODING_CODE128",
+          "object": "barcode"
         }
       ],
       "python_name": "BARCODE_ENCODING",
@@ -773,6 +812,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "MODE",
+          "object": "bar"
+        }
+      ],
       "python_name": "BAR_MODE",
       "typedef_names": [
         "lv_bar_mode_t"
@@ -804,6 +850,13 @@
         {
           "name": "VERTICAL",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "ORIENTATION",
+          "object": "bar"
         }
       ],
       "python_name": "BAR_ORIENTATION",
@@ -847,6 +900,8 @@
           "value": "0x21"
         }
       ],
+      "module_name": "BASE_DIR",
+      "owners": [],
       "python_name": "BASE_DIR",
       "typedef_names": [
         "lv_base_dir_t"
@@ -888,6 +943,8 @@
           "value": null
         }
       ],
+      "module_name": "BLEND_MODE",
+      "owners": [],
       "python_name": "BLEND_MODE",
       "typedef_names": [
         "lv_blend_mode_t"
@@ -921,6 +978,8 @@
           "value": null
         }
       ],
+      "module_name": "BLUR_QUALITY",
+      "owners": [],
       "python_name": "BLUR_QUALITY",
       "typedef_names": [
         "lv_blur_quality_t"
@@ -970,6 +1029,8 @@
           "value": "0x10"
         }
       ],
+      "module_name": "BORDER_SIDE",
+      "owners": [],
       "python_name": "BORDER_SIDE",
       "typedef_names": [
         "lv_border_side_t"
@@ -1103,6 +1164,13 @@
           "value": "0x8000"
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "CTRL",
+          "object": "buttonmatrix"
+        }
+      ],
       "python_name": "BUTTONMATRIX_CTRL",
       "typedef_names": [
         "lv_buttonmatrix_ctrl_t"
@@ -1124,22 +1192,24 @@
       },
       "members": [
         {
-          "name": "LV_CACHE_RESERVE_COND_OK",
+          "name": "OK",
           "value": null
         },
         {
-          "name": "LV_CACHE_RESERVE_COND_TOO_LARGE",
+          "name": "TOO_LARGE",
           "value": null
         },
         {
-          "name": "LV_CACHE_RESERVE_COND_NEED_VICTIM",
+          "name": "NEED_VICTIM",
           "value": null
         },
         {
-          "name": "LV_CACHE_RESERVE_COND_ERROR",
+          "name": "ERROR",
           "value": null
         }
       ],
+      "module_name": "CACHE_RESERVE_COND",
+      "owners": [],
       "python_name": "CACHE_RESERVE_COND_RES",
       "typedef_names": [
         "lv_cache_reserve_cond_res_t"
@@ -1179,6 +1249,13 @@
         {
           "name": "LAST",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "AXIS",
+          "object": "chart"
         }
       ],
       "python_name": "CHART_AXIS",
@@ -1226,6 +1303,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "TYPE",
+          "object": "chart"
+        }
+      ],
       "python_name": "CHART_TYPE",
       "typedef_names": [
         "lv_chart_type_t"
@@ -1253,6 +1337,13 @@
         {
           "name": "CIRCULAR",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "UPDATE_MODE",
+          "object": "chart"
         }
       ],
       "python_name": "CHART_UPDATE_MODE",
@@ -1456,6 +1547,8 @@
           "value": "LV_COLOR_FORMAT_RGB565A8"
         }
       ],
+      "module_name": "COLOR_FORMAT",
+      "owners": [],
       "python_name": "COLOR_FORMAT",
       "typedef_names": [
         "lv_color_format_t"
@@ -1485,6 +1578,8 @@
           "value": "-((1 << 29U) - 1)"
         }
       ],
+      "module_name": "COORD",
+      "owners": [],
       "python_name": "COORD",
       "typedef_names": [],
       "visibility": "public"
@@ -1516,6 +1611,8 @@
           "value": "2"
         }
       ],
+      "module_name": "COVER_RES",
+      "owners": [],
       "python_name": "COVER_RES",
       "typedef_names": [
         "lv_cover_res_t"
@@ -1569,6 +1666,8 @@
           "value": "LV_DIR_HOR | LV_DIR_VER"
         }
       ],
+      "module_name": "DIR",
+      "owners": [],
       "python_name": "DIR",
       "typedef_names": [
         "lv_dir_t"
@@ -1602,6 +1701,8 @@
           "value": null
         }
       ],
+      "module_name": "DISPLAY_RENDER_MODE",
+      "owners": [],
       "python_name": "DISPLAY_RENDER_MODE",
       "typedef_names": [
         "lv_display_render_mode_t"
@@ -1639,6 +1740,8 @@
           "value": null
         }
       ],
+      "module_name": "DISPLAY_ROTATION",
+      "owners": [],
       "python_name": "DISPLAY_ROTATION",
       "typedef_names": [
         "lv_display_rotation_t"
@@ -1676,6 +1779,8 @@
           "value": null
         }
       ],
+      "module_name": "DRAW_SW_MASK_LINE_SIDE",
+      "owners": [],
       "python_name": "DRAW_SW_MASK_LINE_SIDE",
       "typedef_names": [
         "lv_draw_sw_mask_line_side_t"
@@ -1713,6 +1818,8 @@
           "value": null
         }
       ],
+      "module_name": "DRAW_SW_MASK_RES",
+      "owners": [],
       "python_name": "DRAW_SW_MASK_RES",
       "typedef_names": [
         "lv_draw_sw_mask_res_t"
@@ -1754,6 +1861,8 @@
           "value": null
         }
       ],
+      "module_name": "DRAW_SW_MASK_TYPE",
+      "owners": [],
       "python_name": "DRAW_SW_MASK_TYPE",
       "typedef_names": [
         "lv_draw_sw_mask_type_t"
@@ -1795,6 +1904,8 @@
           "value": null
         }
       ],
+      "module_name": "DRAW_TASK_STATE",
+      "owners": [],
       "python_name": "DRAW_TASK_STATE",
       "typedef_names": [
         "lv_draw_task_state_t"
@@ -1872,6 +1983,8 @@
           "value": null
         }
       ],
+      "module_name": "DRAW_TASK_TYPE",
+      "owners": [],
       "python_name": "DRAW_TASK_TYPE",
       "typedef_names": [
         "lv_draw_task_type_t"
@@ -1893,294 +2006,296 @@
       },
       "members": [
         {
-          "name": "LV_EVENT_ALL",
+          "name": "ALL",
           "value": "0"
         },
         {
-          "name": "LV_EVENT_PRESSED",
+          "name": "PRESSED",
           "value": null
         },
         {
-          "name": "LV_EVENT_PRESSING",
+          "name": "PRESSING",
           "value": null
         },
         {
-          "name": "LV_EVENT_PRESS_LOST",
+          "name": "PRESS_LOST",
           "value": null
         },
         {
-          "name": "LV_EVENT_SHORT_CLICKED",
+          "name": "SHORT_CLICKED",
           "value": null
         },
         {
-          "name": "LV_EVENT_SINGLE_CLICKED",
+          "name": "SINGLE_CLICKED",
           "value": null
         },
         {
-          "name": "LV_EVENT_DOUBLE_CLICKED",
+          "name": "DOUBLE_CLICKED",
           "value": null
         },
         {
-          "name": "LV_EVENT_TRIPLE_CLICKED",
+          "name": "TRIPLE_CLICKED",
           "value": null
         },
         {
-          "name": "LV_EVENT_LONG_PRESSED",
+          "name": "LONG_PRESSED",
           "value": null
         },
         {
-          "name": "LV_EVENT_LONG_PRESSED_REPEAT",
+          "name": "LONG_PRESSED_REPEAT",
           "value": null
         },
         {
-          "name": "LV_EVENT_CLICKED",
+          "name": "CLICKED",
           "value": null
         },
         {
-          "name": "LV_EVENT_RELEASED",
+          "name": "RELEASED",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCROLL_BEGIN",
+          "name": "SCROLL_BEGIN",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCROLL_THROW_BEGIN",
+          "name": "SCROLL_THROW_BEGIN",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCROLL_END",
+          "name": "SCROLL_END",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCROLL",
+          "name": "SCROLL",
           "value": null
         },
         {
-          "name": "LV_EVENT_GESTURE",
+          "name": "GESTURE",
           "value": null
         },
         {
-          "name": "LV_EVENT_KEY",
+          "name": "KEY",
           "value": null
         },
         {
-          "name": "LV_EVENT_ROTARY",
+          "name": "ROTARY",
           "value": null
         },
         {
-          "name": "LV_EVENT_FOCUSED",
+          "name": "FOCUSED",
           "value": null
         },
         {
-          "name": "LV_EVENT_DEFOCUSED",
+          "name": "DEFOCUSED",
           "value": null
         },
         {
-          "name": "LV_EVENT_LEAVE",
+          "name": "LEAVE",
           "value": null
         },
         {
-          "name": "LV_EVENT_HIT_TEST",
+          "name": "HIT_TEST",
           "value": null
         },
         {
-          "name": "LV_EVENT_INDEV_RESET",
+          "name": "INDEV_RESET",
           "value": null
         },
         {
-          "name": "LV_EVENT_HOVER_OVER",
+          "name": "HOVER_OVER",
           "value": null
         },
         {
-          "name": "LV_EVENT_HOVER_LEAVE",
+          "name": "HOVER_LEAVE",
           "value": null
         },
         {
-          "name": "LV_EVENT_COVER_CHECK",
+          "name": "COVER_CHECK",
           "value": null
         },
         {
-          "name": "LV_EVENT_REFR_EXT_DRAW_SIZE",
+          "name": "REFR_EXT_DRAW_SIZE",
           "value": null
         },
         {
-          "name": "LV_EVENT_DRAW_MAIN_BEGIN",
+          "name": "DRAW_MAIN_BEGIN",
           "value": null
         },
         {
-          "name": "LV_EVENT_DRAW_MAIN",
+          "name": "DRAW_MAIN",
           "value": null
         },
         {
-          "name": "LV_EVENT_DRAW_MAIN_END",
+          "name": "DRAW_MAIN_END",
           "value": null
         },
         {
-          "name": "LV_EVENT_DRAW_POST_BEGIN",
+          "name": "DRAW_POST_BEGIN",
           "value": null
         },
         {
-          "name": "LV_EVENT_DRAW_POST",
+          "name": "DRAW_POST",
           "value": null
         },
         {
-          "name": "LV_EVENT_DRAW_POST_END",
+          "name": "DRAW_POST_END",
           "value": null
         },
         {
-          "name": "LV_EVENT_DRAW_TASK_ADDED",
+          "name": "DRAW_TASK_ADDED",
           "value": null
         },
         {
-          "name": "LV_EVENT_VALUE_CHANGED",
+          "name": "VALUE_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_INSERT",
+          "name": "INSERT",
           "value": null
         },
         {
-          "name": "LV_EVENT_REFRESH",
+          "name": "REFRESH",
           "value": null
         },
         {
-          "name": "LV_EVENT_READY",
+          "name": "READY",
           "value": null
         },
         {
-          "name": "LV_EVENT_CANCEL",
+          "name": "CANCEL",
           "value": null
         },
         {
-          "name": "LV_EVENT_STATE_CHANGED",
+          "name": "STATE_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_CREATE",
+          "name": "CREATE",
           "value": null
         },
         {
-          "name": "LV_EVENT_DELETE",
+          "name": "DELETE",
           "value": null
         },
         {
-          "name": "LV_EVENT_CHILD_CHANGED",
+          "name": "CHILD_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_CHILD_CREATED",
+          "name": "CHILD_CREATED",
           "value": null
         },
         {
-          "name": "LV_EVENT_CHILD_DELETED",
+          "name": "CHILD_DELETED",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCREEN_UNLOAD_START",
+          "name": "SCREEN_UNLOAD_START",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCREEN_LOAD_START",
+          "name": "SCREEN_LOAD_START",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCREEN_LOADED",
+          "name": "SCREEN_LOADED",
           "value": null
         },
         {
-          "name": "LV_EVENT_SCREEN_UNLOADED",
+          "name": "SCREEN_UNLOADED",
           "value": null
         },
         {
-          "name": "LV_EVENT_SIZE_CHANGED",
+          "name": "SIZE_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_STYLE_CHANGED",
+          "name": "STYLE_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_LAYOUT_CHANGED",
+          "name": "LAYOUT_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_GET_SELF_SIZE",
+          "name": "GET_SELF_SIZE",
           "value": null
         },
         {
-          "name": "LV_EVENT_INVALIDATE_AREA",
+          "name": "INVALIDATE_AREA",
           "value": null
         },
         {
-          "name": "LV_EVENT_RESOLUTION_CHANGED",
+          "name": "RESOLUTION_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_COLOR_FORMAT_CHANGED",
+          "name": "COLOR_FORMAT_CHANGED",
           "value": null
         },
         {
-          "name": "LV_EVENT_REFR_REQUEST",
+          "name": "REFR_REQUEST",
           "value": null
         },
         {
-          "name": "LV_EVENT_REFR_START",
+          "name": "REFR_START",
           "value": null
         },
         {
-          "name": "LV_EVENT_REFR_READY",
+          "name": "REFR_READY",
           "value": null
         },
         {
-          "name": "LV_EVENT_RENDER_START",
+          "name": "RENDER_START",
           "value": null
         },
         {
-          "name": "LV_EVENT_RENDER_READY",
+          "name": "RENDER_READY",
           "value": null
         },
         {
-          "name": "LV_EVENT_FLUSH_START",
+          "name": "FLUSH_START",
           "value": null
         },
         {
-          "name": "LV_EVENT_FLUSH_FINISH",
+          "name": "FLUSH_FINISH",
           "value": null
         },
         {
-          "name": "LV_EVENT_FLUSH_WAIT_START",
+          "name": "FLUSH_WAIT_START",
           "value": null
         },
         {
-          "name": "LV_EVENT_FLUSH_WAIT_FINISH",
+          "name": "FLUSH_WAIT_FINISH",
           "value": null
         },
         {
-          "name": "LV_EVENT_UPDATE_LAYOUT_COMPLETED",
+          "name": "UPDATE_LAYOUT_COMPLETED",
           "value": null
         },
         {
-          "name": "LV_EVENT_VSYNC",
+          "name": "VSYNC",
           "value": null
         },
         {
-          "name": "LV_EVENT_VSYNC_REQUEST",
+          "name": "VSYNC_REQUEST",
           "value": null
         },
         {
-          "name": "LV_EVENT_LAST",
+          "name": "LAST",
           "value": null
         },
         {
-          "name": "LV_EVENT_PREPROCESS",
+          "name": "PREPROCESS",
           "value": "0x8000"
         },
         {
-          "name": "LV_EVENT_MARKED_DELETING",
+          "name": "MARKED_DELETING",
           "value": "0x10000"
         }
       ],
+      "module_name": "EVENT",
+      "owners": [],
       "python_name": "EVENT_CODE",
       "typedef_names": [
         "lv_event_code_t"
@@ -2226,6 +2341,8 @@
           "value": null
         }
       ],
+      "module_name": "FLEX_ALIGN",
+      "owners": [],
       "python_name": "FLEX_ALIGN",
       "typedef_names": [
         "lv_flex_align_t"
@@ -2279,6 +2396,8 @@
           "value": "(LV_FLEX_FLOW_COLUMN | (1 << 2)) | (1 << 3)"
         }
       ],
+      "module_name": "FLEX_FLOW",
+      "owners": [],
       "python_name": "FLEX_FLOW",
       "typedef_names": [
         "lv_flex_flow_t"
@@ -2300,18 +2419,20 @@
       },
       "members": [
         {
-          "name": "LV_FONT_FMT_TXT_PLAIN",
+          "name": "PLAIN",
           "value": "0"
         },
         {
-          "name": "LV_FONT_FMT_TXT_COMPRESSED",
+          "name": "COMPRESSED",
           "value": "1"
         },
         {
-          "name": "LV_FONT_FMT_TXT_COMPRESSED_NO_PREFILTER",
+          "name": "COMPRESSED_NO_PREFILTER",
           "value": "2"
         }
       ],
+      "module_name": "FONT_FMT_TXT_BITMAP_FORMAT",
+      "owners": [],
       "python_name": "FONT_FMT_TXT_BITMAP_FORMAT",
       "typedef_names": [
         "lv_font_fmt_txt_bitmap_format_t"
@@ -2333,22 +2454,24 @@
       },
       "members": [
         {
-          "name": "LV_FONT_FMT_TXT_CMAP_FORMAT0_FULL",
+          "name": "FORMAT0_FULL",
           "value": null
         },
         {
-          "name": "LV_FONT_FMT_TXT_CMAP_SPARSE_FULL",
+          "name": "SPARSE_FULL",
           "value": null
         },
         {
-          "name": "LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY",
+          "name": "FORMAT0_TINY",
           "value": null
         },
         {
-          "name": "LV_FONT_FMT_TXT_CMAP_SPARSE_TINY",
+          "name": "SPARSE_TINY",
           "value": null
         }
       ],
+      "module_name": "FONT_FMT_TXT_CMAP_TYPE",
+      "owners": [],
       "python_name": "FONT_FMT_TXT_CMAP_TYPE",
       "typedef_names": [
         "lv_font_fmt_txt_cmap_type_t"
@@ -2410,6 +2533,8 @@
           "value": "0xFF"
         }
       ],
+      "module_name": "FONT_GLYPH_FORMAT",
+      "owners": [],
       "python_name": "FONT_GLYPH_FORMAT",
       "typedef_names": [
         "lv_font_glyph_format_t"
@@ -2439,6 +2564,8 @@
           "value": null
         }
       ],
+      "module_name": "FONT_KERNING",
+      "owners": [],
       "python_name": "FONT_KERNING",
       "typedef_names": [
         "lv_font_kerning_t"
@@ -2476,6 +2603,8 @@
           "value": null
         }
       ],
+      "module_name": "FONT_SUBPX",
+      "owners": [],
       "python_name": "FONT_SUBPX",
       "typedef_names": [
         "lv_font_subpx_t"
@@ -2505,6 +2634,8 @@
           "value": "0x02"
         }
       ],
+      "module_name": "FS_MODE",
+      "owners": [],
       "python_name": "FS_MODE",
       "typedef_names": [
         "lv_fs_mode_t"
@@ -2582,6 +2713,8 @@
           "value": null
         }
       ],
+      "module_name": "FS_RES",
+      "owners": [],
       "python_name": "FS_RES",
       "typedef_names": [
         "lv_fs_res_t"
@@ -2603,18 +2736,20 @@
       },
       "members": [
         {
-          "name": "LV_FS_SEEK_SET",
+          "name": "SET",
           "value": "0x00"
         },
         {
-          "name": "LV_FS_SEEK_CUR",
+          "name": "CUR",
           "value": "0x01"
         },
         {
-          "name": "LV_FS_SEEK_END",
+          "name": "END",
           "value": "0x02"
         }
       ],
+      "module_name": "FS_WHENCE",
+      "owners": [],
       "python_name": "FS_WHENCE",
       "typedef_names": [
         "lv_fs_whence_t"
@@ -2660,6 +2795,8 @@
           "value": null
         }
       ],
+      "module_name": "GRAD_DIR",
+      "owners": [],
       "python_name": "GRAD_DIR",
       "typedef_names": [
         "lv_grad_dir_t"
@@ -2693,6 +2830,8 @@
           "value": null
         }
       ],
+      "module_name": "GRAD_EXTEND",
+      "owners": [],
       "python_name": "GRAD_EXTEND",
       "typedef_names": [
         "lv_grad_extend_t"
@@ -2742,6 +2881,8 @@
           "value": null
         }
       ],
+      "module_name": "GRID_ALIGN",
+      "owners": [],
       "python_name": "GRID_ALIGN",
       "typedef_names": [
         "lv_grid_align_t"
@@ -2771,6 +2912,8 @@
           "value": "1"
         }
       ],
+      "module_name": "GROUP_REFOCUS_POLICY",
+      "owners": [],
       "python_name": "GROUP_REFOCUS_POLICY",
       "typedef_names": [
         "lv_group_refocus_policy_t"
@@ -2818,6 +2961,13 @@
         {
           "name": "NUM",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "STATE",
+          "object": "imagebutton"
         }
       ],
       "python_name": "IMAGEBUTTON_STATE",
@@ -2901,6 +3051,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "ALIGN",
+          "object": "image"
+        }
+      ],
       "python_name": "IMAGE_ALIGN",
       "typedef_names": [
         "lv_image_align_t"
@@ -2932,6 +3089,13 @@
         {
           "name": "LZ4",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "COMPRESS",
+          "object": "image"
         }
       ],
       "python_name": "IMAGE_COMPRESS",
@@ -3007,6 +3171,13 @@
           "value": "0x8000"
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "FLAGS",
+          "object": "image"
+        }
+      ],
       "python_name": "IMAGE_FLAGS",
       "typedef_names": [
         "lv_image_flags_t"
@@ -3042,6 +3213,13 @@
         {
           "name": "UNKNOWN",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "SRC",
+          "object": "image"
         }
       ],
       "python_name": "IMAGE_SRC",
@@ -3085,6 +3263,8 @@
           "value": null
         }
       ],
+      "module_name": "INDEV_GESTURE_STATE",
+      "owners": [],
       "python_name": "INDEV_GESTURE_STATE",
       "typedef_names": [
         "lv_indev_gesture_state_t"
@@ -3106,34 +3286,36 @@
       },
       "members": [
         {
-          "name": "LV_INDEV_GESTURE_NONE",
+          "name": "NONE",
           "value": "0"
         },
         {
-          "name": "LV_INDEV_GESTURE_PINCH",
+          "name": "PINCH",
           "value": null
         },
         {
-          "name": "LV_INDEV_GESTURE_SWIPE",
+          "name": "SWIPE",
           "value": null
         },
         {
-          "name": "LV_INDEV_GESTURE_ROTATE",
+          "name": "ROTATE",
           "value": null
         },
         {
-          "name": "LV_INDEV_GESTURE_TWO_FINGERS_SWIPE",
+          "name": "TWO_FINGERS_SWIPE",
           "value": null
         },
         {
-          "name": "LV_INDEV_GESTURE_SCROLL",
+          "name": "SCROLL",
           "value": null
         },
         {
-          "name": "LV_INDEV_GESTURE_CNT",
+          "name": "CNT",
           "value": null
         }
       ],
+      "module_name": "INDEV_GESTURE",
+      "owners": [],
       "python_name": "INDEV_GESTURE_TYPE",
       "typedef_names": [
         "lv_indev_gesture_type_t"
@@ -3167,6 +3349,8 @@
           "value": null
         }
       ],
+      "module_name": "INDEV_MODE",
+      "owners": [],
       "python_name": "INDEV_MODE",
       "typedef_names": [
         "lv_indev_mode_t"
@@ -3196,6 +3380,8 @@
           "value": null
         }
       ],
+      "module_name": "INDEV_STATE",
+      "owners": [],
       "python_name": "INDEV_STATE",
       "typedef_names": [
         "lv_indev_state_t"
@@ -3237,6 +3423,8 @@
           "value": null
         }
       ],
+      "module_name": "INDEV_TYPE",
+      "owners": [],
       "python_name": "INDEV_TYPE",
       "typedef_names": [
         "lv_indev_type_t"
@@ -3306,6 +3494,8 @@
           "value": "3"
         }
       ],
+      "module_name": "KEY",
+      "owners": [],
       "python_name": "KEY",
       "typedef_names": [
         "lv_key_t"
@@ -3359,6 +3549,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "MODE",
+          "object": "keyboard"
+        }
+      ],
       "python_name": "KEYBOARD_MODE",
       "typedef_names": [
         "lv_keyboard_mode_t"
@@ -3400,6 +3597,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "LONG_MODE",
+          "object": "label"
+        }
+      ],
       "python_name": "LABEL_LONG_MODE",
       "typedef_names": [
         "lv_label_long_mode_t"
@@ -3433,6 +3637,8 @@
           "value": null
         }
       ],
+      "module_name": "LAYER_TYPE",
+      "owners": [],
       "python_name": "LAYER_TYPE",
       "typedef_names": [
         "lv_layer_type_t"
@@ -3470,6 +3676,8 @@
           "value": null
         }
       ],
+      "module_name": "LAYOUT",
+      "owners": [],
       "python_name": "LAYOUT",
       "typedef_names": [
         "lv_layout_t"
@@ -3515,6 +3723,8 @@
           "value": "5"
         }
       ],
+      "module_name": "LOG_LEVEL",
+      "owners": [],
       "python_name": "LOG_LEVEL",
       "typedef_names": [],
       "visibility": "public"
@@ -3558,6 +3768,8 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [],
       "policy_reason": "outside module prefix",
       "python_name": "MEMORY_ORDER",
       "typedef_names": [
@@ -3580,16 +3792,23 @@
       },
       "members": [
         {
-          "name": "LV_MENU_HEADER_TOP_FIXED",
+          "name": "TOP_FIXED",
           "value": null
         },
         {
-          "name": "LV_MENU_HEADER_TOP_UNFIXED",
+          "name": "TOP_UNFIXED",
           "value": null
         },
         {
-          "name": "LV_MENU_HEADER_BOTTOM_FIXED",
+          "name": "BOTTOM_FIXED",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "HEADER",
+          "object": "menu"
         }
       ],
       "python_name": "MENU_MODE_HEADER",
@@ -3613,12 +3832,19 @@
       },
       "members": [
         {
-          "name": "LV_MENU_ROOT_BACK_BUTTON_DISABLED",
+          "name": "DISABLED",
           "value": null
         },
         {
-          "name": "LV_MENU_ROOT_BACK_BUTTON_ENABLED",
+          "name": "ENABLED",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "ROOT_BACK_BUTTON",
+          "object": "menu"
         }
       ],
       "python_name": "MENU_MODE_ROOT_BACK_BUTTON",
@@ -3654,6 +3880,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "CLASS_EDITABLE",
+          "object": "obj"
+        }
+      ],
       "python_name": "OBJ_CLASS_EDITABLE",
       "typedef_names": [
         "lv_obj_class_editable_t"
@@ -3687,6 +3920,13 @@
           "value": null
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "CLASS_GROUP_DEF",
+          "object": "obj"
+        }
+      ],
       "python_name": "OBJ_CLASS_GROUP_DEF",
       "typedef_names": [
         "lv_obj_class_group_def_t"
@@ -3714,6 +3954,13 @@
         {
           "name": "TRUE",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "CLASS_THEME_INHERITABLE",
+          "object": "obj"
         }
       ],
       "python_name": "OBJ_CLASS_THEME_INHERITABLE",
@@ -3869,6 +4116,13 @@
           "value": "1u << 30"
         }
       ],
+      "module_name": "OBJ_FLAG",
+      "owners": [
+        {
+          "name": "FLAG",
+          "object": "obj"
+        }
+      ],
       "python_name": "OBJ_FLAG",
       "typedef_names": [
         "lv_obj_flag_t"
@@ -3906,6 +4160,13 @@
           "value": "0x03"
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "POINT_TRANSFORM_FLAG",
+          "object": "obj"
+        }
+      ],
       "python_name": "OBJ_POINT_TRANSFORM_FLAG",
       "typedef_names": [
         "lv_obj_point_transform_flag_t"
@@ -3927,16 +4188,23 @@
       },
       "members": [
         {
-          "name": "LV_OBJ_TREE_WALK_NEXT",
+          "name": "NEXT",
           "value": null
         },
         {
-          "name": "LV_OBJ_TREE_WALK_SKIP_CHILDREN",
+          "name": "SKIP_CHILDREN",
           "value": null
         },
         {
-          "name": "LV_OBJ_TREE_WALK_END",
+          "name": "END",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "TREE_WALK",
+          "object": "obj"
         }
       ],
       "python_name": "OBJ_TREE_WALK_RES",
@@ -3960,58 +4228,60 @@
       },
       "members": [
         {
-          "name": "LV_OPA_TRANSP",
+          "name": "TRANSP",
           "value": "0"
         },
         {
-          "name": "LV_OPA_0",
+          "name": "0",
           "value": "0"
         },
         {
-          "name": "LV_OPA_10",
+          "name": "10",
           "value": "25"
         },
         {
-          "name": "LV_OPA_20",
+          "name": "20",
           "value": "51"
         },
         {
-          "name": "LV_OPA_30",
+          "name": "30",
           "value": "76"
         },
         {
-          "name": "LV_OPA_40",
+          "name": "40",
           "value": "102"
         },
         {
-          "name": "LV_OPA_50",
+          "name": "50",
           "value": "127"
         },
         {
-          "name": "LV_OPA_60",
+          "name": "60",
           "value": "153"
         },
         {
-          "name": "LV_OPA_70",
+          "name": "70",
           "value": "178"
         },
         {
-          "name": "LV_OPA_80",
+          "name": "80",
           "value": "204"
         },
         {
-          "name": "LV_OPA_90",
+          "name": "90",
           "value": "229"
         },
         {
-          "name": "LV_OPA_100",
+          "name": "100",
           "value": "255"
         },
         {
-          "name": "LV_OPA_COVER",
+          "name": "COVER",
           "value": "255"
         }
       ],
+      "module_name": "OPA",
+      "owners": [],
       "policy_reason": "outside module prefix",
       "python_name": "OPACITY_LEVEL",
       "typedef_names": [],
@@ -4116,6 +4386,8 @@
           "value": "0xff"
         }
       ],
+      "module_name": "PALETTE",
+      "owners": [],
       "python_name": "PALETTE",
       "typedef_names": [
         "lv_palette_t"
@@ -4173,6 +4445,8 @@
           "value": "0x0F0000"
         }
       ],
+      "module_name": "PART",
+      "owners": [],
       "python_name": "PART",
       "typedef_names": [
         "lv_part_t"
@@ -4202,6 +4476,8 @@
           "value": null
         }
       ],
+      "module_name": "RB_COLOR",
+      "owners": [],
       "python_name": "RB_COLOR",
       "typedef_names": [
         "lv_rb_color_t"
@@ -4231,6 +4507,8 @@
           "value": null
         }
       ],
+      "module_name": "RESULT",
+      "owners": [],
       "python_name": "RESULT",
       "typedef_names": [
         "lv_result_t"
@@ -4258,6 +4536,13 @@
         {
           "name": "INFINITE",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "MODE",
+          "object": "roller"
         }
       ],
       "python_name": "ROLLER_MODE",
@@ -4307,6 +4592,13 @@
         {
           "name": "LAST",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "MODE",
+          "object": "scale"
         }
       ],
       "python_name": "SCALE_MODE",
@@ -4394,6 +4686,8 @@
           "value": null
         }
       ],
+      "module_name": "SCREEN_LOAD_ANIM",
+      "owners": [],
       "python_name": "SCREEN_LOAD_ANIM",
       "typedef_names": [
         "lv_screen_load_anim_t"
@@ -4431,6 +4725,8 @@
           "value": null
         }
       ],
+      "module_name": "SCROLLBAR_MODE",
+      "owners": [],
       "python_name": "SCROLLBAR_MODE",
       "typedef_names": [
         "lv_scrollbar_mode_t"
@@ -4468,6 +4764,8 @@
           "value": null
         }
       ],
+      "module_name": "SCROLL_SNAP",
+      "owners": [],
       "python_name": "SCROLL_SNAP",
       "typedef_names": [
         "lv_scroll_snap_t"
@@ -4501,6 +4799,13 @@
           "value": "LV_BAR_MODE_RANGE"
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "MODE",
+          "object": "slider"
+        }
+      ],
       "python_name": "SLIDER_MODE",
       "typedef_names": [
         "lv_slider_mode_t"
@@ -4532,6 +4837,13 @@
         {
           "name": "VERTICAL",
           "value": "LV_BAR_ORIENTATION_VERTICAL"
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "ORIENTATION",
+          "object": "slider"
         }
       ],
       "python_name": "SLIDER_ORIENTATION",
@@ -4571,6 +4883,8 @@
           "value": null
         }
       ],
+      "module_name": "SPAN_MODE",
+      "owners": [],
       "python_name": "SPAN_MODE",
       "typedef_names": [
         "lv_span_mode_t"
@@ -4604,6 +4918,8 @@
           "value": null
         }
       ],
+      "module_name": "SPAN_OVERFLOW",
+      "owners": [],
       "python_name": "SPAN_OVERFLOW",
       "typedef_names": [
         "lv_span_overflow_t"
@@ -4685,6 +5001,8 @@
           "value": "0xFFFF"
         }
       ],
+      "module_name": "STATE",
+      "owners": [],
       "python_name": "STATE",
       "typedef_names": [
         "lv_state_t"
@@ -4706,254 +5024,256 @@
       },
       "members": [
         {
-          "name": "LV_STR_SYMBOL_BULLET",
+          "name": "BULLET",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_AUDIO",
+          "name": "AUDIO",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_VIDEO",
+          "name": "VIDEO",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_LIST",
+          "name": "LIST",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_OK",
+          "name": "OK",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_CLOSE",
+          "name": "CLOSE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_POWER",
+          "name": "POWER",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_SETTINGS",
+          "name": "SETTINGS",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_HOME",
+          "name": "HOME",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_DOWNLOAD",
+          "name": "DOWNLOAD",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_DRIVE",
+          "name": "DRIVE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_REFRESH",
+          "name": "REFRESH",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_MUTE",
+          "name": "MUTE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_VOLUME_MID",
+          "name": "VOLUME_MID",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_VOLUME_MAX",
+          "name": "VOLUME_MAX",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_IMAGE",
+          "name": "IMAGE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_TINT",
+          "name": "TINT",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_PREV",
+          "name": "PREV",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_PLAY",
+          "name": "PLAY",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_PAUSE",
+          "name": "PAUSE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_STOP",
+          "name": "STOP",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_NEXT",
+          "name": "NEXT",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_EJECT",
+          "name": "EJECT",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_LEFT",
+          "name": "LEFT",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_RIGHT",
+          "name": "RIGHT",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_PLUS",
+          "name": "PLUS",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_MINUS",
+          "name": "MINUS",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_EYE_OPEN",
+          "name": "EYE_OPEN",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_EYE_CLOSE",
+          "name": "EYE_CLOSE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_WARNING",
+          "name": "WARNING",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_SHUFFLE",
+          "name": "SHUFFLE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_UP",
+          "name": "UP",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_DOWN",
+          "name": "DOWN",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_LOOP",
+          "name": "LOOP",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_DIRECTORY",
+          "name": "DIRECTORY",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_UPLOAD",
+          "name": "UPLOAD",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_CALL",
+          "name": "CALL",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_CUT",
+          "name": "CUT",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_COPY",
+          "name": "COPY",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_SAVE",
+          "name": "SAVE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BARS",
+          "name": "BARS",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_ENVELOPE",
+          "name": "ENVELOPE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_CHARGE",
+          "name": "CHARGE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_PASTE",
+          "name": "PASTE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BELL",
+          "name": "BELL",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_KEYBOARD",
+          "name": "KEYBOARD",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_GPS",
+          "name": "GPS",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_FILE",
+          "name": "FILE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_WIFI",
+          "name": "WIFI",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BATTERY_FULL",
+          "name": "BATTERY_FULL",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BATTERY_3",
+          "name": "BATTERY_3",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BATTERY_2",
+          "name": "BATTERY_2",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BATTERY_1",
+          "name": "BATTERY_1",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BATTERY_EMPTY",
+          "name": "BATTERY_EMPTY",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_USB",
+          "name": "USB",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BLUETOOTH",
+          "name": "BLUETOOTH",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_TRASH",
+          "name": "TRASH",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_EDIT",
+          "name": "EDIT",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_BACKSPACE",
+          "name": "BACKSPACE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_SD_CARD",
+          "name": "SD_CARD",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_NEW_LINE",
+          "name": "NEW_LINE",
           "value": null
         },
         {
-          "name": "LV_STR_SYMBOL_DUMMY",
+          "name": "DUMMY",
           "value": null
         }
       ],
+      "module_name": "STR_SYMBOL",
+      "owners": [],
       "policy_reason": "outside module prefix",
       "python_name": "STR_SYMBOL_ID",
       "typedef_names": [],
@@ -4974,538 +5294,540 @@
       },
       "members": [
         {
-          "name": "LV_STYLE_PROP_INV",
+          "name": "PROP_INV",
           "value": "0"
         },
         {
-          "name": "LV_STYLE_WIDTH",
+          "name": "WIDTH",
           "value": "1"
         },
         {
-          "name": "LV_STYLE_HEIGHT",
+          "name": "HEIGHT",
           "value": null
         },
         {
-          "name": "LV_STYLE_LENGTH",
+          "name": "LENGTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_WIDTH",
+          "name": "TRANSFORM_WIDTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_HEIGHT",
+          "name": "TRANSFORM_HEIGHT",
           "value": null
         },
         {
-          "name": "LV_STYLE_MIN_WIDTH",
+          "name": "MIN_WIDTH",
           "value": "8"
         },
         {
-          "name": "LV_STYLE_MAX_WIDTH",
+          "name": "MAX_WIDTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_MIN_HEIGHT",
+          "name": "MIN_HEIGHT",
           "value": null
         },
         {
-          "name": "LV_STYLE_MAX_HEIGHT",
+          "name": "MAX_HEIGHT",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSLATE_X",
+          "name": "TRANSLATE_X",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSLATE_Y",
+          "name": "TRANSLATE_Y",
           "value": null
         },
         {
-          "name": "LV_STYLE_RADIAL_OFFSET",
+          "name": "RADIAL_OFFSET",
           "value": null
         },
         {
-          "name": "LV_STYLE_X",
+          "name": "X",
           "value": "16"
         },
         {
-          "name": "LV_STYLE_Y",
+          "name": "Y",
           "value": null
         },
         {
-          "name": "LV_STYLE_ALIGN",
+          "name": "ALIGN",
           "value": null
         },
         {
-          "name": "LV_STYLE_PAD_TOP",
+          "name": "PAD_TOP",
           "value": "24"
         },
         {
-          "name": "LV_STYLE_PAD_BOTTOM",
+          "name": "PAD_BOTTOM",
           "value": null
         },
         {
-          "name": "LV_STYLE_PAD_LEFT",
+          "name": "PAD_LEFT",
           "value": null
         },
         {
-          "name": "LV_STYLE_PAD_RIGHT",
+          "name": "PAD_RIGHT",
           "value": null
         },
         {
-          "name": "LV_STYLE_PAD_RADIAL",
+          "name": "PAD_RADIAL",
           "value": null
         },
         {
-          "name": "LV_STYLE_PAD_ROW",
+          "name": "PAD_ROW",
           "value": null
         },
         {
-          "name": "LV_STYLE_PAD_COLUMN",
+          "name": "PAD_COLUMN",
           "value": null
         },
         {
-          "name": "LV_STYLE_MARGIN_TOP",
+          "name": "MARGIN_TOP",
           "value": "32"
         },
         {
-          "name": "LV_STYLE_MARGIN_BOTTOM",
+          "name": "MARGIN_BOTTOM",
           "value": null
         },
         {
-          "name": "LV_STYLE_MARGIN_LEFT",
+          "name": "MARGIN_LEFT",
           "value": null
         },
         {
-          "name": "LV_STYLE_MARGIN_RIGHT",
+          "name": "MARGIN_RIGHT",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_GRAD",
+          "name": "BG_GRAD",
           "value": "40"
         },
         {
-          "name": "LV_STYLE_BG_GRAD_DIR",
+          "name": "BG_GRAD_DIR",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_MAIN_OPA",
+          "name": "BG_MAIN_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_GRAD_OPA",
+          "name": "BG_GRAD_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_GRAD_COLOR",
+          "name": "BG_GRAD_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_MAIN_STOP",
+          "name": "BG_MAIN_STOP",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_GRAD_STOP",
+          "name": "BG_GRAD_STOP",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_IMAGE_SRC",
+          "name": "BG_IMAGE_SRC",
           "value": "48"
         },
         {
-          "name": "LV_STYLE_BG_IMAGE_OPA",
+          "name": "BG_IMAGE_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_IMAGE_RECOLOR_OPA",
+          "name": "BG_IMAGE_RECOLOR_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_IMAGE_TILED",
+          "name": "BG_IMAGE_TILED",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_IMAGE_RECOLOR",
+          "name": "BG_IMAGE_RECOLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_BORDER_WIDTH",
+          "name": "BORDER_WIDTH",
           "value": "56"
         },
         {
-          "name": "LV_STYLE_BORDER_COLOR",
+          "name": "BORDER_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_BORDER_OPA",
+          "name": "BORDER_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_BORDER_POST",
+          "name": "BORDER_POST",
           "value": null
         },
         {
-          "name": "LV_STYLE_BORDER_SIDE",
+          "name": "BORDER_SIDE",
           "value": null
         },
         {
-          "name": "LV_STYLE_OUTLINE_WIDTH",
+          "name": "OUTLINE_WIDTH",
           "value": "64"
         },
         {
-          "name": "LV_STYLE_OUTLINE_COLOR",
+          "name": "OUTLINE_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_OUTLINE_OPA",
+          "name": "OUTLINE_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_OUTLINE_PAD",
+          "name": "OUTLINE_PAD",
           "value": null
         },
         {
-          "name": "LV_STYLE_BG_OPA",
+          "name": "BG_OPA",
           "value": "72"
         },
         {
-          "name": "LV_STYLE_BG_COLOR",
+          "name": "BG_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_SHADOW_WIDTH",
+          "name": "SHADOW_WIDTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_LINE_WIDTH",
+          "name": "LINE_WIDTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_ARC_WIDTH",
+          "name": "ARC_WIDTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_FONT",
+          "name": "TEXT_FONT",
           "value": null
         },
         {
-          "name": "LV_STYLE_IMAGE_RECOLOR_OPA",
+          "name": "IMAGE_RECOLOR_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_IMAGE_OPA",
+          "name": "IMAGE_OPA",
           "value": "80"
         },
         {
-          "name": "LV_STYLE_SHADOW_OPA",
+          "name": "SHADOW_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_LINE_OPA",
+          "name": "LINE_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_ARC_OPA",
+          "name": "ARC_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_OPA",
+          "name": "TEXT_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_SHADOW_COLOR",
+          "name": "SHADOW_COLOR",
           "value": "88"
         },
         {
-          "name": "LV_STYLE_IMAGE_RECOLOR",
+          "name": "IMAGE_RECOLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_LINE_COLOR",
+          "name": "LINE_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_ARC_COLOR",
+          "name": "ARC_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_COLOR",
+          "name": "TEXT_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_ARC_IMAGE_SRC",
+          "name": "ARC_IMAGE_SRC",
           "value": "96"
         },
         {
-          "name": "LV_STYLE_SHADOW_OFFSET_X",
+          "name": "SHADOW_OFFSET_X",
           "value": null
         },
         {
-          "name": "LV_STYLE_SHADOW_OFFSET_Y",
+          "name": "SHADOW_OFFSET_Y",
           "value": null
         },
         {
-          "name": "LV_STYLE_SHADOW_SPREAD",
+          "name": "SHADOW_SPREAD",
           "value": null
         },
         {
-          "name": "LV_STYLE_LINE_DASH_WIDTH",
+          "name": "LINE_DASH_WIDTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_ALIGN",
+          "name": "TEXT_ALIGN",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_LETTER_SPACE",
+          "name": "TEXT_LETTER_SPACE",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_LINE_SPACE",
+          "name": "TEXT_LINE_SPACE",
           "value": null
         },
         {
-          "name": "LV_STYLE_LINE_DASH_GAP",
+          "name": "LINE_DASH_GAP",
           "value": "104"
         },
         {
-          "name": "LV_STYLE_LINE_ROUNDED",
+          "name": "LINE_ROUNDED",
           "value": null
         },
         {
-          "name": "LV_STYLE_IMAGE_COLORKEY",
+          "name": "IMAGE_COLORKEY",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_OUTLINE_STROKE_WIDTH",
+          "name": "TEXT_OUTLINE_STROKE_WIDTH",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_OUTLINE_STROKE_OPA",
+          "name": "TEXT_OUTLINE_STROKE_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_OUTLINE_STROKE_COLOR",
+          "name": "TEXT_OUTLINE_STROKE_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_TEXT_DECOR",
+          "name": "TEXT_DECOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_ARC_ROUNDED",
+          "name": "ARC_ROUNDED",
           "value": null
         },
         {
-          "name": "LV_STYLE_OPA",
+          "name": "OPA",
           "value": "112"
         },
         {
-          "name": "LV_STYLE_OPA_LAYERED",
+          "name": "OPA_LAYERED",
           "value": null
         },
         {
-          "name": "LV_STYLE_COLOR_FILTER_DSC",
+          "name": "COLOR_FILTER_DSC",
           "value": null
         },
         {
-          "name": "LV_STYLE_COLOR_FILTER_OPA",
+          "name": "COLOR_FILTER_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_ANIM",
+          "name": "ANIM",
           "value": null
         },
         {
-          "name": "LV_STYLE_ANIM_DURATION",
+          "name": "ANIM_DURATION",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSITION",
+          "name": "TRANSITION",
           "value": null
         },
         {
-          "name": "LV_STYLE_RADIUS",
+          "name": "RADIUS",
           "value": "120"
         },
         {
-          "name": "LV_STYLE_BITMAP_MASK_SRC",
+          "name": "BITMAP_MASK_SRC",
           "value": null
         },
         {
-          "name": "LV_STYLE_BLEND_MODE",
+          "name": "BLEND_MODE",
           "value": null
         },
         {
-          "name": "LV_STYLE_ROTARY_SENSITIVITY",
+          "name": "ROTARY_SENSITIVITY",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSLATE_RADIAL",
+          "name": "TRANSLATE_RADIAL",
           "value": null
         },
         {
-          "name": "LV_STYLE_CLIP_CORNER",
+          "name": "CLIP_CORNER",
           "value": "128"
         },
         {
-          "name": "LV_STYLE_BASE_DIR",
+          "name": "BASE_DIR",
           "value": null
         },
         {
-          "name": "LV_STYLE_RECOLOR",
+          "name": "RECOLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_RECOLOR_OPA",
+          "name": "RECOLOR_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_LAYOUT",
+          "name": "LAYOUT",
           "value": null
         },
         {
-          "name": "LV_STYLE_BLUR_RADIUS",
+          "name": "BLUR_RADIUS",
           "value": "136"
         },
         {
-          "name": "LV_STYLE_BLUR_BACKDROP",
+          "name": "BLUR_BACKDROP",
           "value": null
         },
         {
-          "name": "LV_STYLE_BLUR_QUALITY",
+          "name": "BLUR_QUALITY",
           "value": null
         },
         {
-          "name": "LV_STYLE_DROP_SHADOW_RADIUS",
+          "name": "DROP_SHADOW_RADIUS",
           "value": "144"
         },
         {
-          "name": "LV_STYLE_DROP_SHADOW_OFFSET_X",
+          "name": "DROP_SHADOW_OFFSET_X",
           "value": null
         },
         {
-          "name": "LV_STYLE_DROP_SHADOW_OFFSET_Y",
+          "name": "DROP_SHADOW_OFFSET_Y",
           "value": null
         },
         {
-          "name": "LV_STYLE_DROP_SHADOW_COLOR",
+          "name": "DROP_SHADOW_COLOR",
           "value": null
         },
         {
-          "name": "LV_STYLE_DROP_SHADOW_OPA",
+          "name": "DROP_SHADOW_OPA",
           "value": null
         },
         {
-          "name": "LV_STYLE_DROP_SHADOW_QUALITY",
+          "name": "DROP_SHADOW_QUALITY",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_SCALE_X",
+          "name": "TRANSFORM_SCALE_X",
           "value": "152"
         },
         {
-          "name": "LV_STYLE_TRANSFORM_SCALE_Y",
+          "name": "TRANSFORM_SCALE_Y",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_PIVOT_X",
+          "name": "TRANSFORM_PIVOT_X",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_PIVOT_Y",
+          "name": "TRANSFORM_PIVOT_Y",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_ROTATION",
+          "name": "TRANSFORM_ROTATION",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_SKEW_X",
+          "name": "TRANSFORM_SKEW_X",
           "value": null
         },
         {
-          "name": "LV_STYLE_TRANSFORM_SKEW_Y",
+          "name": "TRANSFORM_SKEW_Y",
           "value": null
         },
         {
-          "name": "LV_STYLE_FLEX_FLOW",
+          "name": "FLEX_FLOW",
           "value": "160"
         },
         {
-          "name": "LV_STYLE_FLEX_MAIN_PLACE",
+          "name": "FLEX_MAIN_PLACE",
           "value": null
         },
         {
-          "name": "LV_STYLE_FLEX_CROSS_PLACE",
+          "name": "FLEX_CROSS_PLACE",
           "value": null
         },
         {
-          "name": "LV_STYLE_FLEX_TRACK_PLACE",
+          "name": "FLEX_TRACK_PLACE",
           "value": null
         },
         {
-          "name": "LV_STYLE_FLEX_GROW",
+          "name": "FLEX_GROW",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_COLUMN_DSC_ARRAY",
+          "name": "GRID_COLUMN_DSC_ARRAY",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_ROW_DSC_ARRAY",
+          "name": "GRID_ROW_DSC_ARRAY",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_COLUMN_ALIGN",
+          "name": "GRID_COLUMN_ALIGN",
           "value": "168"
         },
         {
-          "name": "LV_STYLE_GRID_ROW_ALIGN",
+          "name": "GRID_ROW_ALIGN",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_CELL_COLUMN_POS",
+          "name": "GRID_CELL_COLUMN_POS",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_CELL_COLUMN_SPAN",
+          "name": "GRID_CELL_COLUMN_SPAN",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_CELL_X_ALIGN",
+          "name": "GRID_CELL_X_ALIGN",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_CELL_ROW_POS",
+          "name": "GRID_CELL_ROW_POS",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_CELL_ROW_SPAN",
+          "name": "GRID_CELL_ROW_SPAN",
           "value": null
         },
         {
-          "name": "LV_STYLE_GRID_CELL_Y_ALIGN",
+          "name": "GRID_CELL_Y_ALIGN",
           "value": null
         },
         {
-          "name": "LV_STYLE_LAST_BUILT_IN_PROP",
+          "name": "LAST_BUILT_IN_PROP",
           "value": null
         },
         {
-          "name": "LV_STYLE_NUM_BUILT_IN_PROPS",
+          "name": "NUM_BUILT_IN_PROPS",
           "value": "LV_STYLE_LAST_BUILT_IN_PROP + 1"
         },
         {
-          "name": "LV_STYLE_PROP_ANY",
+          "name": "PROP_ANY",
           "value": "0xFF"
         },
         {
-          "name": "LV_STYLE_PROP_CONST",
+          "name": "PROP_CONST",
           "value": "0xFF"
         }
       ],
+      "module_name": "STYLE",
+      "owners": [],
       "policy_reason": "outside module prefix",
       "python_name": "STYLE_ID",
       "typedef_names": [],
@@ -5534,6 +5856,8 @@
           "value": null
         }
       ],
+      "module_name": "STYLE_RES",
+      "owners": [],
       "python_name": "STYLE_RES",
       "typedef_names": [
         "lv_style_res_t"
@@ -5571,6 +5895,8 @@
           "value": null
         }
       ],
+      "module_name": "STYLE_STATE_CMP",
+      "owners": [],
       "python_name": "STYLE_STATE_CMP",
       "typedef_names": [
         "lv_style_state_cmp_t"
@@ -5624,6 +5950,8 @@
           "value": "7"
         }
       ],
+      "module_name": "SUBJECT_TYPE",
+      "owners": [],
       "python_name": "SUBJECT_TYPE",
       "typedef_names": [
         "lv_subject_type_t"
@@ -5655,6 +5983,13 @@
         {
           "name": "VERTICAL",
           "value": null
+        }
+      ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "ORIENTATION",
+          "object": "switch"
         }
       ],
       "python_name": "SWITCH_ORIENTATION",
@@ -5706,6 +6041,13 @@
           "value": "1 << 7"
         }
       ],
+      "module_name": null,
+      "owners": [
+        {
+          "name": "CELL_CTRL",
+          "object": "table"
+        }
+      ],
       "python_name": "TABLE_CELL_CTRL",
       "typedef_names": [
         "lv_table_cell_ctrl_t"
@@ -5743,6 +6085,8 @@
           "value": null
         }
       ],
+      "module_name": "TEXT_ALIGN",
+      "owners": [],
       "python_name": "TEXT_ALIGN",
       "typedef_names": [
         "lv_text_align_t"
@@ -5776,6 +6120,8 @@
           "value": null
         }
       ],
+      "module_name": "TEXT_CMD_STATE",
+      "owners": [],
       "python_name": "TEXT_CMD_STATE",
       "typedef_names": [
         "lv_text_cmd_state_t"
@@ -5809,6 +6155,8 @@
           "value": "0x02"
         }
       ],
+      "module_name": "TEXT_DECOR",
+      "owners": [],
       "python_name": "TEXT_DECOR",
       "typedef_names": [
         "lv_text_decor_t"
@@ -5850,6 +6198,8 @@
           "value": "0x08"
         }
       ],
+      "module_name": "TEXT_FLAG",
+      "owners": [],
       "python_name": "TEXT_FLAG",
       "typedef_names": [
         "lv_text_flag_t"
@@ -5891,6 +6241,8 @@
           "value": null
         }
       ],
+      "module_name": "THREAD_PRIO",
+      "owners": [],
       "python_name": "THREAD_PRIO",
       "typedef_names": [
         "lv_thread_prio_t"
@@ -5912,14 +6264,16 @@
       },
       "members": [
         {
-          "name": "LV_TREE_WALK_PRE_ORDER",
+          "name": "PRE_ORDER",
           "value": "0"
         },
         {
-          "name": "LV_TREE_WALK_POST_ORDER",
+          "name": "POST_ORDER",
           "value": null
         }
       ],
+      "module_name": "TREE_WALK",
+      "owners": [],
       "policy_reason": "outside module prefix",
       "python_name": "TREE_WALK_MODE",
       "typedef_names": [],

@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import hashlib
 from dataclasses import dataclass, field
+from os.path import commonprefix
 from typing import Any, Mapping, Optional, Tuple
 
 from .ir import (
@@ -28,6 +29,37 @@ from .ir import (
 
 
 TARGETS = ("micropython", "circuitpython", "cpython")
+
+
+# These are the established public spellings used by the upstream-compatible
+# Python API.  They describe enum ownership and naming only; they do not alter
+# C declarations or generated C output.
+_MODULE_ENUM_NAME_OVERRIDES = {
+    "animimg_part_t": "ANIM_IMAGE_PART",
+    "cache_reserve_cond_res_t": "CACHE_RESERVE_COND",
+    "indev_gesture_type_t": "INDEV_GESTURE",
+    "event_code_t": "EVENT",
+    "align_t": "ALIGN",
+    "color_format_t": "COLOR_FORMAT",
+    "grad_dir_t": "GRAD_DIR",
+    "grad_extend_t": "GRAD_EXTEND",
+    "base_dir_t": "BASE_DIR",
+    "opa_t": "OPA",
+    "text_align_t": "TEXT_ALIGN",
+    "palette_t": "PALETTE",
+    "font_kerning_t": "FONT_KERNING",
+    "font_subpx_t": "FONT_SUBPX",
+    "font_glyph_format_t": "FONT_GLYPH_FORMAT",
+    "dir_t": "DIR",
+    "result_t": "RESULT",
+    "log_level_t": "LOG_LEVEL",
+}
+_WIDGET_ENUM_NAME_OVERRIDES = {
+    "barcode_encoding_t": ("barcode", "ENCODING_CODE128"),
+    "menu_mode_header_t": ("menu", "HEADER"),
+    "menu_mode_root_back_button_t": ("menu", "ROOT_BACK_BUTTON"),
+    "obj_tree_walk_res_t": ("obj", "TREE_WALK"),
+}
 
 
 def api_hash_for_dict(data: Mapping[str, Any]) -> str:
@@ -170,6 +202,8 @@ class ApiEnum:
     visibility: str = "public"
     policy_reason: Optional[str] = None
     location: Optional[SourceLocation] = field(default=None)
+    module_name: Optional[str] = None
+    owners: Tuple[Tuple[str, str], ...] = ()
 
     def to_dict(self) -> Mapping[str, Any]:
         result = {
@@ -182,6 +216,11 @@ class ApiEnum:
             "complete": self.complete,
             "available_on": list(self.available_on),
             "visibility": self.visibility,
+            "module_name": self.module_name,
+            "owners": [
+                {"object": object_name, "name": nested_name}
+                for object_name, nested_name in self.owners
+            ],
         }
         if self.policy_reason is not None:
             result["policy_reason"] = self.policy_reason
@@ -390,7 +429,14 @@ class ApiModel:
                 add("module", struct.python_name, "struct " + struct.python_name)
         for enum in self.enums:
             if enum.visibility == "public":
-                add("module", enum.python_name, "enum " + enum.python_name)
+                if enum.module_name is not None:
+                    add("module", enum.module_name, "enum " + enum.python_name)
+                for object_name, nested_name in enum.owners:
+                    add(
+                        "object." + object_name,
+                        nested_name,
+                        "enum " + enum.python_name,
+                    )
                 members = [name for name, _value in enum.members]
                 if len(members) != len(set(members)):
                     errors.append("duplicate enum members: %s" % enum.python_name)
@@ -485,6 +531,78 @@ def _method_name(function_name: str, receiver: str, module_prefix: str) -> str:
         if plain.startswith(stem + "_"):
             return plain[len(stem) + 1 :]
     return plain
+
+
+def _enum_stem(enum: CEnum, module_prefix: str) -> str:
+    """Infer the public enum stem from its enumerator names."""
+
+    names = [member for member in enum.members if not member.startswith("_")]
+    if not names:
+        return ""
+    normalized = [
+        name.removeprefix("ENUM_")
+        for name in names
+        if name.removeprefix("ENUM_").startswith(module_prefix.upper() + "_")
+    ]
+    if not normalized:
+        return ""
+    common_prefix = commonprefix(normalized)
+    common = common_prefix.rstrip("_")
+    if common_prefix and not common_prefix.endswith("_"):
+        common = common.rsplit("_", 1)[0]
+    if not common:
+        return ""
+    module_prefix_upper = module_prefix.upper() + "_"
+    if common.startswith(module_prefix_upper):
+        common = common[len(module_prefix_upper) :]
+    return common.removesuffix("_T").upper()
+
+
+def _enum_exports(
+    enum: CEnum,
+    *,
+    module_prefix: str,
+    object_names: Tuple[str, ...],
+) -> Tuple[Optional[str], Tuple[Tuple[str, str], ...], str]:
+    """Return module export, nested owners, and the C-derived enum stem."""
+
+    typedef_names = tuple(
+        name
+        for name in enum.typedef_names
+        if name.startswith(module_prefix + "_")
+    )
+    typedef_name = (
+        typedef_names[0][len(module_prefix) + 1 :]
+        if typedef_names
+        else ""
+    )
+    stem = _enum_stem(enum, module_prefix)
+    if typedef_name in _MODULE_ENUM_NAME_OVERRIDES:
+        return _MODULE_ENUM_NAME_OVERRIDES[typedef_name], (), stem
+    widget_override = _WIDGET_ENUM_NAME_OVERRIDES.get(typedef_name)
+    if widget_override is not None:
+        owner, nested_name = widget_override
+        return None, ((owner, nested_name),), stem
+
+    object_names = tuple(sorted(object_names, key=len, reverse=True))
+    for object_name in object_names:
+        prefix = object_name.upper() + "_"
+        if stem.startswith(prefix):
+            nested_name = stem[len(prefix) :]
+            if nested_name:
+                # OBJ_FLAG is intentionally exported both as lv.OBJ_FLAG and
+                # as obj.FLAG by the established binding API.
+                if object_name == "obj" and nested_name == "FLAG":
+                    return "OBJ_FLAG", ((object_name, nested_name),), stem
+                return None, ((object_name, nested_name),), stem
+
+    if typedef_name:
+        module_name = _python_enum_name(
+            module_prefix + "_" + typedef_name, module_prefix
+        )
+    else:
+        module_name = stem
+    return module_name or None, (), stem
 
 
 def build_api_model(
@@ -645,6 +763,7 @@ def build_api_model(
         )
     )
     enums = []
+    object_names = tuple(constructors)
     for enum in sorted(
         declarations.enums,
         key=lambda item: (
@@ -660,6 +779,11 @@ def build_api_model(
             enum.typedef_names[0] if enum.typedef_names else enum.name,
             module_prefix,
         )
+        module_name, owners, enum_stem = _enum_exports(
+            enum,
+            module_prefix=module_prefix,
+            object_names=object_names,
+        )
         decision = policy.enum((enum.name,) + tuple(enum.typedef_names))
         enums.append(
             ApiEnum(
@@ -667,7 +791,7 @@ def build_api_model(
                 python_name=enum_name,
                 members=tuple(
                     (
-                        _python_enum_member_name(member, enum_name, module_prefix),
+                        _python_enum_member_name(member, enum_stem, module_prefix),
                         value,
                     )
                     for member, value in (
@@ -679,6 +803,8 @@ def build_api_model(
                 visibility=decision.visibility,
                 policy_reason=decision.reason,
                 location=enum.location,
+                module_name=module_name,
+                owners=owners,
             )
         )
     typedefs = tuple(
@@ -731,6 +857,7 @@ def build_api_model(
                     ),
                     complete=True,
                     location=members[0][0].location,
+                    module_name=group,
                 )
             )
         else:

@@ -139,12 +139,41 @@ def public_export_sets(data: Mapping[str, Any]) -> dict[str, set[str]]:
         for enum in data.get("enums", ()):
             if not _available(enum, target):
                 continue
-            enum_name = enum["python_name"]
-            result[target].add(_entry("enum", enum_name))
-            result[target].update(
-                _entry("enum", "%s.%s" % (enum_name, member["name"]))
-                for member in enum.get("members", ())
-            )
+            member_names = [member["name"] for member in enum.get("members", ())]
+            module_name = enum.get("module_name")
+            if module_name is not None:
+                result[target].add(_entry("enum", module_name))
+                result[target].update(
+                    _entry("enum", "%s.%s" % (module_name, member_name))
+                    for member_name in member_names
+                )
+            for owner_name, nested_name in (
+                (item.get("object"), item.get("name"))
+                for item in enum.get("owners", ())
+            ):
+                if owner_name not in object_by_name:
+                    continue
+                for object_record in objects:
+                    if not _available(object_record, target):
+                        continue
+                    current = object_record
+                    inherits_from_owner = False
+                    while current is not None:
+                        if current["python_name"] == owner_name:
+                            inherits_from_owner = True
+                            break
+                        parent = current.get("parent")
+                        current = object_by_name.get(parent) if parent else None
+                    if inherits_from_owner:
+                        result[target].add(
+                            _entry(
+                                "object",
+                                "%s.%s" % (
+                                    object_record["python_name"],
+                                    nested_name,
+                                ),
+                            )
+                        )
         for typedef in data.get("typedefs", ()):
             if not _available(typedef, target):
                 continue

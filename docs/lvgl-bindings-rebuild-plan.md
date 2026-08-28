@@ -180,9 +180,11 @@ complete enough to replace it.
 ### Work
 
 - [x] Build a second model describing the Python API rather than C syntax.
-- [ ] Record qualified location, Python/C names, parameters, return type,
+- [x] Record qualified location, Python/C names, parameters, return type,
   constructor/method/module role, enum ownership, aliases, inheritance,
-  callbacks, conversions, lifetime semantics, and target availability.
+  callbacks, and target availability.
+- [ ] Add target-neutral conversion classifications and Python type views.
+- [ ] Record callback/object lifetime semantics from verified runtime behavior.
 - [x] Classify methods from declaration relationships and first-argument types,
   not only function-name prefixes.
 - [x] Move deliberate deviations into an auditable policy file.
@@ -198,9 +200,8 @@ written from the same immutable model shared by all target runs. The
 ``binding.api_report`` command now reports inheritance-expanded qualified
 exports, target availability exceptions, visibility inventory, and a
 diagnostic projection against the compact historical baseline. Conversion
-plans, lifetime semantics, enum ownership, reachability, and acceptance of the
-compatibility score are still pending; the legacy metadata/stub path remains
-active.
+plans, lifetime semantics, reachability, and acceptance of the compatibility
+score are still pending; the legacy metadata/stub path remains active.
 
 Interim safe checkpoint: the current model reports 22,923 MicroPython
 qualified exports and 22,921 CircuitPython/CPython exports, with two explicit
@@ -208,6 +209,11 @@ TJPGD availability exceptions. Its historical name/location projection is
 96.99% (21,511/22,179), but the remaining missing/extra entries are not yet
 classified for acceptance. The report and validator are therefore diagnostic,
 not a completed C3 gate.
+
+Enum ownership is now explicit in the model: module-level exports, nested
+widget exports, duplex aliases such as ``OBJ_FLAG``/``obj.FLAG``, and normalized
+members are recorded independently of the C emitters. The current generated
+API hash after this increment is ``e8aca31d23ca8545cd1233d5618022b1c82663dd6bdc5075672d52b81fd26d21``.
 
 ### Gate
 
@@ -393,7 +399,7 @@ Add focused tests for:
 - [x] Function pointers and callbacks.
 - [x] Static-inline declarations.
 - [x] Widget inheritance and method ownership.
-- [ ] Enum nesting and aliases.
+- [x] Enum nesting and aliases.
 - [x] Duplicate export detection.
 - [ ] Unsupported conversions.
 - [x] Target exception validation.
