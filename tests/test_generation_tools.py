@@ -9,7 +9,13 @@ from types import SimpleNamespace
 from binding.artifacts import compare_manifests, manifest_for_directory
 from binding.cli import _stable_command_line
 from binding.generate import _extract_circuitpython_header, _normalized_for_check, generate
-from binding.generator import analysis_snapshot, prepare_analysis, run_micropython
+from binding.generator import (
+    analysis_snapshot,
+    prepare_analysis,
+    run_circuitpython,
+    run_cpython,
+    run_micropython,
+)
 from binding.preprocess import _preprocessor_command
 from binding.verify_namespace import mp_module_names, py_module_names
 
@@ -146,11 +152,21 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
     args = SimpleNamespace(module_name="lvgl", module_prefix="lv", json=None, input=["fixture.h"])
     prepared = prepare_analysis(args, source, "pp", "cmd", lambda *a, **k: None)
     state = analysis_snapshot(prepared)
-    output = io.StringIO()
-    _result, namespace = run_micropython(
-        args, source, "pp", output, "cmd", analysis_state=state
-    )
+
+    def unexpected_analysis():
+        raise AssertionError("target backend re-ran analysis")
+
+    monkeypatch.setattr("binding.emit_micropython.analyze", unexpected_analysis)
+    monkeypatch.setattr("binding.emit_circuitpython.analyze", unexpected_analysis)
+    monkeypatch.setattr("binding.emit_cpython.analyze", unexpected_analysis)
+    runners = (run_micropython, run_circuitpython, run_cpython)
+    namespaces = []
+    for runner in runners:
+        output = io.StringIO()
+        result = runner(args, source, "pp", output, "cmd", analysis_state=state)
+        namespaces.append(result[1])
 
     assert calls.count(source) == 1
-    assert namespace["declaration_ir"] is prepared.declaration_ir
-    assert namespace["api_model"] is prepared.api_model
+    for namespace in namespaces:
+        assert namespace["declaration_ir"] is prepared.declaration_ir
+        assert namespace["api_model"] is prepared.api_model

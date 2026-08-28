@@ -162,15 +162,15 @@ for Python-facing outputs.
 
 ### Gate
 
-- [ ] All targets consume the same parsed IR.
-- [ ] No target re-runs analysis.
-- [ ] C body goldens remain equivalent during the structural refactor.
+- [x] All targets consume the same parsed IR.
+- [x] No target re-runs analysis.
+- [x] C body goldens remain equivalent during the structural refactor.
 
 ### Handoff
 
 - Commit SHA: `________________`
-- Validation command(s): `________________`
-- Notes: `____________________________________________________________`
+- Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests/test_generation_tools.py`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`
+- Notes: `All three backend entry points receive the same frozen DeclarationIR and canonical API model. The regression test makes a target-side analyze() call fail, so the one parse/analysis boundary cannot silently regress. Target-condition removal from analysis remains the next unfinished Checkpoint 2 work item.`
 
 ## Checkpoint 3 — Canonical public API model and policy
 
