@@ -774,7 +774,12 @@ class event_loop:
 
     def default_exception_sink(self, e):
         """Print ``e`` with traceback to stderr (default :attr:`exception_sink`)."""
-        sys.print_exception(e)
+        if hasattr(sys, "print_exception"):  # MicroPython / CircuitPython
+            sys.print_exception(e)
+        else:  # CPython has no sys.print_exception
+            import traceback
+
+            traceback.print_exception(type(e), e, e.__traceback__)
 
 
 def main():

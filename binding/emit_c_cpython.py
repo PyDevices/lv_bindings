@@ -165,7 +165,68 @@ def emit_c(ctx):
 """
         )
 
-    # Helper functions live in lvpy_runtime.c.
+    # Helper functions live in lvpy_runtime.c — except the string-array
+    # argument converter, which is emitted here so the generated file and
+    # the runtime need not be versioned together for it.
+    print(
+        """
+/*
+ * String-array arguments (const char * const map[] and friends).
+ *
+ * LVGL stores these pointers (lv_buttonmatrix_set_map keeps map_p; it never
+ * copies), so the array and its strings must outlive the call. A Python
+ * sequence of str converts to a NULL-terminated char*[] whose array (via a
+ * capsule) and string objects are retained on the widget's callback dict
+ * under a per-function key: the pointers live exactly as long as the widget,
+ * and a repeat call for the same function releases the previous retention.
+ * Non-sequence inputs fall through to mp_to_ptr (blob passthrough / the
+ * usual TypeError).
+ */
+
+static void lvpy_str_arr_capsule_free(PyObject *capsule)
+{
+    PyMem_Free(PyCapsule_GetPointer(capsule, NULL));
+}
+
+__attribute__((unused)) static void *lvpy_str_arr_arg(PyObject *self, PyObject *arg, const char *key)
+{
+    if (!arg || arg == Py_None) return NULL;
+    if (PyUnicode_Check(arg) || PyBytes_Check(arg) || !PySequence_Check(arg))
+        return mp_to_ptr(arg);
+    PyObject *items = PySequence_Tuple(arg);
+    if (!items) return NULL;
+    Py_ssize_t n = PyTuple_GET_SIZE(items);
+    const char **arr = (const char **)PyMem_Malloc(((size_t)n + 1) * sizeof(char *));
+    if (!arr) { Py_DECREF(items); PyErr_NoMemory(); return NULL; }
+    for (Py_ssize_t i = 0; i < n; i++) {
+        PyObject *item = PyTuple_GET_ITEM(items, i);
+        const char *s = PyUnicode_Check(item) ? PyUnicode_AsUTF8(item) : NULL;
+        if (!s) {
+            PyMem_Free(arr);
+            Py_DECREF(items);
+            if (!PyErr_Occurred())
+                PyErr_Format(PyExc_TypeError,
+                             "sequence of str expected; item %zd is '%s'",
+                             i, Py_TYPE(item)->tp_name);
+            return NULL;
+        }
+        arr[i] = s;
+    }
+    arr[n] = NULL;
+    PyObject *capsule = PyCapsule_New((void *)arr, NULL, lvpy_str_arr_capsule_free);
+    if (!capsule) { PyMem_Free(arr); Py_DECREF(items); return NULL; }
+    PyObject *pair = PyTuple_Pack(2, items, capsule);
+    Py_DECREF(items);
+    Py_DECREF(capsule);
+    if (!pair) return NULL;
+    PyObject *callbacks = mp_get_callbacks(self);
+    int rc = callbacks ? PyDict_SetItemString(callbacks, key, pair) : -1;
+    Py_DECREF(pair);
+    if (rc != 0) return NULL;
+    return (void *)arr;
+}
+"""
+    )
 
     #
     # Add regular enums with integer values

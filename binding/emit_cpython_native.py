@@ -840,6 +840,19 @@ def build_py_callback_arg(arg, index, func, py_var):
         return "void *%s = NULL;" % fixed_arg.name
 
 
+def _is_char_ptr_array_arg(arg):
+    """True for a parameter declared as an array of char pointers."""
+    t = getattr(arg, "type", None)
+    if not isinstance(t, c_ast.ArrayDecl) or not isinstance(t.type, c_ast.PtrDecl):
+        return False
+    inner = t.type.type
+    return (
+        isinstance(inner, c_ast.TypeDecl)
+        and isinstance(inner.type, c_ast.IdentifierType)
+        and inner.type.names == ["char"]
+    )
+
+
 def build_py_func_arg_line(arg, index, func, py_var):
     gen = _h("gen")
     get_type_fn = _h("get_type")
@@ -857,6 +870,37 @@ def build_py_func_arg_line(arg, index, func, py_var):
                 "Callbacks require emit phase 7 (function %s)" % func.name
             )
         return build_py_callback_arg(arg, index, func, py_var)
+
+    if _is_char_ptr_array_arg(arg):
+        # const char * const map[] and friends: LVGL stores the pointer, so
+        # the generic mp_to_ptr lowering both rejected str sequences and,
+        # had it worked, would have dangled. lvpy_str_arr_arg (emitted in
+        # the file preamble) converts a sequence of str and retains the
+        # array + strings on the widget under a per-function key.
+        fixed_arg = copy.deepcopy(arg)
+        convert_array_to_ptr(fixed_arg)
+        cname = _c_param_name(arg, index)
+        if not fixed_arg.name:
+            fixed_arg.name = cname
+            add_default_declname(fixed_arg, cname)
+        arg_type = get_type_fn(arg.type, remove_quals=True)
+        # Same lazy registration as the generic path: populates lv_mp_type
+        # (and the conversion tables) for this array type on first sight.
+        conversion_available(
+            conversions=mp_to_lv,
+            type_name=arg_type,
+            generate_type=lambda: try_generate_type(arg.type),
+        )
+        arg_metadata = {"type": lv_mp_type[arg_type]}
+        if cname:
+            arg_metadata["name"] = cname
+        func_metadata[func.name]["args"].append(arg_metadata)
+        return '{var} = ({cast})lvpy_str_arr_arg(self, {py_var}, "{key}");'.format(
+            var=gen.visit(fixed_arg),
+            cast=gen.visit(fixed_arg.type),
+            py_var=py_var,
+            key="%s:%s" % (func.name, cname or index),
+        )
 
     fixed_arg = copy.deepcopy(arg)
     convert_array_to_ptr(fixed_arg)
