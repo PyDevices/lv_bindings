@@ -260,15 +260,6 @@ static struct PyModuleDef lvgl_module_def = {
 
     if max_phase >= 3:
         print("    py_lv_runtime_init_types();")
-        # display_driver.py reads lv._nesting.value on every target. The
-        # runtime creates the counter object (lvgl._Nesting), but since the
-        # canonical model excluded _nesting from generated_globals nothing
-        # attached it to the CPython module - a live regression in wheels
-        # 9.5.38+ that made display_driver's task_handler raise on desktop.
-        print("    if (lvpy_nesting_obj) {")
-        print("        Py_INCREF(lvpy_nesting_obj);")
-        print('        if (PyModule_AddObject(m, "_nesting", lvpy_nesting_obj) < 0) return NULL;')
-        print("    }")
         print("    if (PyType_Ready(&py_blob_type) < 0) return NULL;")
         print("    if (PyType_Ready(&py_lv_base_struct_type) < 0) return NULL;")
         print("    if (PyType_Ready(&py_C_Pointer_type) < 0) return NULL;")

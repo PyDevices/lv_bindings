@@ -88079,10 +88079,6 @@ PyMODINIT_FUNC PyInit_lvgl(void)
     if (PyType_Ready(&py_lv_LV_SYMBOL_type) < 0) return NULL;
     { PyObject *ns = PyType_GenericNew(&py_lv_LV_SYMBOL_type, NULL, NULL); if (ns == NULL) return NULL; if (PyModule_AddObject(m, "SYMBOL", ns) < 0) return NULL; }
     py_lv_runtime_init_types();
-    if (lvpy_nesting_obj) {
-        Py_INCREF(lvpy_nesting_obj);
-        if (PyModule_AddObject(m, "_nesting", lvpy_nesting_obj) < 0) return NULL;
-    }
     if (PyType_Ready(&py_blob_type) < 0) return NULL;
     if (PyType_Ready(&py_lv_base_struct_type) < 0) return NULL;
     if (PyType_Ready(&py_C_Pointer_type) < 0) return NULL;
