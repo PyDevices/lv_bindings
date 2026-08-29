@@ -51,6 +51,13 @@ state, not a public IR or a cross-target alignment mechanism. Synthesized
 callback declarations that are created after declaration indexing use a narrow
 AST fallback solely for receiver classification.
 
+Native emitters read their inputs directly from one `BindingContext` and
+publish an explicit `EmitterResult`; they never mirror a run into module
+globals. Runtime and CPython-native helper bindings are scoped `ContextVar`
+state, so a repeated or nested in-process backend invocation restores its
+enclosing context on exit. Isolation tests cover module namespaces, distinct
+per-run results, deterministic repeated output, and nested CPython emission.
+
 ## Public API policy
 
 All targets use the established upstream-compatible names. There is no

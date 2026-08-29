@@ -70,29 +70,57 @@ from .emit_backend import (
 )
 from .runtime_exports import filter_module_funcs_for_target, filter_registration_module_funcs
 from .util import eprint, memoize
-
-
-def load_context(ctx):
-    """Bind one backend run explicitly to this orchestration module."""
-    for name in ctx.export_names():
-        if hasattr(ctx, name):
-            globals()[name] = getattr(ctx, name)
-    globals()["print"] = ctx.emit_print
-
-
-def store_context(ctx):
-    """Return orchestration results to the backend run context."""
-    for name in ctx.export_names():
-        if name in globals():
-            setattr(ctx, name, globals()[name])
+from .context import EmitterResult
 
 
 def emit_c(ctx):
-    load_context(ctx)
-    global headers, generated_structs, generated_struct_functions, struct_aliases
-    global callbacks_used_on_structs, generated_callbacks, generated_funcs
-    global enum_referenced, generated_obj_names, generated_globals
-    global module_funcs, functions_not_generated, enums
+    """Emit MP-style C from one context without module-level run state."""
+    print = ctx.emit_print
+    args = ctx.args
+    base_obj_name = ctx.base_obj_name
+    base_obj_type = ctx.base_obj_type
+    blobs = ctx.blobs
+    callback_metadata = ctx.callback_metadata
+    cmd_line = ctx.cmd_line
+    enum_defs = ctx.enum_defs
+    func_metadata = ctx.func_metadata
+    func_prototypes = ctx.func_prototypes
+    func_typedefs = ctx.func_typedefs
+    funcs = ctx.funcs
+    gen = ctx.gen
+    int_constants = ctx.int_constants
+    lv_base_obj_pattern = ctx.lv_base_obj_pattern
+    lv_func_returns_array = ctx.lv_func_returns_array
+    lv_mp_type = ctx.lv_mp_type
+    lv_str_enum_pattern = ctx.lv_str_enum_pattern
+    lv_to_mp = ctx.lv_to_mp
+    lv_to_mp_byref = ctx.lv_to_mp_byref
+    lv_to_mp_funcptr = ctx.lv_to_mp_funcptr
+    lvgl_json = ctx.lvgl_json
+    module_name = ctx.module_name
+    mp_to_lv = ctx.mp_to_lv
+    obj_metadata = ctx.obj_metadata
+    obj_names = ctx.obj_names
+    parent_obj_names = ctx.parent_obj_names
+    parser = ctx.parser
+    pp_cmd = ctx.pp_cmd
+    structs = ctx.structs
+    structs_without_typedef = ctx.structs_without_typedef
+    synonym = ctx.synonym
+    typedefs = ctx.typedefs
+
+    generated_structs = getattr(ctx, "generated_structs", collections.OrderedDict())
+    generated_struct_functions = ctx.generated_struct_functions
+    struct_aliases = ctx.struct_aliases
+    callbacks_used_on_structs = ctx.callbacks_used_on_structs
+    generated_callbacks = ctx.generated_callbacks
+    generated_funcs = ctx.generated_funcs
+    enum_referenced = ctx.enum_referenced
+    generated_obj_names = ctx.generated_obj_names
+    generated_globals = ctx.generated_globals
+    module_funcs = ctx.module_funcs
+    functions_not_generated = ctx.functions_not_generated
+    enums = getattr(ctx, "enums", collections.OrderedDict())
 
     headers = resolve_emitter_headers(args.input)
 
@@ -1386,8 +1414,6 @@ MP_ARRAY_CONVERTOR(i64ptr, 8, true)
 
 
     def try_generate_struct(struct_name, struct):
-        global lv_to_mp
-        global mp_to_lv
         if struct_name in generated_structs:
             return None
         sanitized_struct_name = sanitize(struct_name)
@@ -1909,7 +1935,6 @@ typedef union {
 
 
             def gen_callback_func(func, func_name=None, user_data_argument=False):
-                global mp_to_lv
                 if func_name in generated_callbacks:
                     return
                 # print('/* --> callback: %s */' % (gen.visit(func)))
@@ -2352,7 +2377,6 @@ static mp_obj_t mp_{func}(size_t mp_n_args, const mp_obj_t *mp_args, void *lv_fu
 
 
         def gen_obj_methods(obj_name):
-            global enums
             helper_members = (
                 ["{ MP_ROM_QSTR(MP_QSTR___cast__), MP_ROM_PTR(&cast_obj_class_method) }"]
                 if len(obj_names) > 0 and obj_name == base_obj_name
@@ -2842,6 +2866,7 @@ static const mp_lv_obj_type_t *mp_lv_obj_types[] = {{
                 )
             )
         finish_cp_fragment(_emit_max_phase or 7)
+        EmitterResult.capture(locals()).apply(ctx)
         return
 
     # eprint("/* Generating module definition */")
@@ -2989,3 +3014,5 @@ static const mp_lv_obj_type_t *mp_lv_obj_types[] = {{
                 )
             )
         )
+
+    EmitterResult.capture(locals()).apply(ctx)

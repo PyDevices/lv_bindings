@@ -1,6 +1,7 @@
 """Context-local state access for one binding generation run."""
 from __future__ import print_function
 
+from contextlib import contextmanager
 from contextvars import ContextVar
 
 from .context import BindingContext
@@ -38,6 +39,18 @@ def activate(ctx):
     """Activate a context for the current generation flow."""
     _ACTIVE_CONTEXT.set(ctx)
     _RUN_VALUES.set({})
+
+
+@contextmanager
+def scoped(ctx):
+    """Activate one run and restore an enclosing run when it completes."""
+    context_token = _ACTIVE_CONTEXT.set(ctx)
+    values_token = _RUN_VALUES.set({})
+    try:
+        yield ctx
+    finally:
+        _RUN_VALUES.reset(values_token)
+        _ACTIVE_CONTEXT.reset(context_token)
 
 
 def reset():

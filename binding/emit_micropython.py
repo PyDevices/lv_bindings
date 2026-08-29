@@ -14,14 +14,11 @@ print = builtins.print
 def run(ctx):
     ctx.init_patterns()
     runtime.activate(ctx)
-    try:
-        # The MP-style object/enum pass has a full-generation dependency that
-        # is intentionally represented by an unbounded phase. CircuitPython
-        # and CPython use their finite lifecycle phases below.
-        prepare_target_lowering(ctx, target="micropython", max_phase=None)
-        if not getattr(ctx, "_analysis_ready", False):
-            analyze(ctx)
-            runtime.activate(ctx)
-        emit_c_mod.emit_c(ctx)
-    finally:
-        emit_c_mod.store_context(ctx)
+    # The MP-style object/enum pass has a full-generation dependency that is
+    # intentionally represented by an unbounded phase. CircuitPython and
+    # CPython use their finite lifecycle phases below.
+    prepare_target_lowering(ctx, target="micropython", max_phase=None)
+    if not getattr(ctx, "_analysis_ready", False):
+        analyze(ctx)
+        runtime.activate(ctx)
+    emit_c_mod.emit_c(ctx)

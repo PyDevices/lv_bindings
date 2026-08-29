@@ -3,6 +3,37 @@ from __future__ import print_function
 
 import collections
 import re
+from dataclasses import dataclass, fields
+from typing import Any, Mapping
+
+
+@dataclass(frozen=True)
+class EmitterResult:
+    """Explicit per-run state returned by a native C emitter."""
+
+    headers: Any
+    enums: Any
+    generated_structs: Any
+    generated_struct_functions: Any
+    struct_aliases: Any
+    callbacks_used_on_structs: Any
+    generated_callbacks: Any
+    generated_funcs: Any
+    enum_referenced: Any
+    generated_obj_names: Any
+    generated_globals: Any
+    module_funcs: Any
+    functions_not_generated: Any
+
+    @classmethod
+    def capture(cls, namespace: Mapping[str, Any]) -> "EmitterResult":
+        """Capture the declared emitter outputs from one function scope."""
+        return cls(**{field.name: namespace[field.name] for field in fields(cls)})
+
+    def apply(self, ctx: "BindingContext") -> None:
+        """Publish one completed result without touching module globals."""
+        for field in fields(self):
+            setattr(ctx, field.name, getattr(self, field.name))
 
 
 class BindingContext:

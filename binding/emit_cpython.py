@@ -17,12 +17,12 @@ def emit_cpython(ctx):
 
 
 def run(ctx):
-    from .emit_cpython_native import reset_emit_helpers
+    from .emit_cpython_native import begin_emit_helpers, reset_emit_helpers
 
     ctx.init_patterns()
     runtime.activate(ctx)
+    helper_token = begin_emit_helpers()
     try:
         emit_cpython(ctx)
     finally:
-        emit_c_mod.store_context(ctx)
-        reset_emit_helpers()
+        reset_emit_helpers(helper_token)

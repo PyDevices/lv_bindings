@@ -34,6 +34,11 @@ print = runtime.emit
 _EMIT_HELPERS = ContextVar("lvgl_cpython_emit_helpers", default=None)
 
 
+def begin_emit_helpers():
+    """Start an isolated helper scope and return its restoration token."""
+    return _EMIT_HELPERS.set(None)
+
+
 def bind_emit_helpers(local_ns):
     """Bind AST-emitter helpers to the active CPython backend run."""
     from . import analyze as analyze_mod
@@ -153,9 +158,12 @@ def bound_helper(name, default=None):
     return helpers.get(name, default)
 
 
-def reset_emit_helpers():
-    """Release CPython-native run state after an emitter invocation."""
-    _EMIT_HELPERS.set(None)
+def reset_emit_helpers(token=None):
+    """Release helper state, restoring an enclosing emitter when supplied."""
+    if token is None:
+        _EMIT_HELPERS.set(None)
+    else:
+        _EMIT_HELPERS.reset(token)
 
 
 def _emit_max_phase():

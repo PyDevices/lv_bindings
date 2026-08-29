@@ -65,29 +65,47 @@ from .emit_backend import (
 )
 from .runtime_exports import filter_module_funcs_for_target, filter_registration_module_funcs
 from .util import eprint, memoize
-
-
-def load_context(ctx):
-    """Bind one backend run explicitly to the CPython orchestration module."""
-    for name in ctx.export_names():
-        if hasattr(ctx, name):
-            globals()[name] = getattr(ctx, name)
-    globals()["print"] = ctx.emit_print
-
-
-def store_context(ctx):
-    """Return orchestration results to the backend run context."""
-    for name in ctx.export_names():
-        if name in globals():
-            setattr(ctx, name, globals()[name])
+from .context import EmitterResult
 
 
 def emit_c(ctx):
-    load_context(ctx)
-    global headers, generated_structs, generated_struct_functions, struct_aliases
-    global callbacks_used_on_structs, generated_callbacks, generated_funcs
-    global enum_referenced, generated_obj_names, generated_globals
-    global module_funcs, functions_not_generated, enums
+    """Emit CPython C from one context without module-level run state."""
+    print = ctx.emit_print
+    args = ctx.args
+    blobs = ctx.blobs
+    cmd_line = ctx.cmd_line
+    enum_defs = ctx.enum_defs
+    func_typedefs = ctx.func_typedefs
+    funcs = ctx.funcs
+    gen = ctx.gen
+    int_constants = ctx.int_constants
+    lv_mp_type = ctx.lv_mp_type
+    lv_str_enum_pattern = ctx.lv_str_enum_pattern
+    lv_to_mp = ctx.lv_to_mp
+    lv_to_mp_byref = ctx.lv_to_mp_byref
+    lv_to_mp_funcptr = ctx.lv_to_mp_funcptr
+    lvgl_json = ctx.lvgl_json
+    module_name = ctx.module_name
+    mp_to_lv = ctx.mp_to_lv
+    obj_names = ctx.obj_names
+    parent_obj_names = ctx.parent_obj_names
+    pp_cmd = ctx.pp_cmd
+    structs = ctx.structs
+    synonym = ctx.synonym
+    typedefs = ctx.typedefs
+
+    generated_structs = getattr(ctx, "generated_structs", collections.OrderedDict())
+    generated_struct_functions = ctx.generated_struct_functions
+    struct_aliases = ctx.struct_aliases
+    callbacks_used_on_structs = ctx.callbacks_used_on_structs
+    generated_callbacks = ctx.generated_callbacks
+    generated_funcs = ctx.generated_funcs
+    enum_referenced = ctx.enum_referenced
+    generated_obj_names = ctx.generated_obj_names
+    generated_globals = ctx.generated_globals
+    module_funcs = ctx.module_funcs
+    functions_not_generated = ctx.functions_not_generated
+    enums = getattr(ctx, "enums", collections.OrderedDict())
 
     headers = resolve_emitter_headers(args.input)
 
@@ -786,3 +804,4 @@ py_lv_obj_type_t *py_lv_obj_types[] = {{
             )
         )
         finish_py_module(_emit_max_phase or 7)
+        EmitterResult.capture(locals()).apply(ctx)

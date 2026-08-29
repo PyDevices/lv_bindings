@@ -213,6 +213,94 @@ def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypa
         assert context.api_model is prepared.api_model
 
 
+def test_native_emitters_keep_context_state_out_of_module_namespaces():
+    from binding import emit_c_cpython, emit_c_micropython_style
+    from binding.context import BindingContext
+
+    for module in (emit_c_cpython, emit_c_micropython_style):
+        leaked = set(BindingContext.EXPORT_NAMES) & set(vars(module))
+        assert not leaked
+
+
+def test_repeated_backend_runs_are_deterministic_and_result_isolated():
+    import io
+
+    from binding.context import EmitterResult
+
+    source = "typedef struct fixture { int value; } fixture_t; void lv_init(void);"
+    args = SimpleNamespace(
+        module_name="lvgl", module_prefix="lv", json=None, input=["fixture.h"]
+    )
+    prepared = prepare_analysis(args, source, "pp", "cmd", lambda *a, **k: None)
+    state = analysis_snapshot(prepared)
+    runs = []
+    outputs = []
+    for _ in range(2):
+        output = io.StringIO()
+        runs.append(
+            run_backend(
+                "micropython",
+                args,
+                source,
+                "pp",
+                output,
+                "cmd",
+                analysis_state=state,
+            ).context
+        )
+        outputs.append(output.getvalue())
+
+    assert outputs[0] == outputs[1]
+    for field in EmitterResult.__dataclass_fields__:
+        assert getattr(runs[0], field) is not getattr(runs[1], field)
+
+
+def test_nested_backend_runs_restore_context_and_cpython_helpers():
+    import io
+
+    from binding import emit_cpython_native, runtime
+
+    source = "typedef struct fixture { int value; } fixture_t; void lv_init(void);"
+    args = SimpleNamespace(
+        module_name="lvgl", module_prefix="lv", json=None, input=["fixture.h"]
+    )
+    prepared = prepare_analysis(args, source, "pp", "cmd", lambda *a, **k: None)
+    state = analysis_snapshot(prepared)
+
+    class NestedWriter(io.StringIO):
+        triggered = False
+
+        def write(self, text):
+            if not self.triggered and "py_lv_init" in text:
+                self.triggered = True
+                outer_context = runtime.current_context()
+                outer_helpers = emit_cpython_native.bound_helper("generated_funcs")
+                run_backend(
+                    "cpython",
+                    args,
+                    source,
+                    "pp",
+                    io.StringIO(),
+                    "cmd",
+                    analysis_state=state,
+                )
+                assert runtime.current_context() is outer_context
+                assert (
+                    emit_cpython_native.bound_helper("generated_funcs")
+                    is outer_helpers
+                )
+            return super().write(text)
+
+    output = NestedWriter()
+    run_backend(
+        "cpython", args, source, "pp", output, "cmd", analysis_state=state
+    )
+
+    assert output.triggered
+    assert runtime.current_context() is prepared
+    assert emit_cpython_native.bound_helper("generated_funcs") is None
+
+
 def test_analysis_state_lives_on_context_not_analyze_module():
     from binding import analyze as analyze_module
     from binding import helpers, parse

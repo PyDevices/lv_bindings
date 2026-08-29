@@ -152,5 +152,8 @@ def run_backend(target, args, source, pp_cmd, out, cmd_line, analysis_state=None
     ctx = _new_context(
         args, source, pp_cmd, cmd_line, emit_print, analysis_state=analysis_state
     )
-    import_module(backend.emitter_module).run(ctx)
+    from . import runtime
+
+    with runtime.scoped(ctx):
+        import_module(backend.emitter_module).run(ctx)
     return BackendRun(ctx)

@@ -464,9 +464,9 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
   flags. Validation: 114 repository tests and binding.generate --check passed;
   generated artifacts remain unchanged. Twenty-second migration slice: removed
   runtime.py's module-global consumer, publish, absorb, and namespace-sync
-  architecture. Runtime state now lives on one active BindingContext; the two C
-  orchestrators explicitly load and store backend state only at their entry
-  boundaries. A two-context regression test prevents state leakage between
+  architecture. Runtime state now lives on one active BindingContext; at that
+  stage the two C orchestrators still loaded and stored backend state at their
+  entry boundaries. A two-context regression test prevents state leakage between
   runs. Validation: 115 repository tests and binding.generate --check passed;
   generated artifacts remain unchanged. Twenty-third migration slice: typedef,
   enum, pointer, struct-alias, and recursive conversion discovery now use one
@@ -588,6 +588,29 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 - CPython commit SHA: `9b6a6a72c41d5246716f1d7f11cd90616f52e679`
 - Final validation report: `The clean-break generator architecture passes 97 focused tests, deterministic all-target regeneration, canonical API/stub/namespace/mypy checks, the release dry run, and the pinned historical upstream oracle. The canonical API hash remains 03bc15b7ba58855ae69f7866624feb24eea935a334876dc5dda46d1f5b8d5e54; common-target coverage is 99.99%, with two audited availability exceptions and zero unexplained historical differences. Fresh MicroPython and CircuitPython Unix builds passed the shared full-runtime smoke suite, the rebuilt CPython extension passed the same suite, and a CPython wheel build contains the ABI-named extension and matching pyi. All four repositories are clean after their exact-source synchronization commits.`
 - Remaining follow-up: `None. The broader platform constraints discovered and documented during Checkpoint 7 remain outside the generator's ownership.`
+
+## Checkpoint 9 — Reentrant emitter state
+
+### Work
+
+- [ ] Replace emitter module globals with explicit per-run inputs and results.
+- [ ] Remove context-to-module namespace copying from every target backend.
+- [ ] Prove sequential and nested target runs cannot leak emitter state.
+- [ ] Reconcile the remaining Checkpoint 2 state item and handoff record.
+
+### Gate
+
+- [ ] Generated artifacts remain byte-for-byte identical.
+- [ ] Every target passes unit, parity, build, and shared runtime smoke checks.
+- [ ] Repeated in-process generation is deterministic and context-isolated.
+- [ ] All repositories are clean after synchronization, commit, and push.
+
+### Handoff
+
+- Bindings commit SHA: `________________`
+- Consumer synchronization: `________________`
+- Validation command(s): `________________`
+- Notes: `________________`
 
 ## Test inventory
 

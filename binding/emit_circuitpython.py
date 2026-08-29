@@ -20,7 +20,4 @@ def emit_circuitpython(ctx):
 def run(ctx):
     ctx.init_patterns()
     runtime.activate(ctx)
-    try:
-        emit_circuitpython(ctx)
-    finally:
-        emit_c_mod.store_context(ctx)
+    emit_circuitpython(ctx)
