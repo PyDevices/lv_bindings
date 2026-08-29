@@ -826,6 +826,27 @@ static void *mp_lv_callback(mp_obj_t mp_callback, void *lv_callback, qstr callba
 
 static int _nesting = 0;
 
+// Call a Python callback with the re-entrancy counter held. The decrement
+// must survive a raising callback: an nlr unwind past a bare `_nesting--`
+// leaves the counter stuck nonzero, and because C statics survive soft
+// reset, every consumer that gates on `_nesting.value == 0` (display_driver's
+// task_handler above all) stays silently disabled until a hard reset.
+static mp_obj_t mp_lv_nesting_call(mp_obj_t func, size_t n_args, const mp_obj_t *args)
+{
+    nlr_buf_t nlr;
+    mp_obj_t result;
+    _nesting++;
+    if (nlr_push(&nlr) == 0) {
+        result = mp_call_function_n_kw(func, n_args, 0, args);
+        nlr_pop();
+        _nesting--;
+    } else {
+        _nesting--;
+        nlr_jump(nlr.ret_val);
+    }
+    return result;
+}
+
 // Function pointers wrapper
 
 static mp_obj_t mp_lv_funcptr(const mp_lv_obj_fun_builtin_var_t *mp_fun, void *lv_fun, void *lv_callback, qstr func_name, void *user_data)
@@ -12011,9 +12032,7 @@ GENMPY_UNUSED static lv_obj_tree_walk_res_t lv_obj_tree_walk_cb_callback(lv_obj_
     mp_args[0] = lv_to_mp((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg1);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_tree_walk_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_tree_walk_cb)), 2, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -16061,9 +16080,7 @@ GENMPY_UNUSED static void lv_obj_add_event_cb_event_cb_callback(lv_event_t *arg0
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_add_event_cb_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_add_event_cb_event_cb)), 1, mp_args);
     return;
 }
 
@@ -16169,9 +16186,7 @@ GENMPY_UNUSED static void lv_obj_t_event_cb_callback(lv_event_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_t_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_t_event_cb)), 1, mp_args);
     return;
 }
 
@@ -16204,9 +16219,7 @@ GENMPY_UNUSED static void lv_obj_remove_event_cb_with_user_data_event_cb_callbac
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_remove_event_cb_with_user_data_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_remove_event_cb_with_user_data_event_cb)), 1, mp_args);
     return;
 }
 
@@ -19155,9 +19168,7 @@ GENMPY_UNUSED static lv_result_t lv_image_decoder_t_info_cb_callback(lv_image_de
     mp_args[1] = mp_read_ptr_lv_image_decoder_dsc_t((void*)arg1);
     mp_args[2] = mp_read_ptr_lv_image_header_t((void*)arg2);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_info_cb)) , 3, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_info_cb)), 3, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -19191,9 +19202,7 @@ GENMPY_UNUSED static lv_result_t lv_image_decoder_t_open_cb_callback(lv_image_de
     mp_args[0] = mp_read_ptr_lv_image_decoder_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_image_decoder_dsc_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_open_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_open_cb)), 2, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -19229,9 +19238,7 @@ GENMPY_UNUSED static lv_result_t lv_image_decoder_t_read_line_cb_callback(lv_ima
     mp_args[2] = mp_read_ptr_lv_area_t((void*)arg2);
     mp_args[3] = mp_read_ptr_lv_area_t((void*)arg3);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_read_line_cb)) , 4, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_read_line_cb)), 4, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -19265,9 +19272,7 @@ GENMPY_UNUSED static void lv_image_decoder_t_close_cb_callback(lv_image_decoder_
     mp_args[0] = mp_read_ptr_lv_image_decoder_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_image_decoder_dsc_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_close_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_close_cb)), 2, mp_args);
     return;
 }
 
@@ -20104,9 +20109,7 @@ GENMPY_UNUSED static void lv_obj_t_start_cb_callback(lv_anim_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_t_start_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_t_start_cb)), 1, mp_args);
     return;
 }
 
@@ -20139,9 +20142,7 @@ GENMPY_UNUSED static void lv_obj_t_completed_cb_callback(lv_anim_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_t_completed_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_t_completed_cb)), 1, mp_args);
     return;
 }
 
@@ -34130,9 +34131,7 @@ GENMPY_UNUSED static bool lv_cache_set_create_cb_alloc_cb_callback(void *arg0, v
     mp_args[0] = ptr_to_mp((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg1);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_cache_set_create_cb_alloc_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_cache_set_create_cb_alloc_cb)), 2, mp_args);
     return mp_obj_is_true(callback_result);
 }
 
@@ -34167,9 +34166,7 @@ GENMPY_UNUSED static void lv_cache_set_free_cb_free_cb_callback(void *arg0, void
     mp_args[0] = ptr_to_mp((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg1);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_cache_set_free_cb_free_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_cache_set_free_cb_free_cb)), 2, mp_args);
     return;
 }
 
@@ -35238,9 +35235,7 @@ GENMPY_UNUSED static lv_color_t lv_color_filter_dsc_t_cb_callback(const struct _
     mp_args[1] = mp_read_lv_color_t(arg1);
     mp_args[2] = mp_obj_new_int_from_uint(arg2);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_color_filter_dsc_t_cb)) , 3, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_color_filter_dsc_t_cb)), 3, mp_args);
     return mp_write_lv_color_t(callback_result);
 }
 
@@ -35400,9 +35395,7 @@ GENMPY_UNUSED static void lv_anim_t_exec_cb_callback(lv_anim_t *arg0, int32_t ar
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_args[1] = mp_obj_new_int(arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_exec_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_exec_cb)), 2, mp_args);
     return;
 }
 
@@ -35435,9 +35428,7 @@ GENMPY_UNUSED static int32_t lv_anim_t_path_cb_callback(const lv_anim_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_path_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_path_cb)), 1, mp_args);
     return (int32_t)mp_obj_get_int(callback_result);
 }
 
@@ -35470,9 +35461,7 @@ GENMPY_UNUSED static void lv_anim_t_start_cb_callback(lv_anim_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_start_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_start_cb)), 1, mp_args);
     return;
 }
 
@@ -35505,9 +35494,7 @@ GENMPY_UNUSED static int32_t lv_anim_t_get_value_cb_callback(lv_anim_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_get_value_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_get_value_cb)), 1, mp_args);
     return (int32_t)mp_obj_get_int(callback_result);
 }
 
@@ -35540,9 +35527,7 @@ GENMPY_UNUSED static void lv_anim_t_completed_cb_callback(lv_anim_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_completed_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_completed_cb)), 1, mp_args);
     return;
 }
 
@@ -35575,9 +35560,7 @@ GENMPY_UNUSED static void lv_anim_t_deleted_cb_callback(lv_anim_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_deleted_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_deleted_cb)), 1, mp_args);
     return;
 }
 
@@ -35907,9 +35890,7 @@ GENMPY_UNUSED static int32_t lv_style_transition_dsc_init_path_cb_callback(const
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_style_transition_dsc_init_path_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_style_transition_dsc_init_path_cb)), 1, mp_args);
     return (int32_t)mp_obj_get_int(callback_result);
 }
 
@@ -36244,9 +36225,7 @@ GENMPY_UNUSED static void lv_display_t_flush_cb_callback(lv_display_t *arg0, con
     mp_args[1] = mp_read_ptr_lv_area_t((void*)arg1);
     mp_args[2] = mp_array_from_u8ptr((void*)arg2);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_flush_cb)) , 3, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_flush_cb)), 3, mp_args);
     return;
 }
 
@@ -36279,9 +36258,7 @@ GENMPY_UNUSED static void lv_display_t_wait_cb_callback(lv_display_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_display_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_wait_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_wait_cb)), 1, mp_args);
     return;
 }
 
@@ -36458,9 +36435,7 @@ GENMPY_UNUSED static void lv_display_add_event_cb_event_cb_callback(lv_event_t *
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_add_event_cb_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_add_event_cb_event_cb)), 1, mp_args);
     return;
 }
 
@@ -36535,9 +36510,7 @@ GENMPY_UNUSED static void lv_display_remove_event_cb_with_user_data_event_cb_cal
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_remove_event_cb_with_user_data_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_remove_event_cb_with_user_data_event_cb)), 1, mp_args);
     return;
 }
 
@@ -36675,9 +36648,7 @@ GENMPY_UNUSED static void lv_display_register_vsync_event_event_cb_callback(lv_e
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_register_vsync_event_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_register_vsync_event_event_cb)), 1, mp_args);
     return;
 }
 
@@ -38554,9 +38525,7 @@ GENMPY_UNUSED static void lv_event_add_cb_callback(lv_event_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_event_add_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_event_add_cb)), 1, mp_args);
     return;
 }
 
@@ -39057,9 +39026,7 @@ GENMPY_UNUSED static void lv_theme_t_apply_cb_callback(lv_theme_t *arg0, lv_obj_
     mp_args[0] = mp_read_ptr_lv_theme_t((void*)arg0);
     mp_args[1] = lv_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_theme_t_apply_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_theme_t_apply_cb)), 2, mp_args);
     return;
 }
 
@@ -39133,9 +39100,7 @@ GENMPY_UNUSED static void lv_timer_t_timer_cb_callback(lv_timer_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_timer_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_timer_t_timer_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_timer_t_timer_cb)), 1, mp_args);
     return;
 }
 
@@ -40955,9 +40920,7 @@ GENMPY_UNUSED static void lv_subject_add_observer_observer_cb_callback(lv_observ
     mp_args[0] = mp_read_ptr_lv_observer_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_subject_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_subject_add_observer_observer_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_subject_add_observer_observer_cb)), 2, mp_args);
     return;
 }
 
@@ -40992,9 +40955,7 @@ GENMPY_UNUSED static void lv_subject_add_observer_obj_observer_cb_callback(lv_ob
     mp_args[0] = mp_read_ptr_lv_observer_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_subject_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_subject_add_observer_obj_observer_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_subject_add_observer_obj_observer_cb)), 2, mp_args);
     return;
 }
 
@@ -41030,9 +40991,7 @@ GENMPY_UNUSED static void lv_subject_add_observer_with_target_observer_cb_callba
     mp_args[0] = mp_read_ptr_lv_observer_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_subject_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_subject_add_observer_with_target_observer_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_subject_add_observer_with_target_observer_cb)), 2, mp_args);
     return;
 }
 
@@ -41477,9 +41436,7 @@ GENMPY_UNUSED static void lv_group_t_focus_cb_callback(lv_group_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_group_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_group_t_focus_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_group_t_focus_cb)), 1, mp_args);
     return;
 }
 
@@ -41513,9 +41470,7 @@ GENMPY_UNUSED static void lv_group_t_edge_cb_callback(lv_group_t *arg0, bool arg
     mp_args[0] = mp_read_ptr_lv_group_t((void*)arg0);
     mp_args[1] = convert_to_bool(arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_group_t_edge_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_group_t_edge_cb)), 2, mp_args);
     return;
 }
 
@@ -42404,9 +42359,7 @@ GENMPY_UNUSED static bool lv_tree_walk_cb_callback(const lv_tree_node_t *arg0, v
     mp_args[0] = mp_read_ptr_lv_tree_node_t((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg1);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_tree_walk_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_tree_walk_cb)), 2, mp_args);
     return mp_obj_is_true(callback_result);
 }
 
@@ -42422,9 +42375,7 @@ GENMPY_UNUSED static bool lv_tree_walk_bcb_callback(const lv_tree_node_t *arg0, 
     mp_args[0] = mp_read_ptr_lv_tree_node_t((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg1);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_tree_walk_bcb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_tree_walk_bcb)), 2, mp_args);
     return mp_obj_is_true(callback_result);
 }
 
@@ -42440,9 +42391,7 @@ GENMPY_UNUSED static void lv_tree_walk_acb_callback(const lv_tree_node_t *arg0, 
     mp_args[0] = mp_read_ptr_lv_tree_node_t((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg1);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_tree_walk_acb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_tree_walk_acb)), 2, mp_args);
     return;
 }
 
@@ -42992,9 +42941,7 @@ GENMPY_UNUSED static bool lv_circle_buf_fill_fill_cb_callback(void *arg0, uint32
     mp_args[2] = mp_obj_new_int(arg2);
     mp_args[3] = ptr_to_mp((void*)arg3);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg3);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_circle_buf_fill_fill_cb)) , 4, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_circle_buf_fill_fill_cb)), 4, mp_args);
     return mp_obj_is_true(callback_result);
 }
 
@@ -43480,9 +43427,7 @@ GENMPY_UNUSED static void lv_indev_t_read_cb_callback(lv_indev_t *arg0, lv_indev
     mp_args[0] = mp_read_ptr_lv_indev_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_indev_data_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_t_read_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_t_read_cb)), 2, mp_args);
     return;
 }
 
@@ -43963,9 +43908,7 @@ GENMPY_UNUSED static void lv_indev_add_event_cb_event_cb_callback(lv_event_t *ar
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_add_event_cb_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_add_event_cb_event_cb)), 1, mp_args);
     return;
 }
 
@@ -44053,9 +43996,7 @@ GENMPY_UNUSED static void lv_indev_remove_event_cb_with_user_data_event_cb_callb
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_remove_event_cb_with_user_data_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_remove_event_cb_with_user_data_event_cb)), 1, mp_args);
     return;
 }
 
@@ -44109,9 +44050,7 @@ GENMPY_UNUSED static lv_key_t lv_indev_t_remap_cb_callback(lv_indev_t *arg0, lv_
     mp_args[0] = mp_read_ptr_lv_indev_t((void*)arg0);
     mp_args[1] = mp_obj_new_int(arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_t_remap_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_t_remap_cb)), 2, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -44911,9 +44850,7 @@ GENMPY_UNUSED static void lv_thread_init_callback_callback(void *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = ptr_to_mp((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_thread_init_callback)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_thread_init_callback)), 1, mp_args);
     return;
 }
 
@@ -45652,9 +45589,7 @@ GENMPY_UNUSED static void lv_timer_create_timer_xcb_callback(lv_timer_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_timer_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_timer_create_timer_xcb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_timer_create_timer_xcb)), 1, mp_args);
     return;
 }
 
@@ -45935,9 +45870,7 @@ GENMPY_UNUSED static void lv_async_call_async_xcb_callback(void *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = ptr_to_mp((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_async_call_async_xcb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_async_call_async_xcb)), 1, mp_args);
     return;
 }
 
@@ -46634,9 +46567,7 @@ GENMPY_UNUSED static void lv_layout_register_cb_callback(lv_obj_t *arg0, void *a
     mp_args[0] = lv_to_mp((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg1);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_layout_register_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_layout_register_cb)), 2, mp_args);
     return;
 }
 
@@ -47697,9 +47628,7 @@ GENMPY_UNUSED static const void * lv_imgfont_create_path_cb_callback(const lv_fo
     mp_args[3] = mp_array_from_i32ptr((void*)arg3);
     mp_args[4] = ptr_to_mp((void*)arg4);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg4);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_imgfont_create_path_cb)) , 5, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_imgfont_create_path_cb)), 5, mp_args);
     return mp_to_ptr(callback_result);
 }
 
@@ -48630,9 +48559,7 @@ GENMPY_UNUSED static bool lv_font_t_get_glyph_dsc_callback(const lv_font_t *arg0
     mp_args[2] = mp_obj_new_int_from_uint(arg2);
     mp_args[3] = mp_obj_new_int_from_uint(arg3);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_font_t_get_glyph_dsc)) , 4, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_font_t_get_glyph_dsc)), 4, mp_args);
     return mp_obj_is_true(callback_result);
 }
 
@@ -48704,9 +48631,7 @@ GENMPY_UNUSED static void lv_font_t_release_glyph_callback(const lv_font_t *arg0
     mp_args[0] = mp_read_ptr_lv_font_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_font_glyph_dsc_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_font_t_release_glyph)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_font_t_release_glyph)), 2, mp_args);
     return;
 }
 
@@ -48723,9 +48648,7 @@ GENMPY_UNUSED static lv_color_t lv_color_filter_dsc_t_filter_cb_callback(const s
     mp_args[1] = mp_read_lv_color_t(arg1);
     mp_args[2] = mp_obj_new_int_from_uint(arg2);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_color_filter_dsc_t_filter_cb)) , 3, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_color_filter_dsc_t_filter_cb)), 3, mp_args);
     return mp_write_lv_color_t(callback_result);
 }
 
@@ -48741,9 +48664,7 @@ GENMPY_UNUSED static void lv_anim_t_custom_exec_cb_callback(lv_anim_t *arg0, int
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_args[1] = mp_obj_new_int(arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_custom_exec_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_anim_t_custom_exec_cb)), 2, mp_args);
     return;
 }
 
@@ -48758,9 +48679,7 @@ GENMPY_UNUSED static int32_t lv_style_transition_dsc_t_path_xcb_callback(const l
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_style_transition_dsc_t_path_xcb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_style_transition_dsc_t_path_xcb)), 1, mp_args);
     return (int32_t)mp_obj_get_int(callback_result);
 }
 
@@ -48775,9 +48694,7 @@ GENMPY_UNUSED static void lv_display_t_flush_wait_cb_callback(lv_display_t *arg0
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_display_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_flush_wait_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_flush_wait_cb)), 1, mp_args);
     return;
 }
 
@@ -48820,9 +48737,7 @@ GENMPY_UNUSED static void lv_draw_unit_t_event_cb_callback(lv_event_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_draw_unit_t_event_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_draw_unit_t_event_cb)), 1, mp_args);
     return;
 }
 
@@ -48838,9 +48753,7 @@ GENMPY_UNUSED static void lv_display_t_layer_init_callback(lv_display_t *arg0, l
     mp_args[0] = mp_read_ptr_lv_display_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_layer_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_layer_init)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_layer_init)), 2, mp_args);
     return;
 }
 
@@ -48856,9 +48769,7 @@ GENMPY_UNUSED static void lv_display_t_layer_deinit_callback(lv_display_t *arg0,
     mp_args[0] = mp_read_ptr_lv_display_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_layer_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_layer_deinit)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_display_t_layer_deinit)), 2, mp_args);
     return;
 }
 
@@ -48874,9 +48785,7 @@ GENMPY_UNUSED static void lv_obj_class_t_constructor_cb_callback(const lv_obj_cl
     mp_args[0] = mp_read_ptr_lv_obj_class_t((void*)arg0);
     mp_args[1] = lv_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_class_t_constructor_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_class_t_constructor_cb)), 2, mp_args);
     return;
 }
 
@@ -48892,9 +48801,7 @@ GENMPY_UNUSED static void lv_obj_class_t_destructor_cb_callback(const lv_obj_cla
     mp_args[0] = mp_read_ptr_lv_obj_class_t((void*)arg0);
     mp_args[1] = lv_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_class_t_destructor_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_class_t_destructor_cb)), 2, mp_args);
     return;
 }
 
@@ -48910,9 +48817,7 @@ GENMPY_UNUSED static void lv_obj_class_t_event_cb_callback(const lv_obj_class_t 
     mp_args[0] = mp_read_ptr_lv_obj_class_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_event_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_class_t_event_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_class_t_event_cb)), 2, mp_args);
     return;
 }
 
@@ -48928,9 +48833,7 @@ GENMPY_UNUSED static void lv_observer_t_cb_callback(lv_observer_t *arg0, lv_subj
     mp_args[0] = mp_read_ptr_lv_observer_t((void*)arg0);
     mp_args[1] = mp_read_ptr_lv_subject_t((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_observer_t_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_observer_t_cb)), 2, mp_args);
     return;
 }
 
@@ -48945,9 +48848,7 @@ GENMPY_UNUSED static void lv_event_dsc_t_cb_callback(lv_event_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_event_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_event_dsc_t_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_event_dsc_t_cb)), 1, mp_args);
     return;
 }
 
@@ -48962,9 +48863,7 @@ GENMPY_UNUSED static int32_t lv_obj_style_transition_dsc_t_path_cb_callback(cons
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_anim_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_style_transition_dsc_t_path_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_obj_style_transition_dsc_t_path_cb)), 1, mp_args);
     return (int32_t)mp_obj_get_int(callback_result);
 }
 
@@ -48982,9 +48881,7 @@ GENMPY_UNUSED static lv_result_t lv_image_decoder_t_get_area_cb_callback(lv_imag
     mp_args[2] = mp_read_ptr_lv_area_t((void*)arg2);
     mp_args[3] = mp_read_ptr_lv_area_t((void*)arg3);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_get_area_cb)) , 4, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_get_area_cb)), 4, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49003,9 +48900,7 @@ GENMPY_UNUSED static void lv_image_decoder_t_custom_draw_cb_callback(lv_layer_t 
     mp_args[3] = mp_read_ptr_lv_draw_image_dsc_t((void*)arg3);
     mp_args[4] = mp_read_ptr_lv_area_t((void*)arg4);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_custom_draw_cb)) , 5, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_image_decoder_t_custom_draw_cb)), 5, mp_args);
     return;
 }
 
@@ -49020,9 +48915,7 @@ GENMPY_UNUSED static bool lv_fs_drv_t_ready_cb_callback(lv_fs_drv_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_fs_drv_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_ready_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_ready_cb)), 1, mp_args);
     return mp_obj_is_true(callback_result);
 }
 
@@ -49037,9 +48930,7 @@ GENMPY_UNUSED static void lv_fs_drv_t_remove_cb_callback(lv_fs_drv_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_fs_drv_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_remove_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_remove_cb)), 1, mp_args);
     return;
 }
 
@@ -49056,9 +48947,7 @@ GENMPY_UNUSED static void * lv_fs_drv_t_open_cb_callback(lv_fs_drv_t *arg0, cons
     mp_args[1] = convert_to_str((void*)arg1);
     mp_args[2] = mp_obj_new_int(arg2);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_open_cb)) , 3, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_open_cb)), 3, mp_args);
     return mp_to_ptr(callback_result);
 }
 
@@ -49074,9 +48963,7 @@ GENMPY_UNUSED static lv_fs_res_t lv_fs_drv_t_close_cb_callback(lv_fs_drv_t *arg0
     mp_args[0] = mp_read_ptr_lv_fs_drv_t((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_close_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_close_cb)), 2, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49095,9 +48982,7 @@ GENMPY_UNUSED static lv_fs_res_t lv_fs_drv_t_read_cb_callback(lv_fs_drv_t *arg0,
     mp_args[3] = mp_obj_new_int_from_uint(arg3);
     mp_args[4] = mp_array_from_u32ptr((void*)arg4);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_read_cb)) , 5, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_read_cb)), 5, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49116,9 +49001,7 @@ GENMPY_UNUSED static lv_fs_res_t lv_fs_drv_t_write_cb_callback(lv_fs_drv_t *arg0
     mp_args[3] = mp_obj_new_int_from_uint(arg3);
     mp_args[4] = mp_array_from_u32ptr((void*)arg4);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_write_cb)) , 5, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_write_cb)), 5, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49136,9 +49019,7 @@ GENMPY_UNUSED static lv_fs_res_t lv_fs_drv_t_seek_cb_callback(lv_fs_drv_t *arg0,
     mp_args[2] = mp_obj_new_int_from_uint(arg2);
     mp_args[3] = mp_obj_new_int(arg3);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_seek_cb)) , 4, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_seek_cb)), 4, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49155,9 +49036,7 @@ GENMPY_UNUSED static lv_fs_res_t lv_fs_drv_t_tell_cb_callback(lv_fs_drv_t *arg0,
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_args[2] = mp_array_from_u32ptr((void*)arg2);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_tell_cb)) , 3, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_tell_cb)), 3, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49173,9 +49052,7 @@ GENMPY_UNUSED static void * lv_fs_drv_t_dir_open_cb_callback(lv_fs_drv_t *arg0, 
     mp_args[0] = mp_read_ptr_lv_fs_drv_t((void*)arg0);
     mp_args[1] = convert_to_str((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_dir_open_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_dir_open_cb)), 2, mp_args);
     return mp_to_ptr(callback_result);
 }
 
@@ -49193,9 +49070,7 @@ GENMPY_UNUSED static lv_fs_res_t lv_fs_drv_t_dir_read_cb_callback(lv_fs_drv_t *a
     mp_args[2] = convert_to_str((void*)arg2);
     mp_args[3] = mp_obj_new_int_from_uint(arg3);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_dir_read_cb)) , 4, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_dir_read_cb)), 4, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49211,9 +49086,7 @@ GENMPY_UNUSED static lv_fs_res_t lv_fs_drv_t_dir_close_cb_callback(lv_fs_drv_t *
     mp_args[0] = mp_read_ptr_lv_fs_drv_t((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_dir_close_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_fs_drv_t_dir_close_cb)), 2, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
@@ -49249,9 +49122,7 @@ GENMPY_UNUSED static void lv_font_class_t_delete_cb_callback(lv_font_t *arg0)
     mp_obj_t mp_args[1];
     mp_args[0] = mp_read_ptr_lv_font_t((void*)arg0);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_font_class_t_delete_cb)) , 1, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_font_class_t_delete_cb)), 1, mp_args);
     return;
 }
 
@@ -49288,9 +49159,7 @@ GENMPY_UNUSED static void lv_layout_callbacks_t_layout_update_cb_callback(lv_obj
     mp_args[0] = lv_to_mp((void*)arg0);
     mp_args[1] = ptr_to_mp((void*)arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_layout_callbacks_t_layout_update_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_layout_callbacks_t_layout_update_cb)), 2, mp_args);
     return;
 }
 
@@ -49308,9 +49177,7 @@ GENMPY_UNUSED static bool lv_layout_callbacks_t_get_min_size_cb_callback(lv_obj_
     mp_args[2] = convert_to_bool(arg2);
     mp_args[3] = ptr_to_mp((void*)arg3);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_layout_callbacks_t_get_min_size_cb)) , 4, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_layout_callbacks_t_get_min_size_cb)), 4, mp_args);
     return mp_obj_is_true(callback_result);
 }
 
@@ -49326,9 +49193,7 @@ GENMPY_UNUSED static lv_key_t lv_indev_t_key_remap_cb_callback(lv_indev_t *arg0,
     mp_args[0] = mp_read_ptr_lv_indev_t((void*)arg0);
     mp_args[1] = mp_obj_new_int(arg1);
     mp_obj_t callbacks = get_callback_dict_from_user_data(arg0->user_data);
-    _nesting++;
-    mp_obj_t callback_result = mp_call_function_n_kw(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_t_key_remap_cb)) , 2, 0, mp_args);
-    _nesting--;
+    mp_obj_t callback_result = mp_lv_nesting_call(mp_obj_dict_get(callbacks, MP_OBJ_NEW_QSTR(MP_QSTR_lv_indev_t_key_remap_cb)), 2, mp_args);
     return (int)mp_obj_get_int(callback_result);
 }
 
