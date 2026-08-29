@@ -19,6 +19,11 @@ the canonical description of how the family fits together:
 
 Every other repo in the family links back to this section rather than repeating it.
 
+**SINGLE WRITER**: `python/` helpers, `lv_conf.h`, and the generated bindings under `generated/`
+are edited **only here**. Consumer repos sync these files in; any edits made directly in a
+consumer repo get silently overwritten by the next sync. See
+["Releases and propagation"](#releases-and-propagation) below.
+
 ## Documentation
 
 - [Using LVGL with PyDevices](docs/using-lvgl-with-pydevices.md) — how the three
@@ -35,15 +40,19 @@ Every other repo in the family links back to this section rather than repeating 
 
 ```
 lvgl-bindings/
-  binding/              # Modular Python generator
+  binding/              # Modular Python generator (binding.generate is the entry point)
   lvgl/                 # LVGL submodule (git submodule update --init)
   lv_conf.h             # Shared LVGL config for all targets
   generated/            # Generated bindings, API model, and shared stub (committed)
   python/               # Hand-written helpers (display_driver.py — committed)
   packages/             # Optional MIP manifests
-  binding/generate.py    # Unified all-target generator
-  tools/                 # Artifact hashing and smoke checks
-  scripts/               # Verification and release utilities
+  regenerate_all.sh     # Primary entry point for regenerating all binding artifacts
+  docs/                 # Architecture, migration, release, and fonts documentation
+  fonts/                # Committed *.bin font artifacts loaded at runtime by fs_driver.py
+  tests/                # Generator unit tests
+  scratch/              # Tracked upstream-baseline oracle used to diff against LVGL upstream
+  tools/                # Artifact hashing and smoke checks
+  scripts/              # Verification and release utilities
 ```
 
 ## Clone
@@ -56,7 +65,7 @@ git submodule update --init lvgl
 
 Place `lvgl-bindings/` as a sibling of `lvgl-micropython/`, `lvgl-circuitpython/`, and/or `lvgl-python/` in your workspace. ([cmods](https://github.com/PyDevices/cmods) is an optional convenience workspace — not required.)
 
-## 🚀 Setup
+## Setup
 
 ```bash
 python3 -m venv .venv
@@ -76,12 +85,26 @@ The practical flow is: make a small change in **`binding/`** or the LVGL submodu
 Regenerate after changing `lvgl/`, `lv_conf.h`, or `binding/`, then commit the updated files under `generated/`:
 
 ```bash
-PYTHONPATH=. .venv/bin/python -m binding.generate                    # all targets
-PYTHONPATH=. .venv/bin/python -m binding.generate --target micropython
-PYTHONPATH=. .venv/bin/python -m binding.generate --target circuitpython
-PYTHONPATH=. .venv/bin/python -m binding.generate --target cpython
-PYTHONPATH=. .venv/bin/python -m binding.generate --pyi-only         # shared stub only
-PYTHONPATH=. .venv/bin/python -m binding.generate --check            # read-only reproducibility check
+./regenerate_all.sh                    # all targets
+./regenerate_all.sh --target micropython
+./regenerate_all.sh --target circuitpython
+./regenerate_all.sh --target cpython
+./regenerate_all.sh --pyi-only         # shared stub only
+./regenerate_all.sh --check --hash     # read-only reproducibility check, same gate release uses
+```
+
+`regenerate_all.sh` is the primary entry point; it never commits, tags,
+pushes, or dispatches a release. Under the hood it calls the underlying
+generator directly:
+
+```bash
+PYTHONPATH=. .venv/bin/python -m binding.generate
+```
+
+Use `-m binding.generate` directly only when you need flags the wrapper
+doesn't expose, such as `binding.api_report`:
+
+```bash
 PYTHONPATH=. .venv/bin/python -m binding.api_report generated/api.json \
     --baseline docs/baseline/lvgl-bindings-api-baseline.json.gz \
     --classification docs/baseline/lvgl-bindings-api-baseline-classification.json \
@@ -148,3 +171,23 @@ or release tag into each consumer.
 Each consumer records the resolved source SHA in `LVGL_BINDINGS_COMMIT`.
 Consumer sync scripts reject branch names so downstream builds cannot silently
 move to a different generator or artifact set.
+
+## Releases and propagation
+
+This repo publishes **source tags, not wheels or GitHub Releases** — an empty
+Releases sidebar here is deliberate, not a broken pipeline.
+
+Releases are explicit, never automatic:
+
+1. `./scripts/publish_release_tag.sh --push` (or with an explicit version) cuts and pushes an
+   annotated `vX.Y.Z` tag. Pushing the tag does not trigger anything by itself.
+2. Someone then dispatches `release.yml` with `publish=true` for that tag/SHA, which validates
+   the source across all three consumers and, only then, tells `lvgl-python` to sync and publish.
+
+**Merging to `main` releases and propagates nothing.** Consumers do not track `main`; each pins an
+exact `LVGL_BINDINGS_COMMIT` and only moves forward when its own sync is run against a specific
+commit or release tag. Of the family, only `lvgl-python` publishes a package (`pydevices-lvgl` on
+TestPyPI); `lvgl-micropython` and `lvgl-circuitpython` rebuild from the synced files but publish
+nothing themselves.
+
+See [releasing-bindings.md](docs/releasing-bindings.md) for the full release chain.

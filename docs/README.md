@@ -12,6 +12,8 @@
   pipeline, policy, backend boundaries, parser pin, and validation.
 - [generator-migration.md](generator-migration.md) — clean-break migration from
   the former per-target commands and metadata artifacts.
+- [lvgl-bindings-rebuild-plan.md](lvgl-bindings-rebuild-plan.md) — the working
+  checklist for the completed generator rebuild; kept as a historical record.
 
 See the [root README](../README.md) for the generator itself, and its
 ["The LVGL family"](../README.md#the-lvgl-family) section for how the four
