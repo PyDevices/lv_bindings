@@ -54,15 +54,15 @@ and machine-checked without changing the shared canonical API contract.
 
 - [x] Work from a dedicated branch, for example
   `lvgl-generator-overhaul`.
-- [ ] Before each phase, inspect all four repository statuses and preserve
+- [x] Before each phase, inspect all four repository statuses and preserve
   unrelated existing changes.
 - [x] Never hand-edit generated C. All generated C changes must come from the
   generator and be explained by the canonical model or backend; generator-led
   changes are authorized for this rebuild.
-- [ ] Do not commit changes in upstream MicroPython or CircuitPython clones.
-- [ ] At each checkpoint, run the listed gate, record the result, commit only
+- [x] Do not commit changes in upstream MicroPython or CircuitPython clones.
+- [x] At each checkpoint, run the listed gate, record the result, commit only
   that phase, and save the commit SHA below.
-- [ ] After each successful checkpoint, compact context or start a fresh agent
+- [x] After each successful checkpoint, compact context or start a fresh agent
   with this file plus the checkpoint notes.
 
 ## Checkpoint 0 — Baseline and provenance
@@ -127,7 +127,7 @@ and machine-checked without changing the shared canonical API contract.
 
 ### Work
 
-- [ ] Replace global mutable analyzer state with pure typed intermediate
+- [x] Replace global mutable analyzer state with pure typed intermediate
   representations.
 - [x] Represent primitive, qualified, pointer, array, function-pointer, enum,
   struct, union, and typedef types in `binding/ir.py`.
@@ -176,9 +176,9 @@ lowering in the emitters.
 
 ### Handoff
 
-- Commit SHA: `________________`
+- Commit SHA: `f7e5b92e85f73ea6d77afa98fd11ea40ea9ce416`
 - Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests/test_generation_tools.py`; `PYTHONPATH=. .venv/bin/python -m binding.generate --check`
-- Notes: `All three backend entry points receive the same frozen DeclarationIR and canonical API model. The regression test makes a target-side analyze() call fail, so the one parse/analysis boundary cannot silently regress. Parsing, analysis, and API-model construction are target-neutral; target availability is policy data and target branching begins only in backend lowering.`
+- Notes: `All three backend entry points receive the same frozen DeclarationIR and canonical API model. The regression test makes a target-side analyze() call fail, so the one parse/analysis boundary cannot silently regress. Parsing, analysis, and API-model construction are target-neutral; target availability is policy data and target branching begins only in backend lowering. Checkpoint 9 completed the deferred emitter-state boundary: native emitters now consume BindingContext directly and publish a typed EmitterResult without mutable module namespace state.`
 
 ## Checkpoint 3 — Canonical public API model and policy
 
@@ -587,30 +587,30 @@ annotation references. The pinned ``mypy==2.3.1`` check passes.
 - CircuitPython commit SHA: `b70f6e8d15ab58fa23a2bda42f4b4fa996c9b55e`
 - CPython commit SHA: `9b6a6a72c41d5246716f1d7f11cd90616f52e679`
 - Final validation report: `The clean-break generator architecture passes 97 focused tests, deterministic all-target regeneration, canonical API/stub/namespace/mypy checks, the release dry run, and the pinned historical upstream oracle. The canonical API hash remains 03bc15b7ba58855ae69f7866624feb24eea935a334876dc5dda46d1f5b8d5e54; common-target coverage is 99.99%, with two audited availability exceptions and zero unexplained historical differences. Fresh MicroPython and CircuitPython Unix builds passed the shared full-runtime smoke suite, the rebuilt CPython extension passed the same suite, and a CPython wheel build contains the ABI-named extension and matching pyi. All four repositories are clean after their exact-source synchronization commits.`
-- Remaining follow-up: `None. The broader platform constraints discovered and documented during Checkpoint 7 remain outside the generator's ownership.`
+- Remaining follow-up: `The mutable emitter-state concern discovered during final review is resolved in Checkpoint 9. The broader platform constraints documented during Checkpoint 7 remain outside the generator's ownership.`
 
 ## Checkpoint 9 — Reentrant emitter state
 
 ### Work
 
-- [ ] Replace emitter module globals with explicit per-run inputs and results.
-- [ ] Remove context-to-module namespace copying from every target backend.
-- [ ] Prove sequential and nested target runs cannot leak emitter state.
-- [ ] Reconcile the remaining Checkpoint 2 state item and handoff record.
+- [x] Replace emitter module globals with explicit per-run inputs and results.
+- [x] Remove context-to-module namespace copying from every target backend.
+- [x] Prove sequential and nested target runs cannot leak emitter state.
+- [x] Reconcile the remaining Checkpoint 2 state item and handoff record.
 
 ### Gate
 
-- [ ] Generated artifacts remain byte-for-byte identical.
-- [ ] Every target passes unit, parity, build, and shared runtime smoke checks.
-- [ ] Repeated in-process generation is deterministic and context-isolated.
-- [ ] All repositories are clean after synchronization, commit, and push.
+- [x] Generated artifacts remain byte-for-byte identical.
+- [x] Every target passes unit, parity, build, and shared runtime smoke checks.
+- [x] Repeated in-process generation is deterministic and context-isolated.
+- [x] All repositories are clean after synchronization, commit, and push.
 
 ### Handoff
 
-- Bindings commit SHA: `________________`
-- Consumer synchronization: `________________`
-- Validation command(s): `________________`
-- Notes: `________________`
+- Bindings commit SHA: `f7e5b92e85f73ea6d77afa98fd11ea40ea9ce416`
+- Consumer synchronization: `MicroPython 72a7d9b60baae64c7594f4e162e0a7adec84435d; CircuitPython de2797413462f4815f892e92e5e3a88c1e8a2f52; CPython 5fe4bcdeb5e24490283ad2c001ff7871f114e00a`
+- Validation command(s): `TMPDIR=/tmp/lvgl-bindings-checkpoint9 .venv/bin/python -m pytest -q -s tests`; `./regenerate_all.sh --check --hash`; `./scripts/verify_bindings.sh`; `scratch/upstream_baseline/run.sh`; `./scripts/release_dry_run.sh`; consumer integration tests; `../cmods/build_mp.sh --port unix --variant standard` plus shared smoke; `../cmods/build_cp.sh --port unix --variant coverage` plus shared smoke; CPython editable native rebuild, unit tests, and shared smoke
+- Notes: `The two native C emitters no longer copy BindingContext fields into module globals. Each run reads explicit context-local inputs and publishes a frozen EmitterResult. Runtime activation and CPython-native helper bindings restore enclosing ContextVar tokens, including nested same-target CPython generation after helper binding. Static namespace, repeated-run identity, deterministic-output, and nested-run regressions enforce the boundary. All 100 tests and every repository/release gate pass; generated C, header, API, and pyi artifacts are byte-for-byte unchanged. All four product repositories are clean and pushed. No remaining generator work is tracked.`
 
 ## Test inventory
 
