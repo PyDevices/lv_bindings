@@ -1,0 +1,43 @@
+# Finding 11: fonts/*.bin are committed generated artifacts nothing
+# regenerated. Regenerate and fail on drift whenever the inputs move
+# (the lvgl submodule pin or the generator), and weekly as a backstop
+# against upstream recipe changes.
+name: Font drift check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - lvgl
+      - scripts/generate_font_bins.py
+      - fonts/**
+  pull_request:
+    paths:
+      - lvgl
+      - scripts/generate_font_bins.py
+      - fonts/**
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate-and-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Regenerate font binaries
+        run: ./scripts/generate_font_bins.py
+      - name: Fail on drift
+        run: |
+          git diff --stat --exit-code fonts/ || {
+            echo "::error::fonts/*.bin no longer match their recipes -- rerun scripts/generate_font_bins.py and commit." >&2
+            exit 1
+          }
