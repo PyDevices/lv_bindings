@@ -139,7 +139,12 @@ def verify(target, text, expected_names):
     names = mp_module_names(text) if target == "CircuitPython" else py_module_names(text)
     if target == "MicroPython":
         names = mp_module_names(text)
-    integration_names = {"__name__", "__version__"}
+    # _nesting is deliberately private in the canonical API model (it is
+    # not an LVGL declaration) yet is still emitted for MicroPython and
+    # CircuitPython; see api_model.build_api_model and emit_backend's
+    # module_registration_plan. Treat it like the other non-canonical but
+    # expected infrastructure exports rather than flagging it as unexpected.
+    integration_names = {"__name__", "__version__", "_nesting"}
     missing = expected_names - names
     unexpected = names - expected_names - integration_names
     if missing:

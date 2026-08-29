@@ -171,10 +171,18 @@ def test_lifecycle_dunders_are_not_part_of_the_shared_public_namespace():
     for source in (micropython, circuitpython):
         assert "mp_lv_init_mpobj" not in source
         assert "mp_lv_deinit_mpobj" not in source
-        assert "static const mp_lv_struct_t mp__nesting" not in source
-        assert "static int _nesting" not in source
-        assert "_nesting++;" not in source
-        assert "_nesting--;" not in source
+
+    # _nesting is a binding-internal callback re-entrancy counter, not an
+    # LVGL declaration; it is deliberately private in the canonical API
+    # model yet still emitted here for MicroPython/CircuitPython, because
+    # python/display_driver.py (shipped in this repo) depends on it at
+    # runtime. See api_model.build_api_model and emit_backend's
+    # module_registration_plan for the audited exception.
+    for source in (micropython, circuitpython):
+        assert "static const mp_lv_struct_t mp__nesting" in source
+        assert "static int _nesting" in source
+        assert "_nesting++;" in source
+        assert "_nesting--;" in source
 
 
 def test_prepared_analysis_parses_source_once_and_shares_declaration_ir(monkeypatch):

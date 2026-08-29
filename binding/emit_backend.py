@@ -441,10 +441,16 @@ def module_registration_plan(
     """
     return ModuleRegistrationPlan(
         int_constants=tuple(int_constants) if max_phase >= 1 else (),
+        # _nesting (the binding-internal callback re-entrancy counter; see
+        # analyze.py and emit_c_micropython_style.py) is deliberately kept
+        # in the emitted module globals here even though the canonical API
+        # model marks it private: python/display_driver.py, shipped in this
+        # repo, reads it at runtime on MicroPython/CircuitPython. CPython's
+        # native emitter never adds it to generated_globals in the first
+        # place (it uses its own ContextVar-scoped lvpy_nesting_inc/dec
+        # instead), so this is a no-op there.
         generated_globals=(
-            tuple(name for name in generated_globals if name != "_nesting")
-            if max_phase >= 1
-            else ()
+            tuple(generated_globals) if max_phase >= 1 else ()
         ),
         enum_names=(
             tuple(

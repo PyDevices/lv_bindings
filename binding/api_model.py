@@ -1184,6 +1184,25 @@ def build_api_model(
         )
         for variable in declarations.variables
     )
+    # _nesting is not an LVGL declaration; it is a synthetic entry for the
+    # binding-internal callback re-entrancy counter injected into
+    # analyze.py's `blobs` (see analyze.py). It is deliberately private
+    # (not part of the documented public API) but still emitted as a real
+    # MicroPython/CircuitPython module global and stubbed, because
+    # python/display_driver.py (shipped in this repo) depends on it to
+    # detect reentrant lv.task_handler() calls. See emit_backend.py's
+    # module_registration_plan and emit_pyi_canonical.py's CanonicalPyiEmitter
+    # for the matching audited exceptions.
+    variables.append(
+        ApiVariable(
+            c_name="_nesting",
+            type=CType(kind="primitive", name="int"),
+            python_name="_nesting",
+            storage=("static",),
+            visibility="private",
+            policy_reason="Binding re-entrancy guard; not a user-facing LVGL symbol.",
+        )
+    )
     constants = []
     anonymous_groups = {}
     enum_prefix = "ENUM_" + module_prefix.upper() + "_"

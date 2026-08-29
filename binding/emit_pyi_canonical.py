@@ -218,6 +218,14 @@ class CanonicalPyiEmitter:
             1,
         )
         self._add()
+        # _nesting is deliberately private in the canonical API model (see
+        # api_model.build_api_model) but still stubbed here: it is a real
+        # runtime attribute on MicroPython/CircuitPython, and
+        # python/display_driver.py (shipped in this repo) depends on its
+        # public shape (`.value: int`).
+        self._add("class _Nesting:")
+        self._add("value: int", 1)
+        self._add()
 
     def _module_enums(self) -> list[Mapping[str, Any]]:
         return sorted(
@@ -423,6 +431,8 @@ class CanonicalPyiEmitter:
         ):
             name = _identifier(variable.get("python_name") or variable["c_name"])
             self._add("%s: %s" % (name, self._view_type(variable)))
+        if any(variable.get("c_name") == "_nesting" for variable in self.variables):
+            self._add("_nesting: _Nesting")
         self._add()
 
     def _emit_functions(self) -> None:

@@ -16,7 +16,7 @@ from .verify_api import validate_api_data
 
 _ALL_TARGETS = frozenset(TARGETS)
 _HELPER_NAMES = frozenset({"C_Pointer", "LvReferenceError"})
-_PRIVATE_HELPER_NAMES = frozenset({"_Blob", "_BlobT", "_Struct", "_StructT"})
+_PRIVATE_HELPER_NAMES = frozenset({"_Blob", "_BlobT", "_Struct", "_StructT", "_Nesting"})
 
 
 def _available(item: Mapping[str, Any], target: str) -> bool:
@@ -200,6 +200,11 @@ def _expected_top_level(data: Mapping[str, Any], target: str) -> set[str]:
         for item in data.get("variables", ())
         if _public(item, target) and item.get("c_name") != "_nesting"
     )
+    # _nesting is private in the canonical model but still deliberately
+    # stubbed (as `_Nesting`, see CanonicalPyiEmitter) for the targets that
+    # emit it; see api_model.build_api_model for the rationale.
+    if any(item.get("c_name") == "_nesting" for item in data.get("variables", ())):
+        expected.add("_nesting")
     expected.update(
         _identifier(item["python_name"])
         for item in data.get("constants", ())

@@ -392,6 +392,17 @@ def analyze(ctx=None):
         and not decl.name.startswith("_")
     )
 
+    # Not an LVGL declaration: a binding-internal callback re-entrancy
+    # counter (see the matching mp_lv_funcptr/{func}_callback increments in
+    # emit_c_micropython_style.py). It is deliberately private in the
+    # canonical API model (see api_model.build_api_model) yet still emitted
+    # as a real MicroPython/CircuitPython module global, because helper
+    # code this repo ships (python/display_driver.py) reads it to detect
+    # reentrant lv.task_handler() calls from inside an LVGL callback. Do not
+    # remove this on the assumption it is unused C state; its only reader
+    # is Python code outside this translation unit.
+    blobs["_nesting"] = parser.parse("extern int _nesting;").ext[0].type.type
+
     int_constants = []
     # Type convertors
     #

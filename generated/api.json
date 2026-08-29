@@ -1,5 +1,5 @@
 {
-  "api_hash": "03bc15b7ba58855ae69f7866624feb24eea935a334876dc5dda46d1f5b8d5e54",
+  "api_hash": "3e5f11f89b243834d376088f5261970cf6ffa3f6ca91dbbb3510d62f631a754f",
   "constants": [
     {
       "available_on": [
@@ -201431,6 +201431,29 @@
     }
   ],
   "variables": [
+    {
+      "available_on": [
+        "micropython",
+        "circuitpython",
+        "cpython"
+      ],
+      "c_name": "_nesting",
+      "policy_reason": "Binding re-entrancy guard; not a user-facing LVGL symbol.",
+      "python_name": "_nesting",
+      "storage": [
+        "static"
+      ],
+      "type": {
+        "kind": "primitive",
+        "name": "int"
+      },
+      "view": {
+        "category": "scalar",
+        "conversion": "integer",
+        "python_type": "int"
+      },
+      "visibility": "private"
+    },
     {
       "available_on": [
         "micropython",

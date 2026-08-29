@@ -72,6 +72,25 @@ TJPGD implementation. They are declared in `binding/api_policy.json` and have
 policy, namespace, and runtime coverage. The compatibility report must contain
 zero unexplained differences.
 
+`_nesting` is a separate, narrower kind of exception: it is not an LVGL
+declaration at all, so it cannot go in `api_policy.json` (whose entries are
+validated against the parsed translation unit). It is a binding-internal
+callback re-entrancy counter, synthesized directly in `analyze.py` and
+carried through `api_model.build_api_model` as a synthetic `ApiVariable`
+with `visibility="private"`. Despite being private, it is deliberately still
+emitted as a real MicroPython/CircuitPython module global (see
+`emit_backend.module_registration_plan` and the blob-table loop in
+`emit_c_micropython_style.py`) and stubbed as `_nesting: _Nesting` (see
+`CanonicalPyiEmitter`), because `python/display_driver.py` — the LVGL
+event-loop helper this repo ships and every consumer syncs verbatim — reads
+`lv._nesting.value` at runtime to detect reentrant `lv.task_handler()`
+calls from inside an LVGL callback. From inside this translation unit the
+counter looks unused (nothing here reads it back), but its only reader is
+Python code outside the generated C; do not remove it on that "dead code"
+appearance. `tests/test_display_driver_nesting_integration.py` guards this
+by executing the helper's actual re-entrancy-guarded code path against a
+mock built from the freshly generated MicroPython/CircuitPython namespaces.
+
 ## Commands and validation
 
 ```bash
