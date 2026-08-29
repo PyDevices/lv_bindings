@@ -135,7 +135,8 @@ def test_clean_break_keeps_one_generator_command_and_one_naming_contract():
         REPO_ROOT / "generated" / "lvgl.json",
     ):
         assert not path.exists()
-    assert not any((REPO_ROOT / "generated" / "baseline").iterdir())
+    baseline_dir = REPO_ROOT / "generated" / "baseline"
+    assert not baseline_dir.exists() or not any(baseline_dir.iterdir())
 
     result = subprocess.run(
         [sys.executable, "-m", "binding.generate", "--help"],

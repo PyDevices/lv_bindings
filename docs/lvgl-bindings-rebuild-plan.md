@@ -246,7 +246,9 @@ API hash after this increment is
 
 ### Handoff
 
-- Commit SHA: `________________`
+- Commit SHA: `1e4b64b` (filled retroactively during the 2026-08-28 external
+  audit; the checkpoint left this field blank — the SHA is the commit that
+  landed the classification manifest, `api_report`, and its gate test)
 - Compatibility score: `98.87% (21,928/22,179)`
 - Validation command(s): `PYTHONPATH=. .venv/bin/pytest -q -s tests/test_api_report.py`; `PYTHONPATH=. .venv/bin/python -m binding.api_report generated/api.json --baseline docs/baseline/lvgl-bindings-api-baseline.json.gz --classification docs/baseline/lvgl-bindings-api-baseline-classification.json --format markdown`
 - Notes: `The baseline classification manifest covers every missing or extra historical entry. Canonical enum normalization, richer public struct exposure, upstream metadata omissions, and private runtime-helper removal are explicit categories. The shared model precedes all target emitters; the only availability differences are the two audited TJPGD exceptions.`
