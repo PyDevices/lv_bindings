@@ -3,8 +3,11 @@
 #
 # Version is the optional VERSION argument, else auto-computed by
 # next_release_version.sh (highest vX.Y.Z tag + 1 patch). Pushing the tag
-# is the upstream release trigger for lvgl-bindings; lvgl-python then syncs
-# from that tag and publishes the packaged wheel to TestPyPI.
+# does NOT trigger anything by itself: release.yml is workflow_dispatch
+# only. After pushing, dispatch it explicitly --
+#   gh workflow run release.yml -f bindings-ref=vX.Y.Z -f publish=true
+# -- which validates the tag across all three consumers and then
+# dispatches lvgl-python to sync and publish to TestPyPI.
 #
 # Usage:
 #   ./scripts/publish_release_tag.sh                # auto version; create tag
