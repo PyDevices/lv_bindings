@@ -25,14 +25,14 @@ jobs:
         runtime: [micropython, circuitpython]
     steps:
       - name: Check out bindings under test
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: lvgl-bindings
           ref: ${{ inputs['bindings-ref'] || github.sha }}
           submodules: recursive
 
       - name: Check out cmods build orchestration
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: PyDevices/cmods
           ref: 2ba938208dc61ae0f519f6e993b418111e951fb9
@@ -40,7 +40,7 @@ jobs:
 
       - name: Check out MicroPython consumer
         if: matrix.runtime == 'micropython'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: PyDevices/lvgl-micropython
           ref: 72a7d9b60baae64c7594f4e162e0a7adec84435d
@@ -48,7 +48,7 @@ jobs:
 
       - name: Check out MicroPython v1.28.0
         if: matrix.runtime == 'micropython'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: micropython/micropython
           ref: v1.28.0
@@ -56,7 +56,7 @@ jobs:
 
       - name: Check out CircuitPython consumer
         if: matrix.runtime == 'circuitpython'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: PyDevices/lvgl-circuitpython
           ref: de2797413462f4815f892e92e5e3a88c1e8a2f52
@@ -64,7 +64,7 @@ jobs:
 
       - name: Check out CircuitPython 10.2.1
         if: matrix.runtime == 'circuitpython'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: adafruit/circuitpython
           ref: 10.2.1
@@ -119,21 +119,21 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Check out bindings under test
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: lvgl-bindings
           ref: ${{ inputs.bindings-ref || github.sha }}
           submodules: recursive
 
       - name: Check out CPython consumer
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: PyDevices/lvgl-python
           ref: 5fe4bcdeb5e24490283ad2c001ff7871f114e00a
           path: lvgl-python
           submodules: recursive
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
