@@ -77,6 +77,10 @@ def _load_event_loop_class(lv_module):
         "ticks_diff": None,
         "app": None,
         "LVGL_PERIOD_MS": 10,
+        # Mirrors the module-level resolve-once line in display_driver.py:
+        # present on MicroPython/CircuitPython, None on CPython, where the
+        # gate stands down (C-side ContextVar owns re-entrancy there).
+        "_LV_NESTING": getattr(lv_module, "_nesting", None),
     }
     exec(compile(class_source, str(DISPLAY_DRIVER), "exec"), namespace)
     return namespace["event_loop"]
@@ -152,3 +156,25 @@ def test_task_handler_nesting_guard_runs_against_compiled_micropython_globals():
         "guard likely raised AttributeError and task_handler's own "
         "except-Exception swallowed it into exception_sink"
     )
+
+
+def test_task_handler_runs_when_counter_absent_cpython_shape():
+    """CPython exports no _nesting; the gate must stand down, not raise."""
+    mock_lv, names, calls = _mock_lv_from_compiled_namespace(
+        MICROPYTHON_C.read_text(encoding="utf-8")
+    )
+    # Model the CPython module surface: no _nesting attribute at all.
+    if hasattr(mock_lv, "_nesting"):
+        delattr(mock_lv, "_nesting")
+
+    event_loop = _load_event_loop_class(mock_lv)
+    loop = event_loop(period_ms=10)
+    loop._pause = 0
+
+    errors = []
+    loop.exception_sink = errors.append
+
+    loop.task_handler()
+
+    assert not errors, "task_handler() raised with the counter absent: %r" % (errors,)
+    assert calls["task_handler"] == 1
