@@ -828,11 +828,15 @@ static void *mp_lv_callback(mp_obj_t mp_callback, void *lv_callback, qstr callba
 
 static int _nesting = 0;
 
-// Call a Python callback with the re-entrancy counter held. The decrement
-// must survive a raising callback: an nlr unwind past a bare `_nesting--`
-// leaves the counter stuck nonzero, and because C statics survive soft
-// reset, every consumer that gates on `_nesting.value == 0` (display_driver's
-// task_handler above all) stays silently disabled until a hard reset.
+// Call a Python callback from LVGL C code without ever unwinding through
+// the C frames that invoked it. A raising callback used to nlr-unwind past
+// both the `_nesting--` (leaving the counter stuck nonzero, which silently
+// disables every consumer gating on `lv._nesting.value == 0` until a hard
+// reset, C statics surviving soft reset) and LVGL's own re-entrancy state
+// (lv_timer_handler's already-running flag), which wedged timer handling
+// even with the counter balanced. So: report the exception here and return
+// a benign result (0 lowers safely to void/int/bool/enum/pointer returns);
+// LVGL's C state stays consistent and the next callback runs normally.
 static mp_obj_t mp_lv_nesting_call(mp_obj_t func, size_t n_args, const mp_obj_t *args)
 {
     nlr_buf_t nlr;
@@ -841,11 +845,11 @@ static mp_obj_t mp_lv_nesting_call(mp_obj_t func, size_t n_args, const mp_obj_t 
     if (nlr_push(&nlr) == 0) {
         result = mp_call_function_n_kw(func, n_args, 0, args);
         nlr_pop();
-        _nesting--;
     } else {
-        _nesting--;
-        nlr_jump(nlr.ret_val);
+        mp_obj_print_exception(&mp_plat_print, MP_OBJ_FROM_PTR(nlr.ret_val));
+        result = MP_OBJ_NEW_SMALL_INT(0);
     }
+    _nesting--;
     return result;
 }
 
