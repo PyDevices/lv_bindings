@@ -185,9 +185,31 @@ def test_module_types(lv):
     for name in ("C_Pointer", "LvReferenceError"):
         if not hasattr(lv, name):
             _fail("missing module export lv.{}".format(name))
-    for name in ("Blob", "Struct", "_nesting", "mp_lv_init_gc", "mp_lv_deinit_gc", "mp_lv_get_roots"):
+    for name in ("Blob", "Struct", "mp_lv_init_gc", "mp_lv_deinit_gc", "mp_lv_get_roots"):
         if hasattr(lv, name):
             _fail("private implementation export leaked as lv.{}".format(name))
+    # _nesting is a deliberate, audited exception to the private-export
+    # policy above: it is the binding-internal callback re-entrancy
+    # counter that python/display_driver.py (shipped in this repo, synced
+    # into every consumer) reads at runtime as lv._nesting.value to guard
+    # against reentrant lv.task_handler() calls. It is private in the
+    # canonical API model (visibility="private" in api_model.py) but is
+    # still deliberately emitted for MicroPython/CircuitPython -- see
+    # emit_backend.module_registration_plan, the blob-table loop in
+    # emit_c_micropython_style.py, and docs/generator-architecture.md's
+    # "Public API policy" section. CPython never emitted it (its own
+    # ContextVar-scoped lvpy_nesting_inc/dec serves the same purpose) so it
+    # stays forbidden there.
+    if _is_cpython():
+        if hasattr(lv, "_nesting"):
+            _fail("private implementation export leaked as lv._nesting")
+    else:
+        if not hasattr(lv, "_nesting"):
+            _fail(
+                "lv._nesting missing; python/display_driver.py's "
+                "task_handler()/async_refresh() read lv._nesting.value "
+                "and will raise AttributeError at runtime"
+            )
     if hasattr(lv, "area_get_width"):
         _fail("struct method leaked as module-level lv.area_get_width")
     if _module_defines(lv, "__init__") or _module_defines(lv, "__del__"):
