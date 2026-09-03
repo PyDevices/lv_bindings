@@ -31,7 +31,7 @@ jobs:
           ref: ${{ inputs['bindings-ref'] || github.sha }}
           submodules: recursive
 
-      - name: Check out cmods build orchestration
+      - name: Check out the aggregator build orchestration
         uses: actions/checkout@v7
         with:
           repository: PyDevices/cmods
@@ -75,7 +75,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libffi-dev libssl-dev pkg-config
 
-      - name: Link exact bindings checkout into cmods
+      - name: Link exact bindings checkout into the aggregator
         run: |
           bindings_sha=$(git -C lvgl-bindings rev-parse HEAD)
           ln -s ../lvgl-bindings integration/lvgl-bindings

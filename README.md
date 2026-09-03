@@ -63,7 +63,7 @@ cd lvgl-bindings
 git submodule update --init lvgl
 ```
 
-Place `lvgl-bindings/` as a sibling of `lvgl-micropython/`, `lvgl-circuitpython/`, and/or `lvgl-python/` in your workspace. ([cmods](https://github.com/PyDevices/cmods) is an optional convenience workspace — not required.)
+Place `lvgl-bindings/` as a sibling of `lvgl-micropython/`, `lvgl-circuitpython/`, and/or `lvgl-python/` in your workspace. (The org's [aggregator workspace](https://github.com/PyDevices/cmods) is an optional convenience — not required.)
 
 ## Setup
 

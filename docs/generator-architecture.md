@@ -116,7 +116,8 @@ the pinned upstream generator still reproduces that baseline without placing
 its source or full outputs in this repository.
 
 Consumer builds are part of integration validation: MicroPython and
-CircuitPython begin with the `cmods/build_mp.sh` and `cmods/build_cp.sh`
-orchestrators; CPython rebuilds its extension and wheel from the synced source.
+CircuitPython begin with the aggregator workspace's `build_mp.sh` and
+`build_cp.sh` orchestrators; CPython rebuilds its extension and wheel from the
+synced source.
 See [releasing-bindings.md](releasing-bindings.md) for exact-commit
 synchronization and publication boundaries.

@@ -16,5 +16,5 @@ dist/
 # Repo-specific
 lextab.py
 yacctab.py
-# Scratch logs from cmods build_all.sh / build_target.sh
+# Scratch logs from workspace build runs
 .cursor/build-all*
