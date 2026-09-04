@@ -28,6 +28,13 @@
       "patterns": ["struct.*"],
       "classification": "deliberate_fix",
       "reason": "The canonical declaration model retains public LVGL structs and struct methods that the upstream metadata did not represent."
+    },
+    {
+      "id": "tjpgd-owned-by-jpegio",
+      "side": "missing",
+      "patterns": ["module.function.tjpgd_init", "module.function.tjpgd_deinit"],
+      "classification": "target_exception",
+      "reason": "LV_USE_TJPGD is 0 on MicroPython (the compared view) and CircuitPython: the JPEG decoder there is jpegio's, registered through lv_image_decoder_create by displayif / lvgl-circuitpython, one TJpgDec per firmware (displayif#23, lvgl-bindings#14). CPython keeps LVGL's built-in TJPGD, so both names remain in the canonical model as cpython-only target exceptions in binding/api_policy.json."
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "api_hash": "3e5f11f89b243834d376088f5261970cf6ffa3f6ca91dbbb3510d62f631a754f",
+  "api_hash": "d6562dc4a627712d83a68ad8cb03c5a3f3b427593a928720c0c0695216e00443",
   "constants": [
     {
       "available_on": [
@@ -156853,7 +156853,7 @@
     },
     {
       "available_on": [
-        "micropython"
+        "cpython"
       ],
       "c_name": "lv_tjpgd_deinit",
       "function_specifiers": [],
@@ -156881,7 +156881,7 @@
     },
     {
       "available_on": [
-        "micropython"
+        "cpython"
       ],
       "c_name": "lv_tjpgd_init",
       "function_specifiers": [],

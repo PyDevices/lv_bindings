@@ -67,10 +67,18 @@ helpers remain private; concrete reachable LVGL structs, `C_Pointer`,
 variables follow the canonical model.
 
 The current target exceptions are `lv_tjpgd_init` and `lv_tjpgd_deinit`, which
-are unavailable on CircuitPython and CPython because those builds exclude the
-TJPGD implementation. They are declared in `binding/api_policy.json` and have
-policy, namespace, and runtime coverage. The compatibility report must contain
-zero unexplained differences.
+are unavailable on MicroPython and CircuitPython and present only on CPython.
+`lv_conf.h` sets `LV_USE_TJPGD 0` on those two targets: the JPEG decoder there
+is jpegio's, registered through LVGL's public `lv_image_decoder_create` API by
+displayif (MicroPython) / lvgl-circuitpython (CircuitPython), so each firmware
+carries one TJpgDec (see displayif#23, lvgl-bindings#14). CPython has no jpegio
+and keeps LVGL's built-in decoder. The exceptions are declared in
+`binding/api_policy.json` and have policy, namespace, and runtime coverage. The
+compatibility report must contain zero unexplained differences. Because the
+generator preprocesses once, target-neutrally, `lv_conf.h` keeps
+`LV_USE_TJPGD 1` under the generator's `PYCPARSER` define so the canonical
+translation unit still declares both functions; only real compiles see the
+per-target value.
 
 `_nesting` is a separate, narrower kind of exception: it is not an LVGL
 declaration at all, so it cannot go in `api_policy.json` (whose entries are

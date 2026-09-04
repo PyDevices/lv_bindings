@@ -501,11 +501,15 @@ def test_object_lifetime_and_pointer_validation(lv):
 
 
 def test_target_exceptions(lv):
-    has_tjpgd = hasattr(lv, "tjpgd_init") or hasattr(lv, "tjpgd_deinit")
-    if _runtime_target() == "micropython":
-        if not has_tjpgd:
-            _fail("MicroPython is missing its enabled TJPGD API")
-    elif has_tjpgd:
+    # LV_USE_TJPGD is 0 on MicroPython and CircuitPython (jpegio owns the JPEG
+    # decoder there, registered via lv_image_decoder_create); CPython keeps
+    # LVGL's built-in TJPGD, so tjpgd_init/deinit exist only on CPython.
+    has_init = hasattr(lv, "tjpgd_init")
+    has_deinit = hasattr(lv, "tjpgd_deinit")
+    if _runtime_target() == "cpython":
+        if not (has_init and has_deinit):
+            _fail("CPython is missing its enabled TJPGD API")
+    elif has_init or has_deinit:
         _fail("TJPGD API leaked into a target that excludes the subsystem")
     print("OK: reviewed target exception policy")
 

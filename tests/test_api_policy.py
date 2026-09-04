@@ -94,14 +94,16 @@ def test_symbol_identifier_enum_is_private():
 
 
 def test_tjpgd_exception_is_target_specific():
+    # LV_USE_TJPGD is 0 on MicroPython and CircuitPython (jpegio owns the JPEG
+    # decoder there); only CPython keeps LVGL's built-in TJPGD.
     ir = parse_source(
         "void lv_tjpgd_init(void); void lv_tjpgd_deinit(void);"
     )
     model = build_api_model(ir)
     functions = {function.c_name: function for function in model.functions}
 
-    assert functions["lv_tjpgd_init"].available_on == ("micropython",)
-    assert functions["lv_tjpgd_deinit"].available_on == ("micropython",)
+    assert functions["lv_tjpgd_init"].available_on == ("cpython",)
+    assert functions["lv_tjpgd_deinit"].available_on == ("cpython",)
 
 
 def test_policy_file_is_complete_for_the_current_translation_unit():

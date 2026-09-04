@@ -164,25 +164,25 @@
     {
       "name": "lv_tjpgd_deinit",
       "target": "circuitpython",
-      "reason": "CircuitPython's configured LVGL build excludes the TJPGD subsystem.",
+      "reason": "LV_USE_TJPGD is 0 on CircuitPython: the JPEG decoder is jpegio's, registered through lv_image_decoder_create by lvgl-circuitpython; one TJpgDec per firmware (displayif#23, lvgl-bindings#14).",
       "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     },
     {
       "name": "lv_tjpgd_deinit",
-      "target": "cpython",
-      "reason": "CPython's configured LVGL build excludes the TJPGD subsystem.",
+      "target": "micropython",
+      "reason": "LV_USE_TJPGD is 0 on MicroPython: the JPEG decoder is jpegio's, registered through lv_image_decoder_create by displayif; one TJpgDec per firmware (displayif#23, lvgl-bindings#14).",
       "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     },
     {
       "name": "lv_tjpgd_init",
       "target": "circuitpython",
-      "reason": "CircuitPython's configured LVGL build excludes the TJPGD subsystem.",
+      "reason": "LV_USE_TJPGD is 0 on CircuitPython: the JPEG decoder is jpegio's, registered through lv_image_decoder_create by lvgl-circuitpython; one TJpgDec per firmware (displayif#23, lvgl-bindings#14).",
       "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     },
     {
       "name": "lv_tjpgd_init",
-      "target": "cpython",
-      "reason": "CPython's configured LVGL build excludes the TJPGD subsystem.",
+      "target": "micropython",
+      "reason": "LV_USE_TJPGD is 0 on MicroPython: the JPEG decoder is jpegio's, registered through lv_image_decoder_create by displayif; one TJpgDec per firmware (displayif#23, lvgl-bindings#14).",
       "test": "tests/test_verify_pyi.py::test_target_specific_stubs_match_the_real_exception_policy"
     }
   ]

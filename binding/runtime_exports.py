@@ -3,7 +3,16 @@
 from __future__ import print_function
 
 # C function names (parser names, not simplified Python names)
+# LV_USE_TJPGD is 0 on MicroPython and CircuitPython (lv_conf.h): the JPEG
+# decoder there is jpegio's, registered through lv_image_decoder_create by
+# displayif / lvgl-circuitpython. CPython keeps LVGL's built-in TJPGD.
 RUNTIME_SKIP_MODULE_FUNCS = {
+    "micropython": frozenset(
+        {
+            "lv_tjpgd_init",
+            "lv_tjpgd_deinit",
+        }
+    ),
     "circuitpython": frozenset(
         {
             "lv_tjpgd_init",
@@ -12,8 +21,6 @@ RUNTIME_SKIP_MODULE_FUNCS = {
     ),
     "cpython": frozenset(
         {
-            "lv_tjpgd_init",
-            "lv_tjpgd_deinit",
             "mp_lv_init_gc",
             "mp_lv_deinit_gc",
             "mp_lv_get_roots",

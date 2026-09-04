@@ -47699,14 +47699,6 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_lodepng_init_mpobj, 0, mp_lv_
 
 static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_lodepng_deinit_mpobj, 0, mp_lv_obj_style_init, lv_lodepng_deinit);
     
-/* Reusing lv_obj_style_init for lv_tjpgd_init */
-
-static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_tjpgd_init_mpobj, 0, mp_lv_obj_style_init, lv_tjpgd_init);
-    
-/* Reusing lv_obj_style_init for lv_tjpgd_deinit */
-
-static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_tjpgd_deinit_mpobj, 0, mp_lv_obj_style_init, lv_tjpgd_deinit);
-    
 
 /*
  * lvgl extension definition for:
@@ -48445,6 +48437,8 @@ static MP_DEFINE_CONST_LV_FUN_OBJ_STATIC_VAR(mp_lv_event_mark_deleted_mpobj, 1, 
  * lv_msgbox_add_text_fmt
  * lv_spangroup_set_span_text_fmt
  * lv_table_set_cell_value_fmt
+ * lv_tjpgd_init
+ * lv_tjpgd_deinit
  * lv_global_default
  * lv_text_set_text_vfmt
  *
@@ -49505,8 +49499,6 @@ static const mp_rom_map_elem_t lvgl_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR_fs_memfs_init), MP_ROM_PTR(&mp_lv_fs_memfs_init_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_lodepng_init), MP_ROM_PTR(&mp_lv_lodepng_init_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_lodepng_deinit), MP_ROM_PTR(&mp_lv_lodepng_deinit_mpobj) },
-    { MP_ROM_QSTR(MP_QSTR_tjpgd_init), MP_ROM_PTR(&mp_lv_tjpgd_init_mpobj) },
-    { MP_ROM_QSTR(MP_QSTR_tjpgd_deinit), MP_ROM_PTR(&mp_lv_tjpgd_deinit_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_draw_sw_i1_to_argb8888), MP_ROM_PTR(&mp_lv_draw_sw_i1_to_argb8888_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_draw_sw_rgb565_swap), MP_ROM_PTR(&mp_lv_draw_sw_rgb565_swap_mpobj) },
     { MP_ROM_QSTR(MP_QSTR_draw_sw_i1_invert), MP_ROM_PTR(&mp_lv_draw_sw_i1_invert_mpobj) },
